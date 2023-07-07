@@ -1,0 +1,63 @@
+{
+  "name": "ts-data-structures",
+  "version": "1.0.0",
+  "description": "Misc TS data structures",
+  "main": "./dist/index.js",
+  "engines": {
+    "node": "*"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "test": "npm run build && mocha -r ts-node/register test/**/*.test.ts",
+    "pristine": "rimraf ./dist ./node_modules",
+    "build": "rimraf ./dist && tsc",
+    "repl": "npm run build && env NODE_PATH=./dist ts-node -i",
+    "htmldoc": "./scripts/htmldoc",
+    "eslint": "eslint",
+    "coverage": "nyc npm run test",
+    "format": "prettier --write .",
+    "precommit": "pretty-quick --staged",
+    "prepare": "husky install .husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alaincaron/ts-data-structures.git"
+  },
+  "keywords": [
+    "data",
+    "structures",
+    "queue",
+    "stack",
+    "circular",
+    "buffer",
+    "typescript"
+  ],
+  "author": "Alain Caron",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alaincaron/ts-data-structures/issues"
+  },
+  "homepage": "https://github.com/alaincaron/ts-data-structures#readme",
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.7",
+    "eslint": "^8.44.0",
+    "husky": "^8.0.3",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "prettier": "^2.8.8",
+    "pretty-quick": "^3.1.3",
+    "rimraf": "^5.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "types": "./dist/index.d.ts",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "files": [
+    "dist"
+  ]
+}
