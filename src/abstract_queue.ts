@@ -1,33 +1,25 @@
 import { OverflowException, UnderflowException } from './exceptions';
+import { AbstractCollection } from './abstract_collection';
+import { Collection } from './collection';
+import { Queue } from './queue';
 
-export abstract class AbstractQueue<T, Q extends AbstractQueue<T, Q>> implements Iterable<T> {
+export abstract class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
   // insertion
-  abstract offer(item: T): boolean;
+  abstract offer(item: E): boolean;
 
-  add(item: T): Q {
+  add(item: E): boolean {
     if (!this.offer(item)) throw new OverflowException();
-    return this as unknown as Q;
+    return true;
   }
 
-  push(item: T) {
-    this.add(item);
-  }
-
-  addMany<Q1 extends AbstractQueue<T, Q1>>(items: T[] | Q1): Q {
-    const itemsToAdd = Array.isArray(items) ? items.length : items.size();
-    if (this.remaining() < itemsToAdd) throw new OverflowException();
-    for (const item of items) this.add(item);
-    return this as unknown as Q;
-  }
-
-  offerFully<Q1 extends AbstractQueue<T, Q1>>(items: T[] | Q1): number {
+  offerFully<E1 extends E>(items: E1[] | Collection<E1>): number {
     const itemsToAdd = Array.isArray(items) ? items.length : items.size();
     if (this.remaining() < itemsToAdd) return 0;
     for (const item of items) this.add(item);
     return itemsToAdd;
   }
 
-  offerPartially<Q1 extends AbstractQueue<T, Q1>>(items: T[] | Q1): number {
+  offerPartially<E1 extends E>(items: Iterable<E1>): number {
     let count = 0;
     for (const item of items) {
       if (!this.offer(item)) break;
@@ -37,61 +29,19 @@ export abstract class AbstractQueue<T, Q extends AbstractQueue<T, Q>> implements
   }
 
   // removal
-  abstract poll(): T | undefined;
-  remove(): T {
+  abstract poll(): E | undefined;
+  remove(): E {
     if (this.isEmpty()) throw new UnderflowException();
     return this.poll()!;
   }
-  pop(): T {
-    return this.remove();
-  }
 
   // inspection
-  abstract peek(): T | undefined;
+  abstract peek(): E | undefined;
 
-  element(): T {
+  element(): E {
     if (this.isEmpty()) throw new UnderflowException();
     return this.peek()!;
   }
 
-  // others
-  abstract size(): number;
-  abstract capacity(): number;
-
-  isEmpty(): boolean {
-    return this.size() === 0;
-  }
-
-  isFull(): boolean {
-    return this.size() >= this.capacity();
-  }
-
-  remaining(): number {
-    return this.capacity() - this.size();
-  }
-
-  abstract reset(): Q;
-
-  abstract clone(): Q;
-
-  toArray(): Array<T> {
-    return Array.from({ length: this.size() }, (_v, _i) => this.remove());
-  }
-
-  [Symbol.iterator](): Iterator<T> {
-    return {
-      next: () => {
-        if (this.isEmpty()) {
-          return {
-            done: true,
-            value: undefined,
-          };
-        }
-        return {
-          done: false,
-          value: this.remove(),
-        };
-      },
-    };
-  }
+  abstract clone(): AbstractQueue<E>;
 }
