@@ -42,5 +42,11 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
     return this.peek()!;
   }
 
+  *drain() {
+    while (!this.isEmpty()) {
+      yield this.remove();
+    }
+  }
+
   abstract clone(): AbstractQueue<E>;
 }

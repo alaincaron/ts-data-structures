@@ -188,12 +188,6 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
     while (cursor < this._size) yield this.buffer[cursor++];
   }
 
-  *drain() {
-    while (!this.isEmpty()) {
-      yield this.remove();
-    }
-  }
-
   private heapify() {
     let i = (this._size >> 1) - 1;
     while (i >= 0) this.heapifyDown(i--);
