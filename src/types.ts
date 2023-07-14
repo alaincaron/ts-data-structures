@@ -1,6 +1,7 @@
 import { Collection } from './collection';
 
 export type Predicate<E> = (item: E) => boolean;
+export type Comparator<E> = (a: E, b: E) => number;
 
 export interface ArrayLike<E> {
   length: number;

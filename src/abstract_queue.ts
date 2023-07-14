@@ -7,9 +7,8 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
   // insertion
   abstract offer(item: E): boolean;
 
-  add(item: E): boolean {
+  add(item: E) {
     if (!this.offer(item)) throw new OverflowException();
-    return true;
   }
 
   offerFully<E1 extends E>(items: E1[] | Collection<E1>): number {

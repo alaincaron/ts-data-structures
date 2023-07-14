@@ -11,7 +11,7 @@ const MIN_INITIAL_CAPACITY = 8;
 const MAX_ARRAY_SIZE = 2 ** 31;
 
 export class ArrayDeque<E> extends AbstractDeque<E> {
-  private elements: Array<E | undefined>;
+  private elements: Array<E>;
   private head: number;
   private tail: number;
   private readonly _capacity: number;
@@ -41,7 +41,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
         this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
         this.tail = 0;
       } else if (Array.isArray(initialElements)) {
-        const arr = initialElements as Array<E | undefined>;
+        const arr = initialElements as Array<E>;
         this.elements = [...arr];
         this.elements.length = this.nextArraySize(this.elements.length);
         this.tail = arr.length;
@@ -95,7 +95,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     const r = this.elements.length - h;
     const newCapacity = n << 1;
     if (newCapacity <= 0) throw new Error('Sorry, deque too big');
-    const a = new Array<E | undefined>(newCapacity);
+    const a = new Array<E>(newCapacity);
     for (let i = h; i < n; ++i) a[i - h] = this.elements[i];
     for (let i = 0; i < h; ++i) a[i + r] = this.elements[i];
     this.elements = a;
@@ -155,7 +155,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     const h = this.head;
     const result = this.elements[h];
     if (result == null) return undefined;
-    this.elements[h] = undefined; // Must null out slot
+    this.elements[h] = undefined!; // Must null out slot
     this.head = this.slot(h + 1);
     return result;
   }
@@ -164,7 +164,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     const t = this.slot(this.tail - 1);
     const result = this.elements[t];
     if (result == null) return undefined;
-    this.elements[t] = undefined;
+    this.elements[t] = undefined!;
     this.tail = t;
     return result;
   }
@@ -273,7 +273,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     while (cursor !== this.tail) {
       const item = this.elements[cursor]!;
       if (predicate(item)) {
-        this.elements[cursor] = undefined;
+        this.elements[cursor] = undefined!;
         this.compact(cursor);
         return item;
       }
@@ -288,7 +288,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
       const idx = this.slot(cursor - 1);
       const item = this.elements[idx]!;
       if (predicate(item)) {
-        this.elements[idx] = undefined;
+        this.elements[idx] = undefined!;
         this.compact(idx);
         return item;
       }
@@ -302,7 +302,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     let modified = false;
     while (cursor !== this.tail) {
       if (!predicate(this.elements[cursor]!)) {
-        this.elements[cursor] = undefined;
+        this.elements[cursor] = undefined!;
         modified = true;
       }
       cursor = this.slot(cursor + 1);
@@ -323,7 +323,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
         ++shift;
       } else if (shift > 0) {
         this.elements[this.slot(cursor - shift)] = this.elements[cursor];
-        this.elements[cursor] = undefined;
+        this.elements[cursor] = undefined!;
       }
       cursor = this.slot(cursor + 1);
     }

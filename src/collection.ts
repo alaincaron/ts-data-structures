@@ -8,7 +8,7 @@ export interface Collection<E> extends Iterable<E> {
   remaining(): number;
   contains(item: E): boolean;
   toArray(): E[];
-  add(item: E): boolean;
+  add(item: E): void;
   removeMatchingItem(predicate: Predicate<E>): E | undefined;
   removeItem(item: E): boolean;
   filter(predicate: Predicate<E>): boolean;
@@ -17,8 +17,8 @@ export interface Collection<E> extends Iterable<E> {
   all(predicate: Predicate<E>): boolean;
   some(predicate: Predicate<E>): boolean;
 
-  addMany<E1 extends E>(items: E1[] | Collection<E1> | Iterable<E1>): number;
-  addAll<E1 extends E>(iter: Iterable<E1>): number;
+  addFully<E1 extends E>(items: E1[] | Collection<E1> | Iterable<E1>): number;
+  addPartially<E1 extends E>(iter: Iterable<E1>): number;
 
   clear(): void;
 

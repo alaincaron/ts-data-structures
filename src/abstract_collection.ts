@@ -34,7 +34,7 @@ export abstract class AbstractCollection<E> implements Collection<E> {
     return result;
   }
 
-  abstract add(item: E): boolean;
+  abstract add(item: E): void;
   abstract removeMatchingItem(predicate: Predicate<E>): E | undefined;
 
   removeItem(item: E): boolean {
@@ -64,16 +64,17 @@ export abstract class AbstractCollection<E> implements Collection<E> {
     return false;
   }
 
-  addMany<E1 extends E>(items: E1[] | Collection<E1>): number {
+  addFully<E1 extends E>(items: E1[] | Collection<E1>): number {
     const itemsToAdd = Array.isArray(items) ? items.length : items.size();
     if (this.remaining() < itemsToAdd) throw new OverflowException();
-    return this.addAll(items);
+    return this.addPartially(items);
   }
 
-  addAll<E1 extends E>(iter: Iterable<E1>): number {
+  addPartially<E1 extends E>(iter: Iterable<E1>): number {
     let count = 0;
     for (const e of iter) {
-      if (this.add(e)) ++count;
+      this.add(e);
+      ++count;
     }
     return count;
   }
