@@ -43,7 +43,7 @@ export class CircularBuffer<E> extends AbstractQueue<E> {
   offer(item: E) {
     if (this.isFull()) {
       if (this._overflowHandler === 'overwrite' && !this.isEmpty()) {
-        this.deque.pollFirst();
+        this.poll();
       } else {
         return false;
       }
