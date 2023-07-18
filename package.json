@@ -17,7 +17,8 @@
     "coverage": "nyc npm run test",
     "format": "prettier --write .",
     "precommit": "pretty-quick --staged",
-    "prepare": "husky install .husky"
+    "prepare": "husky install .husky",
+    "benchmark": "npm run build && ./scripts/benchmarks"
   },
   "repository": {
     "type": "git",
@@ -41,6 +42,7 @@
   "devDependencies": {
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
+    "benny": "^3.7.1",
     "chai": "^4.3.7",
     "eslint": "^8.44.0",
     "husky": "^8.0.3",

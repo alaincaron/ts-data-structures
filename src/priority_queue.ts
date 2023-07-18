@@ -189,7 +189,6 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
   }
 
   private heapify() {
-    let i = (this._size >> 1) - 1;
-    while (i >= 0) this.heapifyDown(i--);
+    for (let i = (this._size >> 1) - 1; i >= 0; --i) this.heapifyDown(i);
   }
 }
