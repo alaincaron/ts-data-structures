@@ -1,6 +1,5 @@
 import { AbstractMap } from './abstract_map';
-import { IMap } from './map';
-import { nextPrime, cyrb53, Predicate } from '../utils';
+import { nextPrime, cyrb53, Predicate, MapOptions } from '../utils';
 
 interface HashEntry<K, V> {
   key: K;
@@ -9,14 +8,8 @@ interface HashEntry<K, V> {
   readonly hash: number;
 }
 
-export interface MapOptions<K, V> {
-  capacity?: number;
-  initial?: Map<K, V> | IMap<K, V>;
-}
-
 export interface HashMapOptions<K, V> extends MapOptions<K, V> {
   hash?: (k: K) => number;
-  equal?: (k1: K, k2: K) => boolean;
 }
 
 export class HashMap<K, V> extends AbstractMap<K, V> {
@@ -24,21 +17,31 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
   private _capacity: number;
   private slots: Array<HashEntry<K, V> | undefined>;
   private readonly hash: (k: K) => number;
-  private readonly equal: (k1: K, k2: K) => boolean;
+
+  private static toOptions<K, V>(initializer: any): MapOptions<K, V> {
+    return {
+      equalK: initializer?.equalK,
+      equalV: initializer?.equalV,
+    };
+  }
 
   constructor(initializer?: number | HashMap<K, V> | HashMapOptions<K, V>) {
-    super();
+    super(HashMap.toOptions(initializer));
+
     this._size = 0;
     this._capacity = Infinity;
     this.hash = cyrb53 as (k: K) => number;
-    this.equal = (k1, k2) => k1 === k2;
 
     if (initializer == null) {
       this.slots = new Array(3);
     } else if (typeof initializer === 'number') {
       this.slots = new Array(nextPrime(initializer));
     } else if (initializer instanceof HashMap) {
-      throw new Error('Not implemented');
+      this._size = initializer._size;
+      this._capacity = initializer._capacity;
+      this.hash = initializer.hash;
+      this.slots = new Array(initializer.slots.length);
+      this.putAll(initializer);
     } else {
       throw new Error('Not implemented');
     }
@@ -62,7 +65,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     const h = this.hash(key);
     const slot = this.getSlot(h);
     let e = this.slots[slot];
-    while (e && !(e.hash === h && this.equal(e.key, key))) e = e.next;
+    while (e && !(e.hash === h && this.equalK(e.key, key))) e = e.next;
     return e;
   }
 
@@ -75,7 +78,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     const slot = this.getSlot(h);
     let prev: HashEntry<K, V> | undefined = undefined;
     let e = this.slots[slot];
-    while (e && !(e.hash === h && this.equal(e.key, key))) {
+    while (e && !(e.hash === h && this.equalK(e.key, key))) {
       prev = e;
       e = e.next;
     }
@@ -104,7 +107,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     const slot = this.getSlot(h);
     let prev: HashEntry<K, V> | undefined = undefined;
     let e = this.slots[slot];
-    while (e && !(e.hash === h && this.equal(e.key, key))) {
+    while (e && !(e.hash === h && this.equalK(e.key, key))) {
       prev = e;
       e = e.next;
     }

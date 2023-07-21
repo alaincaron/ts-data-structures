@@ -1,11 +1,12 @@
-import { ContainerOptions, Predicate } from '../utils';
+import { Predicate } from '../utils';
 import { Deque, ArrayDeque } from '../deques';
 import { AbstractStack } from './abstract_stack';
+import { CollectionOptions } from '../collections';
 
 export class ArrayStack<E> extends AbstractStack<E> {
   private readonly buffer: Deque<E>;
 
-  constructor(initializer?: number | ArrayStack<E> | ContainerOptions<E>) {
+  constructor(initializer?: number | ArrayStack<E> | CollectionOptions<E>) {
     super();
     if (initializer == null) {
       this.buffer = new ArrayDeque<E>();
@@ -14,7 +15,7 @@ export class ArrayStack<E> extends AbstractStack<E> {
     } else if (initializer instanceof ArrayStack) {
       this.buffer = initializer.buffer.clone();
     } else {
-      const options = initializer as ContainerOptions<E>;
+      const options = initializer as CollectionOptions<E>;
       this.buffer = new ArrayDeque<E>(options);
     }
   }

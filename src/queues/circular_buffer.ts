@@ -1,11 +1,11 @@
 import { AbstractQueue } from './abstract_queue';
-import { ContainerOptions, Predicate } from '../utils';
+import { Predicate } from '../utils';
 import { Deque, ArrayDeque } from '../deques';
-import { Collection } from '../collections';
+import { Collection, CollectionOptions } from '../collections';
 
 export type OverflowHandler = 'throw' | 'overwrite';
 
-export interface CircularBufferOptions<E> extends ContainerOptions<E> {
+export interface CircularBufferOptions<E> extends CollectionOptions<E> {
   overflowHandler?: OverflowHandler;
 }
 export class CircularBuffer<E> extends AbstractQueue<E> {

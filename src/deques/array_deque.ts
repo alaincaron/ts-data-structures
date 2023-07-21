@@ -1,6 +1,6 @@
 import { AbstractDeque } from './abstract_deque';
-import { Collection } from '../collections';
-import { UnderflowException, nextPowerOfTwo, ArrayLike, ContainerOptions, initArrayLike, Predicate } from '../utils';
+import { Collection, ArrayLike, CollectionOptions, initArrayLike } from '../collections';
+import { UnderflowException, nextPowerOfTwo, Predicate } from '../utils';
 
 /*
  * The minimum capacity that we'll use for a newly created deque.
@@ -14,7 +14,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   private tail: number;
   private readonly _capacity: number;
 
-  constructor(initializer?: number | ContainerOptions<E> | ArrayDeque<E>) {
+  constructor(initializer?: number | CollectionOptions<E> | ArrayDeque<E>) {
     super();
 
     if (initializer == null) {
@@ -33,7 +33,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
       this.tail = other.tail;
       this._capacity = other._capacity;
     } else {
-      const options = initializer as ContainerOptions<E>;
+      const options = initializer as CollectionOptions<E>;
       const initialElements = options.initial;
       if (!initialElements) {
         this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);

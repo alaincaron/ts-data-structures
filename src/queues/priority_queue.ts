@@ -1,8 +1,8 @@
 import { AbstractQueue } from './abstract_queue';
-import { Collection } from '../collections';
-import { Comparator, ContainerOptions, initArrayLike, ArrayLike, Predicate } from '../utils';
+import { Collection, CollectionOptions, initArrayLike, ArrayLike } from '../collections';
+import { Comparator, Predicate } from '../utils';
 
-export interface PriorityQueueOptions<E> extends ContainerOptions<E> {
+export interface PriorityQueueOptions<E> extends CollectionOptions<E> {
   comparator?: Comparator<E>;
 }
 

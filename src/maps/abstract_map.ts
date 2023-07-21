@@ -1,12 +1,19 @@
-import { Predicate } from '../utils';
+import { Predicate, MapOptions } from '../utils';
 import { IMap } from './map';
 
 export abstract class AbstractMap<K, V> implements IMap<K, V> {
+  protected readonly equalK: (k1: K, k2: K) => boolean;
+  protected readonly equalV: (v1: V, v2: V) => boolean;
   abstract size(): number;
   abstract capacity(): number;
 
+  constructor(options?: MapOptions<K, V>) {
+    this.equalK = options?.equalK ?? ((k1, k2) => k1 === k2);
+    this.equalV = options?.equalV ?? ((v1, v2) => v1 === v2);
+  }
+
   isEmpty() {
-    return this.size() != 0;
+    return this.size() === 0;
   }
 
   isFull() {
@@ -15,7 +22,7 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
 
   get(key: K): V | undefined {
     for (const [k, v] of this.entries()) {
-      if (k === key) return v;
+      if (this.equalK(key, k)) return v;
     }
     return undefined;
   }
@@ -24,14 +31,14 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
 
   containsKey(key: K) {
     for (const k of this.keys()) {
-      if (k === key) return true;
+      if (this.equalK(key, k)) return true;
     }
     return false;
   }
 
   containsValue(value: V) {
     for (const v of this.values()) {
-      if (v === value) return true;
+      if (this.equalV(value, v)) return true;
     }
     return false;
   }
