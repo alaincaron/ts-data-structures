@@ -1,5 +1,6 @@
 import { AbstractMap } from './abstract_map';
-import { nextPrime, cyrb53, Predicate, MapOptions } from '../utils';
+import { MapOptions, MapComparators } from './types';
+import { nextPrime, cyrb53, Predicate } from '../utils';
 
 interface HashEntry<K, V> {
   key: K;
@@ -12,30 +13,30 @@ export interface HashMapOptions<K, V> extends MapOptions<K, V> {
   hash?: (k: K) => number;
 }
 
+const MIN_INITIAL_CAPACITY = nextPrime(5);
 export class HashMap<K, V> extends AbstractMap<K, V> {
   private _size: number;
   private _capacity: number;
   private slots: Array<HashEntry<K, V> | undefined>;
   private readonly hash: (k: K) => number;
 
-  private static toOptions<K, V>(initializer: any): MapOptions<K, V> {
-    return {
-      equalK: initializer?.equalK,
-      equalV: initializer?.equalV,
-    };
+  private static toOptions<K, V>(initializer: any): MapComparators<K, V> | undefined {
+    if (initializer?.equalK || initializer?.equalV) return initializer;
+    return undefined;
   }
 
   constructor(initializer?: number | HashMap<K, V> | HashMapOptions<K, V>) {
     super(HashMap.toOptions(initializer));
 
     this._size = 0;
-    this._capacity = Infinity;
     this.hash = cyrb53 as (k: K) => number;
 
     if (initializer == null) {
-      this.slots = new Array(3);
+      this.slots = new Array(MIN_INITIAL_CAPACITY);
+      this._capacity = Infinity;
     } else if (typeof initializer === 'number') {
-      this.slots = new Array(nextPrime(initializer));
+      this.slots = new Array(nextPrime(Math.max(initializer, MIN_INITIAL_CAPACITY)));
+      this._capacity = Infinity;
     } else if (initializer instanceof HashMap) {
       this._size = initializer._size;
       this._capacity = initializer._capacity;
@@ -43,7 +44,20 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
       this.slots = new Array(initializer.slots.length);
       this.putAll(initializer);
     } else {
-      throw new Error('Not implemented');
+      const capacity = initializer.capacity ?? Infinity;
+      const initialElements = initializer.initial;
+      if (!initialElements) {
+        this.slots = new Array(MIN_INITIAL_CAPACITY);
+        this._capacity = capacity;
+      } else {
+        const s = initialElements.size;
+        const size = typeof s === 'function' ? s.call(initialElements) : s;
+        this._capacity = Math.max(capacity, size);
+        this.slots = new Array(nextPrime(Math.max(size * 1.33333, MIN_INITIAL_CAPACITY)));
+        for (const [k, v] of initialElements.entries()) {
+          this.put(k, v);
+        }
+      }
     }
   }
 

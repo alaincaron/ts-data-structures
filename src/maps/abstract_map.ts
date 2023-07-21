@@ -1,5 +1,6 @@
-import { Predicate, MapOptions } from '../utils';
+import { Predicate } from '../utils';
 import { IMap } from './map';
+import { MapComparators } from './types';
 
 export abstract class AbstractMap<K, V> implements IMap<K, V> {
   protected readonly equalK: (k1: K, k2: K) => boolean;
@@ -7,7 +8,7 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
   abstract size(): number;
   abstract capacity(): number;
 
-  constructor(options?: MapOptions<K, V>) {
+  constructor(options?: MapComparators<K, V>) {
     this.equalK = options?.equalK ?? ((k1, k2) => k1 === k2);
     this.equalV = options?.equalV ?? ((v1, v2) => v1 === v2);
   }
