@@ -1,4 +1,4 @@
-import { Collection } from './collection';
+import { Collection } from '../collections';
 
 export interface Queue<E> extends Collection<E> {
   offer(item: E): boolean;

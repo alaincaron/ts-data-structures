@@ -1,4 +1,4 @@
-import { Predicate } from './types';
+import { Predicate } from '../utils';
 
 export interface Collection<E> extends Iterable<E> {
   size(): number;

@@ -1,7 +1,6 @@
-import { AbstractQueue } from './abstract_queue';
+import { AbstractQueue } from '../queues';
 import { Deque } from './deque';
-import { OverflowException } from './exceptions';
-import { Predicate } from './types';
+import { OverflowException, Predicate } from '../utils';
 
 export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque<E> {
   addFirst(item: E) {

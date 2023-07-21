@@ -1,6 +1,5 @@
-import { ContainerOptions, Predicate } from './types';
-import { Deque } from './deque';
-import { ArrayDeque } from './array_deque';
+import { ContainerOptions, Predicate } from '../utils';
+import { Deque, ArrayDeque } from '../deques';
 import { AbstractStack } from './abstract_stack';
 
 export class ArrayStack<E> extends AbstractStack<E> {

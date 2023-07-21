@@ -1,14 +1,12 @@
 import { AbstractDeque } from './abstract_deque';
-import { Collection } from './collection';
-import { UnderflowException } from './exceptions';
-import { ArrayLike, ContainerOptions, initArrayLike, Predicate } from './types';
+import { Collection } from '../collections';
+import { UnderflowException, nextPowerOfTwo, ArrayLike, ContainerOptions, initArrayLike, Predicate } from '../utils';
 
 /*
  * The minimum capacity that we'll use for a newly created deque.
  * Must be a power of 2.
  */
 const MIN_INITIAL_CAPACITY = 8;
-const MAX_ARRAY_SIZE = 2 ** 31;
 
 export class ArrayDeque<E> extends AbstractDeque<E> {
   private elements: Array<E>;
@@ -61,19 +59,8 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   }
 
   private nextArraySize(numElements: number) {
-    let initialCapacity = MIN_INITIAL_CAPACITY;
-
-    if (numElements > initialCapacity) {
-      if (numElements > MAX_ARRAY_SIZE) throw new Error('Deque too big');
-      initialCapacity = numElements - 1;
-      initialCapacity |= initialCapacity >> 1;
-      initialCapacity |= initialCapacity >> 2;
-      initialCapacity |= initialCapacity >> 4;
-      initialCapacity |= initialCapacity >> 8;
-      initialCapacity |= initialCapacity >> 16;
-      ++initialCapacity;
-    }
-    return initialCapacity;
+    if (numElements <= MIN_INITIAL_CAPACITY) return MIN_INITIAL_CAPACITY;
+    return nextPowerOfTwo(numElements);
   }
   /**
    * Allocate empty array to hold the given number of elements.

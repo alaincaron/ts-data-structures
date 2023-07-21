@@ -1,6 +1,5 @@
-import { PriorityQueue } from '../src/priority_queue';
+import { PriorityQueue, OverflowException, UnderflowException } from '../src';
 import { expect } from 'chai';
-import { OverflowException, UnderflowException } from '../src/exceptions';
 
 function* generator(): IterableIterator<number> {
   let i = 0;

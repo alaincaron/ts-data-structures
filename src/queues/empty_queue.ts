@@ -1,5 +1,4 @@
-import { EmptyCollection } from './empty_collection';
-import { Collection } from './collection';
+import { EmptyCollection, Collection } from '../collections';
 import { Queue } from './queue';
 
 export class EmptyQueue<E> extends EmptyCollection<E> implements Queue<E> {

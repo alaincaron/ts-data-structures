@@ -1,8 +1,7 @@
 import { AbstractQueue } from './abstract_queue';
-import { ContainerOptions, Predicate } from './types';
-import { Deque } from './deque';
-import { ArrayDeque } from './array_deque';
-import { Collection } from './collection';
+import { ContainerOptions, Predicate } from '../utils';
+import { Deque, ArrayDeque } from '../deques';
+import { Collection } from '../collections';
 
 export type OverflowHandler = 'throw' | 'overwrite';
 

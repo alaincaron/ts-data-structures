@@ -1,6 +1,5 @@
 import { Collection } from './collection';
-import { OverflowException } from './exceptions';
-import { Predicate } from './types';
+import { OverflowException, Predicate } from '../utils';
 
 export abstract class AbstractCollection<E> implements Collection<E> {
   abstract size(): number;

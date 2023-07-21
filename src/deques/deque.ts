@@ -1,5 +1,5 @@
-import { Queue } from './queue';
-import { Predicate } from './types';
+import { Queue } from '../queues';
+import { Predicate } from '../utils';
 
 export interface Deque<E> extends Queue<E> {
   addFirst(item: E): void;

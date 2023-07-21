@@ -1,6 +1,5 @@
-import { OverflowException, UnderflowException } from './exceptions';
-import { AbstractCollection } from './abstract_collection';
-import { Collection } from './collection';
+import { OverflowException, UnderflowException } from '../utils';
+import { AbstractCollection, Collection } from '../collections';
 import { Queue } from './queue';
 
 export abstract class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {

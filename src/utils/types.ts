@@ -1,4 +1,4 @@
-import { Collection } from './collection';
+import { Collection } from '../collections';
 
 export type Predicate<E> = (item: E) => boolean;
 export type Comparator<E> = (a: E, b: E) => number;

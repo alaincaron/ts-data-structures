@@ -1,5 +1,5 @@
-import { UnderflowException } from './exceptions';
-import { AbstractQueue } from './abstract_queue';
+import { UnderflowException } from '../utils';
+import { AbstractQueue } from '../queues';
 import { Stack } from './stack';
 
 export abstract class AbstractStack<E> extends AbstractQueue<E> implements Stack<E> {

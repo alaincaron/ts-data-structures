@@ -1,4 +1,4 @@
-import { EmptyQueue } from './empty_queue';
+import { EmptyQueue } from '../queues';
 import { Stack } from './stack';
 
 export class EmptyStack<E> extends EmptyQueue<E> implements Stack<E> {

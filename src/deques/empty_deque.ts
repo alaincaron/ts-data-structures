@@ -1,6 +1,6 @@
-import { EmptyQueue } from './empty_queue';
-import { Predicate } from './types';
-import { Deque } from './deque';
+import { EmptyQueue } from '../queues';
+import { Predicate } from '../utils';
+import { Deque } from '../deques';
 
 export class EmptyDeque<E> extends EmptyQueue<E> implements Deque<E> {
   private static DEQUE = new EmptyDeque();

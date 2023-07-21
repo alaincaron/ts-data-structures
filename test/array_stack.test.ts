@@ -1,6 +1,4 @@
-import { ArrayDeque } from '../src/array_deque';
-import { OverflowException, UnderflowException } from '../src/exceptions';
-import { ArrayStack } from '../src/array_stack';
+import { OverflowException, UnderflowException, ArrayStack, ArrayDeque } from '../src';
 import { expect } from 'chai';
 
 describe('ArrayStack', () => {

@@ -1,6 +1,5 @@
 import { AbstractCollection } from './abstract_collection';
-import { OverflowException } from './exceptions';
-import { Predicate } from './types';
+import { OverflowException, Predicate } from '../utils';
 
 export class EmptyCollection<E> extends AbstractCollection<E> {
   private static COL = new EmptyCollection();

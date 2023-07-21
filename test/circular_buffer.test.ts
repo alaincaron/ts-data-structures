@@ -1,6 +1,5 @@
-import { CircularBuffer } from '../src/circular_buffer';
+import { CircularBuffer, OverflowException, UnderflowException } from '../src';
 import { expect } from 'chai';
-import { OverflowException, UnderflowException } from '../src/exceptions';
 
 function* generator(): IterableIterator<number> {
   let i = 0;

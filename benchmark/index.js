@@ -1,5 +1,5 @@
 const Benny = require('benny');
-const { ArrayDeque } = require('array_deque');
+const { ArrayDeque } = require('deques');
 
 Benny.suite(
   'FIFO grow array',
