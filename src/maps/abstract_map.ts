@@ -21,6 +21,10 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     return this.size() >= this.capacity();
   }
 
+  remaining() {
+    return this.capacity() - this.size();
+  }
+
   get(key: K): V | undefined {
     for (const [k, v] of this.entries()) {
       if (this.equalK(key, k)) return v;

@@ -5,6 +5,7 @@ export interface IMap<K, V> {
   isEmpty(): boolean;
   capacity(): number;
   isFull(): boolean;
+  remaining(): number;
 
   get(key: K): V | undefined;
 

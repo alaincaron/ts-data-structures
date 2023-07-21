@@ -3,7 +3,7 @@
   "check-coverage": false,
   "extension": [".ts"],
   "include": ["**/*.js", "**/*.ts"],
-  "exclude": ["dist/**", "coverage/**", "node_modules/**", "test/**"],
+  "exclude": ["dist/**", "coverage/**", "node_modules/**", "test/**", "benchmark/**", "src/**/index.ts"],
   "sourceMap": true,
   "reporter": ["html", "text", "text-summary"],
   "all": true,
