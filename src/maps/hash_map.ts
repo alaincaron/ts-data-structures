@@ -1,6 +1,6 @@
 import { AbstractMap } from './abstract_map';
 import { MapOptions, MapComparators } from './types';
-import { nextPrime, cyrb53, Predicate, LARGEST_PRIME } from '../utils';
+import { nextPrime, cyrb53, Predicate, LARGEST_PRIME, OverflowException } from '../utils';
 
 interface HashEntry<K, V> {
   key: K;
@@ -41,7 +41,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
       this._capacity = Infinity;
     } else if (typeof initializer === 'number') {
       this.slots = new Array(nextPrime(Math.max(initializer, MIN_INITIAL_CAPACITY)));
-      this._capacity = Infinity;
+      this._capacity = initializer;
     } else if (initializer instanceof HashMap) {
       this.loadFactor = initializer.loadFactor;
       this._size = initializer._size;
@@ -63,7 +63,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
         const s = initialElements.size;
         const size = typeof s === 'function' ? s.call(initialElements) : s;
         this._capacity = Math.max(capacity, size);
-        this.slots = new Array(nextPrime(Math.max(size * 1.33333, MIN_INITIAL_CAPACITY)));
+        this.slots = new Array(nextPrime(Math.max(size / this.loadFactor, MIN_INITIAL_CAPACITY)));
         for (const [k, v] of initialElements.entries()) {
           this.put(k, v);
         }
@@ -107,6 +107,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
       e = e.next;
     }
     if (!e) {
+      if (this.isFull()) throw new OverflowException();
       e = { key, value, next: undefined, hash: h };
       ++this._size;
       if (prev) {

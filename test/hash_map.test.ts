@@ -1,4 +1,4 @@
-import { HashMap } from '../src';
+import { HashMap, OverflowException } from '../src';
 import { expect } from 'chai';
 
 describe('HashMap', () => {
@@ -14,9 +14,9 @@ describe('HashMap', () => {
 
     it('should have specified capacity as unique argument', () => {
       const map = new HashMap(2);
-      expect(map.capacity()).equal(Infinity);
+      expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
-      expect(map.remaining()).equal(Infinity);
+      expect(map.remaining()).equal(2);
       expect(map.isEmpty()).to.be.true;
       expect(map.isFull()).to.be.false;
     });
@@ -25,6 +25,31 @@ describe('HashMap', () => {
       const map = new HashMap({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
+    });
+  });
+
+  describe('put/get', () => {
+    it('should return undefined if key is newly added', () => {
+      const map = new HashMap();
+      expect(map.put('foo', 4)).to.be.undefined;
+      expect(map.size()).equal(1);
+      expect(map.get('foo')).equal(4);
+    });
+    it('should return the old value if key already present', () => {
+      const map = new HashMap();
+      expect(map.put('foo', 4)).to.be.undefined;
+      expect(map.put('foo', 2)).equal(4);
+      expect(map.size()).equal(1);
+      expect(map.get('foo')).equal(2);
+    });
+
+    it('should throw if adding a new element and map is full', () => {
+      const map = new HashMap(1);
+      expect(map.put('foo', 1)).to.be.undefined;
+      expect(map.put('foo', 2)).equal(1);
+      expect(() => map.put('bar', 1)).to.throw(OverflowException);
+      expect(map.isFull()).to.be.true;
+      expect(map.size()).equal(1);
     });
   });
 
