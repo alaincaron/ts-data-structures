@@ -1,6 +1,6 @@
 import { AbstractMap } from './abstract_map';
 import { MapOptions, MapComparators } from './types';
-import { nextPrime, cyrb53, Predicate, LARGEST_PRIME, OverflowException } from '../utils';
+import { nextPrime, hashAny, hashNumber, Predicate, LARGEST_PRIME, OverflowException } from '../utils';
 
 interface HashEntry<K, V> {
   key: K;
@@ -33,7 +33,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     super(HashMap.toOptions(initializer));
 
     this._size = 0;
-    this.hash = cyrb53 as (k: K) => number;
+    this.hash = hashAny as (k: K) => number;
     this.loadFactor = DEFAULT_LOAD_FACTOR;
 
     if (initializer == null) {
@@ -55,16 +55,18 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
         this.loadFactor = initializer.loadFactor;
       }
       const capacity = initializer.capacity ?? Infinity;
+      if (initializer.hash) this.hash = (k: K) => hashNumber(initializer.hash!(k));
       const initialElements = initializer.initial;
       if (!initialElements) {
         this.slots = new Array(MIN_INITIAL_CAPACITY);
         this._capacity = capacity;
       } else {
-        const s = initialElements.size;
-        const size = typeof s === 'function' ? s.call(initialElements) : s;
+        const s = (initialElements as any).size;
+        const len = (initialElements as any).length;
+        const size = len != null ? len : s == null ? 0 : typeof s === 'function' ? s.call(initialElements) : s;
         this._capacity = Math.max(capacity, size);
         this.slots = new Array(nextPrime(Math.max(size / this.loadFactor, MIN_INITIAL_CAPACITY)));
-        for (const [k, v] of initialElements.entries()) {
+        for (const [k, v] of initialElements) {
           this.put(k, v);
         }
       }

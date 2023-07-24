@@ -1,6 +1,6 @@
 import { Predicate } from '../utils';
 
-export interface IMap<K, V> {
+export interface IMap<K, V> extends Iterable<[K, V]> {
   size(): number;
   isEmpty(): boolean;
   capacity(): number;

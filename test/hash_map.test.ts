@@ -127,4 +127,31 @@ describe('HashMap', () => {
       expect(map.remove('foo')).to.equal(1);
     });
   });
+
+  describe('filterKeys', () => {
+    it('should remove keys not matching predicate', () => {
+      const map = new HashMap<string, number>();
+      map.put('foo', 1);
+      map.put('bar', 2);
+      map.put('foobar', 3);
+      map.filterKeys(k => k.startsWith('b'));
+      expect(map.size()).equal(1);
+      expect(map.containsKey('foo')).to.be.false;
+      expect(map.containsKey('foobar')).to.be.false;
+      expect(map.containsKey('bar')).to.be.true;
+    });
+  });
+  describe('filterValues', () => {
+    it('should remove values not matching predicate', () => {
+      const map = new HashMap<string, number>();
+      map.put('foo', 1);
+      map.put('bar', 2);
+      map.put('foobar', 3);
+      map.filterValues(v => v % 2 === 0);
+      expect(map.size()).equal(1);
+      expect(map.containsKey('foo')).to.be.false;
+      expect(map.containsKey('foobar')).to.be.false;
+      expect(map.containsKey('bar')).to.be.true;
+    });
+  });
 });

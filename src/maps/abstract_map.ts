@@ -79,4 +79,8 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
   abstract entries(): IterableIterator<[K, V]>;
 
   abstract clone(): IMap<K, V>;
+
+  [Symbol.iterator]() {
+    return this.entries();
+  }
 }

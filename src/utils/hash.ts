@@ -24,11 +24,30 @@ export function hashStringJava(s: string): number {
   return h;
 }
 
-export function hashNumberJava(h: number): number {
+export function hashNumber(h: number): number {
   h ^= (h >>> 20) ^ (h >>> 12);
   return h ^ (h >>> 7) ^ (h >>> 4);
 }
 
-export function hashString(s: string): number {
-  return hashNumberJava(hashStringJava(s));
+export function hashAny(x: any): number {
+  if (x == null) return 0;
+  if (x.hashCode === 'function') return x.hashCode();
+  switch (typeof x) {
+    case 'string':
+      return cyrb53(x);
+    case 'number':
+      return hashNumber(x);
+    case 'boolean':
+      return x ? 1231 : 1237;
+    default:
+      if (typeof x[Symbol.iterator] === 'function') {
+        let hash = 0;
+        for (const y of x) {
+          hash = ((hash << 5) - hash + hashAny(y)) | 0;
+        }
+        return hash;
+      }
+      if (typeof x.toString === 'function') return cyrb53(x.toString() as string);
+      return cyrb53(JSON.stringify(x));
+  }
 }
