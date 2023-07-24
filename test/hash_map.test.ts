@@ -26,6 +26,35 @@ describe('HashMap', () => {
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
     });
+
+    it('should initialize with the provided Map', () => {
+      const map = new HashMap({ initial: new Map().set('a', 1).set('b', 2) });
+      expect(map.size()).equal(2);
+      expect(map.get('a')).equal(1);
+      expect(map.get('b')).equal(2);
+    });
+
+    it('should initialize with the provided IMap', () => {
+      const map1 = new HashMap();
+      map1.put('a', 1);
+      map1.put('b', 2);
+      const map = new HashMap({ initial: map1 });
+      expect(map.size()).equal(2);
+      expect(map.get('a')).equal(1);
+      expect(map.get('b')).equal(2);
+    });
+
+    it('should initialize with the provided Iterable', () => {
+      const map = new HashMap({
+        initial: [
+          ['a', 1],
+          ['b', 2],
+        ] as Array<[string, number]>,
+      });
+      expect(map.size()).equal(2);
+      expect(map.get('a')).equal(1);
+      expect(map.get('b')).equal(2);
+    });
   });
 
   describe('put/get', () => {
