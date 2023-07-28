@@ -1,6 +1,10 @@
 import { LinkedHashMap, OverflowException } from '../src';
 import { expect } from 'chai';
 
+function collectKeys<K, V>(m: LinkedHashMap<K, V>): K[] {
+  return Array.from(m.keys());
+}
+
 describe('LinkedHashMap', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
@@ -27,11 +31,13 @@ describe('LinkedHashMap', () => {
       expect(map.isEmpty()).to.be.true;
     });
 
-    it('should initialize with the provided Map', () => {
-      const map = LinkedHashMap.from({ initial: new Map().set('a', 1).set('b', 2) });
+    it('should initialize with the provided Map and respect accessOrder', () => {
+      const map = LinkedHashMap.from({ accessOrder: true, initial: new Map().set('a', 1).set('b', 2) });
       expect(map.size()).equal(2);
-      expect(map.get('a')).equal(1);
+      expect(collectKeys(map)).to.deep.equal(['a', 'b']);
       expect(map.get('b')).equal(2);
+      expect(map.get('a')).equal(1);
+      expect(collectKeys(map)).to.deep.equal(['b', 'a']);
     });
 
     it('should initialize with the provided IMap', () => {
@@ -40,8 +46,9 @@ describe('LinkedHashMap', () => {
       map1.put('b', 2);
       const map = LinkedHashMap.from({ initial: map1 });
       expect(map.size()).equal(2);
-      expect(map.get('a')).equal(1);
       expect(map.get('b')).equal(2);
+      expect(map.get('a')).equal(1);
+      expect(collectKeys(map)).to.deep.equal(['a', 'b']);
     });
 
     it('should initialize with the provided Iterable', () => {
