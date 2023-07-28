@@ -8,5 +8,6 @@ export interface MapComparators<K, V> {
 
 export interface MapOptions<K, V> extends MapComparators<K, V> {
   capacity?: number;
-  initial?: Map<K, V> | IMap<K, V> | Iterable<[K, V]>;
 }
+
+export type MapInitializer<K, V> = Map<K, V> | IMap<K, V> | Iterable<[K, V]>;

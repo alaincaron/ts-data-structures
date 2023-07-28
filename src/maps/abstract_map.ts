@@ -1,5 +1,5 @@
 import { Predicate } from '../utils';
-import { IMap } from './map';
+import { IMap, MapEntry } from './map';
 import { MapComparators } from './types';
 
 export abstract class AbstractMap<K, V> implements IMap<K, V> {
@@ -25,20 +25,21 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     return this.capacity() - this.size();
   }
 
-  get(key: K): V | undefined {
-    for (const [k, v] of this.entries()) {
-      if (this.equalK(key, k)) return v;
+  getEntry(key: K): MapEntry<K, V> | undefined {
+    for (const e of this.entries()) {
+      if (this.equalK(key, e.key)) return e;
     }
     return undefined;
+  }
+
+  get(key: K): V | undefined {
+    return this.getEntry(key)?.value;
   }
 
   abstract put(key: K, value: V): V | undefined;
 
   containsKey(key: K) {
-    for (const k of this.keys()) {
-      if (this.equalK(key, k)) return true;
-    }
-    return false;
+    return this.getEntry(key) !== undefined;
   }
 
   containsValue(value: V) {
@@ -61,26 +62,35 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
   abstract filterEntries(predicate: Predicate<[K, V]>): void;
 
   putAll<K1 extends K, V1 extends V>(map: IMap<K1, V1>) {
-    for (const [k, v] of map.entries()) {
-      this.put(k, v);
+    for (const { key, value } of map.entries()) {
+      this.put(key, value);
     }
   }
 
   abstract clear(): void;
 
   *keys(): IterableIterator<K> {
-    for (const [k, _] of this.entries()) yield k;
+    for (const e of this.entries()) yield e.key;
   }
 
   *values(): IterableIterator<V> {
-    for (const [_, v] of this.entries()) yield v;
+    for (const e of this.entries()) yield e.value;
   }
 
-  abstract entries(): IterableIterator<[K, V]>;
+  abstract entries(): IterableIterator<MapEntry<K, V>>;
 
   abstract clone(): IMap<K, V>;
 
-  [Symbol.iterator]() {
-    return this.entries();
+  [Symbol.iterator](): Iterator<[K, V]> {
+    const iter = this.entries();
+    return {
+      next: () => {
+        const item = iter.next();
+        if (item.done) {
+          return { done: true, value: undefined };
+        }
+        return { done: false, value: [item.value.key, item.value.value] };
+      },
+    };
   }
 }
