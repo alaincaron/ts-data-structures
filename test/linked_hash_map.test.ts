@@ -1,4 +1,4 @@
-import { LinkedHashMap, OverflowException } from '../src';
+import { LinkedHashMap, Ordering, OverflowException } from '../src';
 import { expect } from 'chai';
 
 function collectKeys<K, V>(m: LinkedHashMap<K, V>): K[] {
@@ -31,13 +31,15 @@ describe('LinkedHashMap', () => {
       expect(map.isEmpty()).to.be.true;
     });
 
-    it('should initialize with the provided Map and respect accessOrder', () => {
-      const map = LinkedHashMap.from({ accessOrder: true, initial: new Map().set('a', 1).set('b', 2) });
+    it('should initialize with the provided Map and respect ordering', () => {
+      const map = LinkedHashMap.from({ ordering: Ordering.ACCESS, initial: new Map().set('a', 1).set('b', 2) });
       expect(map.size()).equal(2);
       expect(collectKeys(map)).to.deep.equal(['a', 'b']);
       expect(map.get('b')).equal(2);
       expect(map.get('a')).equal(1);
       expect(collectKeys(map)).to.deep.equal(['b', 'a']);
+      expect(map.mostRecent().key).equal('a');
+      expect(map.leastRecent().key).equal('b');
     });
 
     it('should initialize with the provided IMap', () => {
@@ -94,7 +96,7 @@ describe('LinkedHashMap', () => {
       const a = new LinkedHashMap();
       a.put('foo', 1);
       const b = a.clone();
-      expect(b).to.deep.equal(a);
+      expect(collectKeys(b)).to.deep.equal(collectKeys(a));
       b.put('bar', 1);
       expect(b.size()).equal(2);
       expect(a.size()).equal(1);

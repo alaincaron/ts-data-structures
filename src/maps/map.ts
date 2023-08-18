@@ -1,4 +1,5 @@
 import { Predicate } from '../utils';
+import { MapOptions } from './types';
 
 export interface MapEntry<K, V> {
   readonly key: K;
@@ -34,4 +35,6 @@ export interface IMap<K, V> extends Iterable<[K, V]> {
   entries(): IterableIterator<MapEntry<K, V>>;
 
   clone(): IMap<K, V>;
+
+  buildOptions(): MapOptions<K, V>;
 }

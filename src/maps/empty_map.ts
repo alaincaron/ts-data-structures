@@ -9,15 +9,19 @@ export class EmptyMap<K, V> extends AbstractMap<K, V> {
   }
 
   protected constructor() {
-    super();
+    super({ capacity: 0 });
   }
 
   size() {
     return 0;
   }
 
-  capacity() {
-    return 0;
+  getEntry(_: K) {
+    return undefined;
+  }
+
+  containsValue(_: V) {
+    return false;
   }
 
   put(_key: K, _value: V): never {

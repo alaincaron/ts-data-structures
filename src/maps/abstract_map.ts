@@ -1,16 +1,34 @@
-import { Predicate } from '../utils';
+import { EqualFunction, Predicate, equalPredicate } from '../utils';
 import { IMap, MapEntry } from './map';
-import { MapComparators } from './types';
+import { MapOptions, MapInitializer } from './types';
 
 export abstract class AbstractMap<K, V> implements IMap<K, V> {
-  protected readonly equalK: (k1: K, k2: K) => boolean;
-  protected readonly equalV: (v1: V, v2: V) => boolean;
-  abstract size(): number;
-  abstract capacity(): number;
+  public readonly equalK: EqualFunction<K>;
+  public readonly equalV: EqualFunction<V>;
+  private readonly _capacity: number;
 
-  constructor(options?: MapComparators<K, V>) {
-    this.equalK = options?.equalK ?? ((k1, k2) => k1 === k2);
-    this.equalV = options?.equalV ?? ((v1, v2) => v1 === v2);
+  constructor(options?: number | MapOptions<K, V>) {
+    let capacity;
+    let equalK;
+    let equalV;
+
+    if (typeof options === 'number') {
+      capacity = options;
+    } else {
+      capacity = options?.capacity;
+      equalK = options?.equalK;
+      equalV = options?.equalV;
+    }
+
+    this._capacity = capacity ?? Infinity;
+    this.equalK = equalK ?? equalPredicate;
+    this.equalV = equalV ?? equalPredicate;
+  }
+
+  abstract size(): number;
+
+  capacity() {
+    return this._capacity;
   }
 
   isEmpty() {
@@ -25,12 +43,7 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     return this.capacity() - this.size();
   }
 
-  getEntry(key: K): MapEntry<K, V> | undefined {
-    for (const e of this.entries()) {
-      if (this.equalK(key, e.key)) return e;
-    }
-    return undefined;
-  }
+  abstract getEntry(key: K): MapEntry<K, V> | undefined;
 
   get(key: K): V | undefined {
     return this.getEntry(key)?.value;
@@ -92,5 +105,35 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
         return { done: false, value: [item.value.key, item.value.value] };
       },
     };
+  }
+
+  buildOptions(): MapOptions<K, V> {
+    return {
+      capacity: this._capacity,
+      equalK: this.equalK,
+      equalV: this.equalV,
+    };
+  }
+
+  static buildMap<
+    K,
+    V,
+    Initializer extends MapInitializer<K, V>,
+    M extends IMap<K, V>,
+    Options extends MapOptions<K, V>
+  >(factory: (options: Options) => M, initializer: Initializer): M {
+    const initialElements = initializer.initial;
+    const options =
+      initialElements instanceof AbstractMap
+        ? { ...initialElements.buildOptions(), ...initializer }
+        : { ...initializer };
+    const result = factory(options as unknown as Options);
+
+    if (initialElements) {
+      for (const [k, v] of initialElements) {
+        result.put(k, v);
+      }
+    }
+    return result;
   }
 }

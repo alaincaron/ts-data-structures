@@ -1,5 +1,5 @@
 import { AbstractMap } from './abstract_map';
-import { MapOptions, MapComparators, MapInitializer } from './types';
+import { MapInitializer, MapOptions } from './types';
 import { MapEntry } from './map';
 import { nextPrime, hashAny, Predicate, LARGEST_PRIME, OverflowException } from '../utils';
 
@@ -8,84 +8,61 @@ export interface HashEntry<K, V> extends MapEntry<K, V> {
   readonly hash: number;
 }
 
-export interface HashMapBuildOptions<K, V> extends MapOptions<K, V> {
-  nbSlots?: number;
+export enum AccessType {
+  GET,
+  INSERT,
+  MODIFY,
+  REMOVE,
+}
+
+export interface HashMapOptions<K, V> extends MapOptions<K, V> {
   hash?: (k: K) => number;
   loadFactor?: number;
 }
 
-export type HashMapInitOptions<K, V> = Omit<HashMapBuildOptions<K, V>, 'nbSlots'> & {
-  initial?: MapInitializer<K, V>;
-};
-
 const MIN_INITIAL_CAPACITY = nextPrime(5);
 const DEFAULT_LOAD_FACTOR = 0.75;
 
+export type HashMapInitializer<K, V> = HashMapOptions<K, V> & MapInitializer<K, V>;
+
 export class HashMap<K, V> extends AbstractMap<K, V> {
   private _size: number;
-  private _capacity: number;
-  protected slots: Array<HashEntry<K, V> | undefined>;
-  protected readonly hash: (k: K) => number;
-  protected readonly loadFactor: number;
+  private slots: Array<HashEntry<K, V> | undefined>;
+  public readonly hash: (k: K) => number;
+  public readonly loadFactor: number;
 
-  private static toOptions<K, V>(initializer: any): MapComparators<K, V> | undefined {
-    if (initializer?.equalK || initializer?.equalV) return initializer;
-    return undefined;
-  }
+  protected overflowHandler(_key: K, _value: V) {}
+  protected recordAccess(_e: HashEntry<K, V>, _accessType: AccessType) {}
 
-  constructor(initializer?: number | HashMapBuildOptions<K, V>) {
-    super(HashMap.toOptions(initializer));
-
+  constructor(options?: number | HashMapOptions<K, V>) {
+    super(options);
     this._size = 0;
     this.hash = hashAny as (k: K) => number;
     this.loadFactor = DEFAULT_LOAD_FACTOR;
 
-    if (initializer == null) {
+    if (options == null) {
       this.slots = new Array(MIN_INITIAL_CAPACITY);
-      this._capacity = Infinity;
-    } else if (typeof initializer === 'number') {
-      this.slots = new Array(nextPrime(Math.max(initializer, MIN_INITIAL_CAPACITY)));
-      this._capacity = initializer;
+    } else if (typeof options === 'number') {
+      this.slots = new Array(nextPrime(Math.max(options, MIN_INITIAL_CAPACITY)));
     } else {
-      this._capacity = initializer.capacity ?? Infinity;
-      if (initializer.loadFactor != null) {
-        if (initializer.loadFactor <= 0.0) throw new Error(`Invalid load factor: ${initializer.loadFactor}`);
-        this.loadFactor = initializer.loadFactor;
+      this.slots = new Array(MIN_INITIAL_CAPACITY);
+      if (options.loadFactor != null) {
+        if (options.loadFactor <= 0.0) throw new Error(`Invalid load factor: ${options.loadFactor}`);
+        this.loadFactor = options.loadFactor;
       }
-      if (initializer.hash) this.hash = initializer.hash;
-      let nbSlots = initializer.nbSlots ?? MIN_INITIAL_CAPACITY;
-      if (nbSlots < MIN_INITIAL_CAPACITY) nbSlots = MIN_INITIAL_CAPACITY;
-      else if (nbSlots > MIN_INITIAL_CAPACITY) nbSlots = nextPrime(nbSlots);
-      this.slots = new Array(nbSlots);
+      if (options.hash) this.hash = options.hash;
     }
   }
 
-  protected static convertHashMapInitOptions<K, V>(options: HashMapInitOptions<K, V>): HashMapBuildOptions<K, V> {
-    let nbSlots: number | undefined = undefined;
-    const loadFactor = options.loadFactor ?? DEFAULT_LOAD_FACTOR;
-    const elements = options.initial;
-    const size = (elements as any)?.size;
-    if (typeof size === 'number') {
-      nbSlots = size;
-    } else if (typeof size === 'function') {
-      nbSlots = size.call(elements);
-    }
-    if (nbSlots) nbSlots /= loadFactor;
-    return { ...options, nbSlots };
-  }
-
-  static from<K, V>(options: HashMapInitOptions<K, V>): HashMap<K, V> {
-    const m = new HashMap(HashMap.convertHashMapInitOptions(options));
-    if (options.initial) for (const [k, v] of options.initial) m.put(k, v);
-    return m;
+  static from<K, V>(initializer: HashMapInitializer<K, V>): HashMap<K, V> {
+    return AbstractMap.buildMap<K, V, HashMapOptions<K, V> & MapInitializer<K, V>, HashMap<K, V>, HashMapOptions<K, V>>(
+      (options: HashMapOptions<K, V>) => new HashMap(options),
+      initializer
+    );
   }
 
   size(): number {
     return this._size;
-  }
-
-  capacity(): number {
-    return this._capacity;
   }
 
   private getSlot(h: number, slots: Array<HashEntry<K, V> | undefined>): number {
@@ -99,16 +76,10 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     const slot = this.getSlot(h, this.slots);
     let e = this.slots[slot];
     while (e && !(e.hash === h && this.equalK(e.key, key))) e = e.next;
-    if (e) this.recordAccess(e);
+    if (e) this.recordAccess(e, AccessType.GET);
     return e;
   }
 
-  protected handleOverflow() {
-    throw new OverflowException();
-  }
-
-  protected recordInsertion(_e: MapEntry<K, V>): void {}
-  protected recordAccess(_e: MapEntry<K, V>): void {}
   protected recordRemoval(_e: MapEntry<K, V>): void {}
 
   put(key: K, value: V): V | undefined {
@@ -122,12 +93,12 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     }
     if (!e) {
       if (this.isFull()) {
-        this.handleOverflow();
+        this.overflowHandler(key, value);
         if (this.isFull()) throw new OverflowException();
       }
 
       e = { key, value, next: undefined, hash };
-      this.recordInsertion(e);
+      this.recordAccess(e, AccessType.INSERT);
       ++this._size;
       if (prev) {
         prev.next = e;
@@ -139,7 +110,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     } else {
       const old = e.value;
       e.value = value;
-      this.recordAccess(e);
+      this.recordAccess(e, AccessType.MODIFY);
       return old;
     }
   }
@@ -181,7 +152,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
       this.slots[slot] = e.next;
     }
     --this._size;
-    this.recordRemoval(e);
+    this.recordAccess(e, AccessType.REMOVE);
 
     return e;
   }
@@ -201,7 +172,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
           } else {
             this.slots[i] = e.next;
           }
-          this.recordRemoval(e);
+          this.recordAccess(e, AccessType.REMOVE);
           --this._size;
         } else {
           prev = e;
@@ -227,15 +198,14 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
   }
 
   clone(): HashMap<K, V> {
-    const m = new HashMap<K, V>({
-      capacity: this._capacity,
-      equalK: this.equalK,
-      equalV: this.equalV,
-      nbSlots: this.slots.length,
+    return HashMap.from({ initial: this });
+  }
+
+  buildOptions(): HashMapOptions<K, V> {
+    return {
+      ...super.buildOptions(),
       hash: this.hash,
       loadFactor: this.loadFactor,
-    });
-    m.putAll(this);
-    return m;
+    };
   }
 }

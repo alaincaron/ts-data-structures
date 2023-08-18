@@ -1,84 +1,127 @@
-import { HashMap, HashEntry, HashMapBuildOptions } from './hash_map';
+import { HashMap, HashEntry, HashMapOptions, AccessType } from './hash_map';
 import { MapEntry } from './map';
+import { DoubleLinkedList, Entry } from './double_linked_list';
+import { OverflowException } from '../utils';
+import { AbstractMap } from './abstract_map';
 import { MapInitializer } from './types';
-interface LinkedHashEntry<K, V> extends HashEntry<K, V> {
-  before: LinkedHashEntry<K, V>;
-  after: LinkedHashEntry<K, V>;
+
+export enum Ordering {
+  INSERTION = 1,
+  MODIFICATION,
+  ACCESS,
 }
 
-export interface LinkedHashMapBuildOptions<K, V> extends HashMapBuildOptions<K, V> {
-  accessOrder?: boolean;
+export enum OverflowStrategy {
+  REMOVE_LEAST_RECENT = 1,
+  REMOVE_MOST_RECENT,
+  THROW,
 }
 
-export type LinkedHashMapInitOptions<K, V> = Omit<LinkedHashMapBuildOptions<K, V>, 'nbSlots'> & {
-  initial?: MapInitializer<K, V>;
-};
+export interface LinkedHashMapOptions<K, V> extends HashMapOptions<K, V> {
+  ordering?: Ordering;
+  overflowStrategy?: OverflowStrategy;
+}
 
 export class LinkedHashMap<K, V> extends HashMap<K, V> {
-  private accessOrder: boolean;
-  private header: LinkedHashEntry<K, V>;
+  private readonly ordering: Ordering;
+  private readonly overflowStrategy: OverflowStrategy;
+  private readonly linkedList: DoubleLinkedList;
 
-  constructor(initializer?: number | LinkedHashMapBuildOptions<K, V>) {
-    super(initializer);
-    this.accessOrder = typeof initializer === 'object' ? !!initializer.accessOrder : false;
-    this.header = {} as LinkedHashEntry<K, V>;
-    this.header.before = this.header.after = this.header;
+  constructor(options?: number | LinkedHashMapOptions<K, V>) {
+    super(options);
+    this.ordering = (options as any)?.ordering ?? Ordering.INSERTION;
+    this.overflowStrategy = (options as any)?.overflowStrategy ?? OverflowStrategy.THROW;
+    this.linkedList = new DoubleLinkedList();
   }
 
-  static from<K, V>(options: LinkedHashMapInitOptions<K, V>): LinkedHashMap<K, V> {
-    const m = new LinkedHashMap(HashMap.convertHashMapInitOptions(options) as LinkedHashMapBuildOptions<K, V>);
-    if (options.initial) for (const [k, v] of options.initial) m.put(k, v);
-    return m;
+  static from<K, V>(initializer: LinkedHashMapOptions<K, V> & MapInitializer<K, V>): LinkedHashMap<K, V> {
+    return AbstractMap.buildMap<
+      K,
+      V,
+      LinkedHashMapOptions<K, V> & MapInitializer<K, V>,
+      LinkedHashMap<K, V>,
+      LinkedHashMapOptions<K, V>
+    >((options: LinkedHashMapOptions<K, V>) => new LinkedHashMap(options), initializer);
   }
 
-  protected recordInsertion(e: HashEntry<K, V>) {
-    const ee = e as LinkedHashEntry<K, V>;
-    this.addBefore(ee, this.header);
-  }
+  protected recordAccess(e: HashEntry<K, V>, accessType: AccessType) {
+    const ee = e as unknown as Entry;
 
-  private removeEntryFromLinkedList(e: LinkedHashEntry<K, V>) {
-    e.before.after = e.after;
-    e.after.before = e.before;
-  }
-
-  private addBefore(e: LinkedHashEntry<K, V>, existingEntry: LinkedHashEntry<K, V>) {
-    e.after = existingEntry;
-    e.before = existingEntry.before;
-    e.before.after = e;
-    e.after.before = e;
-  }
-
-  protected recordAccess(e: MapEntry<K, V>): void {
-    if (this.accessOrder) {
-      const ee = e as LinkedHashEntry<K, V>;
-      this.removeEntryFromLinkedList(ee);
-      this.addBefore(ee, this.header);
+    switch (accessType) {
+      case AccessType.INSERT:
+        this.linkedList.addLast(ee);
+        break;
+      case AccessType.MODIFY:
+        if (this.ordering === Ordering.ACCESS || this.ordering === Ordering.MODIFICATION) {
+          this.linkedList.remove(ee);
+          this.linkedList.addLast(ee);
+        }
+        break;
+      case AccessType.GET:
+        if (this.ordering === Ordering.ACCESS) {
+          this.linkedList.remove(ee);
+          this.linkedList.addLast(ee);
+        }
+        break;
+      case AccessType.REMOVE:
+        this.linkedList.remove(ee);
+        break;
+      default:
+        throw new Error(`Unexpected access type: ${accessType}`);
     }
   }
 
-  protected recordRemoval(e: MapEntry<K, V>): void {
-    this.removeEntryFromLinkedList(e as LinkedHashEntry<K, V>);
+  mostRecent() {
+    return this.linkedList.mostRecent() as unknown as MapEntry<K, V>;
+  }
+
+  leastRecent() {
+    return this.linkedList.leastRecent() as unknown as MapEntry<K, V>;
+  }
+
+  protected override overflowHandler(_key: K, _value: V) {
+    switch (this.overflowStrategy) {
+      case OverflowStrategy.REMOVE_LEAST_RECENT:
+        this.removeLeastRecent();
+        break;
+      case OverflowStrategy.REMOVE_MOST_RECENT:
+        this.removeMostRecent();
+        break;
+      default:
+        throw new OverflowException();
+    }
+  }
+
+  private removeMostRecent() {
+    const e = this.mostRecent();
+    if (!e) return undefined;
+    return super.remove(e.key);
+  }
+
+  private removeLeastRecent() {
+    const e = this.leastRecent();
+    if (!e) return;
+    return super.remove(e.key);
   }
 
   clear() {
     super.clear();
-    this.header.before = this.header.after = this.header;
+    this.linkedList.clear();
   }
 
   *entries(): IterableIterator<MapEntry<K, V>> {
-    for (let e = this.header.after; e != this.header; e = e.after) yield e;
+    for (const e of this.linkedList.entries()) yield e as unknown as MapEntry<K, V>;
+  }
+
+  buildOptions(): LinkedHashMapOptions<K, V> {
+    return {
+      ...super.buildOptions(),
+      ordering: this.ordering,
+      overflowStrategy: this.overflowStrategy,
+    };
   }
 
   clone(): LinkedHashMap<K, V> {
-    const m = new LinkedHashMap<K, V>({
-      capacity: this.capacity(),
-      equalK: this.equalK,
-      equalV: this.equalV,
-      nbSlots: this.slots.length,
-      hash: this.hash,
-      loadFactor: this.loadFactor,
-    });
-    m.putAll(this);
-    return m;
+    return LinkedHashMap.from({ initial: this });
   }
 }

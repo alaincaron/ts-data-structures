@@ -1,3 +1,4 @@
+import { BinaryPredicate } from '../utils';
 import { Collection } from './collection';
 
 export interface ArrayLike<E> {
@@ -8,6 +9,7 @@ export interface ArrayLike<E> {
 export interface CollectionOptions<E> {
   capacity?: number;
   initial?: Array<E> | Collection<E> | ArrayLike<E>;
+  equals?: BinaryPredicate<E>;
 }
 
 function toIterator<E>(arrayLike: ArrayLike<E>): Iterator<E> {
