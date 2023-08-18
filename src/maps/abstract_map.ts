@@ -120,7 +120,7 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     V,
     Initializer extends MapInitializer<K, V>,
     M extends IMap<K, V>,
-    Options extends MapOptions<K, V>
+    Options extends MapOptions<K, V>,
   >(factory: (options: Options) => M, initializer: Initializer): M {
     const initialElements = initializer.initial;
     const options =
