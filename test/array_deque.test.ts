@@ -34,7 +34,7 @@ describe('ArrayDeque', () => {
 
     it('should have the same elements as the array argument', () => {
       const arr = [1, 2];
-      const deque = new ArrayDeque({ capacity: 2, initial: arr });
+      const deque = ArrayDeque.from({ capacity: 2, initial: arr });
       expect(deque.capacity()).equal(2);
       expect(deque.size()).equal(2);
       expect(deque.remaining()).equal(0);
@@ -45,42 +45,42 @@ describe('ArrayDeque', () => {
 
     it('should be identical to the ArrayDeque argument', () => {
       const arr = [1, 2];
-      const deque1 = new ArrayDeque({ capacity: 3, initial: arr });
+      const deque1 = ArrayDeque.from({ capacity: 3, initial: arr });
       expect(deque1.capacity()).equal(3);
-      const deque2 = new ArrayDeque(deque1);
+      const deque2 = ArrayDeque.from({ initial: deque1 });
       expect(deque2).to.deep.equal(deque1);
       expect(deque2.capacity()).equal(3);
     });
 
     it('should be identical to the Collection argument', () => {
       const arr = [1, 2];
-      const deque1 = new ArrayDeque({ initial: arr });
-      const deque2 = new ArrayDeque({ initial: deque1 });
+      const deque1 = ArrayDeque.from({ initial: arr });
+      const deque2 = ArrayDeque.from({ initial: deque1 });
       expect(deque2.capacity()).equal(Infinity);
       expect(deque2.toArray()).to.deep.equal(arr);
     });
 
     it('should use the function provided in the ArrayLike', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i + 1);
-      const deque = new ArrayDeque({ initial: { length: arr.length, seed: i => i + 1 } });
+      const deque = ArrayDeque.from({ initial: { length: arr.length, seed: i => i + 1 } });
       expect(deque.toArray()).to.deep.equal(arr);
     });
 
     it('should use the iterator provided in the ArrayLike', () => {
-      const deque = new ArrayDeque({ initial: { length: 10, seed: generator() } });
+      const deque = ArrayDeque.from({ initial: { length: 10, seed: generator() } });
       expect(deque.size()).equal(10);
       expect(deque.toArray()).to.deep.equal(Array.from({ length: 10 }, (_, i) => i));
     });
 
     it('should use the iterable provided in the ArrayLike', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i);
-      const deque = new ArrayDeque({ initial: { length: 10, seed: arr } });
+      const deque = ArrayDeque.from({ initial: { length: 10, seed: arr } });
       expect(deque.size()).equal(2);
       expect(deque.toArray()).to.deep.equal(arr);
     });
 
     it('should expand capacity to match number of initial elements', () => {
-      const deque = new ArrayDeque({ capacity: 0, initial: { length: 10, seed: i => i + 1 } });
+      const deque = ArrayDeque.from({ capacity: 0, initial: { length: 10, seed: i => i + 1 } });
       expect(deque.capacity()).equal(10);
     });
   });
@@ -172,7 +172,7 @@ describe('ArrayDeque', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const deque = new ArrayDeque({ capacity: 3, initial: { length: 2, seed: (i: number) => i } });
+      const deque = ArrayDeque.from({ capacity: 3, initial: { length: 2, seed: (i: number) => i } });
       expect(deque.size()).to.equal(2);
       expect(deque.remaining()).to.equal(1);
       deque.clear();
@@ -188,11 +188,11 @@ describe('ArrayDeque', () => {
       expect(deque.contains('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const deque = new ArrayDeque({ initial: { length: 10, seed: (i: number) => i } });
+      const deque = ArrayDeque.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(deque.contains(10)).to.be.false;
     });
     it('should return true if present', () => {
-      const deque = new ArrayDeque({ initial: { length: 10, seed: (i: number) => i } });
+      const deque = ArrayDeque.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(deque.contains(9)).to.be.true;
     });
   });
@@ -203,11 +203,11 @@ describe('ArrayDeque', () => {
       expect(deque.find(x => x === 'foo')).to.be.undefined;
     });
     it('should return undefined if no match', () => {
-      const deque = new ArrayDeque({ initial: { length: 10, seed: (i: number) => i } });
+      const deque = ArrayDeque.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(deque.find(x => x >= 10)).to.be.undefined;
     });
     it('should return the first item matching the predicate', () => {
-      const deque = new ArrayDeque({ initial: { length: 10, seed: (i: number) => i } });
+      const deque = ArrayDeque.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(deque.find(x => x >= 5)).equal(5);
     });
   });
@@ -221,14 +221,14 @@ describe('ArrayDeque', () => {
     });
     it('should return false if item is missing', () => {
       const arr = [1, 2, 3];
-      const deque = new ArrayDeque({ initial: arr });
+      const deque = ArrayDeque.from({ initial: arr });
       expect(deque.removeItem(4)).to.be.false;
       expect(deque.isEmpty()).to.be.false;
       expect(deque.size()).equal(3);
     });
     it('should remove first occurence and return true if item is present', () => {
       const arr = [1, 0, 2, 0, 3];
-      const deque = new ArrayDeque({ initial: arr });
+      const deque = ArrayDeque.from({ initial: arr });
       expect(deque.removeItem(0)).to.be.true;
       expect(deque.isEmpty()).to.be.false;
       expect(deque.size()).equal(4);
@@ -246,14 +246,14 @@ describe('ArrayDeque', () => {
 
     it('should return false if all items match the predicate', () => {
       const arr = [1, 2, 3];
-      const deque = new ArrayDeque({ initial: arr });
+      const deque = ArrayDeque.from({ initial: arr });
       expect(deque.filter(i => i > 0)).to.be.false;
       expect(deque.isEmpty()).to.be.false;
       expect(deque.size()).equal(3);
     });
     it('should remove all items not matching the filter', () => {
       const arr = [1, 0, 2, -1, 3];
-      const deque = new ArrayDeque({ initial: arr });
+      const deque = ArrayDeque.from({ initial: arr });
       expect(deque.filter(i => i > 0)).to.be.true;
       expect(deque.isEmpty()).to.be.false;
       expect(deque.size()).equal(3);
@@ -307,11 +307,11 @@ describe('ArrayDeque', () => {
       expect(deque.all(_ => false)).to.be.true;
     });
     it('should return true if predicate is true for all elements', () => {
-      const deque = new ArrayDeque({ initial: { length: 10, seed: (i: number) => i } });
+      const deque = ArrayDeque.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(deque.all(x => x >= 0)).to.be.true;
     });
     it('should return false if predicate is false for at least one element', () => {
-      const deque = new ArrayDeque({ initial: { length: 10, seed: (i: number) => i } });
+      const deque = ArrayDeque.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(deque.all(x => x < 9)).to.be.false;
     });
   });
@@ -322,11 +322,11 @@ describe('ArrayDeque', () => {
       expect(deque.some(_ => true)).to.be.false;
     });
     it('should return true if predicate is true for at least one element', () => {
-      const deque = new ArrayDeque({ initial: { length: 10, seed: (i: number) => i } });
+      const deque = ArrayDeque.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(deque.some(x => x === 9)).to.be.true;
     });
     it('should return false if predicate is false for all elements', () => {
-      const deque = new ArrayDeque({ initial: { length: 10, seed: (i: number) => i } });
+      const deque = ArrayDeque.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(deque.some(x => x > 9)).to.be.false;
     });
   });
@@ -337,7 +337,7 @@ describe('ArrayDeque', () => {
       const data = [1, 2, 3];
       expect(deque.offerFully(data)).equal(0);
       expect(deque.isEmpty()).to.be.true;
-      expect(deque.offerFully(new ArrayDeque({ initial: data }))).equal(0);
+      expect(deque.offerFully(ArrayDeque.from({ initial: data }))).equal(0);
       expect(deque.isEmpty()).to.be.true;
     });
     it('should accept all items if enough capacity remaining', () => {
@@ -345,7 +345,7 @@ describe('ArrayDeque', () => {
       const data = [1, 2, 3];
       expect(deque.offerFully(data)).equal(3);
       expect(deque.size()).equal(3);
-      expect(deque.offerFully(new ArrayDeque({ initial: data }))).equal(3);
+      expect(deque.offerFully(ArrayDeque.from({ initial: data }))).equal(3);
       expect(deque.size()).equal(6);
     });
   });
@@ -357,7 +357,7 @@ describe('ArrayDeque', () => {
       expect(deque.offerPartially(data)).equal(2);
       expect(deque.toArray()).to.deep.equal([1, 2]);
       deque.clear();
-      expect(deque.offerPartially(new ArrayDeque({ initial: data }))).equal(2);
+      expect(deque.offerPartially(ArrayDeque.from({ initial: data }))).equal(2);
       expect(deque.toArray()).to.deep.equal([1, 2]);
     });
     it('should accept all items if enough capacity remaining', () => {
@@ -365,7 +365,7 @@ describe('ArrayDeque', () => {
       const data = [1, 2, 3];
       expect(deque.offerPartially(data)).equal(3);
       expect(deque.size()).equal(3);
-      expect(deque.offerPartially(new ArrayDeque({ initial: data }))).equal(3);
+      expect(deque.offerPartially(ArrayDeque.from({ initial: data }))).equal(3);
       expect(deque.size()).equal(6);
     });
   });

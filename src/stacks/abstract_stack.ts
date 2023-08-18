@@ -1,8 +1,13 @@
 import { UnderflowException } from '../utils';
 import { AbstractQueue } from '../queues';
 import { Stack } from './stack';
+import { CollectionOptions } from '../collections';
 
 export abstract class AbstractStack<E> extends AbstractQueue<E> implements Stack<E> {
+  constructor(options?: number | CollectionOptions<E>) {
+    super(options);
+  }
+
   push(item: E) {
     this.add(item);
   }

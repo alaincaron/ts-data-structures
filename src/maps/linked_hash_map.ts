@@ -35,13 +35,7 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   }
 
   static from<K, V>(initializer: LinkedHashMapOptions<K, V> & MapInitializer<K, V>): LinkedHashMap<K, V> {
-    return AbstractMap.buildMap<
-      K,
-      V,
-      LinkedHashMapOptions<K, V> & MapInitializer<K, V>,
-      LinkedHashMap<K, V>,
-      LinkedHashMapOptions<K, V>
-    >((options: LinkedHashMapOptions<K, V>) => new LinkedHashMap(options), initializer);
+    return AbstractMap.buildMap(options => new LinkedHashMap(options), initializer) as LinkedHashMap<K, V>;
   }
 
   protected recordAccess(e: HashEntry<K, V>, accessType: AccessType) {

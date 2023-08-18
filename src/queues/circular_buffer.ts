@@ -1,7 +1,7 @@
 import { AbstractQueue } from './abstract_queue';
 import { Predicate } from '../utils';
 import { Deque, ArrayDeque } from '../deques';
-import { Collection, CollectionOptions } from '../collections';
+import { Collection, CollectionInitializer, CollectionOptions } from '../collections';
 
 export type OverflowHandler = 'throw' | 'overwrite';
 
@@ -12,15 +12,14 @@ export class CircularBuffer<E> extends AbstractQueue<E> {
   private readonly deque: Deque<E>;
   private readonly _overflowHandler: OverflowHandler;
 
-  constructor(initializer?: number | CircularBufferOptions<E> | CircularBuffer<E>) {
-    super();
-    if (initializer instanceof CircularBuffer) {
-      this.deque = initializer.deque.clone();
-      this._overflowHandler = initializer._overflowHandler;
-    } else {
-      this.deque = new ArrayDeque(initializer);
-      this._overflowHandler = (initializer as CircularBufferOptions<E>)?.overflowHandler ?? 'throw';
-    }
+  constructor(initializer?: number | CircularBufferOptions<E>) {
+    super(initializer);
+    this.deque = new ArrayDeque(initializer);
+    this._overflowHandler = (initializer as CircularBufferOptions<E>)?.overflowHandler ?? 'throw';
+  }
+
+  static from<E>(initializer: CircularBufferOptions<E> & CollectionInitializer<E>) {
+    return AbstractQueue.buildCollection(options => new CircularBuffer(options), initializer) as CircularBuffer<E>;
   }
 
   overflowHandler(): OverflowHandler {
@@ -85,7 +84,14 @@ export class CircularBuffer<E> extends AbstractQueue<E> {
     return this.deque[Symbol.iterator]();
   }
 
-  clone() {
-    return new CircularBuffer(this);
+  clone(): CircularBuffer<E> {
+    return CircularBuffer.from({ initial: this });
+  }
+
+  buildOptions(): CircularBufferOptions<E> {
+    return {
+      ...super.buildOptions(),
+      overflowHandler: this.overflowHandler(),
+    };
   }
 }

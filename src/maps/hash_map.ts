@@ -55,10 +55,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
   }
 
   static from<K, V>(initializer: HashMapInitializer<K, V>): HashMap<K, V> {
-    return AbstractMap.buildMap<K, V, HashMapOptions<K, V> & MapInitializer<K, V>, HashMap<K, V>, HashMapOptions<K, V>>(
-      (options: HashMapOptions<K, V>) => new HashMap(options),
-      initializer
-    );
+    return AbstractMap.buildMap(options => new HashMap(options), initializer) as HashMap<K, V>;
   }
 
   size(): number {

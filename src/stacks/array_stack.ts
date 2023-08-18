@@ -1,23 +1,18 @@
 import { Predicate } from '../utils';
 import { Deque, ArrayDeque } from '../deques';
 import { AbstractStack } from './abstract_stack';
-import { CollectionOptions } from '../collections';
+import { CollectionInitializer, CollectionOptions } from '../collections';
 
 export class ArrayStack<E> extends AbstractStack<E> {
   private readonly buffer: Deque<E>;
 
-  constructor(initializer?: number | ArrayStack<E> | CollectionOptions<E>) {
-    super();
-    if (initializer == null) {
-      this.buffer = new ArrayDeque<E>();
-    } else if (typeof initializer === 'number') {
-      this.buffer = new ArrayDeque(initializer);
-    } else if (initializer instanceof ArrayStack) {
-      this.buffer = initializer.buffer.clone();
-    } else {
-      const options = initializer as CollectionOptions<E>;
-      this.buffer = new ArrayDeque<E>(options);
-    }
+  constructor(options?: number | CollectionOptions<E>) {
+    super(options);
+    this.buffer = new ArrayDeque<E>(options);
+  }
+
+  static from<E>(initializer: CollectionOptions<E> & CollectionInitializer<E>) {
+    return AbstractStack.buildCollection(options => new ArrayStack(options), initializer) as ArrayStack<E>;
   }
 
   size() {
@@ -53,7 +48,7 @@ export class ArrayStack<E> extends AbstractStack<E> {
   }
 
   clone(): ArrayStack<E> {
-    return new ArrayStack(this);
+    return ArrayStack.from({ initial: this });
   }
 
   removeMatchingItem(predicate: Predicate<E>): E | undefined {

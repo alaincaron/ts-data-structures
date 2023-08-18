@@ -1,5 +1,5 @@
 import { AbstractDeque } from './abstract_deque';
-import { Collection, ArrayLike, CollectionOptions, initArrayLike } from '../collections';
+import { CollectionInitializer, CollectionOptions } from '../collections';
 import { UnderflowException, nextPowerOfTwo, Predicate } from '../utils';
 
 /*
@@ -12,50 +12,20 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   private elements: Array<E>;
   private head: number;
   private tail: number;
-  private readonly _capacity: number;
 
-  constructor(initializer?: number | CollectionOptions<E> | ArrayDeque<E>) {
-    super();
+  constructor(options?: number | CollectionOptions<E>) {
+    super(options);
 
-    if (initializer == null) {
-      this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
-      this.head = this.tail = 0;
-      this._capacity = Infinity;
-    } else if (typeof initializer === 'number') {
-      const initialCapacity = initializer as number;
-      this.elements = this.allocateElements(initialCapacity);
-      this.head = this.tail = 0;
-      this._capacity = initialCapacity;
-    } else if (initializer instanceof ArrayDeque) {
-      const other = initializer as ArrayDeque<E>;
-      this.elements = [...other.elements];
-      this.head = other.head;
-      this.tail = other.tail;
-      this._capacity = other._capacity;
+    this.head = this.tail = 0;
+    if (typeof options === 'number') {
+      this.elements = this.allocateElements(options);
     } else {
-      const options = initializer as CollectionOptions<E>;
-      const initialElements = options.initial;
-      if (!initialElements) {
-        this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
-        this.tail = 0;
-      } else if (Array.isArray(initialElements)) {
-        const arr = initialElements as Array<E>;
-        this.elements = [...arr];
-        this.elements.length = this.nextArraySize(this.elements.length);
-        this.tail = arr.length;
-      } else if (typeof (initialElements as Collection<E>).size === 'function') {
-        const col = initialElements as Collection<E>;
-        this.elements = col.toArray();
-        this.elements.length = this.nextArraySize(this.elements.length);
-        this.tail = col.size();
-      } else {
-        const arrayLike = initialElements as ArrayLike<E>;
-        this.elements = this.allocateElements(arrayLike.length);
-        this.tail = initArrayLike(this.elements, arrayLike);
-      }
-      this.head = 0;
-      this._capacity = Math.max(options.capacity ?? Infinity, this.tail);
+      this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
     }
+  }
+
+  static from<E>(initializer: CollectionOptions<E> & CollectionInitializer<E>): ArrayDeque<E> {
+    return AbstractDeque.buildCollection(options => new ArrayDeque(options), initializer) as ArrayDeque<E>;
   }
 
   private nextArraySize(numElements: number) {
@@ -211,11 +181,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   }
 
   clone(): ArrayDeque<E> {
-    return new ArrayDeque(this);
-  }
-
-  capacity(): number {
-    return this._capacity;
+    return ArrayDeque.from({ initial: this });
   }
 
   [Symbol.iterator](): Iterator<E> {

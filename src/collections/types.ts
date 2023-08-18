@@ -8,11 +8,14 @@ export interface ArrayLike<E> {
 
 export interface CollectionOptions<E> {
   capacity?: number;
-  initial?: Array<E> | Collection<E> | ArrayLike<E>;
   equals?: BinaryPredicate<E>;
 }
 
-function toIterator<E>(arrayLike: ArrayLike<E>): Iterator<E> {
+export interface CollectionInitializer<E> {
+  initial: Array<E> | Collection<E> | ArrayLike<E>;
+}
+
+export function toIterator<E>(arrayLike: ArrayLike<E>): Iterator<E> {
   const seed: any = arrayLike.seed;
   if (typeof seed === 'function') {
     let i = 0;

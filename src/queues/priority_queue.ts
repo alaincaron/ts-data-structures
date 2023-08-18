@@ -1,64 +1,39 @@
 import { AbstractQueue } from './abstract_queue';
-import { Collection, CollectionOptions, initArrayLike, ArrayLike } from '../collections';
+import { CollectionOptions, CollectionInitializer, AbstractCollection } from '../collections';
 import { Comparator, Predicate } from '../utils';
 
 export interface PriorityQueueOptions<E> extends CollectionOptions<E> {
   comparator?: Comparator<E>;
 }
 
+export type PriorityQueueInitializer<E> = PriorityQueueOptions<E> & CollectionInitializer<E>;
+
 export class PriorityQueue<E> extends AbstractQueue<E> {
   private buffer: Array<E>;
   private _size: number;
-  private _capacity: number;
   private readonly comparator: Comparator<E>;
 
-  constructor(initializer?: number | PriorityQueueOptions<E> | PriorityQueue<E>) {
-    super();
+  constructor(options?: number | PriorityQueueOptions<E>) {
+    super(options);
 
     this._size = 0;
-    this._capacity = Infinity;
-    if (initializer == null) {
+    if (options == null) {
       this.buffer = [];
-    } else if (typeof initializer === 'number') {
-      this.buffer = new Array(initializer);
-      this._capacity = initializer;
-    } else if (initializer instanceof PriorityQueue) {
-      const other = initializer as PriorityQueue<E>;
-      this.buffer = [...other.buffer];
-      this._size = other._size;
-      this._capacity = other._capacity;
-      this.comparator = other.comparator;
+    } else if (typeof options === 'number') {
+      this.buffer = new Array(options);
     } else {
-      const options = initializer as PriorityQueueOptions<E>;
       if (options.comparator) this.comparator = options.comparator;
-      const initialElements = options.initial;
-      if (!initialElements) {
-        this.buffer = [];
-      } else if (Array.isArray(initialElements)) {
-        const arr = initialElements as Array<E>;
-        this.buffer = [...arr];
-        this._size = this.buffer.length;
-      } else if (typeof (initialElements as Collection<E>).size === 'function') {
-        const col = initialElements as Collection<E>;
-        this.buffer = col.toArray();
-        this._size = col.size();
-      } else {
-        const arrayLike = initialElements as ArrayLike<E>;
-        this.buffer = new Array(arrayLike.length);
-        this._size = initArrayLike(this.buffer, arrayLike);
-      }
-      this._capacity = Math.max(options.capacity ?? Infinity, this._size);
+      this.buffer = [];
     }
     this.comparator ??= (a, b) => (a < b ? -1 : a > b ? 1 : 0);
-    this.heapify();
+  }
+
+  static from<E>(initializer: PriorityQueueInitializer<E>): PriorityQueue<E> {
+    return AbstractCollection.buildCollection(options => new PriorityQueue(options), initializer) as PriorityQueue<E>;
   }
 
   size(): number {
     return this._size;
-  }
-
-  capacity(): number {
-    return this._capacity;
   }
 
   offer(item: E) {
@@ -176,7 +151,14 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
   }
 
   clone(): PriorityQueue<E> {
-    return new PriorityQueue(this);
+    return PriorityQueue.from({ initial: this });
+  }
+
+  buildOptions(): PriorityQueueOptions<E> {
+    return {
+      ...super.buildOptions(),
+      comparator: this.comparator,
+    };
   }
 
   [Symbol.iterator](): Iterator<E> {

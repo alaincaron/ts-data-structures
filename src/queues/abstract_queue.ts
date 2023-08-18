@@ -1,8 +1,12 @@
 import { OverflowException, UnderflowException } from '../utils';
-import { AbstractCollection, Collection } from '../collections';
+import { AbstractCollection, Collection, CollectionOptions } from '../collections';
 import { Queue } from './queue';
 
 export abstract class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
+  constructor(options?: number | CollectionOptions<E>) {
+    super(options);
+  }
+
   // insertion
   abstract offer(item: E): boolean;
 

@@ -29,7 +29,7 @@ describe('ArrayStack', () => {
 
     it('should have the same elements as the array argument in revers order', () => {
       const arr = [1, 2];
-      const stack = new ArrayStack({ capacity: 2, initial: arr });
+      const stack = ArrayStack.from({ capacity: 2, initial: arr });
       expect(stack.capacity()).equal(2);
       expect(stack.size()).equal(2);
       expect(stack.remaining()).equal(0);
@@ -40,29 +40,29 @@ describe('ArrayStack', () => {
 
     it('should be identical to the ArrayStack argument', () => {
       const arr = [1, 2];
-      const stack1 = new ArrayStack({ capacity: 3, initial: arr });
+      const stack1 = ArrayStack.from({ capacity: 3, initial: arr });
       expect(stack1.capacity()).equal(3);
-      const stack2 = new ArrayStack(stack1);
+      const stack2 = ArrayStack.from({ initial: stack1 });
       expect(stack2).to.deep.equal(stack1);
       expect(stack2.capacity()).equal(3);
     });
 
     it('should be identical to the Collection argument', () => {
       const arr = [1, 2];
-      const deque = new ArrayDeque({ initial: arr });
-      const stack = new ArrayStack({ initial: deque });
+      const deque = ArrayDeque.from({ initial: arr });
+      const stack = ArrayStack.from({ initial: deque });
       expect(stack.capacity()).equal(Infinity);
       expect(stack.toArray()).deep.equal(arr.reverse());
     });
 
     it('should use the ArrayLike argument', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i + 1);
-      const stack = new ArrayStack({ initial: { length: arr.length, seed: i => i + 1 } });
+      const stack = ArrayStack.from({ initial: { length: arr.length, seed: i => i + 1 } });
       expect(stack.toArray()).to.deep.equal(arr.reverse());
     });
 
     it('should expand capacity to match number of initial elements', () => {
-      const stack = new ArrayStack({ capacity: 0, initial: { length: 10, seed: i => i + 1 } });
+      const stack = ArrayStack.from({ capacity: 0, initial: { length: 10, seed: i => i + 1 } });
       expect(stack.capacity()).equal(10);
     });
   });
@@ -119,13 +119,13 @@ describe('ArrayStack', () => {
 
   describe('swap', () => {
     it('should throw if less than 2 elemeents', () => {
-      const stack = new ArrayStack<number>({ initial: { length: 1, seed: i => i } });
+      const stack = ArrayStack.from({ initial: { length: 1, seed: i => i } });
       expect(() => stack.swap()).to.throw(UnderflowException);
       expect(stack.size()).equal(1);
       expect(stack.peek()).equal(0);
     });
     it('should swap top 2 elemeents', () => {
-      const stack = new ArrayStack<number>({ initial: { length: 3, seed: i => i } });
+      const stack = ArrayStack.from<number>({ initial: { length: 3, seed: i => i } });
       stack.swap();
       expect(stack.pop()).equal(1);
       expect(stack.pop()).equal(2);
@@ -136,7 +136,7 @@ describe('ArrayStack', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const stack = new ArrayStack({ capacity: 3, initial: { length: 2, seed: (i: number) => i } });
+      const stack = ArrayStack.from({ capacity: 3, initial: { length: 2, seed: (i: number) => i } });
       expect(stack.size()).to.equal(2);
       expect(stack.remaining()).to.equal(1);
       stack.clear();
@@ -152,11 +152,11 @@ describe('ArrayStack', () => {
       expect(stack.contains('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const stack = new ArrayStack({ initial: { length: 10, seed: (i: number) => i } });
+      const stack = ArrayStack.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(stack.contains(10)).to.be.false;
     });
     it('should return true if present', () => {
-      const stack = new ArrayStack({ initial: { length: 10, seed: (i: number) => i } });
+      const stack = ArrayStack.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(stack.contains(9)).to.be.true;
     });
   });
@@ -167,11 +167,11 @@ describe('ArrayStack', () => {
       expect(stack.find(x => x === 'foo')).to.be.undefined;
     });
     it('should return undefined if no match', () => {
-      const stack = new ArrayStack({ initial: { length: 10, seed: (i: number) => i } });
+      const stack = ArrayStack.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(stack.find(x => x >= 10)).to.be.undefined;
     });
     it('should return the first item matching the predicate', () => {
-      const stack = new ArrayStack({ initial: { length: 10, seed: (i: number) => i } });
+      const stack = ArrayStack.from({ initial: { length: 10, seed: (i: number) => i } });
       expect(stack.find(x => x >= 5)).equal(9);
     });
   });
@@ -185,14 +185,14 @@ describe('ArrayStack', () => {
     });
     it('should return false if item is missing', () => {
       const arr = [1, 2, 3];
-      const stack = new ArrayStack({ initial: arr });
+      const stack = ArrayStack.from({ initial: arr });
       expect(stack.removeItem(4)).to.be.false;
       expect(stack.isEmpty()).to.be.false;
       expect(stack.size()).equal(3);
     });
     it('should remove last occurence and return true if item is present', () => {
       const arr = [1, 0, 2, 0, 3];
-      const stack = new ArrayStack({ initial: arr });
+      const stack = ArrayStack.from({ initial: arr });
       expect(stack.removeItem(0)).to.be.true;
       expect(stack.isEmpty()).to.be.false;
       expect(stack.size()).equal(4);
@@ -210,14 +210,14 @@ describe('ArrayStack', () => {
 
     it('should return false if all items match the predicate', () => {
       const arr = [1, 2, 3];
-      const stack = new ArrayStack({ initial: arr });
+      const stack = ArrayStack.from({ initial: arr });
       expect(stack.filter(i => i > 0)).to.be.false;
       expect(stack.isEmpty()).to.be.false;
       expect(stack.size()).equal(3);
     });
     it('should remove all items not matching the filter', () => {
       const arr = [1, 0, 2, -1, 3];
-      const stack = new ArrayStack({ initial: arr });
+      const stack = ArrayStack.from({ initial: arr });
       expect(stack.filter(i => i > 0)).to.be.true;
       expect(stack.isEmpty()).to.be.false;
       expect(stack.size()).equal(3);

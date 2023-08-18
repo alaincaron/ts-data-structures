@@ -3,8 +3,8 @@ import { IMap, MapEntry } from './map';
 import { MapOptions, MapInitializer } from './types';
 
 export abstract class AbstractMap<K, V> implements IMap<K, V> {
-  public readonly equalK: EqualFunction<K>;
-  public readonly equalV: EqualFunction<V>;
+  protected readonly equalK: EqualFunction<K>;
+  protected readonly equalV: EqualFunction<V>;
   private readonly _capacity: number;
 
   constructor(options?: number | MapOptions<K, V>) {

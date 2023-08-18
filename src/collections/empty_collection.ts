@@ -9,14 +9,10 @@ export class EmptyCollection<E> extends AbstractCollection<E> {
   }
 
   protected constructor() {
-    super();
+    super({ capacity: 0 });
   }
 
   size(): number {
-    return 0;
-  }
-
-  capacity(): number {
     return 0;
   }
 
