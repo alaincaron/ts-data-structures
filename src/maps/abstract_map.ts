@@ -118,16 +118,27 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
   static buildMap<
     K,
     V,
-    Initializer extends MapInitializer<K, V>,
     M extends IMap<K, V>,
     Options extends MapOptions<K, V>,
-  >(factory: (options: Options) => M, initializer: Initializer): M {
+    Initializer extends MapInitializer<K, V>,
+  >(factory: (options?: number | Options) => M, initializer?: number | (Options & Initializer)): M {
+    if (initializer == null || typeof initializer === 'number') return factory(initializer);
     const initialElements = initializer.initial;
-    const options =
-      initialElements instanceof AbstractMap
-        ? { ...initialElements.buildOptions(), ...initializer }
-        : { ...initializer };
-    const result = factory(options as unknown as Options);
+
+    let options: any = undefined;
+    if (initialElements) {
+      let initialMap = initialElements as IMap<K, V>;
+      let buildOptionsF = initialMap.buildOptions;
+      if (typeof buildOptionsF === 'function') {
+        options = { ...initialMap.buildOptions(), ...initializer };
+      }
+    }
+    if (!options) {
+      options = { ...initializer };
+    }
+    delete options.initial;
+
+    const result = factory(options);
 
     if (initialElements) {
       for (const [k, v] of initialElements) {

@@ -23,8 +23,6 @@ export interface HashMapOptions<K, V> extends MapOptions<K, V> {
 const MIN_INITIAL_CAPACITY = nextPrime(5);
 const DEFAULT_LOAD_FACTOR = 0.75;
 
-export type HashMapInitializer<K, V> = HashMapOptions<K, V> & MapInitializer<K, V>;
-
 export class HashMap<K, V> extends AbstractMap<K, V> {
   private _size: number;
   private slots: Array<HashEntry<K, V> | undefined>;
@@ -34,7 +32,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
   protected overflowHandler(_key: K, _value: V) {}
   protected recordAccess(_e: HashEntry<K, V>, _accessType: AccessType) {}
 
-  constructor(options?: number | HashMapOptions<K, V>) {
+  protected constructor(options?: number | HashMapOptions<K, V>) {
     super(options);
     this._size = 0;
     this.hash = hashAny as (k: K) => number;
@@ -54,8 +52,11 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     }
   }
 
-  static from<K, V>(initializer: HashMapInitializer<K, V>): HashMap<K, V> {
-    return AbstractMap.buildMap(options => new HashMap(options), initializer) as HashMap<K, V>;
+  static create<K, V>(initializer?: number | HashMapOptions<K, V> | MapInitializer<K, V>): HashMap<K, V> {
+    return AbstractMap.buildMap<K, V, HashMap<K, V>, HashMapOptions<K, V>, MapInitializer<K, V>>(
+      options => new HashMap(options),
+      initializer
+    );
   }
 
   size(): number {
@@ -195,7 +196,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
   }
 
   clone(): HashMap<K, V> {
-    return HashMap.from({ initial: this });
+    return HashMap.create({ initial: this });
   }
 
   buildOptions(): HashMapOptions<K, V> {

@@ -1,9 +1,9 @@
 import { OverflowException, UnderflowException } from '../utils';
-import { AbstractCollection, Collection, CollectionOptions } from '../collections';
+import { AbstractCollection, CollectionOptions } from '../collections';
 import { Queue } from './queue';
 
 export abstract class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
-  constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | CollectionOptions<E>) {
     super(options);
   }
 
@@ -12,22 +12,6 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
 
   add(item: E) {
     if (!this.offer(item)) throw new OverflowException();
-  }
-
-  offerFully<E1 extends E>(items: E1[] | Collection<E1>): number {
-    const itemsToAdd = Array.isArray(items) ? items.length : items.size();
-    if (this.remaining() < itemsToAdd) return 0;
-    for (const item of items) this.add(item);
-    return itemsToAdd;
-  }
-
-  offerPartially<E1 extends E>(items: Iterable<E1>): number {
-    let count = 0;
-    for (const item of items) {
-      if (!this.offer(item)) break;
-      ++count;
-    }
-    return count;
   }
 
   // removal

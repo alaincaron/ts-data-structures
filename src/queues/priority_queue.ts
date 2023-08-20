@@ -13,7 +13,7 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
   private _size: number;
   private readonly comparator: Comparator<E>;
 
-  constructor(options?: number | PriorityQueueOptions<E>) {
+  protected constructor(options?: number | PriorityQueueOptions<E>) {
     super(options);
 
     this._size = 0;
@@ -28,8 +28,11 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
     this.comparator ??= (a, b) => (a < b ? -1 : a > b ? 1 : 0);
   }
 
-  static from<E>(initializer: PriorityQueueInitializer<E>): PriorityQueue<E> {
-    return AbstractCollection.buildCollection(options => new PriorityQueue(options), initializer) as PriorityQueue<E>;
+  static create<E>(initializer?: number | (PriorityQueueOptions<E> & CollectionInitializer<E>)): PriorityQueue<E> {
+    return AbstractCollection.buildCollection<E, PriorityQueue<E>, PriorityQueueOptions<E>, CollectionInitializer<E>>(
+      options => new PriorityQueue(options),
+      initializer
+    );
   }
 
   size(): number {
@@ -151,7 +154,7 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
   }
 
   clone(): PriorityQueue<E> {
-    return PriorityQueue.from({ initial: this });
+    return PriorityQueue.create({ initial: this });
   }
 
   buildOptions(): PriorityQueueOptions<E> {

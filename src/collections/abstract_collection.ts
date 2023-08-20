@@ -1,12 +1,12 @@
 import { Collection } from './collection';
 import { EqualFunction, OverflowException, Predicate, equalPredicate } from '../utils';
-import { CollectionOptions, CollectionInitializer, ArrayLike, toIterator } from './types';
+import { CollectionOptions, CollectionInitializer, toIterator, CollectionLike, IteratorLike, getSize } from './types';
 
 export abstract class AbstractCollection<E> implements Collection<E> {
   private readonly _capacity: number;
   private readonly equals: EqualFunction<E>;
 
-  constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | CollectionOptions<E>) {
     let capacity;
     let equals;
 
@@ -53,7 +53,19 @@ export abstract class AbstractCollection<E> implements Collection<E> {
     return result;
   }
 
-  abstract add(item: E): void;
+  protected handleOverflow(_item: E) {
+    throw new OverflowException();
+  }
+
+  add(item: E): void {
+    while (!this.offer(item)) {
+      this.handleOverflow(item);
+      if (this.isFull()) throw new OverflowException();
+    }
+  }
+
+  abstract offer(item: E): boolean;
+
   abstract removeMatchingItem(predicate: Predicate<E>): E | undefined;
 
   removeItem(item: E): boolean {
@@ -83,16 +95,36 @@ export abstract class AbstractCollection<E> implements Collection<E> {
     return false;
   }
 
-  addFully<E1 extends E>(items: E1[] | Collection<E1>): number {
-    const itemsToAdd = Array.isArray(items) ? items.length : items.size();
+  addFully<E1 extends E>(items: CollectionLike<E1>): number {
+    const itemsToAdd = getSize(items);
     if (this.remaining() < itemsToAdd) throw new OverflowException();
     return this.addPartially(items);
   }
 
-  addPartially<E1 extends E>(iter: Iterable<E1>): number {
+  addPartially<E1 extends E>(items: IteratorLike<E1> | CollectionLike<E1>): number {
     let count = 0;
-    for (const e of iter) {
-      this.add(e);
+    const iter = toIterator(items);
+    for (;;) {
+      const item = iter.next();
+      if (item.done) break;
+      this.add(item.value);
+      ++count;
+    }
+    return count;
+  }
+
+  offerFully<E1 extends E>(items: CollectionLike<E1>): number {
+    const itemsToAdd = getSize(items);
+    if (this.remaining() < itemsToAdd) return 0;
+    return this.offerPartially(items);
+  }
+
+  offerPartially<E1 extends E>(items: IteratorLike<E1> | CollectionLike<E1>): number {
+    let count = 0;
+    const iter = toIterator(items);
+    for (;;) {
+      const item = iter.next();
+      if (item.done || !this.offer(item.value)) break;
       ++count;
     }
     return count;
@@ -114,32 +146,28 @@ export abstract class AbstractCollection<E> implements Collection<E> {
 
   static buildCollection<
     E,
-    Initializer extends CollectionInitializer<E>,
     C extends Collection<E>,
     Options extends CollectionOptions<E>,
-  >(factory: (options: Options) => C, initializer: Initializer): C {
+    Initializer extends CollectionInitializer<E>,
+  >(factory: (options?: number | Options) => C, initializer?: number | (Options & Initializer)): C {
+    if (initializer == null || typeof initializer === 'number') return factory(initializer);
     const initialElements = initializer.initial;
-    const options =
-      initialElements instanceof AbstractCollection
-        ? { ...initialElements.buildOptions(), ...initializer }
-        : { ...initializer };
-    const result = factory(options as unknown as Options);
 
-    let iterator: Iterator<E>;
-    if (Array.isArray(initialElements)) {
-      iterator = initialElements[Symbol.iterator]();
-    } else if (typeof (initialElements as any).iterator === 'function') {
-      iterator = (initialElements as Collection<E>).iterator();
-    } else {
-      iterator = toIterator(initialElements as unknown as ArrayLike<E>);
+    let options: any = undefined;
+
+    if (initialElements) {
+      let initialCol = initialElements as Collection<E>;
+      let buildOptionsF = initialCol.buildOptions;
+      if (typeof buildOptionsF === 'function') {
+        options = { ...initialCol.buildOptions(), ...initializer };
+      }
     }
-
-    for (;;) {
-      const item = iterator.next();
-      if (item.done) break;
-      result.add(item.value);
+    if (!options) {
+      options = { ...initializer };
     }
-
+    delete options.initial;
+    const result = factory(options);
+    if (initialElements) result.addFully(initialElements);
     return result;
   }
 }

@@ -27,15 +27,18 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   private readonly overflowStrategy: OverflowStrategy;
   private readonly linkedList: DoubleLinkedList;
 
-  constructor(options?: number | LinkedHashMapOptions<K, V>) {
+  protected constructor(options?: number | LinkedHashMapOptions<K, V>) {
     super(options);
     this.ordering = (options as any)?.ordering ?? Ordering.INSERTION;
     this.overflowStrategy = (options as any)?.overflowStrategy ?? OverflowStrategy.THROW;
     this.linkedList = new DoubleLinkedList();
   }
 
-  static from<K, V>(initializer: LinkedHashMapOptions<K, V> & MapInitializer<K, V>): LinkedHashMap<K, V> {
-    return AbstractMap.buildMap(options => new LinkedHashMap(options), initializer) as LinkedHashMap<K, V>;
+  static create<K, V>(initializer?: number | (LinkedHashMapOptions<K, V> & MapInitializer<K, V>)): LinkedHashMap<K, V> {
+    return AbstractMap.buildMap<K, V, LinkedHashMap<K, V>, LinkedHashMapOptions<K, V>, MapInitializer<K, V>>(
+      options => new LinkedHashMap(options),
+      initializer
+    );
   }
 
   protected recordAccess(e: HashEntry<K, V>, accessType: AccessType) {
@@ -116,6 +119,6 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   }
 
   clone(): LinkedHashMap<K, V> {
-    return LinkedHashMap.from({ initial: this });
+    return LinkedHashMap.create({ initial: this });
   }
 }

@@ -4,7 +4,7 @@ import { OverflowException, Predicate } from '../utils';
 import { CollectionOptions } from '../collections';
 
 export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque<E> {
-  constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | CollectionOptions<E>) {
     super(options);
   }
 

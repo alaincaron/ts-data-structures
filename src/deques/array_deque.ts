@@ -13,7 +13,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   private head: number;
   private tail: number;
 
-  constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | CollectionOptions<E>) {
     super(options);
 
     this.head = this.tail = 0;
@@ -24,8 +24,11 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     }
   }
 
-  static from<E>(initializer: CollectionOptions<E> & CollectionInitializer<E>): ArrayDeque<E> {
-    return AbstractDeque.buildCollection(options => new ArrayDeque(options), initializer) as ArrayDeque<E>;
+  static create<E>(initializer?: number | (CollectionOptions<E> & CollectionInitializer<E>)): ArrayDeque<E> {
+    return AbstractDeque.buildCollection<E, ArrayDeque<E>, CollectionOptions<E>, CollectionInitializer<E>>(
+      options => new ArrayDeque(options),
+      initializer
+    );
   }
 
   private nextArraySize(numElements: number) {
@@ -181,7 +184,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   }
 
   clone(): ArrayDeque<E> {
-    return ArrayDeque.from({ initial: this });
+    return ArrayDeque.create({ initial: this });
   }
 
   [Symbol.iterator](): Iterator<E> {

@@ -20,6 +20,10 @@ export class EmptyCollection<E> extends AbstractCollection<E> {
     throw new OverflowException(`Adding to ${this.constructor.name}`);
   }
 
+  offer(_item: E): boolean {
+    return false;
+  }
+
   removeMatchingItem(_predicate: Predicate<E>) {
     return undefined;
   }

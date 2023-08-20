@@ -4,7 +4,7 @@ import { Stack } from './stack';
 import { CollectionOptions } from '../collections';
 
 export abstract class AbstractStack<E> extends AbstractQueue<E> implements Stack<E> {
-  constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | CollectionOptions<E>) {
     super(options);
   }
 

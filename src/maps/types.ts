@@ -8,5 +8,5 @@ export interface MapOptions<K, V> {
 }
 
 export interface MapInitializer<K, V> {
-  initial: Map<K, V> | IMap<K, V> | Iterable<[K, V]>;
+  initial?: Map<K, V> | IMap<K, V> | Iterable<[K, V]>;
 }

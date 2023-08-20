@@ -6,13 +6,16 @@ import { CollectionInitializer, CollectionOptions } from '../collections';
 export class ArrayStack<E> extends AbstractStack<E> {
   private readonly buffer: Deque<E>;
 
-  constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | CollectionOptions<E>) {
     super(options);
-    this.buffer = new ArrayDeque<E>(options);
+    this.buffer = ArrayDeque.create(options);
   }
 
-  static from<E>(initializer: CollectionOptions<E> & CollectionInitializer<E>) {
-    return AbstractStack.buildCollection(options => new ArrayStack(options), initializer) as ArrayStack<E>;
+  static create<E>(initializer?: number | (CollectionOptions<E> & CollectionInitializer<E>)) {
+    return AbstractStack.buildCollection<E, ArrayStack<E>, CollectionOptions<E>, CollectionInitializer<E>>(
+      options => new ArrayStack(options),
+      initializer
+    );
   }
 
   size() {
@@ -48,7 +51,8 @@ export class ArrayStack<E> extends AbstractStack<E> {
   }
 
   clone(): ArrayStack<E> {
-    return ArrayStack.from({ initial: this });
+    const options = this.buildOptions();
+    return ArrayStack.create({ ...options, initial: { length: this.size(), seed: this.buffer.iterator() } });
   }
 
   removeMatchingItem(predicate: Predicate<E>): E | undefined {
