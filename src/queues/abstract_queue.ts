@@ -1,4 +1,4 @@
-import { OverflowException, UnderflowException } from '../utils';
+import { UnderflowException } from '../utils';
 import { AbstractCollection, CollectionOptions } from '../collections';
 import { Queue } from './queue';
 
@@ -9,10 +9,6 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
 
   // insertion
   abstract offer(item: E): boolean;
-
-  add(item: E) {
-    if (!this.offer(item)) throw new OverflowException();
-  }
 
   // removal
   abstract poll(): E | undefined;
