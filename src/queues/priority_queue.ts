@@ -1,6 +1,6 @@
 import { AbstractQueue } from './abstract_queue';
 import { CollectionOptions, CollectionInitializer, AbstractCollection } from '../collections';
-import { Comparator, Predicate } from '../utils';
+import { Comparator, Predicate, nextPowerOfTwo } from '../utils';
 
 export interface PriorityQueueOptions<E> extends CollectionOptions<E> {
   comparator?: Comparator<E>;
@@ -20,7 +20,7 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
     if (options == null) {
       this.buffer = [];
     } else if (typeof options === 'number') {
-      this.buffer = new Array(options);
+      this.buffer = new Array(nextPowerOfTwo(options));
     } else {
       if (options.comparator) this.comparator = options.comparator;
       this.buffer = [];
@@ -41,6 +41,7 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
 
   offer(item: E) {
     if (this.isFull()) return false;
+    if (this.buffer.length === this._size) this.buffer.length = nextPowerOfTwo(this._size + 1);
     this.buffer[this._size] = item;
     this.heapifyUp(this._size);
     ++this._size;

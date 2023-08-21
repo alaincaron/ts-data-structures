@@ -45,17 +45,17 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   }
 
   /**
-   * Double the capacity of this deque.  Call only when full, i.e.,
+   * Double the size of this buffer.  Call only when full, i.e.,
    * when head and tail have wrapped around to become equal.
    */
-  private doubleCapacity() {
+  private doubleBufferSize() {
     if (this.head !== this.tail) throw new Error('Assertion failed');
     const h = this.head;
     const n = this.elements.length;
     const r = this.elements.length - h;
-    const newCapacity = n << 1;
-    if (newCapacity <= 0) throw new Error('Sorry, deque too big');
-    const a = new Array<E>(newCapacity);
+    const newSize = n << 1;
+    if (newSize <= 0) throw new Error('Sorry, deque too big');
+    const a = new Array<E>(newSize);
     for (let i = h; i < n; ++i) a[i - h] = this.elements[i];
     for (let i = 0; i < h; ++i) a[i + r] = this.elements[i];
     this.elements = a;
@@ -73,7 +73,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   offerFirst(item: E): boolean {
     if (!this.isFull()) {
       this.elements[(this.head = this.slot(this.head - 1))] = item;
-      if (this.head === this.tail) this.doubleCapacity();
+      if (this.head === this.tail) this.doubleBufferSize();
       return true;
     }
     return false;
@@ -89,7 +89,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   offerLast(item: E): boolean {
     if (!this.isFull()) {
       this.elements[this.tail] = item;
-      if ((this.tail = this.slot(this.tail + 1)) === this.head) this.doubleCapacity();
+      if ((this.tail = this.slot(this.tail + 1)) === this.head) this.doubleBufferSize();
       return true;
     }
     return false;
