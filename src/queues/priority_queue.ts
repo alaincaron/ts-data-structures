@@ -1,6 +1,6 @@
 import { AbstractQueue } from './abstract_queue';
 import { CollectionOptions, CollectionInitializer, AbstractCollection } from '../collections';
-import { Comparator, Predicate, nextPowerOfTwo } from '../utils';
+import { Comparator, Predicate, equalPredicate, nextPowerOfTwo } from '../utils';
 
 export interface PriorityQueueOptions<E> extends CollectionOptions<E> {
   comparator?: Comparator<E>;
@@ -14,7 +14,18 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
   private readonly comparator: Comparator<E>;
 
   protected constructor(options?: number | PriorityQueueOptions<E>) {
-    super(options);
+    let realOptions: number | PriorityQueueOptions<E> | undefined;
+    if (typeof options === 'number' || !options) {
+      realOptions = options;
+    } else {
+      const comparator = options.comparator;
+      realOptions = {
+        equals: comparator ? (a, b) => comparator(a, b) === 0 : equalPredicate,
+        ...options,
+      };
+    }
+
+    super(realOptions);
 
     this._size = 0;
     if (options == null) {

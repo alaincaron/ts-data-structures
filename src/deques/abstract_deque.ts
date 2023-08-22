@@ -30,11 +30,11 @@ export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque
   abstract removeLastMatchingItem(predicate: Predicate<E>): E | undefined;
 
   removeFirstOccurence(item: E) {
-    return this.removeFirstMatchingItem(x => item === x) != null;
+    return this.removeFirstMatchingItem(x => this.equals(item, x)) != null;
   }
 
   removeLastOccurence(item: E) {
-    return this.removeLastMatchingItem(x => item === x) != null;
+    return this.removeLastMatchingItem(x => this.equals(item, x)) != null;
   }
 
   abstract removeFirst(): E;

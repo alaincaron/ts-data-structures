@@ -370,4 +370,59 @@ describe('ArrayDeque', () => {
       expect(deque.size()).equal(6);
     });
   });
+
+  describe('forEach', () => {
+    it('should execute for each item', () => {
+      const data = [1, 2, 3];
+      const deque = ArrayDeque.create({ initial: data });
+      const x: number[] = [];
+      deque.forEach(e => x.push(e));
+      expect(x).to.deep.equal(x);
+    });
+    it('should do nothing if empty', () => {
+      const deque = ArrayDeque.create();
+      deque.forEach(_ => {
+        throw new Error('Should not be invoked');
+      });
+    });
+  });
+
+  describe('fold', () => {
+    it('should compute the sum with an initial value', () => {
+      const data = [1, 2, 3];
+      const deque = ArrayDeque.create({ initial: data });
+      const sum = deque.fold((a, b) => a + b, 1);
+      expect(sum).equal(7);
+    });
+    it('should return initial value if empty', () => {
+      const deque = ArrayDeque.create<number>();
+      const sum = deque.fold((a, b) => a + b, 1);
+      expect(sum).equal(1);
+    });
+  });
+
+  describe('reduce', () => {
+    it('should compute the sum with an initial value', () => {
+      const data = [1, 2, 3];
+      const deque = ArrayDeque.create({ initial: data });
+      const sum = deque.reduce((a, b) => a + b, 1);
+      expect(sum).equal(7);
+    });
+    it('should return initial value if empty', () => {
+      const deque = ArrayDeque.create<number>();
+      const sum = deque.fold((a, b) => a + b, 1);
+      expect(sum).equal(1);
+    });
+    it('should compute the sum without an initial value', () => {
+      const data = [1, 2, 3];
+      const deque = ArrayDeque.create({ initial: data });
+      const sum = deque.reduce((a, b) => a + b);
+      expect(sum).equal(6);
+    });
+    it('should return undefined if empty and no initial value', () => {
+      const deque = ArrayDeque.create<number>();
+      const sum = deque.reduce((a, b: number) => a + b);
+      expect(sum).to.be.undefined;
+    });
+  });
 });

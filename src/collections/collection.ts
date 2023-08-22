@@ -1,4 +1,4 @@
-import { Predicate } from '../utils';
+import { Predicate, Reducer } from '../utils';
 import { CollectionLike, CollectionOptions } from './types';
 
 export interface Collection<E> extends Iterable<E> {
@@ -25,6 +25,10 @@ export interface Collection<E> extends Iterable<E> {
   offerPartially<E1 extends E>(items: Iterable<E1>): number;
 
   clear(): void;
+
+  forEach(f: (item: E) => any): void;
+  fold<B>(reducer: Reducer<E, B>, initialValue: B): B;
+  reduce(reducer: Reducer<E, E>, initialValue?: E): E | undefined;
 
   iterator(): IterableIterator<E>;
 

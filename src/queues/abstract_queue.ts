@@ -1,4 +1,4 @@
-import { UnderflowException } from '../utils';
+import { UnderflowException, OverflowException } from '../utils';
 import { AbstractCollection, CollectionOptions } from '../collections';
 import { Queue } from './queue';
 
@@ -7,7 +7,17 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
     super(options);
   }
 
+  protected handleOverflow(nbItems: number, _context?: any) {
+    if (nbItems > 0) throw new OverflowException();
+  }
+
   // insertion
+  add(item: E) {
+    if (this.offer(item)) return;
+    this.handleOverflow(1);
+    if (!this.offer(item)) throw new OverflowException();
+  }
+
   abstract offer(item: E): boolean;
 
   // removal

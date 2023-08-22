@@ -1,19 +1,12 @@
-import { BinaryPredicate } from '../utils';
+import { BinaryPredicate, IteratorLike, ArrayLike } from '../utils';
 import { Collection } from './collection';
-
-export type IteratorLike<E> = ((i: number) => E) | Iterator<E> | Iterable<E>;
-
-export interface ArrayLike<E> {
-  length: number;
-  seed: IteratorLike<E>;
-}
 
 export interface CollectionOptions<E> {
   capacity?: number;
   equals?: BinaryPredicate<E>;
 }
 
-export type CollectionLike<E> = Array<E> | Collection<E> | ArrayLike<E>;
+export type CollectionLike<E> = Set<E> | Array<E> | Collection<E> | ArrayLike<E>;
 
 export interface CollectionInitializer<E> {
   initial?: CollectionLike<E>;
@@ -21,6 +14,7 @@ export interface CollectionInitializer<E> {
 
 export function getSize<E>(items: CollectionLike<E>) {
   if (Array.isArray(items)) return items.length;
+  if (items instanceof Set) return items.size;
   if (typeof (items as Collection<E>).size === 'function') return (items as Collection<E>).size();
   return (items as ArrayLike<E>).length;
 }
@@ -52,7 +46,7 @@ export function arrayLikeToIterator<E>(arrayLike: ArrayLike<E>): Iterator<E> {
   throw new Error('Unable to convert object into an Iterator');
 }
 
-export function toIterator<E>(x: CollectionLike<E> | IteratorLike<E>): Iterator<E> {
+export function toIterator<E>(x: ArrayLike<E> | IteratorLike<E>): Iterator<E> {
   const iter: any = x as any;
   if (typeof iter[Symbol.iterator] === 'function') {
     return iter[Symbol.iterator]();

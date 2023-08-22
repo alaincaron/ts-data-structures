@@ -1,10 +1,10 @@
 import { Collection } from './collection';
-import { EqualFunction, OverflowException, Predicate, equalPredicate } from '../utils';
-import { CollectionOptions, CollectionInitializer, toIterator, CollectionLike, IteratorLike, getSize } from './types';
+import { EqualFunction, OverflowException, Predicate, equalPredicate, IteratorLike, Reducer } from '../utils';
+import { CollectionOptions, CollectionInitializer, toIterator, CollectionLike, getSize } from './types';
 
 export abstract class AbstractCollection<E> implements Collection<E> {
   private readonly _capacity: number;
-  private readonly equals: EqualFunction<E>;
+  protected readonly equals: EqualFunction<E>;
 
   protected constructor(options?: number | CollectionOptions<E>) {
     let capacity;
@@ -53,15 +53,8 @@ export abstract class AbstractCollection<E> implements Collection<E> {
     return result;
   }
 
-  protected handleOverflow(_item: E) {
-    throw new OverflowException();
-  }
-
   add(item: E): void {
-    while (!this.offer(item)) {
-      this.handleOverflow(item);
-      if (this.isFull()) throw new OverflowException();
-    }
+    if (!this.offer(item)) throw new OverflowException();
   }
 
   abstract offer(item: E): boolean;
@@ -93,6 +86,36 @@ export abstract class AbstractCollection<E> implements Collection<E> {
       if (predicate(e)) return true;
     }
     return false;
+  }
+
+  forEach(f: (e: E) => void) {
+    for (const e of this) {
+      f(e);
+    }
+  }
+
+  fold<B>(reducer: Reducer<E, B>, initialValue: B): B {
+    let acc = initialValue;
+    for (const e of this) {
+      acc = reducer(acc, e);
+    }
+    return acc;
+  }
+
+  reduce(reducer: Reducer<E, E>, initialValue?: E): E | undefined {
+    const iter = this.iterator();
+    let acc = initialValue;
+    if (acc === undefined) {
+      const item = iter.next();
+      if (item.done) return undefined;
+      acc = item.value;
+    }
+    for (;;) {
+      const item = iter.next();
+      if (item.done) break;
+      acc = reducer(acc, item.value);
+    }
+    return acc;
   }
 
   addFully<E1 extends E>(items: CollectionLike<E1>): number {
