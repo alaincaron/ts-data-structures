@@ -1,4 +1,4 @@
-import { EmptyCollection, Collection } from '../collections';
+import { EmptyCollection } from '../collections';
 import { Queue } from './queue';
 
 export class EmptyQueue<E> extends EmptyCollection<E> implements Queue<E> {
@@ -10,18 +10,6 @@ export class EmptyQueue<E> extends EmptyCollection<E> implements Queue<E> {
 
   protected constructor() {
     super();
-  }
-
-  offer(_item: E) {
-    return false;
-  }
-
-  offerFully<E1 extends E>(_items: E1[] | Collection<E1>) {
-    return 0;
-  }
-
-  offerPartially<E1 extends E>(_items: Iterable<E1>) {
-    return 0;
   }
 
   poll() {
