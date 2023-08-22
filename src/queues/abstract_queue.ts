@@ -1,5 +1,5 @@
-import { UnderflowException, OverflowException } from '../utils';
-import { AbstractCollection, CollectionOptions } from '../collections';
+import { UnderflowException, OverflowException, IteratorLike } from '../utils';
+import { AbstractCollection, CollectionOptions, CollectionLike, getSize, toIterator, take } from '../collections';
 import { Queue } from './queue';
 
 export abstract class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
@@ -7,8 +7,11 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
     super(options);
   }
 
-  protected handleOverflow(nbItems: number, _context?: any) {
-    if (nbItems > 0) throw new OverflowException();
+  protected handleOverflow(nbItems: number, context?: any) {
+    if (nbItems > 0) {
+      if (context === 'offerFully') return;
+      throw new OverflowException();
+    }
   }
 
   // insertion
@@ -33,6 +36,27 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
   element(): E {
     if (this.isEmpty()) throw new UnderflowException();
     return this.peek()!;
+  }
+
+  // bulk
+  addFully<E1 extends E>(items: CollectionLike<E1>): number {
+    const itemsToAdd = getSize(items);
+    if (this.remaining() < itemsToAdd) throw new OverflowException();
+    return this.addPartially(items);
+  }
+
+  addPartially<E1 extends E>(items: IteratorLike<E1> | CollectionLike<E1>): number {
+    return super.addPartially(take(this.remaining(), toIterator(items)));
+  }
+
+  offerFully<E1 extends E>(items: CollectionLike<E1>): number {
+    const itemsToAdd = getSize(items);
+    if (this.remaining() < itemsToAdd) return 0;
+    return this.offerPartially(items);
+  }
+
+  offerPartially<E1 extends E>(items: IteratorLike<E1> | CollectionLike<E1>): number {
+    return super.offerPartially(take(this.remaining(), toIterator(items)));
   }
 
   *drain() {

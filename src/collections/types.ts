@@ -19,7 +19,7 @@ export function getSize<E>(items: CollectionLike<E>) {
   return (items as ArrayLike<E>).length;
 }
 
-function* take<E>(n: number, iter: Iterator<E>): Iterator<E> {
+export function* take<E>(n: number, iter: Iterator<E>): Iterator<E> {
   for (let i = 0; i < n; ++i) {
     const item = iter.next();
     if (item.done) break;
