@@ -53,8 +53,9 @@ export abstract class AbstractCollection<E> implements Collection<E> {
     return result;
   }
 
-  add(item: E): void {
+  add(item: E) {
     if (!this.offer(item)) throw new OverflowException();
+    return true;
   }
 
   abstract offer(item: E): boolean;
@@ -189,6 +190,7 @@ export abstract class AbstractCollection<E> implements Collection<E> {
       options = { ...initializer };
     }
     delete options.initial;
+
     const result = factory(options);
     if (initialElements) result.addFully(initialElements);
     return result;

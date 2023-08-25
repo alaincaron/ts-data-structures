@@ -1,10 +1,9 @@
-import { AbstractQueue } from '../queues';
+import { AbstractQueue, QueueOptions } from '../queues';
 import { Deque } from './deque';
 import { OverflowException, Predicate } from '../utils';
-import { CollectionOptions } from '../collections';
 
 export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque<E> {
-  protected constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | QueueOptions<E>) {
     super(options);
   }
 

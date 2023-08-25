@@ -1,5 +1,5 @@
 import { EmptyCollection } from '../collections';
-import { Queue } from './queue';
+import { Queue, OverflowQueueStrategy } from './queue';
 
 export class EmptyQueue<E> extends EmptyCollection<E> implements Queue<E> {
   private static QUEUE = new EmptyQueue();
@@ -10,6 +10,10 @@ export class EmptyQueue<E> extends EmptyCollection<E> implements Queue<E> {
 
   protected constructor() {
     super();
+  }
+
+  overflowStrategy(): OverflowQueueStrategy {
+    return 'throw';
   }
 
   poll() {

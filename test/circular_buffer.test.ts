@@ -10,7 +10,7 @@ describe('CircularBuffer', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
       const buffer = CircularBuffer.create();
-      expect(buffer.overflowHandler()).equal('throw');
+      expect(buffer.overflowStrategy()).equal('throw');
       expect(buffer.capacity()).equal(Infinity);
       expect(buffer.size()).equal(0);
       expect(buffer.remaining()).equal(Infinity);
@@ -20,7 +20,7 @@ describe('CircularBuffer', () => {
 
     it('should have specified capacity as unique argument', () => {
       const buffer = CircularBuffer.create(2);
-      expect(buffer.overflowHandler()).equal('throw');
+      expect(buffer.overflowStrategy()).equal('throw');
       expect(buffer.capacity()).equal(2);
       expect(buffer.size()).equal(0);
       expect(buffer.remaining()).equal(2);
@@ -29,16 +29,16 @@ describe('CircularBuffer', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const buffer = CircularBuffer.create({ capacity: 2, overflowHandler: 'overwrite' });
-      expect(buffer.overflowHandler()).equal('overwrite');
+      const buffer = CircularBuffer.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      expect(buffer.overflowStrategy()).equal('overwrite');
       expect(buffer.capacity()).equal(2);
       expect(buffer.isEmpty()).to.be.true;
     });
 
     it('should have the same elements as the array argument', () => {
       const arr = [1, 2];
-      const buffer = CircularBuffer.create({ capacity: 2, initial: arr, overflowHandler: 'overwrite' });
-      expect(buffer.overflowHandler()).equal('overwrite');
+      const buffer = CircularBuffer.create({ capacity: 2, initial: arr, overflowStrategy: 'overwrite' });
+      expect(buffer.overflowStrategy()).equal('overwrite');
       expect(buffer.capacity()).equal(2);
       expect(buffer.size()).equal(2);
       expect(buffer.remaining()).equal(0);
@@ -58,10 +58,10 @@ describe('CircularBuffer', () => {
 
     it('should be identical to the Collection argument', () => {
       const arr = [1, 2];
-      const buffer1 = CircularBuffer.create({ initial: arr, overflowHandler: 'throw' });
-      const buffer2 = CircularBuffer.create({ initial: buffer1, overflowHandler: 'overwrite' });
-      expect(buffer1.overflowHandler()).equal('throw');
-      expect(buffer2.overflowHandler()).equal('overwrite');
+      const buffer1 = CircularBuffer.create({ initial: arr, overflowStrategy: 'throw' });
+      const buffer2 = CircularBuffer.create({ initial: buffer1, overflowStrategy: 'overwrite' });
+      expect(buffer1.overflowStrategy()).equal('throw');
+      expect(buffer2.overflowStrategy()).equal('overwrite');
       expect(buffer2.capacity()).equal(Infinity);
       expect(buffer2.toArray()).to.deep.equal(arr);
     });
@@ -70,9 +70,9 @@ describe('CircularBuffer', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i + 1);
       const buffer = CircularBuffer.create({
         initial: { length: arr.length, seed: i => i + 1 },
-        overflowHandler: 'overwrite',
+        overflowStrategy: 'overwrite',
       });
-      expect(buffer.overflowHandler()).equal('overwrite');
+      expect(buffer.overflowStrategy()).equal('overwrite');
       expect(buffer.toArray()).to.deep.equal(arr);
     });
 
@@ -98,10 +98,10 @@ describe('CircularBuffer', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = CircularBuffer.create({ overflowHandler: 'overwrite' });
+      const a = CircularBuffer.create({ overflowStrategy: 'overwrite' });
       const b = a.clone();
       expect(b).to.deep.equal(a);
-      expect(b.overflowHandler()).equal('overwrite');
+      expect(b.overflowStrategy()).equal('overwrite');
       b.add('foo');
       expect(b.size()).equal(1);
       expect(a.size()).equal(0);
@@ -110,8 +110,8 @@ describe('CircularBuffer', () => {
 
   describe('overflow handling', () => {
     it('should throw if overflow', () => {
-      const buffer = CircularBuffer.create({ capacity: 2, overflowHandler: 'throw' });
-      expect(buffer.overflowHandler()).equal('throw');
+      const buffer = CircularBuffer.create({ capacity: 2, overflowStrategy: 'throw' });
+      expect(buffer.overflowStrategy()).equal('throw');
       buffer.add('foo');
       buffer.add('bar');
       expect(buffer.size()).equal(2);
@@ -124,7 +124,8 @@ describe('CircularBuffer', () => {
       expect(() => buffer.remove()).to.throw(UnderflowException);
     });
     it('should overwrite if overflow', () => {
-      const buffer = CircularBuffer.create({ capacity: 2, overflowHandler: 'overwrite' });
+      const buffer = CircularBuffer.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      expect(buffer.overflowStrategy()).equal('overwrite');
       buffer.add('foo');
       buffer.add('bar');
       expect(buffer.size()).equal(2);
@@ -276,15 +277,14 @@ describe('CircularBuffer', () => {
       expect(buffer.offerFully(CircularBuffer.create({ initial: data }))).equal(3);
       expect(buffer.size()).equal(6);
     });
-    it('should accept all the items if overflowHandler is overwrite even if not enough capacity', () => {
-      const buffer = CircularBuffer.create({ capacity: 2, overflowHandler: 'overwrite' });
+    it("should refuse the items even if overflowStrategy is overwrite if we can't free enough room", () => {
+      const buffer = CircularBuffer.create({ capacity: 2, overflowStrategy: 'overwrite' });
       const data = [1, 2, 3];
-      expect(buffer.offerFully(data)).equal(3);
-      expect(buffer.size()).equal(2);
-      expect(buffer.toArray()).to.deep.equal([2, 3]);
+      expect(buffer.offerFully(data)).equal(0);
+      expect(buffer.size()).equal(0);
     });
-    it('should accept all items if enough capacity remaining with overflowHandler set to overwrite', () => {
-      const buffer = CircularBuffer.create({ capacity: 6, overflowHandler: 'overwrite' });
+    it('should accept all items if enough capacity remaining with overflowStrategy set to overwrite', () => {
+      const buffer = CircularBuffer.create({ capacity: 6, overflowStrategy: 'overwrite' });
       const data = [1, 2, 3];
       expect(buffer.offerFully(data)).equal(3);
       expect(buffer.size()).equal(3);
@@ -312,17 +312,14 @@ describe('CircularBuffer', () => {
       expect(buffer.offerPartially(CircularBuffer.create({ initial: data }))).equal(3);
       expect(buffer.size()).equal(6);
     });
-    it('should accept all elements and overwrite ', () => {
-      const buffer = CircularBuffer.create({ capacity: 2, overflowHandler: 'overwrite' });
+    it('should accept only elements as up to the capacity and overwrite', () => {
+      const buffer = CircularBuffer.create({ capacity: 2, overflowStrategy: 'overwrite' });
       const data = [1, 2, 3];
-      expect(buffer.offerPartially(data)).equal(3);
-      expect(buffer.toArray()).to.deep.equal([2, 3]);
-      buffer.clear();
-      expect(buffer.offerPartially(CircularBuffer.create({ initial: data }))).equal(3);
-      expect(buffer.toArray()).to.deep.equal([2, 3]);
+      expect(buffer.offerPartially(data)).equal(2);
+      expect(buffer.toArray()).to.deep.equal([1, 2]);
     });
     it('should accept all items', () => {
-      const buffer = CircularBuffer.create({ capacity: 6, overflowHandler: 'overwrite' });
+      const buffer = CircularBuffer.create({ capacity: 6, overflowStrategy: 'overwrite' });
       const data = [1, 2, 3];
       expect(buffer.offerPartially(data)).equal(3);
       expect(buffer.size()).equal(3);

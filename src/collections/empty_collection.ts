@@ -16,7 +16,7 @@ export class EmptyCollection<E> extends AbstractCollection<E> {
     return 0;
   }
 
-  add(_item: E): void {
+  add(_item: E): never {
     throw new OverflowException(`Adding to ${this.constructor.name}`);
   }
 

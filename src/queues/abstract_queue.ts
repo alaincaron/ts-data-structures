@@ -1,24 +1,47 @@
 import { UnderflowException, OverflowException, IteratorLike } from '../utils';
 import { AbstractCollection, CollectionOptions, CollectionLike, getSize, toIterator, take } from '../collections';
-import { Queue } from './queue';
+import { Queue, OverflowQueueStrategy } from './queue';
+
+export interface QueueOptions<E> extends CollectionOptions<E> {
+  overflowStrategy?: OverflowQueueStrategy;
+}
 
 export abstract class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
-  protected constructor(options?: number | CollectionOptions<E>) {
+  private readonly _overflowStrategy: OverflowQueueStrategy;
+  protected constructor(options?: number | QueueOptions<E>) {
     super(options);
+    this._overflowStrategy = (options as QueueOptions<E>)?.overflowStrategy ?? 'throw';
   }
 
-  protected handleOverflow(nbItems: number, context?: any) {
+  overflowStrategy() {
+    return this._overflowStrategy;
+  }
+
+  protected handleOverflow(nbItems: number, context?: any): boolean {
     if (nbItems > 0) {
-      if (context === 'offerFully') return;
-      throw new OverflowException();
+      if (context === 'offerFully') return false;
+      switch (this._overflowStrategy) {
+        case 'throw':
+          throw new OverflowException();
+        case 'overwrite':
+          if (this.size() < nbItems) throw new OverflowException(); // can't free enough
+          for (let i = 0; i < nbItems; ++i) this.remove();
+          return true;
+        case 'discard':
+          return false;
+        default:
+          throw new Error(`Unexpected value for overflowStrategy ${this._overflowStrategy}`);
+      }
     }
+    return true;
   }
 
   // insertion
-  add(item: E) {
-    if (this.offer(item)) return;
-    this.handleOverflow(1);
+  add(item: E): boolean {
+    if (this.offer(item)) return true;
+    if (!this.handleOverflow(1)) return false;
     if (!this.offer(item)) throw new OverflowException();
+    return true;
   }
 
   abstract offer(item: E): boolean;
@@ -41,7 +64,11 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
   // bulk
   addFully<E1 extends E>(items: CollectionLike<E1>): number {
     const itemsToAdd = getSize(items);
-    if (this.remaining() < itemsToAdd) throw new OverflowException();
+    const excess = itemsToAdd - this.remaining();
+    if (excess > 0) {
+      if (!this.handleOverflow(excess, 'addFully')) return 0;
+      if (this.remaining() < itemsToAdd) throw new OverflowException();
+    }
     return this.addPartially(items);
   }
 
@@ -51,7 +78,11 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
 
   offerFully<E1 extends E>(items: CollectionLike<E1>): number {
     const itemsToAdd = getSize(items);
-    if (this.remaining() < itemsToAdd) return 0;
+    const excess = itemsToAdd - this.remaining();
+    if (excess > 0) {
+      if (!this.handleOverflow(excess, 'offerFully')) return 0;
+      if (this.remaining() < itemsToAdd) return 0;
+    }
     return this.offerPartially(items);
   }
 
@@ -63,6 +94,13 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
     while (!this.isEmpty()) {
       yield this.remove();
     }
+  }
+
+  buildOptions(): QueueOptions<E> {
+    return {
+      ...super.buildOptions(),
+      overflowStrategy: this._overflowStrategy,
+    };
   }
 
   abstract clone(): AbstractQueue<E>;

@@ -10,7 +10,7 @@ export interface Collection<E> extends Iterable<E> {
   contains(item: E): boolean;
   toArray(): E[];
   offer(item: E): boolean;
-  add(item: E): void;
+  add(item: E): boolean;
   removeMatchingItem(predicate: Predicate<E>): E | undefined;
   removeItem(item: E): boolean;
   filter(predicate: Predicate<E>): boolean;
