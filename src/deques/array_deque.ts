@@ -1,5 +1,6 @@
 import { AbstractDeque } from './abstract_deque';
-import { CollectionInitializer, CollectionOptions } from '../collections';
+import { QueueOptions } from '../queues';
+import { CollectionInitializer } from '../collections';
 import { UnderflowException, nextPowerOfTwo, Predicate } from '../utils';
 
 /*
@@ -13,7 +14,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   private head: number;
   private tail: number;
 
-  protected constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | QueueOptions<E>) {
     super(options);
 
     this.head = this.tail = 0;
@@ -24,8 +25,8 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     }
   }
 
-  static create<E>(initializer?: number | (CollectionOptions<E> & CollectionInitializer<E>)): ArrayDeque<E> {
-    return AbstractDeque.buildCollection<E, ArrayDeque<E>, CollectionOptions<E>, CollectionInitializer<E>>(
+  static create<E>(initializer?: number | (QueueOptions<E> & CollectionInitializer<E>)): ArrayDeque<E> {
+    return AbstractDeque.buildCollection<E, ArrayDeque<E>, QueueOptions<E>, CollectionInitializer<E>>(
       options => new ArrayDeque(options),
       initializer
     );

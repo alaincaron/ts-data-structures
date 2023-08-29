@@ -84,6 +84,45 @@ describe('ArrayDeque', () => {
         OverflowException
       );
     });
+
+    it('should use the specified capacity as per options with overwrite strategy', () => {
+      const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      expect(deque.overflowStrategy()).equal('overwrite');
+      expect(deque.capacity()).equal(2);
+      expect(deque.isEmpty()).to.be.true;
+    });
+
+    it('should have the same elements as the array argument with overwrite strategy', () => {
+      const arr = [1, 2];
+      const deque = ArrayDeque.create({ capacity: 2, initial: arr, overflowStrategy: 'overwrite' });
+      expect(deque.overflowStrategy()).equal('overwrite');
+      expect(deque.capacity()).equal(2);
+      expect(deque.size()).equal(2);
+      expect(deque.remaining()).equal(0);
+      expect(deque.isEmpty()).to.be.false;
+      expect(deque.isFull()).to.be.true;
+      expect(deque.toArray()).to.deep.equal(arr);
+    });
+
+    it('should be identical to the Collection argument with overwrite strategy', () => {
+      const arr = [1, 2];
+      const deque1 = ArrayDeque.create({ initial: arr, overflowStrategy: 'throw' });
+      const deque2 = ArrayDeque.create({ initial: deque1, overflowStrategy: 'overwrite' });
+      expect(deque1.overflowStrategy()).equal('throw');
+      expect(deque2.overflowStrategy()).equal('overwrite');
+      expect(deque2.capacity()).equal(Infinity);
+      expect(deque2.toArray()).to.deep.equal(arr);
+    });
+
+    it('should use the function provided in the ArrayLike with overwrite strategy', () => {
+      const arr = Array.from({ length: 2 }, (_, i) => i + 1);
+      const deque = ArrayDeque.create({
+        initial: { length: arr.length, seed: i => i + 1 },
+        overflowStrategy: 'overwrite',
+      });
+      expect(deque.overflowStrategy()).equal('overwrite');
+      expect(deque.toArray()).to.deep.equal(arr);
+    });
   });
 
   describe('clone', () => {
@@ -91,6 +130,17 @@ describe('ArrayDeque', () => {
       const a = ArrayDeque.create();
       const b = a.clone();
       expect(b).to.deep.equal(a);
+      expect(b.overflowStrategy()).equal('throw');
+      b.add('foo');
+      expect(b.size()).equal(1);
+      expect(a.size()).equal(0);
+    });
+
+    it('should create a deep equal copy with overwrite strategy', () => {
+      const a = ArrayDeque.create({ overflowStrategy: 'overwrite' });
+      const b = a.clone();
+      expect(b).to.deep.equal(a);
+      expect(b.overflowStrategy()).equal('overwrite');
       b.add('foo');
       expect(b.size()).equal(1);
       expect(a.size()).equal(0);
@@ -134,6 +184,21 @@ describe('ArrayDeque', () => {
       expect(deque.isEmpty()).to.be.true;
       expect(() => deque.removeFirst()).to.throw(UnderflowException);
     });
+
+    it('should overwrite if overflow', () => {
+      const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      expect(deque.overflowStrategy()).equal('overwrite');
+      deque.add('foo');
+      deque.add('bar');
+      expect(deque.size()).equal(2);
+      deque.add('foobar');
+      expect(deque.size()).equal(2);
+      expect(deque.remove()).equal('bar');
+      expect(deque.remove()).equal('foobar');
+      expect(deque.poll()).to.be.undefined;
+      expect(deque.isEmpty()).to.be.true;
+      expect(() => deque.remove()).to.throw(UnderflowException);
+    });
   });
 
   describe('LIFO', () => {
@@ -159,6 +224,21 @@ describe('ArrayDeque', () => {
       expect(deque.pollFirst()).to.be.undefined;
       expect(() => deque.removeFirst()).to.throw(UnderflowException);
     });
+
+    it('should overwrite first if overflow', () => {
+      const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      expect(deque.overflowStrategy()).equal('overwrite');
+      deque.add('foo');
+      deque.add('bar');
+      expect(deque.size()).equal(2);
+      deque.addFirst('foobar');
+      expect(deque.size()).equal(2);
+      expect(deque.remove()).equal('foobar');
+      expect(deque.remove()).equal('bar');
+      expect(deque.poll()).to.be.undefined;
+      expect(deque.isEmpty()).to.be.true;
+      expect(() => deque.remove()).to.throw(UnderflowException);
+    });
   });
 
   describe('offerFirst', () => {
@@ -168,6 +248,13 @@ describe('ArrayDeque', () => {
       expect(deque.size()).equal(1);
       expect(deque.peekFirst()).equal('foo');
       expect(deque.peekLast()).equal('foo');
+    });
+    it('should return false if capacity is reached', () => {
+      const deque = ArrayDeque.create(1);
+      expect(deque.offerFirst('foo')).equal(true);
+      expect(deque.isFull()).equal(true);
+      expect(deque.offerFirst('bar')).equal(false);
+      expect(deque.size()).equal(1);
     });
   });
 
@@ -349,6 +436,21 @@ describe('ArrayDeque', () => {
       expect(deque.offerFully(ArrayDeque.create({ initial: data }))).equal(3);
       expect(deque.size()).equal(6);
     });
+    it("should refuse the items even if overflowStrategy is overwrite if we can't free enough room", () => {
+      const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      const data = [1, 2, 3];
+      expect(deque.offerFully(data)).equal(0);
+      expect(deque.size()).equal(0);
+    });
+    it('should accept all items if enough capacity remaining with overflowStrategy set to overwrite', () => {
+      const deque = ArrayDeque.create({ capacity: 6, overflowStrategy: 'overwrite' });
+      const data = [1, 2, 3];
+      expect(deque.offerFully(data)).equal(3);
+      expect(deque.size()).equal(3);
+      expect(deque.offerFully(ArrayDeque.create({ initial: data }))).equal(3);
+      expect(deque.size()).equal(6);
+      expect(deque.toArray()).to.deep.equal([...data, ...data]);
+    });
   });
 
   describe('offerPartially', () => {
@@ -363,6 +465,20 @@ describe('ArrayDeque', () => {
     });
     it('should accept all items if enough capacity remaining', () => {
       const deque = ArrayDeque.create(6);
+      const data = [1, 2, 3];
+      expect(deque.offerPartially(data)).equal(3);
+      expect(deque.size()).equal(3);
+      expect(deque.offerPartially(ArrayDeque.create({ initial: data }))).equal(3);
+      expect(deque.size()).equal(6);
+    });
+    it('should accept only elements as up to the capacity and overwrite', () => {
+      const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      const data = [1, 2, 3];
+      expect(deque.offerPartially(data)).equal(2);
+      expect(deque.toArray()).to.deep.equal([1, 2]);
+    });
+    it('should accept all items', () => {
+      const deque = ArrayDeque.create({ capacity: 6, overflowStrategy: 'overwrite' });
       const data = [1, 2, 3];
       expect(deque.offerPartially(data)).equal(3);
       expect(deque.size()).equal(3);

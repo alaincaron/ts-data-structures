@@ -39,7 +39,7 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
   // insertion
   add(item: E): boolean {
     if (this.offer(item)) return true;
-    if (!this.handleOverflow(1)) return false;
+    if (!this.handleOverflow(1, 'add')) return false;
     if (!this.offer(item)) throw new OverflowException();
     return true;
   }

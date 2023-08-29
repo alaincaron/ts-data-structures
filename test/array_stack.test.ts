@@ -83,7 +83,7 @@ describe('ArrayStack', () => {
   });
 
   describe('LIFO', () => {
-    it('respect LIFO semantics witt add', () => {
+    it('respect LIFO semantics with add', () => {
       const stack = ArrayStack.create({ capacity: 2 });
       stack.add('foo');
       stack.add('bar');
