@@ -1,7 +1,7 @@
 import { AbstractDeque } from './abstract_deque';
 import { QueueOptions } from '../queues';
 import { CollectionInitializer } from '../collections';
-import { UnderflowException, nextPowerOfTwo, Predicate } from '../utils';
+import { UnderflowException, nextPowerOfTwo, Predicate, RandomAccess, IndexOutOfBoundsException } from '../utils';
 
 /*
  * The minimum capacity that we'll use for a newly created deque.
@@ -9,7 +9,7 @@ import { UnderflowException, nextPowerOfTwo, Predicate } from '../utils';
  */
 const MIN_INITIAL_CAPACITY = 8;
 
-export class ArrayDeque<E> extends AbstractDeque<E> {
+export class ArrayDeque<E> extends AbstractDeque<E> implements RandomAccess<E> {
   private elements: Array<E>;
   private head: number;
   private tail: number;
@@ -36,11 +36,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     if (numElements <= MIN_INITIAL_CAPACITY) return MIN_INITIAL_CAPACITY;
     return nextPowerOfTwo(numElements);
   }
-  /**
-   * Allocate empty array to hold the given number of elements.
-   *
-   * @param numElements  the number of elements to hold
-   */
+
   private allocateElements(numElements: number) {
     return new Array(this.nextArraySize(numElements));
   }
@@ -64,13 +60,6 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     this.tail = n;
   }
 
-  /**
-   * Inserts the specified element at the front of this deque.
-   *
-   * @param e the element to add
-   * @return <tt>true</tt> (as specified by {@link Deque#offerFirst})
-   * @throws NullPointerException if the specified element is null
-   */
   offerFirst(item: E): boolean {
     if (!this.isFull()) {
       this.elements[(this.head = this.slot(this.head - 1))] = item;
@@ -80,13 +69,6 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     return false;
   }
 
-  /**
-   * Inserts the specified element at the end of this deque.
-   *
-   * @param e the element to add
-   * @return <tt>true</tt> (as specified by {@link Deque#offerLast})
-   * @throws NullPointerException if the specified element is null
-   */
   offerLast(item: E): boolean {
     if (!this.isFull()) {
       this.elements[this.tail] = item;
@@ -96,17 +78,11 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     return false;
   }
 
-  /**
-   * @throws NoSuchElementException {@inheritDoc}
-   */
   removeFirst(): E {
     if (this.isEmpty()) throw new UnderflowException();
     return this.pollFirst()!;
   }
 
-  /**
-   * @throws NoSuchElementException {@inheritDoc}
-   */
   removeLast(): E {
     if (this.isEmpty()) throw new UnderflowException();
     return this.pollLast()!;
@@ -130,19 +106,25 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     return result;
   }
 
-  /**
-   * @throws NoSuchElementException {@inheritDoc}
-   */
+  getAt(idx: number): E {
+    if (idx < 0 || idx >= this.size()) throw new IndexOutOfBoundsException();
+    return this.elements[this.slot(this.head + idx)];
+  }
+
+  setAt(idx: number, item: E): E {
+    if (idx < 0 || idx >= this.size()) throw new IndexOutOfBoundsException();
+    const slot = this.slot(idx);
+    const x = this.elements[slot];
+    this.elements[slot] = item;
+    return x;
+  }
+
   getFirst(): E {
-    const x = this.elements[this.head];
-    if (x == null) throw new UnderflowException();
-    return x!;
+    return this.getAt(0);
   }
 
   getLast(): E {
-    const x = this.elements[this.slot(this.tail - 1)];
-    if (x == null) throw new UnderflowException();
-    return x;
+    return this.getAt(this.size() - 1);
   }
 
   peekFirst(): E | undefined {

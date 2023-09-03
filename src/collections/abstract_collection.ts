@@ -104,7 +104,7 @@ export abstract class AbstractCollection<E> implements Collection<E> {
   }
 
   reduce(reducer: Reducer<E, E>, initialValue?: E): E | undefined {
-    const iter = this.iterator();
+    const iter = this[Symbol.iterator]();
     let acc = initialValue;
     if (acc === undefined) {
       const item = iter.next();

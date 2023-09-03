@@ -4,3 +4,4 @@ export * from './maps';
 export * from './queues';
 export * from './stacks';
 export * from './utils';
+export * from './lists';

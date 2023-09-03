@@ -13,3 +13,8 @@ export interface ArrayLike<E> {
   length: number;
   seed: IteratorLike<E>;
 }
+
+export interface RandomAccess<E> {
+  getAt(idx: number): E;
+  setAt(idx: number, value: E): E;
+}

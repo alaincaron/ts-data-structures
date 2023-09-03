@@ -176,13 +176,14 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
     };
   }
 
-  [Symbol.iterator](): Iterator<E> {
+  *[Symbol.iterator](): IterableIterator<E> {
+    let cursor = 0;
+    while (cursor < this._size) yield this.buffer[cursor++];
     return this.iterator();
   }
 
-  *iterator(): IterableIterator<E> {
-    let cursor = 0;
-    while (cursor < this._size) yield this.buffer[cursor++];
+  iterator(): IterableIterator<E> {
+    return this[Symbol.iterator]();
   }
 
   private heapify() {
