@@ -151,7 +151,7 @@ export class ArrayList<E> extends AbstractList<E> {
       setValue: (item: E) => this.setAt(lastReturn, item),
       remove: () => {
         const value = this.removeAt(lastReturn);
-        if (cursor > lastReturn) cursor = lastReturn;
+        cursor = lastReturn;
         lastReturn = -1;
         return value;
       },
@@ -175,7 +175,7 @@ export class ArrayList<E> extends AbstractList<E> {
       setValue: (item: E) => this.setAt(lastReturn, item),
       remove: () => {
         const value = this.removeAt(lastReturn);
-        if (cursor > lastReturn) cursor = lastReturn;
+        lastReturn = -1;
         return value;
       },
     };
