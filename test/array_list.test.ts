@@ -390,4 +390,104 @@ describe('ArrayList', () => {
       expect(sum).to.be.undefined;
     });
   });
+
+  describe('replaceAll', () => {
+    it('should double all elements', () => {
+      const data = [1, 2, 3];
+      const list = ArrayList.create({ initial: data });
+      const transform = (x: number) => 2 * x;
+      list.replaceAll(transform);
+      expect(list.toArray()).to.deep.equal(data.map(transform));
+    });
+  });
+
+  describe('indexOf', () => {
+    it('should return -1 if the target is missing', () => {
+      const data = [1, 2, 3];
+      const list = ArrayList.create({ initial: data });
+      expect(list.indexOf(4)).equal(-1);
+    });
+
+    it('should return the index of the first occurence', () => {
+      const data = [0, 2, 1, 2, 3, 1, 0, 2];
+      const list = ArrayList.create({ initial: data });
+      expect(list.indexOf(1)).equal(2);
+    });
+  });
+
+  describe('lastIndexOf', () => {
+    it('should return -1 if the target is missing', () => {
+      const data = [1, 2, 3];
+      const list = ArrayList.create({ initial: data });
+      expect(list.lastIndexOf(4)).equal(-1);
+    });
+
+    it('should return the index of the first occurence', () => {
+      const data = [0, 2, 1, 2, 3, 1, 0, 2];
+      const list = ArrayList.create({ initial: data });
+      expect(list.lastIndexOf(1)).equal(list.size() - 3);
+    });
+  });
+
+  describe('shuffle', () => {
+    it('should not modify the list', () => {
+      const data = [1, 2, 3];
+      const list = ArrayList.create({ initial: data });
+      list.shuffle(_x => 0);
+      expect(list.toArray()).deep.equal(data);
+    });
+  });
+  it('should send the first time at the end', () => {
+    const data = [1, 2, 3];
+    const list = ArrayList.create({ initial: data });
+    list.shuffle(_x => 1);
+    data.push(data.shift()!);
+    expect(list.toArray()).deep.equal(data);
+  });
+
+  describe('sort', () => {
+    it('should sort empty array', () => {
+      const list = ArrayList.create();
+      list.sort();
+      expect(list.size()).equal(0);
+    });
+    it('should sort according to the default comparator', () => {
+      const list = ArrayList.create({ initial: { length: 10, seed: i => i } });
+      const copy = list.clone();
+      list.shuffle();
+      list.sort();
+      expect(list.toArray()).deep.equal(copy.toArray());
+    });
+    it('should sort according to the length of the strings', () => {
+      const data = ['foobar', 'foo', 'bar', 'ba', 'a'];
+      const list = ArrayList.create({ initial: data });
+      const comparator = (s1: string, s2: string) => s1.length - s2.length;
+      list.sort(comparator);
+      expect(list.toArray()).deep.equal(data.sort(comparator));
+    });
+  });
+
+  describe('reverse', () => {
+    it('should left unmodified list with less than 2 elements', () => {
+      const list = ArrayList.create();
+      list.reverse();
+      expect(list.isEmpty()).to.be.true;
+      list.add(1);
+      list.reverse();
+      expect(list.toArray()).deep.equal([1]);
+    });
+  });
+
+  it('should reverse list with odd number of elements', () => {
+    const list = ArrayList.create({ initial: [1, 2, 3] });
+    list.reverse();
+    expect(list.toArray()).deep.equal([3, 2, 1]);
+    expect(list.size()).equal(3);
+  });
+  it('should reverse list with even number of elements', () => {
+    const list = ArrayList.create({ initial: [1, 2, 3, 4] });
+    list.reverse();
+    expect(list.toArray()).deep.equal([4, 3, 2, 1]);
+    expect(list.size()).equal(4);
+  });
 });
