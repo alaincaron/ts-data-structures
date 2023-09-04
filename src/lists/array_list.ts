@@ -1,7 +1,7 @@
 import { AbstractList } from './abstract_list';
 import { ListIterator } from './list';
 import { CollectionInitializer, CollectionOptions } from '../collections';
-import { UnderflowException, Predicate, IndexOutOfBoundsException } from '../utils';
+import { UnderflowException, Predicate, IndexOutOfBoundsException, Comparator, shuffle } from '../utils';
 
 export class ArrayList<E> extends AbstractList<E> {
   private elements: Array<E>;
@@ -66,8 +66,12 @@ export class ArrayList<E> extends AbstractList<E> {
     return x;
   }
 
-  sort() {
-    this.elements.sort();
+  sort(comparator?: Comparator<E>) {
+    this.elements.sort(comparator);
+  }
+
+  shuffle(random?: (n: number) => number) {
+    shuffle(this.elements, random);
   }
 
   size(): number {
@@ -130,8 +134,8 @@ export class ArrayList<E> extends AbstractList<E> {
     return shift;
   }
 
-  listIterator(start?: number): ListIterator<E> {
-    let cursor = start ?? 0;
+  listIterator(start?: number | 'head' | 'tail'): ListIterator<E> {
+    let cursor = typeof start == 'number' ? start : start === 'tail' ? this.size() - 1 : 0;
     let lastReturn = -1;
     return {
       [Symbol.iterator]() {
@@ -142,13 +146,6 @@ export class ArrayList<E> extends AbstractList<E> {
           return { done: true, value: undefined };
         }
         lastReturn = cursor++;
-        return { done: false, value: this.getAt(lastReturn) };
-      },
-      previous: () => {
-        if (cursor < 0) {
-          return { done: true, value: undefined };
-        }
-        lastReturn = cursor--;
         return { done: false, value: this.getAt(lastReturn) };
       },
       setValue: (item: E) => this.setAt(lastReturn, item),
@@ -162,7 +159,7 @@ export class ArrayList<E> extends AbstractList<E> {
   }
 
   reverseListIterator(start?: number): ListIterator<E> {
-    let cursor = start ?? this.size() - 1;
+    let cursor = typeof start == 'number' ? start : start === 'head' ? 0 : this.size() - 1;
     let lastReturn = -1;
     return {
       [Symbol.iterator]() {
@@ -173,13 +170,6 @@ export class ArrayList<E> extends AbstractList<E> {
           return { done: true, value: undefined };
         }
         lastReturn = cursor--;
-        return { done: false, value: this.getAt(lastReturn) };
-      },
-      previous: () => {
-        if (cursor < 0) {
-          return { done: true, value: undefined };
-        }
-        lastReturn = cursor++;
         return { done: false, value: this.getAt(lastReturn) };
       },
       setValue: (item: E) => this.setAt(lastReturn, item),

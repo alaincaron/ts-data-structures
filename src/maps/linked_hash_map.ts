@@ -1,7 +1,6 @@
 import { HashMap, HashEntry, HashMapOptions, AccessType } from './hash_map';
 import { MapEntry } from './map';
-import { DoubleLinkedList, Entry } from './double_linked_list';
-import { OverflowException } from '../utils';
+import { OverflowException, DoubleLinkedList } from '../utils';
 import { AbstractMap } from './abstract_map';
 import { MapInitializer } from './types';
 
@@ -42,7 +41,7 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   }
 
   protected recordAccess(e: HashEntry<K, V>, accessType: AccessType) {
-    const ee = e as unknown as Entry;
+    const ee = e as unknown as DoubleLinkedList.Entry;
 
     switch (accessType) {
       case AccessType.INSERT:
@@ -69,11 +68,11 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   }
 
   mostRecent() {
-    return this.linkedList.mostRecent() as unknown as MapEntry<K, V>;
+    return this.linkedList.last() as unknown as MapEntry<K, V>;
   }
 
   leastRecent() {
-    return this.linkedList.leastRecent() as unknown as MapEntry<K, V>;
+    return this.linkedList.first() as unknown as MapEntry<K, V>;
   }
 
   protected override overflowHandler(_key: K, _value: V) {

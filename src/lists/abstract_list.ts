@@ -1,5 +1,5 @@
 import { List, ListIterator } from './list';
-import { Comparator, OverflowException, Predicate, RandomAccess, UnderflowException } from '../utils';
+import { Comparator, OverflowException, Predicate, RandomAccess, UnderflowException, shuffle } from '../utils';
 import { AbstractCollection, CollectionOptions } from '../collections';
 
 export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>, RandomAccess<E> {
@@ -53,6 +53,21 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     return this.removeAt(this.size() - 1);
   }
 
+  filter(predicate: Predicate<E>): boolean {
+    const iterator = this.listIterator();
+    let modified = false;
+    for (;;) {
+      const item = iterator.next();
+      if (item.done) break;
+      if (!predicate(item.value)) {
+        iterator.remove();
+        modified = true;
+      }
+    }
+    return modified;
+  }
+
+  abstract reverseIterator(): IterableIterator<E>;
   abstract listIterator(start?: number | 'head' | 'tail'): ListIterator<E>;
   abstract reverseListIterator(start?: number | 'head' | 'tail'): ListIterator<E>;
 
@@ -88,7 +103,35 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
   }
 
   sort(comparator?: Comparator<E>) {
-    const arr = this.toArray().sort(comparator ?? ((a: E, b: E) => (a < b ? -1 : a > b ? 1 : 0)));
+    if (this.size() <= 1) return;
+    const arr = this.toArray().sort(comparator);
+    const iter = this.listIterator();
+    for (const e of arr) {
+      iter.next();
+      iter.setValue(e);
+    }
+  }
+
+  reverse() {
+    const n = this.size();
+    if (n <= 1) return;
+    let i = 0;
+    let j = n - 1;
+    const iter1 = this.listIterator();
+    const iter2 = this.reverseListIterator();
+    while (i < j) {
+      const item1 = iter1.next();
+      const item2 = iter2.next();
+      iter1.setValue(item2.value);
+      iter2.setValue(item1.value);
+      ++i;
+      --j;
+    }
+  }
+
+  shuffle(random?: (n: number) => number) {
+    if (this.size() <= 1) return;
+    const arr = shuffle(this.toArray(), random);
     const iter = this.listIterator();
     for (const e of arr) {
       iter.next();
