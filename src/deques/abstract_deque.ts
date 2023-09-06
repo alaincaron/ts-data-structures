@@ -3,7 +3,7 @@ import { Deque } from './deque';
 import { OverflowException, Predicate } from '../utils';
 
 export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque<E> {
-  protected constructor(options?: number | QueueOptions<E>) {
+  protected constructor(options?: number | QueueOptions) {
     super(options);
   }
 
@@ -33,11 +33,11 @@ export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque
   abstract removeLastMatchingItem(predicate: Predicate<E>): E | undefined;
 
   removeFirstOccurence(item: E) {
-    return this.removeFirstMatchingItem(x => this.equals(item, x)) != null;
+    return this.removeFirstMatchingItem(x => item === x) != null;
   }
 
   removeLastOccurence(item: E) {
-    return this.removeLastMatchingItem(x => this.equals(item, x)) != null;
+    return this.removeLastMatchingItem(x => item === x) != null;
   }
 
   abstract removeFirst(): E;

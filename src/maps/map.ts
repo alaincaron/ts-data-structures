@@ -36,5 +36,5 @@ export interface IMap<K, V> extends Iterable<[K, V]> {
 
   clone(): IMap<K, V>;
 
-  buildOptions(): MapOptions<K, V>;
+  buildOptions(): MapOptions;
 }

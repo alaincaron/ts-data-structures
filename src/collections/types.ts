@@ -1,9 +1,8 @@
-import { BinaryPredicate, IteratorLike, ArrayLike } from '../utils';
+import { IteratorLike, ArrayLike } from '../utils';
 import { Collection } from './collection';
 
-export interface CollectionOptions<E> {
+export interface CollectionOptions {
   capacity?: number;
-  equals?: BinaryPredicate<E>;
 }
 
 export type CollectionLike<E> = Set<E> | Array<E> | Collection<E> | ArrayLike<E>;

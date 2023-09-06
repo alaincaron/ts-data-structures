@@ -16,7 +16,7 @@ export enum OverflowStrategy {
   THROW,
 }
 
-export interface LinkedHashMapOptions<K, V> extends HashMapOptions<K, V> {
+export interface LinkedHashMapOptions<K> extends HashMapOptions<K> {
   ordering?: Ordering;
   overflowStrategy?: OverflowStrategy;
 }
@@ -26,15 +26,15 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   private readonly overflowStrategy: OverflowStrategy;
   private readonly linkedList: DoubleLinkedList;
 
-  protected constructor(options?: number | LinkedHashMapOptions<K, V>) {
+  protected constructor(options?: number | LinkedHashMapOptions<K>) {
     super(options);
     this.ordering = (options as any)?.ordering ?? Ordering.INSERTION;
     this.overflowStrategy = (options as any)?.overflowStrategy ?? OverflowStrategy.THROW;
     this.linkedList = new DoubleLinkedList();
   }
 
-  static create<K, V>(initializer?: number | (LinkedHashMapOptions<K, V> & MapInitializer<K, V>)): LinkedHashMap<K, V> {
-    return AbstractMap.buildMap<K, V, LinkedHashMap<K, V>, LinkedHashMapOptions<K, V>, MapInitializer<K, V>>(
+  static create<K, V>(initializer?: number | (LinkedHashMapOptions<K> & MapInitializer<K, V>)): LinkedHashMap<K, V> {
+    return AbstractMap.buildMap<K, V, LinkedHashMap<K, V>, LinkedHashMapOptions<K>, MapInitializer<K, V>>(
       options => new LinkedHashMap(options),
       initializer
     );
@@ -109,7 +109,7 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
     for (const e of this.linkedList.entries()) yield e as unknown as MapEntry<K, V>;
   }
 
-  buildOptions(): LinkedHashMapOptions<K, V> {
+  buildOptions(): LinkedHashMapOptions<K> {
     return {
       ...super.buildOptions(),
       ordering: this.ordering,

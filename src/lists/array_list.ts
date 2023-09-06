@@ -6,13 +6,13 @@ import { UnderflowException, Predicate, IndexOutOfBoundsException, Comparator, s
 export class ArrayList<E> extends AbstractList<E> {
   private elements: Array<E>;
 
-  protected constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | CollectionOptions) {
     super(options);
     this.elements = [];
   }
 
-  static create<E>(initializer?: number | (CollectionOptions<E> & CollectionInitializer<E>)): ArrayList<E> {
-    return AbstractList.buildCollection<E, ArrayList<E>, CollectionOptions<E>, CollectionInitializer<E>>(
+  static create<E>(initializer?: number | (CollectionOptions & CollectionInitializer<E>)): ArrayList<E> {
+    return AbstractList.buildCollection<E, ArrayList<E>, CollectionOptions, CollectionInitializer<E>>(
       options => new ArrayList(options),
       initializer
     );

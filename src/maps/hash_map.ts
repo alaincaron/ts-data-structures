@@ -15,7 +15,7 @@ export enum AccessType {
   REMOVE,
 }
 
-export interface HashMapOptions<K, V> extends MapOptions<K, V> {
+export interface HashMapOptions<K> extends MapOptions {
   hash?: (k: K) => number;
   loadFactor?: number;
 }
@@ -32,7 +32,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
   protected overflowHandler(_key: K, _value: V) {}
   protected recordAccess(_e: HashEntry<K, V>, _accessType: AccessType) {}
 
-  protected constructor(options?: number | HashMapOptions<K, V>) {
+  protected constructor(options?: number | HashMapOptions<K>) {
     super(options);
     this._size = 0;
     this.hash = hashAny as (k: K) => number;
@@ -52,8 +52,8 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     }
   }
 
-  static create<K, V>(initializer?: number | HashMapOptions<K, V> | MapInitializer<K, V>): HashMap<K, V> {
-    return AbstractMap.buildMap<K, V, HashMap<K, V>, HashMapOptions<K, V>, MapInitializer<K, V>>(
+  static create<K, V>(initializer?: number | HashMapOptions<K> | MapInitializer<K, V>): HashMap<K, V> {
+    return AbstractMap.buildMap<K, V, HashMap<K, V>, HashMapOptions<K>, MapInitializer<K, V>>(
       options => new HashMap(options),
       initializer
     );
@@ -73,7 +73,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     const h = this.hash(key);
     const slot = this.getSlot(h, this.slots);
     let e = this.slots[slot];
-    while (e && !(e.hash === h && this.equalK(e.key, key))) e = e.next;
+    while (e && (e.hash !== h || e.key !== key)) e = e.next;
     if (e) this.recordAccess(e, AccessType.GET);
     return e;
   }
@@ -85,7 +85,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     const slot = this.getSlot(hash, this.slots);
     let prev: HashEntry<K, V> | undefined = undefined;
     let e = this.slots[slot];
-    while (e && !(e.hash === hash && this.equalK(e.key, key))) {
+    while (e && (e.hash !== hash || e.key !== key)) {
       prev = e;
       e = e.next;
     }
@@ -139,7 +139,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     const slot = this.getSlot(h, this.slots);
     let prev: HashEntry<K, V> | undefined = undefined;
     let e = this.slots[slot];
-    while (e && !(e.hash === h && this.equalK(e.key, key))) {
+    while (e && (e.hash !== h || e.key !== key)) {
       prev = e;
       e = e.next;
     }
@@ -199,7 +199,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     return HashMap.create({ initial: this });
   }
 
-  buildOptions(): HashMapOptions<K, V> {
+  buildOptions(): HashMapOptions<K> {
     return {
       ...super.buildOptions(),
       hash: this.hash,

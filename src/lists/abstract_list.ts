@@ -3,7 +3,7 @@ import { Comparator, OverflowException, Predicate, RandomAccess, UnderflowExcept
 import { AbstractCollection, CollectionOptions } from '../collections';
 
 export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>, RandomAccess<E> {
-  protected constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | CollectionOptions) {
     super(options);
   }
 
@@ -86,7 +86,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     for (;;) {
       const item = iter.next();
       if (item.done) return -1;
-      if (this.equals(item.value, e)) return idx;
+      if (item.value === e) return idx;
       ++idx;
     }
   }
@@ -97,7 +97,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     for (;;) {
       const item = iter.next();
       if (item.done) return -1;
-      if (this.equals(item.value, e)) return idx;
+      if (item.value === e) return idx;
       --idx;
     }
   }
@@ -168,11 +168,11 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
   }
 
   removeFirstOccurence(item: E) {
-    return this.removeFirstMatchingItem(x => this.equals(item, x)) != null;
+    return this.removeFirstMatchingItem(x => item === x) != null;
   }
 
   removeLastOccurence(item: E) {
-    return this.removeLastMatchingItem(x => this.equals(item, x)) != null;
+    return this.removeLastMatchingItem(x => item === x) != null;
   }
 
   abstract clone(): AbstractList<E>;

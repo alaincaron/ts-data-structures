@@ -11,14 +11,14 @@ export class LinkedList<E> extends AbstractList<E> {
   private readonly linkedList: DoubleLinkedList;
   private _size: number;
 
-  static create<E>(initializer?: number | (CollectionOptions<E> & CollectionInitializer<E>)): LinkedList<E> {
-    return AbstractList.buildCollection<E, LinkedList<E>, CollectionOptions<E>, CollectionInitializer<E>>(
+  static create<E>(initializer?: number | (CollectionOptions & CollectionInitializer<E>)): LinkedList<E> {
+    return AbstractList.buildCollection<E, LinkedList<E>, CollectionOptions, CollectionInitializer<E>>(
       options => new LinkedList(options),
       initializer
     );
   }
 
-  protected constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | CollectionOptions) {
     super(options);
     this._size = 0;
     this.linkedList = new DoubleLinkedList();

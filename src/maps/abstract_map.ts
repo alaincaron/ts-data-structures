@@ -1,28 +1,13 @@
-import { EqualFunction, Predicate, equalPredicate } from '../utils';
+import { Predicate } from '../utils';
 import { IMap, MapEntry } from './map';
 import { MapOptions, MapInitializer } from './types';
 
 export abstract class AbstractMap<K, V> implements IMap<K, V> {
-  protected readonly equalK: EqualFunction<K>;
-  protected readonly equalV: EqualFunction<V>;
   private readonly _capacity: number;
 
-  constructor(options?: number | MapOptions<K, V>) {
-    let capacity;
-    let equalK;
-    let equalV;
-
-    if (typeof options === 'number') {
-      capacity = options;
-    } else {
-      capacity = options?.capacity;
-      equalK = options?.equalK;
-      equalV = options?.equalV;
-    }
-
+  constructor(options?: number | MapOptions) {
+    const capacity = typeof options === 'number' ? options : options?.capacity;
     this._capacity = capacity ?? Infinity;
-    this.equalK = equalK ?? equalPredicate;
-    this.equalV = equalV ?? equalPredicate;
   }
 
   abstract size(): number;
@@ -57,7 +42,7 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
 
   containsValue(value: V) {
     for (const v of this.values()) {
-      if (this.equalV(value, v)) return true;
+      if (value === v) return true;
     }
     return false;
   }
@@ -107,21 +92,16 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     };
   }
 
-  buildOptions(): MapOptions<K, V> {
+  buildOptions(): MapOptions {
     return {
       capacity: this._capacity,
-      equalK: this.equalK,
-      equalV: this.equalV,
     };
   }
 
-  static buildMap<
-    K,
-    V,
-    M extends IMap<K, V>,
-    Options extends MapOptions<K, V>,
-    Initializer extends MapInitializer<K, V>,
-  >(factory: (options?: number | Options) => M, initializer?: number | (Options & Initializer)): M {
+  static buildMap<K, V, M extends IMap<K, V>, Options extends MapOptions, Initializer extends MapInitializer<K, V>>(
+    factory: (options?: number | Options) => M,
+    initializer?: number | (Options & Initializer)
+  ): M {
     if (initializer == null || typeof initializer === 'number') return factory(initializer);
     const initialElements = initializer.initial;
 

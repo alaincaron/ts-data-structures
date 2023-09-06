@@ -6,13 +6,13 @@ import { CollectionInitializer, CollectionOptions } from '../collections';
 export class ArrayStack<E> extends AbstractStack<E> {
   private readonly buffer: Deque<E>;
 
-  protected constructor(options?: number | CollectionOptions<E>) {
+  protected constructor(options?: number | CollectionOptions) {
     super(options);
     this.buffer = ArrayDeque.create(options);
   }
 
-  static create<E>(initializer?: number | (CollectionOptions<E> & CollectionInitializer<E>)) {
-    return AbstractStack.buildCollection<E, ArrayStack<E>, CollectionOptions<E>, CollectionInitializer<E>>(
+  static create<E>(initializer?: number | (CollectionOptions & CollectionInitializer<E>)) {
+    return AbstractStack.buildCollection<E, ArrayStack<E>, CollectionOptions, CollectionInitializer<E>>(
       options => new ArrayStack(options),
       initializer
     );

@@ -2,15 +2,15 @@ import { UnderflowException, OverflowException, IteratorLike } from '../utils';
 import { AbstractCollection, CollectionOptions, CollectionLike, getSize, toIterator, take } from '../collections';
 import { Queue, OverflowQueueStrategy } from './queue';
 
-export interface QueueOptions<E> extends CollectionOptions<E> {
+export interface QueueOptions extends CollectionOptions {
   overflowStrategy?: OverflowQueueStrategy;
 }
 
 export abstract class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
   private readonly _overflowStrategy: OverflowQueueStrategy;
-  protected constructor(options?: number | QueueOptions<E>) {
+  protected constructor(options?: number | QueueOptions) {
     super(options);
-    this._overflowStrategy = (options as QueueOptions<E>)?.overflowStrategy ?? 'throw';
+    this._overflowStrategy = (options as QueueOptions)?.overflowStrategy ?? 'throw';
   }
 
   overflowStrategy() {
@@ -96,7 +96,7 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
     }
   }
 
-  buildOptions(): QueueOptions<E> {
+  buildOptions(): QueueOptions {
     return {
       ...super.buildOptions(),
       overflowStrategy: this._overflowStrategy,

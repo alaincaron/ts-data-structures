@@ -1,9 +1,6 @@
 import { IMap } from './map';
-import { EqualFunction } from '../utils';
 
-export interface MapOptions<K, V> {
-  equalK?: EqualFunction<K>;
-  equalV?: EqualFunction<V>;
+export interface MapOptions {
   capacity?: number;
 }
 

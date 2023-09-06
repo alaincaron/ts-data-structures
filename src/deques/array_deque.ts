@@ -14,7 +14,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> implements RandomAccess<E> {
   private head: number;
   private tail: number;
 
-  protected constructor(options?: number | QueueOptions<E>) {
+  protected constructor(options?: number | QueueOptions) {
     super(options);
 
     this.head = this.tail = 0;
@@ -25,8 +25,8 @@ export class ArrayDeque<E> extends AbstractDeque<E> implements RandomAccess<E> {
     }
   }
 
-  static create<E>(initializer?: number | (QueueOptions<E> & CollectionInitializer<E>)): ArrayDeque<E> {
-    return AbstractDeque.buildCollection<E, ArrayDeque<E>, QueueOptions<E>, CollectionInitializer<E>>(
+  static create<E>(initializer?: number | (QueueOptions & CollectionInitializer<E>)): ArrayDeque<E> {
+    return AbstractDeque.buildCollection<E, ArrayDeque<E>, QueueOptions, CollectionInitializer<E>>(
       options => new ArrayDeque(options),
       initializer
     );

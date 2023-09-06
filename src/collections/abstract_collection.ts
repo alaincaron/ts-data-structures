@@ -1,23 +1,13 @@
 import { Collection } from './collection';
-import { EqualFunction, OverflowException, Predicate, equalPredicate, IteratorLike, Reducer } from '../utils';
+import { OverflowException, Predicate, IteratorLike, Reducer } from '../utils';
 import { CollectionOptions, CollectionInitializer, toIterator, CollectionLike, getSize } from './types';
 
 export abstract class AbstractCollection<E> implements Collection<E> {
   private readonly _capacity: number;
-  protected readonly equals: EqualFunction<E>;
 
-  protected constructor(options?: number | CollectionOptions<E>) {
-    let capacity;
-    let equals;
-
-    if (typeof options === 'number') {
-      capacity = options;
-    } else {
-      capacity = options?.capacity;
-      equals = options?.equals;
-    }
+  protected constructor(options?: number | CollectionOptions) {
+    const capacity = typeof options === 'number' ? options : options?.capacity;
     this._capacity = capacity ?? Infinity;
-    this.equals = equals ?? equalPredicate;
   }
 
   abstract size(): number;
@@ -40,7 +30,7 @@ export abstract class AbstractCollection<E> implements Collection<E> {
 
   contains(item: E): boolean {
     for (const e of this) {
-      if (this.equals(item, e)) return true;
+      if (item === e) return true;
     }
     return false;
   }
@@ -63,7 +53,7 @@ export abstract class AbstractCollection<E> implements Collection<E> {
   abstract removeMatchingItem(predicate: Predicate<E>): E | undefined;
 
   removeItem(item: E): boolean {
-    return this.removeMatchingItem(x => this.equals(x, item)) != null;
+    return this.removeMatchingItem(x => x === item) != null;
   }
 
   abstract filter(predicate: Predicate<E>): boolean;
@@ -161,17 +151,16 @@ export abstract class AbstractCollection<E> implements Collection<E> {
 
   abstract clone(): Collection<E>;
 
-  buildOptions(): CollectionOptions<E> {
+  buildOptions(): CollectionOptions {
     return {
       capacity: this._capacity,
-      equals: this.equals,
     };
   }
 
   static buildCollection<
     E,
     C extends Collection<E>,
-    Options extends CollectionOptions<E>,
+    Options extends CollectionOptions,
     Initializer extends CollectionInitializer<E>,
   >(factory: (options?: number | Options) => C, initializer?: number | (Options & Initializer)): C {
     if (initializer == null || typeof initializer === 'number') return factory(initializer);

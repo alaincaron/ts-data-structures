@@ -33,5 +33,5 @@ export interface Collection<E> extends Iterable<E> {
   iterator(): IterableIterator<E>;
 
   clone(): Collection<E>;
-  buildOptions(): CollectionOptions<E>;
+  buildOptions(): CollectionOptions;
 }
