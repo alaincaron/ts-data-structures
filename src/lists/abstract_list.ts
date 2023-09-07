@@ -80,26 +80,30 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     }
   }
 
-  indexOf(e: E): number {
-    const iter = this[Symbol.iterator]();
-    let idx = 0;
-    for (;;) {
-      const item = iter.next();
-      if (item.done) return -1;
-      if (item.value === e) return idx;
+  indexOfFirstOccurence(predicate: Predicate<E>): number {
+    let idx = -1;
+    for (const e of this) {
       ++idx;
+      if (predicate(e)) return idx;
     }
+    return -1;
+  }
+
+  indexOf(e: E): number {
+    return this.indexOfFirstOccurence(x => x === e);
+  }
+
+  indexOfLastOccurence(predicate: Predicate<E>): number {
+    let idx = this.size();
+    for (const e of this.reverseIterator()) {
+      --idx;
+      if (predicate(e)) return idx;
+    }
+    return -1;
   }
 
   lastIndexOf(e: E): number {
-    const iter = this.reverseListIterator();
-    let idx = this.size() - 1;
-    for (;;) {
-      const item = iter.next();
-      if (item.done) return -1;
-      if (item.value === e) return idx;
-      --idx;
-    }
+    return this.indexOfLastOccurence(x => x === e);
   }
 
   sort(comparator?: Comparator<E>) {

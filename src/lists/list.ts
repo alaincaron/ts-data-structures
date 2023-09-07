@@ -34,6 +34,8 @@ export interface List<E> extends Collection<E>, RandomAccess<E> {
   listIterator(start?: number): ListIterator<E>;
   reverseListIterator(start?: number): ListIterator<E>;
   replaceAll(f: (e: E) => E): void;
+  indexOfFirstOccurence(predicate: Predicate<E>): number;
+  indexOfLastOccurence(predicate: Predicate<E>): number;
   indexOf(item: E): number;
   lastIndexOf(item: E): number;
 
