@@ -5,3 +5,5 @@ export * from './exceptions';
 export * from './hash';
 export * from './shuffle';
 export * from './types';
+export * from './json';
+export * from './iterators';

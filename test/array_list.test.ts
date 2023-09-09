@@ -476,18 +476,25 @@ describe('ArrayList', () => {
       list.reverse();
       expect(list.toArray()).deep.equal([1]);
     });
+
+    it('should reverse list with odd number of elements', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      list.reverse();
+      expect(list.toArray()).deep.equal([3, 2, 1]);
+      expect(list.size()).equal(3);
+    });
+    it('should reverse list with even number of elements', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3, 4] });
+      list.reverse();
+      expect(list.toArray()).deep.equal([4, 3, 2, 1]);
+      expect(list.size()).equal(4);
+    });
   });
 
-  it('should reverse list with odd number of elements', () => {
-    const list = ArrayList.create({ initial: [1, 2, 3] });
-    list.reverse();
-    expect(list.toArray()).deep.equal([3, 2, 1]);
-    expect(list.size()).equal(3);
-  });
-  it('should reverse list with even number of elements', () => {
-    const list = ArrayList.create({ initial: [1, 2, 3, 4] });
-    list.reverse();
-    expect(list.toArray()).deep.equal([4, 3, 2, 1]);
-    expect(list.size()).equal(4);
+  describe('toJson', () => {
+    it('should return the JSON string', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      expect(list.toJson()).equal('[1,2,3]');
+    });
   });
 });

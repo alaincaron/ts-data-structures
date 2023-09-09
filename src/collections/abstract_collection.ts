@@ -1,6 +1,6 @@
 import { Collection } from './collection';
-import { OverflowException, Predicate, IteratorLike, Reducer } from '../utils';
-import { CollectionOptions, CollectionInitializer, toIterator, CollectionLike, getSize } from './types';
+import { OverflowException, Predicate, IteratorLike, Reducer, iterableToJSON, toIterator } from '../utils';
+import { CollectionOptions, CollectionInitializer, CollectionLike, getSize } from './types';
 
 export abstract class AbstractCollection<E> implements Collection<E> {
   private readonly _capacity: number;
@@ -155,6 +155,10 @@ export abstract class AbstractCollection<E> implements Collection<E> {
     return {
       capacity: this._capacity,
     };
+  }
+
+  toJson() {
+    return iterableToJSON(this);
   }
 
   static buildCollection<

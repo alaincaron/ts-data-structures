@@ -1,4 +1,4 @@
-import { Predicate } from '../utils';
+import { Predicate, mapToJSON } from '../utils';
 import { IMap, MapEntry } from './map';
 import { MapOptions, MapInitializer } from './types';
 
@@ -96,6 +96,10 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     return {
       capacity: this._capacity,
     };
+  }
+
+  toJson() {
+    return mapToJSON(this);
   }
 
   static buildMap<K, V, M extends IMap<K, V>, Options extends MapOptions, Initializer extends MapInitializer<K, V>>(

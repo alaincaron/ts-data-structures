@@ -34,4 +34,5 @@ export interface Collection<E> extends Iterable<E> {
 
   clone(): Collection<E>;
   buildOptions(): CollectionOptions;
+  toJson(): string;
 }

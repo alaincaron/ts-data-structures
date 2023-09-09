@@ -116,5 +116,9 @@ export abstract class ForwardingCollection<E> implements Collection<E> {
     return this._delegate.buildOptions();
   }
 
+  toJson() {
+    return this._delegate.toJson();
+  }
+
   abstract clone(): ForwardingCollection<E>;
 }

@@ -34,6 +34,8 @@ export interface IMap<K, V> extends Iterable<[K, V]> {
   values(): IterableIterator<V>;
   entries(): IterableIterator<MapEntry<K, V>>;
 
+  toJson(): string;
+
   clone(): IMap<K, V>;
 
   buildOptions(): MapOptions;

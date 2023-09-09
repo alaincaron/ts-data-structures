@@ -1,5 +1,5 @@
-import { UnderflowException, OverflowException, IteratorLike } from '../utils';
-import { AbstractCollection, CollectionOptions, CollectionLike, getSize, toIterator, take } from '../collections';
+import { UnderflowException, OverflowException, IteratorLike, toIterator, take } from '../utils';
+import { AbstractCollection, CollectionOptions, CollectionLike, getSize } from '../collections';
 import { Queue, OverflowQueueStrategy } from './queue';
 
 export interface QueueOptions extends CollectionOptions {

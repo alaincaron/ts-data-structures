@@ -193,4 +193,16 @@ describe('LinkedHashMap', () => {
       expect(map.containsKey('bar')).to.be.true;
     });
   });
+
+  describe('toJson', () => {
+    it('should return the JSON string', () => {
+      const map = LinkedHashMap.create({
+        initial: [
+          ['a', 1],
+          ['b', 2],
+        ] as Array<[string, number]>,
+      });
+      expect(map.toJson()).equal('{"a":1,"b":2}');
+    });
+  });
 });
