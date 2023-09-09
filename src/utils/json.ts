@@ -7,7 +7,7 @@ export function toJSON(x: any) {
     return mapToJSON(x);
   }
   if (x instanceof Set) {
-    return 'set';
+    return iterableToJSON(x);
   }
   return JSON.stringify(x);
 }
