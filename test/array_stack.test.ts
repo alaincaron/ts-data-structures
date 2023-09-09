@@ -55,7 +55,7 @@ describe('ArrayStack', () => {
       expect(stack.toArray()).deep.equal(arr.reverse());
     });
 
-    it('should use the ArrayLike argument', () => {
+    it('should use the ArrayGenerator argument', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i + 1);
       const stack = ArrayStack.create({ initial: { length: arr.length, seed: i => i + 1 } });
       expect(stack.toArray()).to.deep.equal(arr.reverse());

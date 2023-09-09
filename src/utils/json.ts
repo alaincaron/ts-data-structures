@@ -1,18 +1,30 @@
-import { toIterator } from './iterators';
-import { IteratorLike, ArrayLike } from './types';
+import { toIterator, toIteratorMaybe } from './iterators';
+import { IteratorLike, ArrayGenerator } from './types';
 
 export function toJSON(x: any) {
+  if (x == null) return JSON.stringify(x);
+  switch (typeof x) {
+    case 'string':
+    case 'number':
+    case 'boolean':
+      return JSON.stringify(x);
+    case 'bigint':
+      return JSON.stringify(x.toString());
+    case 'symbol':
+      return JSON.stringify(x.description);
+  }
   if (typeof x.toJson === 'function') return x.toJson();
   if (x instanceof Map) {
     return mapToJSON(x);
   }
-  if (x instanceof Set) {
-    return iterableToJSON(x);
+  const iter = toIteratorMaybe(x);
+  if (iter) {
+    return iterableToJSON(iter);
   }
   return JSON.stringify(x);
 }
 
-export function mapToJSON<K = any, V = any>(entries: Map<K, V> | ArrayLike<[K, V]> | IteratorLike<[K, V]>) {
+export function mapToJSON<K = any, V = any>(entries: Map<K, V> | ArrayGenerator<[K, V]> | IteratorLike<[K, V]>) {
   const iterator = entries instanceof Map ? entries[Symbol.iterator]() : toIterator(entries);
   let s = '{';
 
@@ -20,23 +32,31 @@ export function mapToJSON<K = any, V = any>(entries: Map<K, V> | ArrayLike<[K, V
     const item = iterator.next();
     if (item.done) break;
     const [k, v] = item.value;
+    const jsonv = toJSON(v);
+    if (jsonv === undefined) continue;
+
+    let jsonk = toJSON(k);
+    if (jsonk === undefined) jsonk = '"undefined"';
+    else if (jsonk === 'null') jsonk == '"null"';
+
     if (s.length > 1) s += ',';
-    s += toJSON(k);
+    s += '';
+    s += jsonk;
     s += ':';
-    s += toJSON(v);
+    s += jsonv;
   }
   s += '}';
   return s;
 }
 
-export function iterableToJSON<E = any>(items: ArrayLike<E> | IteratorLike<E>) {
+export function iterableToJSON<E = any>(items: ArrayGenerator<E> | IteratorLike<E>) {
   const iterator = toIterator(items);
   let s = '[';
   for (;;) {
     const item = iterator.next();
     if (item.done) break;
     if (s.length > 1) s += ',';
-    s += toJSON(item.value);
+    s += toJSON(item.value) ?? null;
   }
   s += ']';
   return s;

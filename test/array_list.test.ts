@@ -60,19 +60,19 @@ describe('ArrayList', () => {
       expect(list2.toArray()).to.deep.equal(arr);
     });
 
-    it('should use the function provided in the ArrayLike', () => {
+    it('should use the function provided in the ArrayGenerator', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i + 1);
       const list = ArrayList.create({ initial: { length: arr.length, seed: i => i + 1 } });
       expect(list.toArray()).to.deep.equal(arr);
     });
 
-    it('should use the iterator provided in the ArrayLike', () => {
+    it('should use the iterator provided in the ArrayGenerator', () => {
       const list = ArrayList.create({ initial: { length: 10, seed: generator() } });
       expect(list.size()).equal(10);
       expect(list.toArray()).to.deep.equal(Array.from({ length: 10 }, (_, i) => i));
     });
 
-    it('should use the iterable provided in the ArrayLike', () => {
+    it('should use the iterable provided in the ArrayGenerator', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i);
       const list = ArrayList.create({ initial: { length: 10, seed: arr } });
       expect(list.size()).equal(2);

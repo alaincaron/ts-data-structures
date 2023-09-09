@@ -60,19 +60,19 @@ describe('ArrayDeque', () => {
       expect(deque2.toArray()).to.deep.equal(arr);
     });
 
-    it('should use the function provided in the ArrayLike', () => {
+    it('should use the function provided in the ArrayGenerator', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i + 1);
       const deque = ArrayDeque.create({ initial: { length: arr.length, seed: i => i + 1 } });
       expect(deque.toArray()).to.deep.equal(arr);
     });
 
-    it('should use the iterator provided in the ArrayLike', () => {
+    it('should use the iterator provided in the ArrayGenerator', () => {
       const deque = ArrayDeque.create({ initial: { length: 10, seed: generator() } });
       expect(deque.size()).equal(10);
       expect(deque.toArray()).to.deep.equal(Array.from({ length: 10 }, (_, i) => i));
     });
 
-    it('should use the iterable provided in the ArrayLike', () => {
+    it('should use the iterable provided in the ArrayGenerator', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i);
       const deque = ArrayDeque.create({ initial: { length: 10, seed: arr } });
       expect(deque.size()).equal(2);
@@ -114,7 +114,7 @@ describe('ArrayDeque', () => {
       expect(deque2.toArray()).to.deep.equal(arr);
     });
 
-    it('should use the function provided in the ArrayLike with overwrite strategy', () => {
+    it('should use the function provided in the ArrayGenerator with overwrite strategy', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i + 1);
       const deque = ArrayDeque.create({
         initial: { length: arr.length, seed: i => i + 1 },

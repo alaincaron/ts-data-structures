@@ -1,4 +1,4 @@
-import { IteratorLike, ArrayLike } from '../utils';
+import { IteratorLike, ArrayGenerator } from '../utils';
 
 export function* take<E>(n: number, iter: Iterator<E>): Iterator<E> {
   for (let i = 0; i < n; ++i) {
@@ -8,14 +8,15 @@ export function* take<E>(n: number, iter: Iterator<E>): Iterator<E> {
   }
 }
 
-export function* seedToIterator<E>(n: number, seed: (i: number) => E) {
+function* seedToIterator<E>(n: number, seed: (i: number) => E) {
   for (let i = 0; i < n; ++i) {
     yield seed(i);
   }
 }
 
-export function arrayLikeToIterator<E>(arrayLike: ArrayLike<E>): Iterator<E> {
+function arrayLikeToIterator<E>(arrayLike: ArrayGenerator<E>): Iterator<E> | null {
   const { seed, length }: { seed: any; length: number } = arrayLike;
+  if (seed == null || length == null) return null;
   if (typeof seed === 'function') {
     return seedToIterator(length, seed);
   }
@@ -24,10 +25,10 @@ export function arrayLikeToIterator<E>(arrayLike: ArrayLike<E>): Iterator<E> {
   } else if (typeof seed[Symbol.iterator] === 'function') {
     return take(length, (seed as Iterable<E>)[Symbol.iterator]());
   }
-  throw new Error('Unable to convert object into an Iterator');
+  return null;
 }
 
-export function toIterator<E>(x: ArrayLike<E> | IteratorLike<E>): Iterator<E> {
+export function toIteratorMaybe<E>(x: ArrayGenerator<E> | IteratorLike<E>): Iterator<E> | null {
   const iter: any = x as any;
   if (typeof iter[Symbol.iterator] === 'function') {
     return iter[Symbol.iterator]();
@@ -36,6 +37,12 @@ export function toIterator<E>(x: ArrayLike<E> | IteratorLike<E>): Iterator<E> {
   } else if (typeof iter === 'function') {
     return seedToIterator(Number.MAX_SAFE_INTEGER, iter);
   } else {
-    return arrayLikeToIterator(iter as unknown as ArrayLike<E>);
+    return arrayLikeToIterator(iter as unknown as ArrayGenerator<E>);
   }
+}
+
+export function toIterator<E>(x: ArrayGenerator<E> | IteratorLike<E>): Iterator<E> {
+  const iter = toIteratorMaybe(x);
+  if (iter) return iter;
+  throw new Error('Unable to convert object into an Iterator');
 }

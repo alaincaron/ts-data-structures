@@ -7,7 +7,7 @@ export type Reducer<A, B> = (acc: B, a: A) => B;
 
 export type IteratorLike<E> = ((i: number) => E) | Iterator<E> | Iterable<E>;
 
-export interface ArrayLike<E> {
+export interface ArrayGenerator<E> {
   length: number;
   seed: IteratorLike<E>;
 }
