@@ -97,13 +97,6 @@ export class ArrayList<E> extends AbstractList<E> {
     return this[Symbol.iterator]();
   }
 
-  *reverseIterator(): IterableIterator<E> {
-    let cursor = this.size() - 1;
-    while (cursor >= 0) {
-      yield this.elements[cursor--]!;
-    }
-  }
-
   filter(predicate: Predicate<E>): boolean {
     let cursor = 0;
     let modified = false;

@@ -1,6 +1,6 @@
 import { AbstractQueue, QueueOptions } from '../queues';
 import { Deque } from './deque';
-import { OverflowException, Predicate } from '../utils';
+import { OverflowException, Predicate, UnderflowException } from '../utils';
 
 export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque<E> {
   protected constructor(options?: number | QueueOptions) {
@@ -56,7 +56,11 @@ export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque
     return this.element();
   }
 
-  abstract getLast(): E;
+  getLast(): E {
+    const e = this.peekLast();
+    if (!e) throw new UnderflowException();
+    return e;
+  }
 
   abstract peekFirst(): E | undefined;
   abstract peekLast(): E | undefined;

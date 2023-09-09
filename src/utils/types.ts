@@ -5,8 +5,6 @@ export type HashFunction<E> = (e: E) => number;
 export type EqualFunction<E> = BinaryPredicate<E>;
 export type Reducer<A, B> = (acc: B, a: A) => B;
 
-export const equalPredicate = (e1: unknown, e2: unknown) => e1 === e2;
-
 export type IteratorLike<E> = ((i: number) => E) | Iterator<E> | Iterable<E>;
 
 export interface ArrayLike<E> {

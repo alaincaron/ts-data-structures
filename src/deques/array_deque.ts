@@ -119,14 +119,6 @@ export class ArrayDeque<E> extends AbstractDeque<E> implements RandomAccess<E> {
     return x;
   }
 
-  getFirst(): E {
-    return this.getAt(0);
-  }
-
-  getLast(): E {
-    return this.getAt(this.size() - 1);
-  }
-
   peekFirst(): E | undefined {
     return this.elements[this.head];
   }

@@ -78,8 +78,6 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     return e;
   }
 
-  protected recordRemoval(_e: MapEntry<K, V>): void {}
-
   put(key: K, value: V): V | undefined {
     const hash = this.hash(key);
     const slot = this.getSlot(hash, this.slots);

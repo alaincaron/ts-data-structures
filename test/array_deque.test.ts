@@ -541,4 +541,54 @@ describe('ArrayDeque', () => {
       expect(sum).to.be.undefined;
     });
   });
+
+  describe('getFirst', () => {
+    it('should return the first element on a non-empty list', () => {
+      const deque = ArrayDeque.create({ initial: [2, 4, 1] });
+      expect(deque.getFirst()).equal(2);
+      expect(deque.size()).equal(3);
+    });
+    it('should throw on an empty list', () => {
+      const deque = ArrayDeque.create();
+      expect(() => deque.getFirst()).to.throw(UnderflowException);
+    });
+  });
+
+  describe('getLast', () => {
+    it('should return the last element on a non-empty list', () => {
+      const deque = ArrayDeque.create({ initial: [2, 4, 1] });
+      expect(deque.getLast()).equal(1);
+      expect(deque.size()).equal(3);
+    });
+    it('should throw on an empty list', () => {
+      const deque = ArrayDeque.create();
+      expect(() => deque.getLast()).to.throw(UnderflowException);
+    });
+  });
+
+  describe('removeFirstOccurence', () => {
+    it('should remove the first occurence only', () => {
+      const deque = ArrayDeque.create({ initial: [1, 3, 2, 3] });
+      expect(deque.removeFirstOccurence(3)).to.be.true;
+      expect(deque.toArray()).to.deep.equal([1, 2, 3]);
+    });
+    it('should not remove any element if not present', () => {
+      const deque = ArrayDeque.create({ initial: [1, 2, 3] });
+      expect(deque.removeFirstOccurence(4)).to.be.false;
+      expect(deque.toArray()).to.deep.equal([1, 2, 3]);
+    });
+  });
+
+  describe('removeLastOccurence', () => {
+    it('should remove the last occurence only', () => {
+      const deque = ArrayDeque.create({ initial: [1, 2, 3, 2] });
+      expect(deque.removeLastOccurence(2)).to.be.true;
+      expect(deque.toArray()).to.deep.equal([1, 2, 3]);
+    });
+    it('should not remove any element if not present', () => {
+      const deque = ArrayDeque.create({ initial: [1, 2, 3] });
+      expect(deque.removeLastOccurence(4)).to.be.false;
+      expect(deque.toArray()).to.deep.equal([1, 2, 3]);
+    });
+  });
 });

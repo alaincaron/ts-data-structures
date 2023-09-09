@@ -67,7 +67,10 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     return modified;
   }
 
-  abstract reverseIterator(): IterableIterator<E>;
+  reverseIterator(): IterableIterator<E> {
+    return this.reverseListIterator('tail');
+  }
+
   abstract listIterator(start?: number | 'head' | 'tail'): ListIterator<E>;
   abstract reverseListIterator(start?: number | 'head' | 'tail'): ListIterator<E>;
 
