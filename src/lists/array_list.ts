@@ -27,10 +27,6 @@ export class ArrayList<E> extends AbstractList<E> {
     return false;
   }
 
-  offer(item: E): boolean {
-    return this.offerLast(item);
-  }
-
   removeAt(idx: number): E {
     if (idx < 0 || idx >= this.size()) throw new IndexOutOfBoundsException();
     return this.elements.splice(idx, 1)[0];

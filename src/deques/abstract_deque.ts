@@ -40,8 +40,16 @@ export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque
     return this.removeLastMatchingItem(x => item === x) != null;
   }
 
-  abstract removeFirst(): E;
-  abstract removeLast(): E;
+  removeFirst() {
+    if (this.isEmpty()) throw new UnderflowException();
+    return this.pollFirst()!;
+  }
+
+  removeLast() {
+    if (this.isEmpty()) throw new UnderflowException();
+    return this.pollLast()!;
+  }
+
   remove(): E {
     return this.removeFirst();
   }
@@ -57,9 +65,8 @@ export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque
   }
 
   getLast(): E {
-    const e = this.peekLast();
-    if (!e) throw new UnderflowException();
-    return e;
+    if (this.isEmpty()) throw new UnderflowException();
+    return this.peekLast()!;
   }
 
   abstract peekFirst(): E | undefined;

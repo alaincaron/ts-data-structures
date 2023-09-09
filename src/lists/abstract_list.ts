@@ -10,11 +10,17 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
   abstract getAt(idx: number): E;
 
   getFirst() {
+    if (this.isEmpty()) throw new UnderflowException();
     return this.getAt(0);
   }
 
   getLast() {
+    if (this.isEmpty()) throw new UnderflowException();
     return this.getAt(this.size() - 1);
+  }
+
+  offer(item: E): boolean {
+    return this.offerLast(item);
   }
 
   abstract offerAt(idx: number, item: E): boolean;

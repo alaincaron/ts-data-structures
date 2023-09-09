@@ -1,7 +1,7 @@
 import { AbstractDeque } from './abstract_deque';
 import { QueueOptions } from '../queues';
 import { CollectionInitializer } from '../collections';
-import { UnderflowException, nextPowerOfTwo, Predicate, RandomAccess, IndexOutOfBoundsException } from '../utils';
+import { nextPowerOfTwo, Predicate, RandomAccess, IndexOutOfBoundsException } from '../utils';
 
 /*
  * The minimum capacity that we'll use for a newly created deque.
@@ -76,16 +76,6 @@ export class ArrayDeque<E> extends AbstractDeque<E> implements RandomAccess<E> {
       return true;
     }
     return false;
-  }
-
-  removeFirst(): E {
-    if (this.isEmpty()) throw new UnderflowException();
-    return this.pollFirst()!;
-  }
-
-  removeLast(): E {
-    if (this.isEmpty()) throw new UnderflowException();
-    return this.pollLast()!;
   }
 
   pollFirst(): E | undefined {

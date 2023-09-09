@@ -1,6 +1,6 @@
 import { AbstractList } from './abstract_list';
 import { ListIterator } from './list';
-import { DoubleLinkedList, IndexOutOfBoundsException } from '../utils';
+import { DoubleLinkedList, IndexOutOfBoundsException, UnderflowException } from '../utils';
 import { CollectionOptions, CollectionInitializer } from '../collections';
 
 interface ListEntry<E> {
@@ -45,6 +45,16 @@ export class LinkedList<E> extends AbstractList<E> {
     return e.value;
   }
 
+  getFirst() {
+    if (this.isEmpty()) throw new UnderflowException();
+    return (this.linkedList.header.after as unknown as ListEntry<E>).value;
+  }
+
+  getLast() {
+    if (this.isEmpty()) throw new UnderflowException();
+    return (this.linkedList.header.before as unknown as ListEntry<E>).value;
+  }
+
   offerAt(idx: number, item: E): boolean {
     if (this.isFull()) return false;
     if (idx < 0 || idx > this.size()) throw new IndexOutOfBoundsException();
@@ -71,7 +81,7 @@ export class LinkedList<E> extends AbstractList<E> {
     return e.value;
   }
 
-  offer(item: E): boolean {
+  offerLast(item: E): boolean {
     if (this.isFull()) return false;
     const e = { value: item } as unknown as DoubleLinkedList.Entry;
     this.linkedList.addLast(e);
