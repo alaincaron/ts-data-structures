@@ -94,14 +94,8 @@ export class LinkedList<E> extends AbstractList<E> {
     this.linkedList.clear();
   }
 
-  *iterator(): IterableIterator<E> {
+  *[Symbol.iterator]() {
     for (const e of this.linkedList.entries()) {
-      yield (e as unknown as ListEntry<E>).value;
-    }
-  }
-
-  *reverseIterator(): IterableIterator<E> {
-    for (const e of this.linkedList.entriesReversed()) {
       yield (e as unknown as ListEntry<E>).value;
     }
   }
@@ -178,10 +172,6 @@ export class LinkedList<E> extends AbstractList<E> {
         return value;
       },
     };
-  }
-
-  [Symbol.iterator](): Iterator<E> {
-    return this.iterator();
   }
 
   clone(): LinkedList<E> {

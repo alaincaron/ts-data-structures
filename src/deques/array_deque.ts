@@ -1,7 +1,8 @@
 import { AbstractDeque } from './abstract_deque';
 import { QueueOptions } from '../queues';
 import { CollectionInitializer } from '../collections';
-import { nextPowerOfTwo, Predicate, RandomAccess, IndexOutOfBoundsException } from '../utils';
+import { nextPowerOfTwo, RandomAccess, IndexOutOfBoundsException } from '../utils';
+import { Predicate } from 'ts-fluent-iterators';
 
 /*
  * The minimum capacity that we'll use for a newly created deque.
@@ -152,27 +153,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> implements RandomAccess<E> {
     return ArrayDeque.create({ initial: this });
   }
 
-  [Symbol.iterator](): Iterator<E> {
-    let cursor = this.head;
-    return {
-      next: () => {
-        if (cursor === this.tail) {
-          return {
-            done: true,
-            value: undefined,
-          };
-        }
-        const e = this.elements[cursor]!;
-        cursor = this.slot(cursor + 1);
-        return {
-          done: false,
-          value: e,
-        };
-      },
-    };
-  }
-
-  *iterator(): IterableIterator<E> {
+  *[Symbol.iterator](): Iterator<E> {
     let cursor = this.head;
     while (cursor !== this.tail) {
       yield this.elements[cursor]!;

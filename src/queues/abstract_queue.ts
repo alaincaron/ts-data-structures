@@ -1,4 +1,5 @@
-import { UnderflowException, OverflowException, IteratorLike, toIterator, take } from '../utils';
+import { UnderflowException, OverflowException } from '../utils';
+import { FluentIterator, IteratorLike, Iterators } from 'ts-fluent-iterators';
 import { AbstractCollection, CollectionOptions, CollectionLike, getSize } from '../collections';
 import { Queue, OverflowQueueStrategy } from './queue';
 
@@ -73,7 +74,7 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
   }
 
   addPartially<E1 extends E>(items: IteratorLike<E1> | CollectionLike<E1>): number {
-    return super.addPartially(take(this.remaining(), toIterator(items)));
+    return super.addPartially(Iterators.take(Iterators.toIterator(items), this.remaining()));
   }
 
   offerFully<E1 extends E>(items: CollectionLike<E1>): number {
@@ -87,13 +88,17 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
   }
 
   offerPartially<E1 extends E>(items: IteratorLike<E1> | CollectionLike<E1>): number {
-    return super.offerPartially(take(this.remaining(), toIterator(items)));
+    return super.offerPartially(Iterators.take(Iterators.toIterator(items), this.remaining()));
   }
 
-  *drain() {
+  private *drainIterator() {
     while (!this.isEmpty()) {
       yield this.remove();
     }
+  }
+
+  drain() {
+    return new FluentIterator(this.drainIterator());
   }
 
   buildOptions(): QueueOptions {

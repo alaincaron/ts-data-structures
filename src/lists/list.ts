@@ -1,5 +1,6 @@
 import { Collection } from '../collections';
-import { Comparator, RandomAccess, Predicate } from '../utils';
+import { RandomAccess } from '../utils';
+import { Comparator, FluentIterator, Predicate } from 'ts-fluent-iterators';
 
 export interface ListIterator<E> extends IterableIterator<E> {
   setValue(item: E): E;
@@ -30,7 +31,7 @@ export interface List<E> extends Collection<E>, RandomAccess<E> {
   removeFirstOccurence(item: E): boolean;
   removeLastOccurence(item: E): boolean;
 
-  reverseIterator(): IterableIterator<E>;
+  reverseIterator(): FluentIterator<E>;
   listIterator(start?: number): ListIterator<E>;
   reverseListIterator(start?: number): ListIterator<E>;
   replaceAll(f: (e: E) => E): void;

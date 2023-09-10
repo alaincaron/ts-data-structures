@@ -1,7 +1,8 @@
 import { AbstractMap } from './abstract_map';
 import { MapInitializer, MapOptions } from './types';
 import { MapEntry } from './map';
-import { nextPrime, hashAny, Predicate, LARGEST_PRIME, OverflowException } from '../utils';
+import { nextPrime, hashAny, HashFunction, LARGEST_PRIME, OverflowException } from '../utils';
+import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 
 export interface HashEntry<K, V> extends MapEntry<K, V> {
   next: HashEntry<K, V> | undefined;
@@ -16,7 +17,7 @@ export enum AccessType {
 }
 
 export interface HashMapOptions<K> extends MapOptions {
-  hash?: (k: K) => number;
+  hash?: HashFunction<K>;
   loadFactor?: number;
 }
 
@@ -26,7 +27,7 @@ const DEFAULT_LOAD_FACTOR = 0.75;
 export class HashMap<K, V> extends AbstractMap<K, V> {
   private _size: number;
   private slots: Array<HashEntry<K, V> | undefined>;
-  public readonly hash: (k: K) => number;
+  public readonly hash: HashFunction<K>;
   public readonly loadFactor: number;
 
   protected overflowHandler(_key: K, _value: V) {}
@@ -183,14 +184,18 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     this._size = 0;
   }
 
-  *entries(): IterableIterator<MapEntry<K, V>> {
+  protected *entryGenerator(): IterableIterator<MapEntry<K, V>> {
     for (let i = 0; i < this.slots.length; ++i) {
       let e = this.slots[i];
       while (e) {
-        yield e;
+        yield e as unknown as MapEntry<K, V>;
         e = e.next;
       }
     }
+  }
+
+  entryIterator() {
+    return new FluentIterator(this.entryGenerator());
   }
 
   clone(): HashMap<K, V> {

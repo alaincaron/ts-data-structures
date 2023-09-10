@@ -30,7 +30,7 @@ export abstract class ForwardingQueue<E> extends ForwardingCollection<E> impleme
     return this.delegate().element();
   }
 
-  drain(): IterableIterator<E> {
+  drain() {
     return this.delegate().drain();
   }
 

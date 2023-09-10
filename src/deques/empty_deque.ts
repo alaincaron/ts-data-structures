@@ -1,5 +1,5 @@
 import { EmptyQueue } from '../queues';
-import { Predicate } from '../utils';
+import { Predicate } from 'ts-fluent-iterators';
 import { Deque } from '../deques';
 
 export class EmptyDeque<E> extends EmptyQueue<E> implements Deque<E> {

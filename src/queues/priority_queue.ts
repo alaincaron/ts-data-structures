@@ -1,6 +1,7 @@
 import { AbstractQueue, QueueOptions } from './abstract_queue';
 import { CollectionInitializer, AbstractCollection } from '../collections';
-import { Comparator, Predicate, nextPowerOfTwo } from '../utils';
+import { nextPowerOfTwo } from '../utils';
+import { Comparator, Predicate } from 'ts-fluent-iterators';
 
 export interface PriorityQueueOptions<E> extends QueueOptions {
   comparator?: Comparator<E>;
@@ -169,10 +170,6 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
     let cursor = 0;
     while (cursor < this._size) yield this.buffer[cursor++];
     return this.iterator();
-  }
-
-  iterator(): IterableIterator<E> {
-    return this[Symbol.iterator]();
   }
 
   private heapify() {

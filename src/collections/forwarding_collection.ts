@@ -1,5 +1,5 @@
 import { Collection } from './collection';
-import { Predicate, Reducer } from '../utils';
+import { Predicate, Reducer } from 'ts-fluent-iterators';
 import { CollectionLike } from './types';
 
 export abstract class ForwardingCollection<E> implements Collection<E> {
@@ -104,7 +104,7 @@ export abstract class ForwardingCollection<E> implements Collection<E> {
     return this._delegate.reduce(reducer, initialValue);
   }
 
-  iterator(): IterableIterator<E> {
+  iterator() {
     return this._delegate.iterator();
   }
 

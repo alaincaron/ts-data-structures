@@ -1,5 +1,6 @@
 import { Collection } from './collection';
-import { OverflowException, Predicate, IteratorLike, Reducer, iterableToJSON, toIterator } from '../utils';
+import { Predicate, Reducer, IteratorLike, Iterators, FluentIterator, Mapper } from 'ts-fluent-iterators';
+import { OverflowException, iterableToJSON } from '../utils';
 import { CollectionOptions, CollectionInitializer, CollectionLike, getSize } from './types';
 
 export abstract class AbstractCollection<E> implements Collection<E> {
@@ -29,18 +30,11 @@ export abstract class AbstractCollection<E> implements Collection<E> {
   }
 
   contains(item: E): boolean {
-    for (const e of this) {
-      if (item === e) return true;
-    }
-    return false;
+    return this.iterator().includes(item);
   }
 
   toArray(): E[] {
-    const result = [];
-    for (const e of this) {
-      result.push(e);
-    }
-    return result;
+    return this.iterator().collect();
   }
 
   add(item: E) {
@@ -59,54 +53,27 @@ export abstract class AbstractCollection<E> implements Collection<E> {
   abstract filter(predicate: Predicate<E>): boolean;
 
   find(predicate: Predicate<E>): E | undefined {
-    for (const e of this) {
-      if (predicate(e)) return e;
-    }
-    return undefined;
+    return this.iterator().first(predicate);
   }
 
   all(predicate: Predicate<E>) {
-    for (const e of this) {
-      if (!predicate(e)) return false;
-    }
-    return true;
+    return this.iterator().all(predicate);
   }
 
   some(predicate: Predicate<E>) {
-    for (const e of this) {
-      if (predicate(e)) return true;
-    }
-    return false;
+    return this.iterator().some(predicate);
   }
 
-  forEach(f: (e: E) => void) {
-    for (const e of this) {
-      f(e);
-    }
+  forEach(f: Mapper<E, any>) {
+    this.iterator().forEach(f);
   }
 
   fold<B>(reducer: Reducer<E, B>, initialValue: B): B {
-    let acc = initialValue;
-    for (const e of this) {
-      acc = reducer(acc, e);
-    }
-    return acc;
+    return this.iterator().fold(reducer, initialValue);
   }
 
   reduce(reducer: Reducer<E, E>, initialValue?: E): E | undefined {
-    const iter = this[Symbol.iterator]();
-    let acc = initialValue;
-    if (acc === undefined) {
-      const item = iter.next();
-      if (item.done) return undefined;
-      acc = item.value;
-    }
-    for (;;) {
-      const item = iter.next();
-      if (item.done) break;
-      acc = reducer(acc, item.value);
-    }
-    return acc;
+    return this.iterator().reduce(reducer, initialValue);
   }
 
   addFully<E1 extends E>(items: CollectionLike<E1>): number {
@@ -117,7 +84,7 @@ export abstract class AbstractCollection<E> implements Collection<E> {
 
   addPartially<E1 extends E>(items: IteratorLike<E1> | CollectionLike<E1>): number {
     let count = 0;
-    const iter = toIterator(items);
+    const iter: Iterator<E1> = Iterators.toIterator(items);
     for (;;) {
       const item = iter.next();
       if (item.done) break;
@@ -135,7 +102,7 @@ export abstract class AbstractCollection<E> implements Collection<E> {
 
   offerPartially<E1 extends E>(items: IteratorLike<E1> | CollectionLike<E1>): number {
     let count = 0;
-    const iter = toIterator(items);
+    const iter: Iterator<E1> = Iterators.toIterator(items);
     for (;;) {
       const item = iter.next();
       if (item.done || !this.offer(item.value)) break;
@@ -147,7 +114,10 @@ export abstract class AbstractCollection<E> implements Collection<E> {
   abstract clear(): void;
 
   abstract [Symbol.iterator](): Iterator<E>;
-  abstract iterator(): IterableIterator<E>;
+
+  iterator() {
+    return new FluentIterator(this[Symbol.iterator]());
+  }
 
   abstract clone(): Collection<E>;
 

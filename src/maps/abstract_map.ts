@@ -1,4 +1,5 @@
-import { Predicate, mapToJSON } from '../utils';
+import { mapToJSON } from '../utils';
+import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry } from './map';
 import { MapOptions, MapInitializer } from './types';
 
@@ -60,7 +61,7 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
   abstract filterEntries(predicate: Predicate<[K, V]>): void;
 
   putAll<K1 extends K, V1 extends V>(map: IMap<K1, V1>) {
-    for (const { key, value } of map.entries()) {
+    for (const [key, value] of map.entries()) {
       this.put(key, value);
     }
   }
@@ -68,28 +69,33 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
   abstract clear(): void;
 
   *keys(): IterableIterator<K> {
-    for (const e of this.entries()) yield e.key;
+    for (const e of this.entryIterator()) yield e.key;
   }
 
   *values(): IterableIterator<V> {
-    for (const e of this.entries()) yield e.value;
+    for (const e of this.entryIterator()) yield e.value;
   }
 
-  abstract entries(): IterableIterator<MapEntry<K, V>>;
+  keyIterator() {
+    return this.entryIterator().map(e => e.key);
+  }
+
+  valueIterator() {
+    return this.entryIterator().map(e => e.value);
+  }
+
+  abstract entryIterator(): FluentIterator<MapEntry<K, V>>;
+
+  *entries(): IterableIterator<[K, V]> {
+    for (const entry of this.entryIterator()) {
+      yield [entry.key, entry.value];
+    }
+  }
 
   abstract clone(): IMap<K, V>;
 
   [Symbol.iterator](): Iterator<[K, V]> {
-    const iter = this.entries();
-    return {
-      next: () => {
-        const item = iter.next();
-        if (item.done) {
-          return { done: true, value: undefined };
-        }
-        return { done: false, value: [item.value.key, item.value.value] };
-      },
-    };
+    return this.entries();
   }
 
   buildOptions(): MapOptions {

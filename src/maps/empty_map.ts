@@ -1,4 +1,5 @@
-import { Predicate, OverflowException } from '../utils';
+import { OverflowException } from '../utils';
+import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { AbstractMap } from './abstract_map';
 
 export class EmptyMap<K, V> extends AbstractMap<K, V> {
@@ -40,5 +41,7 @@ export class EmptyMap<K, V> extends AbstractMap<K, V> {
 
   filterEntries(_: Predicate<[K, V]>) {}
 
-  *entries() {}
+  entryIterator() {
+    return FluentIterator.empty();
+  }
 }

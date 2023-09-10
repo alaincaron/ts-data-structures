@@ -1,3 +1,4 @@
+import { FluentIterator, Iterators } from 'ts-fluent-iterators';
 import { IndexOutOfBoundsException } from '../utils';
 import { AbstractList } from './abstract_list';
 import { ListIterator } from './list';
@@ -30,7 +31,9 @@ export class EmptyList<E> extends AbstractList<E> {
     throw new IndexOutOfBoundsException();
   }
 
-  *reverseIterator() {}
+  reverseIterator() {
+    return FluentIterator.empty();
+  }
 
   listIterator(_start?: number | 'head' | 'tail'): ListIterator<E> {
     return {
@@ -63,14 +66,12 @@ export class EmptyList<E> extends AbstractList<E> {
 
   clear() {}
 
-  *iterator() {}
+  iterator() {
+    return FluentIterator.empty();
+  }
 
   [Symbol.iterator](): Iterator<E> {
-    return {
-      next: () => {
-        return { done: true, value: undefined };
-      },
-    };
+    return Iterators.empty();
   }
 
   clone(): EmptyList<E> {

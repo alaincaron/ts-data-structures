@@ -32,7 +32,9 @@ export class EmptyQueue<E> extends EmptyCollection<E> implements Queue<E> {
     throw new Error(`Calling element on ${this.constructor.name}`);
   }
 
-  *drain() {}
+  drain() {
+    return this.iterator();
+  }
 
   clone(): EmptyQueue<E> {
     return this;

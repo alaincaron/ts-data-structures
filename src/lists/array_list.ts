@@ -1,7 +1,8 @@
 import { AbstractList } from './abstract_list';
 import { ListIterator } from './list';
 import { CollectionInitializer, CollectionOptions } from '../collections';
-import { UnderflowException, Predicate, IndexOutOfBoundsException, Comparator, shuffle } from '../utils';
+import { UnderflowException, IndexOutOfBoundsException, shuffle } from '../utils';
+import { Predicate, Comparator } from 'ts-fluent-iterators';
 
 export class ArrayList<E> extends AbstractList<E> {
   private elements: Array<E>;
@@ -82,15 +83,11 @@ export class ArrayList<E> extends AbstractList<E> {
     return ArrayList.create({ initial: this });
   }
 
-  *[Symbol.iterator](): IterableIterator<E> {
+  *[Symbol.iterator]() {
     let cursor = 0;
     while (cursor < this.size()) {
       yield this.elements[cursor++]!;
     }
-  }
-
-  iterator(): IterableIterator<E> {
-    return this[Symbol.iterator]();
   }
 
   filter(predicate: Predicate<E>): boolean {

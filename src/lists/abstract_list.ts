@@ -1,5 +1,6 @@
 import { List, ListIterator } from './list';
-import { Comparator, OverflowException, Predicate, RandomAccess, UnderflowException, shuffle } from '../utils';
+import { OverflowException, RandomAccess, UnderflowException, shuffle } from '../utils';
+import { Comparator, Predicate, FluentIterator } from 'ts-fluent-iterators';
 import { AbstractCollection, CollectionOptions } from '../collections';
 
 export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>, RandomAccess<E> {
@@ -73,8 +74,8 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     return modified;
   }
 
-  reverseIterator(): IterableIterator<E> {
-    return this.reverseListIterator('tail');
+  reverseIterator() {
+    return new FluentIterator(this.reverseListIterator('tail'));
   }
 
   abstract listIterator(start?: number | 'head' | 'tail'): ListIterator<E>;

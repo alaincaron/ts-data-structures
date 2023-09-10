@@ -1,5 +1,6 @@
 import { AbstractCollection } from './abstract_collection';
-import { OverflowException, Predicate } from '../utils';
+import { OverflowException } from '../utils';
+import { Predicate, FluentIterator, Iterators } from 'ts-fluent-iterators';
 
 export class EmptyCollection<E> extends AbstractCollection<E> {
   private static COL = new EmptyCollection();
@@ -38,13 +39,11 @@ export class EmptyCollection<E> extends AbstractCollection<E> {
     return this;
   }
 
-  *iterator() {}
+  iterator() {
+    return FluentIterator.empty<E>();
+  }
 
   [Symbol.iterator](): Iterator<E> {
-    return {
-      next: () => {
-        return { done: true, value: undefined };
-      },
-    };
+    return Iterators.empty();
   }
 }

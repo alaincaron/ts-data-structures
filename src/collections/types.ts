@@ -1,4 +1,4 @@
-import { ArrayGenerator } from '../utils';
+import { ArrayGenerator } from 'ts-fluent-iterators';
 import { Collection } from './collection';
 
 export interface CollectionOptions {

@@ -1,4 +1,4 @@
-import { Predicate } from '../utils';
+import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { MapOptions } from './types';
 
 export interface MapEntry<K, V> {
@@ -32,7 +32,11 @@ export interface IMap<K, V> extends Iterable<[K, V]> {
 
   keys(): IterableIterator<K>;
   values(): IterableIterator<V>;
-  entries(): IterableIterator<MapEntry<K, V>>;
+  entries(): IterableIterator<[K, V]>;
+
+  keyIterator(): FluentIterator<K>;
+  valueIterator(): FluentIterator<V>;
+  entryIterator(): FluentIterator<MapEntry<K, V>>;
 
   toJson(): string;
 

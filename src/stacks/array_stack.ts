@@ -1,4 +1,4 @@
-import { Predicate } from '../utils';
+import { Predicate } from 'ts-fluent-iterators';
 import { Deque, ArrayDeque } from '../deques';
 import { AbstractStack } from './abstract_stack';
 import { CollectionInitializer, CollectionOptions } from '../collections';
@@ -64,10 +64,6 @@ export class ArrayStack<E> extends AbstractStack<E> {
   }
 
   [Symbol.iterator](): Iterator<E> {
-    return this.buffer.reverseIterator();
-  }
-
-  iterator(): IterableIterator<E> {
     return this.buffer.reverseIterator();
   }
 }

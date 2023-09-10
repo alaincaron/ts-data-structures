@@ -1,4 +1,4 @@
-import { Predicate, Reducer } from '../utils';
+import { FluentIterator, Predicate, Reducer } from 'ts-fluent-iterators';
 import { CollectionLike, CollectionOptions } from './types';
 
 export interface Collection<E> extends Iterable<E> {
@@ -30,7 +30,7 @@ export interface Collection<E> extends Iterable<E> {
   fold<B>(reducer: Reducer<E, B>, initialValue: B): B;
   reduce(reducer: Reducer<E, E>, initialValue?: E): E | undefined;
 
-  iterator(): IterableIterator<E>;
+  iterator(): FluentIterator<E>;
 
   clone(): Collection<E>;
   buildOptions(): CollectionOptions;

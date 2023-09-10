@@ -105,7 +105,7 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
     this.linkedList.clear();
   }
 
-  *entries(): IterableIterator<MapEntry<K, V>> {
+  protected *entryGenerator() {
     for (const e of this.linkedList.entries()) yield e as unknown as MapEntry<K, V>;
   }
 
