@@ -1,4 +1,4 @@
-import { ArrayList, OverflowException, UnderflowException } from '../src';
+import { ArrayList, IndexOutOfBoundsException, OverflowException, UnderflowException } from '../src';
 import { expect } from 'chai';
 
 function* generator(): IterableIterator<number> {
@@ -156,6 +156,70 @@ describe('ArrayList', () => {
     });
   });
 
+  describe('getAt', () => {
+    it('should throw IndexOutOfBoundException', () => {
+      const list = ArrayList.create();
+      expect(() => list.getAt(-1)).to.throw(IndexOutOfBoundsException);
+      expect(() => list.getAt(0)).to.throw(IndexOutOfBoundsException);
+      expect(() => list.getAt(1)).to.throw(IndexOutOfBoundsException);
+      list.add(12);
+      expect(() => list.getAt(1)).to.throw(IndexOutOfBoundsException);
+    });
+
+    it('should return the value at the sepcified index', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      expect(list.getAt(0)).equal(1);
+      expect(list.getAt(1)).equal(2);
+      expect(list.getAt(2)).equal(3);
+    });
+  });
+
+  describe('addAt', () => {
+    it('should insert the beginning of a list', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      list.addAt(0, 4);
+      expect(list.toArray()).deep.equal([4, 1, 2, 3]);
+    });
+    it('should insert in the middle of a list', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      list.addAt(2, 4);
+      expect(list.toArray()).deep.equal([1, 2, 4, 3]);
+    });
+    it('should insert at the end of a list', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      list.addAt(3, 4);
+      expect(list.toArray()).deep.equal([1, 2, 3, 4]);
+    });
+    it('should throw if index is out of bounds', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      expect(() => list.addAt(-1, 0)).to.throw(IndexOutOfBoundsException);
+      expect(() => list.addAt(4, 0)).to.throw(IndexOutOfBoundsException);
+    });
+  });
+
+  describe('setAt', () => {
+    it('should set at the beginning of a list', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      expect(list.setAt(0, 4)).equal(1);
+      expect(list.toArray()).deep.equal([4, 2, 3]);
+    });
+    it('should set at in the middle of a list', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      expect(list.setAt(1, 4)).equal(2);
+      expect(list.toArray()).deep.equal([1, 4, 3]);
+    });
+    it('should set at the end of a list', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      expect(list.setAt(2, 4)).equal(3);
+      expect(list.toArray()).deep.equal([1, 2, 4]);
+    });
+    it('should throw if index is out of bounds', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      expect(() => list.setAt(-1, 0)).to.throw(IndexOutOfBoundsException);
+      expect(() => list.setAt(4, 0)).to.throw(IndexOutOfBoundsException);
+    });
+  });
+
   describe('offerFirst', () => {
     it('should add item on an empty list', () => {
       const list = ArrayList.create();
@@ -182,14 +246,6 @@ describe('ArrayList', () => {
       expect(list.size()).to.equal(0);
       expect(list.remaining()).to.equal(3);
       expect(list.toArray()).to.deep.equal([]);
-    });
-  });
-
-  describe('addAt', () => {
-    it('should insert in the middle of a list', () => {
-      const list = ArrayList.create({ initial: [1, 2, 3] });
-      list.addAt(2, 4);
-      expect(list.toArray()).deep.equal([1, 2, 4, 3]);
     });
   });
 
