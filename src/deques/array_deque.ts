@@ -15,7 +15,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> implements RandomAccess<E> {
   private head: number;
   private tail: number;
 
-  protected constructor(options?: number | QueueOptions) {
+  constructor(options?: number | QueueOptions) {
     super(options);
 
     this.head = this.tail = 0;

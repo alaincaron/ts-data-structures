@@ -2,7 +2,7 @@ import { Queue } from './queue';
 import { ForwardingCollection } from '../collections';
 
 export abstract class ForwardingQueue<E> extends ForwardingCollection<E> implements Queue<E> {
-  protected constructor(delegate: Queue<E>) {
+  constructor(delegate: Queue<E>) {
     super(delegate);
   }
 
@@ -32,10 +32,6 @@ export abstract class ForwardingQueue<E> extends ForwardingCollection<E> impleme
 
   drain() {
     return this.delegate().drain();
-  }
-
-  buildOptions() {
-    return this.delegate().buildOptions();
   }
 
   abstract clone(): ForwardingQueue<E>;

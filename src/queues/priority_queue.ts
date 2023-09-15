@@ -14,7 +14,7 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
   private _size: number;
   private readonly comparator: Comparator<E>;
 
-  protected constructor(options?: number | PriorityQueueOptions<E>) {
+  constructor(options?: number | PriorityQueueOptions<E>) {
     super(options);
 
     this._size = 0;

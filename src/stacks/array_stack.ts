@@ -6,7 +6,7 @@ import { CollectionInitializer, CollectionOptions } from '../collections';
 export class ArrayStack<E> extends AbstractStack<E> {
   private readonly buffer: Deque<E>;
 
-  protected constructor(options?: number | CollectionOptions) {
+  constructor(options?: number | CollectionOptions) {
     super(options);
     this.buffer = ArrayDeque.create(options);
   }

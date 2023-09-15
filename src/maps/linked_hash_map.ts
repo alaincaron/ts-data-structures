@@ -26,7 +26,7 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   private readonly overflowStrategy: OverflowStrategy;
   private readonly linkedList: DoubleLinkedList;
 
-  protected constructor(options?: number | LinkedHashMapOptions<K>) {
+  constructor(options?: number | LinkedHashMapOptions<K>) {
     super(options);
     this.ordering = (options as any)?.ordering ?? Ordering.INSERTION;
     this.overflowStrategy = (options as any)?.overflowStrategy ?? OverflowStrategy.THROW;

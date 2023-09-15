@@ -1,5 +1,5 @@
 import { FluentIterator, Predicate, Reducer } from 'ts-fluent-iterators';
-import { CollectionLike, CollectionOptions } from './types';
+import { CollectionLike } from './types';
 
 export interface Collection<E> extends Iterable<E> {
   size(): number;
@@ -33,6 +33,5 @@ export interface Collection<E> extends Iterable<E> {
   iterator(): FluentIterator<E>;
 
   clone(): Collection<E>;
-  buildOptions(): CollectionOptions;
   toJson(): string;
 }

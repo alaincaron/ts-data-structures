@@ -9,7 +9,7 @@ export interface QueueOptions extends CollectionOptions {
 
 export abstract class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
   private readonly _overflowStrategy: OverflowQueueStrategy;
-  protected constructor(options?: number | QueueOptions) {
+  constructor(options?: number | QueueOptions) {
     super(options);
     this._overflowStrategy = (options as QueueOptions)?.overflowStrategy ?? 'throw';
   }

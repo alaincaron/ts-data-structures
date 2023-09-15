@@ -6,7 +6,7 @@ import { CollectionOptions, CollectionInitializer, CollectionLike, getSize } fro
 export abstract class AbstractCollection<E> implements Collection<E> {
   private readonly _capacity: number;
 
-  protected constructor(options?: number | CollectionOptions) {
+  public constructor(options?: number | CollectionOptions) {
     const capacity = typeof options === 'number' ? options : options?.capacity;
     this._capacity = capacity ?? Infinity;
   }
@@ -142,12 +142,8 @@ export abstract class AbstractCollection<E> implements Collection<E> {
 
     let options: any = undefined;
 
-    if (initialElements) {
-      let initialCol = initialElements as Collection<E>;
-      let buildOptionsF = initialCol.buildOptions;
-      if (typeof buildOptionsF === 'function') {
-        options = { ...initialCol.buildOptions(), ...initializer };
-      }
+    if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
+      options = { ...(initialElements.buildOptions() as CollectionOptions), ...initializer };
     }
     if (!options) {
       options = { ...initializer };

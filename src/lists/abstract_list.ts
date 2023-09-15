@@ -4,7 +4,7 @@ import { Comparator, Predicate, FluentIterator } from 'ts-fluent-iterators';
 import { AbstractCollection, CollectionOptions } from '../collections';
 
 export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>, RandomAccess<E> {
-  protected constructor(options?: number | CollectionOptions) {
+  constructor(options?: number | CollectionOptions) {
     super(options);
   }
 

@@ -7,7 +7,7 @@ import { Predicate, Comparator } from 'ts-fluent-iterators';
 export class ArrayList<E> extends AbstractList<E> {
   private elements: Array<E>;
 
-  protected constructor(options?: number | CollectionOptions) {
+  constructor(options?: number | CollectionOptions) {
     super(options);
     this.elements = [];
   }

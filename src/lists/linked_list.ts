@@ -18,7 +18,7 @@ export class LinkedList<E> extends AbstractList<E> {
     );
   }
 
-  protected constructor(options?: number | CollectionOptions) {
+  constructor(options?: number | CollectionOptions) {
     super(options);
     this._size = 0;
     this.linkedList = new DoubleLinkedList();

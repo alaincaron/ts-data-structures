@@ -5,7 +5,7 @@ import { CollectionLike } from './types';
 export abstract class ForwardingCollection<E> implements Collection<E> {
   private readonly _delegate: Collection<E>;
 
-  protected constructor(delegate: Collection<E>) {
+  constructor(delegate: Collection<E>) {
     this._delegate = delegate;
   }
 
@@ -110,10 +110,6 @@ export abstract class ForwardingCollection<E> implements Collection<E> {
 
   [Symbol.iterator](): Iterator<E> {
     return this._delegate[Symbol.iterator]();
-  }
-
-  buildOptions() {
-    return this._delegate.buildOptions();
   }
 
   toJson() {

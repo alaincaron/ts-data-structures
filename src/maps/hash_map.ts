@@ -33,7 +33,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
   protected overflowHandler(_key: K, _value: V) {}
   protected recordAccess(_e: HashEntry<K, V>, _accessType: AccessType) {}
 
-  protected constructor(options?: number | HashMapOptions<K>) {
+  constructor(options?: number | HashMapOptions<K>) {
     super(options);
     this._size = 0;
     this.hash = hashAny as (k: K) => number;
