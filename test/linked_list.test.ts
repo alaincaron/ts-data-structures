@@ -9,7 +9,7 @@ function* generator(): IterableIterator<number> {
 describe('LinkedList', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       expect(list.capacity()).equal(Infinity);
       expect(list.size()).equal(0);
       expect(list.remaining()).equal(Infinity);
@@ -88,7 +88,7 @@ describe('LinkedList', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = LinkedList.create();
+      const a = new LinkedList();
       const b = a.clone();
       expect(b).to.deep.equal(a);
       b.add('foo');
@@ -158,7 +158,7 @@ describe('LinkedList', () => {
 
   describe('offerFirst', () => {
     it('should add item on an empty list', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       expect(list.offerFirst('foo')).equal(true);
       expect(list.size()).equal(1);
       expect(list.getFirst()).equal('foo');
@@ -187,7 +187,7 @@ describe('LinkedList', () => {
 
   describe('getAt', () => {
     it('should throw IndexOutOfBoundException', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       expect(() => list.getAt(-1)).to.throw(IndexOutOfBoundsException);
       expect(() => list.getAt(0)).to.throw(IndexOutOfBoundsException);
       expect(() => list.getAt(1)).to.throw(IndexOutOfBoundsException);
@@ -251,7 +251,7 @@ describe('LinkedList', () => {
 
   describe('contains', () => {
     it('should return false on empty list', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       expect(list.contains('foo')).to.be.false;
     });
     it('should return false if absent', () => {
@@ -266,7 +266,7 @@ describe('LinkedList', () => {
 
   describe('find', () => {
     it('should return undefined on empty list', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       expect(list.find(x => x === 'foo')).to.be.undefined;
     });
     it('should return undefined if no match', () => {
@@ -281,7 +281,7 @@ describe('LinkedList', () => {
 
   describe('removeItem', () => {
     it('should return false on empty list', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       expect(list.removeItem(1)).to.be.false;
       expect(list.isEmpty()).to.be.true;
       expect(list.size()).equal(0);
@@ -305,7 +305,7 @@ describe('LinkedList', () => {
 
   describe('filter', () => {
     it('should return false on empty list', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       expect(list.filter(i => i === 0)).to.be.false;
       expect(list.isEmpty()).to.be.true;
       expect(list.size()).equal(0);
@@ -330,7 +330,7 @@ describe('LinkedList', () => {
 
   describe('all', () => {
     it('should return true on empty', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       expect(list.all(_ => false)).to.be.true;
     });
     it('should return true if predicate is true for all elements', () => {
@@ -345,7 +345,7 @@ describe('LinkedList', () => {
 
   describe('some', () => {
     it('should return false on empty', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       expect(list.some(_ => true)).to.be.false;
     });
     it('should return true if predicate is true for at least one element', () => {
@@ -406,7 +406,7 @@ describe('LinkedList', () => {
       expect(x).to.deep.equal(x);
     });
     it('should do nothing if empty', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       list.forEach(_ => {
         throw new Error('Should not be invoked');
       });
@@ -503,7 +503,7 @@ describe('LinkedList', () => {
 
   describe('sort', () => {
     it('should sort empty array', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       list.sort();
       expect(list.size()).equal(0);
     });
@@ -525,7 +525,7 @@ describe('LinkedList', () => {
 
   describe('reverse', () => {
     it('should left unmodified list with less than 2 elements', () => {
-      const list = LinkedList.create();
+      const list = new LinkedList();
       list.reverse();
       expect(list.isEmpty()).to.be.true;
       list.add(1);
