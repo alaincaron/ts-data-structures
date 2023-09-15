@@ -35,6 +35,24 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     return this.getEntry(key)?.value;
   }
 
+  protected overflowHandler(_key: K, _value: V): boolean {
+    return false;
+  }
+
+  offer(key: K, value: V) {
+    if (this.isFull()) {
+      const entry = this.getEntry(key);
+      if (entry) {
+        const old_value = entry.value;
+        entry.value = value;
+        return { accepted: true, previous: old_value };
+      }
+      return { accepted: false };
+    }
+
+    return { accepted: true, previous: this.put(key, value) };
+  }
+
   abstract put(key: K, value: V): V | undefined;
 
   containsKey(key: K) {

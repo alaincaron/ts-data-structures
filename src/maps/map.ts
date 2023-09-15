@@ -16,6 +16,7 @@ export interface IMap<K, V> extends Iterable<[K, V]> {
   getEntry(key: K): MapEntry<K, V> | undefined;
   get(key: K): V | undefined;
 
+  offer(key: K, value: V): { accepted: boolean; previous?: V };
   put(key: K, value: V): V | undefined;
 
   containsKey(key: K): boolean;

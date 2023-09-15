@@ -13,6 +13,7 @@ export enum Ordering {
 export enum OverflowStrategy {
   REMOVE_LEAST_RECENT = 1,
   REMOVE_MOST_RECENT,
+  DISCARD,
   THROW,
 }
 
@@ -75,14 +76,16 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
     return this.linkedList.first() as unknown as MapEntry<K, V>;
   }
 
-  protected override overflowHandler(_key: K, _value: V) {
+  protected override overflowHandler(_key: K, _value: V): boolean {
     switch (this.overflowStrategy) {
       case OverflowStrategy.REMOVE_LEAST_RECENT:
         this.removeLeastRecent();
-        break;
+        return false;
       case OverflowStrategy.REMOVE_MOST_RECENT:
         this.removeMostRecent();
-        break;
+        return false;
+      case OverflowStrategy.DISCARD:
+        return true;
       default:
         throw new OverflowException();
     }

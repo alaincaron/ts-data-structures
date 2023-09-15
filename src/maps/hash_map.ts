@@ -30,7 +30,6 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
   public readonly hash: HashFunction<K>;
   public readonly loadFactor: number;
 
-  protected overflowHandler(_key: K, _value: V) {}
   protected recordAccess(_e: HashEntry<K, V>, _accessType: AccessType) {}
 
   constructor(options?: number | HashMapOptions<K>) {
@@ -90,7 +89,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     }
     if (!e) {
       if (this.isFull()) {
-        this.overflowHandler(key, value);
+        if (this.overflowHandler(key, value)) return undefined;
         if (this.isFull()) throw new OverflowException();
       }
 
