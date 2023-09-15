@@ -27,10 +27,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> implements RandomAccess<E> {
   }
 
   static create<E>(initializer?: number | (QueueOptions & CollectionInitializer<E>)): ArrayDeque<E> {
-    return AbstractDeque.buildCollection<E, ArrayDeque<E>, QueueOptions, CollectionInitializer<E>>(
-      options => new ArrayDeque(options),
-      initializer
-    );
+    return AbstractDeque.buildCollection<E, ArrayDeque<E>>(options => new ArrayDeque(options), initializer);
   }
 
   private nextArraySize(numElements: number) {

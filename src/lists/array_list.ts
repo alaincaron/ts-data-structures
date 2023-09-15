@@ -13,10 +13,7 @@ export class ArrayList<E> extends AbstractList<E> {
   }
 
   static create<E>(initializer?: number | (CollectionOptions & CollectionInitializer<E>)): ArrayList<E> {
-    return AbstractList.buildCollection<E, ArrayList<E>, CollectionOptions, CollectionInitializer<E>>(
-      options => new ArrayList(options),
-      initializer
-    );
+    return AbstractList.buildCollection<E, ArrayList<E>>(options => new ArrayList(options), initializer);
   }
 
   offerAt(idx: number, item: E): boolean {

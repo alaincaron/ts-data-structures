@@ -1,7 +1,7 @@
 import { mapToJSON } from '../utils';
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry } from './map';
-import { MapOptions, MapInitializer } from './types';
+import { MapOptions, MapInitializer, MapLike } from './types';
 
 export abstract class AbstractMap<K, V> implements IMap<K, V> {
   private readonly _capacity: number;
@@ -78,8 +78,8 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
 
   abstract filterEntries(predicate: Predicate<[K, V]>): void;
 
-  putAll<K1 extends K, V1 extends V>(map: IMap<K1, V1>) {
-    for (const [key, value] of map.entries()) {
+  putAll<K1 extends K, V1 extends V>(map: MapLike<K1, V1>) {
+    for (const [key, value] of map) {
       this.put(key, value);
     }
   }
@@ -126,33 +126,27 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     return mapToJSON(this);
   }
 
-  static buildMap<K, V, M extends IMap<K, V>, Options extends MapOptions, Initializer extends MapInitializer<K, V>>(
-    factory: (options?: number | Options) => M,
-    initializer?: number | (Options & Initializer)
-  ): M {
+  static buildMap<
+    K,
+    V,
+    M extends IMap<K, V>,
+    Options extends MapOptions = MapOptions,
+    Initializer extends MapInitializer<K, V> = MapInitializer<K, V>,
+  >(factory: (options?: number | Options) => M, initializer?: number | (Options & Initializer)): M {
     if (initializer == null || typeof initializer === 'number') return factory(initializer);
     const initialElements = initializer.initial;
 
     let options: any = undefined;
-    if (initialElements) {
-      let initialMap = initialElements as IMap<K, V>;
-      let buildOptionsF = initialMap.buildOptions;
-      if (typeof buildOptionsF === 'function') {
-        options = { ...initialMap.buildOptions(), ...initializer };
-      }
-    }
-    if (!options) {
+    if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
+      options = { ...(initialElements.buildOptions() as MapOptions), ...initializer };
+    } else {
       options = { ...initializer };
     }
-    delete options.initial;
 
+    delete options.initial;
     const result = factory(options);
 
-    if (initialElements) {
-      for (const [k, v] of initialElements) {
-        result.put(k, v);
-      }
-    }
+    if (initialElements) result.putAll(initialElements);
     return result;
   }
 }

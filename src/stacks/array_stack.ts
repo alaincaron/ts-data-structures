@@ -12,10 +12,7 @@ export class ArrayStack<E> extends AbstractStack<E> {
   }
 
   static create<E>(initializer?: number | (CollectionOptions & CollectionInitializer<E>)) {
-    return AbstractStack.buildCollection<E, ArrayStack<E>, CollectionOptions, CollectionInitializer<E>>(
-      options => new ArrayStack(options),
-      initializer
-    );
+    return AbstractStack.buildCollection<E, ArrayStack<E>>(options => new ArrayStack(options), initializer);
   }
 
   size() {

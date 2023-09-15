@@ -134,8 +134,8 @@ export abstract class AbstractCollection<E> implements Collection<E> {
   static buildCollection<
     E,
     C extends Collection<E>,
-    Options extends CollectionOptions,
-    Initializer extends CollectionInitializer<E>,
+    Options extends CollectionOptions = CollectionOptions,
+    Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
   >(factory: (options?: number | Options) => C, initializer?: number | (Options & Initializer)): C {
     if (initializer == null || typeof initializer === 'number') return factory(initializer);
     const initialElements = initializer.initial;

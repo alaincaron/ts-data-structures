@@ -30,7 +30,7 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
   }
 
   static create<E>(initializer?: number | (PriorityQueueOptions<E> & CollectionInitializer<E>)): PriorityQueue<E> {
-    return AbstractCollection.buildCollection<E, PriorityQueue<E>, PriorityQueueOptions<E>, CollectionInitializer<E>>(
+    return AbstractCollection.buildCollection<E, PriorityQueue<E>, PriorityQueueOptions<E>>(
       options => new PriorityQueue(options),
       initializer
     );

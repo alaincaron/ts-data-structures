@@ -35,7 +35,7 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   }
 
   static create<K, V>(initializer?: number | (LinkedHashMapOptions<K> & MapInitializer<K, V>)): LinkedHashMap<K, V> {
-    return AbstractMap.buildMap<K, V, LinkedHashMap<K, V>, LinkedHashMapOptions<K>, MapInitializer<K, V>>(
+    return AbstractMap.buildMap<K, V, LinkedHashMap<K, V>, LinkedHashMapOptions<K>>(
       options => new LinkedHashMap(options),
       initializer
     );

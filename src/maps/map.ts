@@ -1,5 +1,5 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { MapOptions } from './types';
+import { MapLike } from './types';
 
 export interface MapEntry<K, V> {
   readonly key: K;
@@ -27,7 +27,7 @@ export interface IMap<K, V> extends Iterable<[K, V]> {
   filterValues(predicate: Predicate<V>): void;
   filterEntries(predicate: Predicate<[K, V]>): void;
 
-  putAll<K1 extends K, V1 extends V>(map: IMap<K1, V1>): void;
+  putAll<K1 extends K, V1 extends V>(map: MapLike<K1, V1>): void;
 
   clear(): void;
 
@@ -42,6 +42,4 @@ export interface IMap<K, V> extends Iterable<[K, V]> {
   toJson(): string;
 
   clone(): IMap<K, V>;
-
-  buildOptions(): MapOptions;
 }

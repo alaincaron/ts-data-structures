@@ -12,10 +12,7 @@ export class LinkedList<E> extends AbstractList<E> {
   private _size: number;
 
   static create<E>(initializer?: number | (CollectionOptions & CollectionInitializer<E>)): LinkedList<E> {
-    return AbstractList.buildCollection<E, LinkedList<E>, CollectionOptions, CollectionInitializer<E>>(
-      options => new LinkedList(options),
-      initializer
-    );
+    return AbstractList.buildCollection<E, LinkedList<E>>(options => new LinkedList(options), initializer);
   }
 
   constructor(options?: number | CollectionOptions) {
