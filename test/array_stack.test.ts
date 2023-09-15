@@ -4,7 +4,7 @@ import { expect } from 'chai';
 describe('ArrayStack', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const stack = ArrayStack.create();
+      const stack = new ArrayStack();
       expect(stack.capacity()).equal(Infinity);
       expect(stack.size()).equal(0);
       expect(stack.remaining()).equal(Infinity);
@@ -13,7 +13,7 @@ describe('ArrayStack', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const stack = ArrayStack.create(2);
+      const stack = new ArrayStack(2);
       expect(stack.capacity()).equal(2);
       expect(stack.size()).equal(0);
       expect(stack.remaining()).equal(2);
@@ -22,7 +22,7 @@ describe('ArrayStack', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const stack = ArrayStack.create({ capacity: 2 });
+      const stack = new ArrayStack({ capacity: 2 });
       expect(stack.capacity()).equal(2);
       expect(stack.isEmpty()).to.be.true;
     });
@@ -84,7 +84,7 @@ describe('ArrayStack', () => {
 
   describe('LIFO', () => {
     it('respect LIFO semantics with add', () => {
-      const stack = ArrayStack.create({ capacity: 2 });
+      const stack = new ArrayStack({ capacity: 2 });
       stack.add('foo');
       stack.add('bar');
       expect(stack.size()).equal(2);
@@ -95,7 +95,7 @@ describe('ArrayStack', () => {
       expect(() => stack.pop()).to.throw(UnderflowException);
     });
     it('respect LIFO semantics witt push', () => {
-      const stack = ArrayStack.create(2);
+      const stack = new ArrayStack(2);
       stack.push('foo');
       stack.push('bar');
       expect(stack.size()).equal(2);
@@ -109,13 +109,13 @@ describe('ArrayStack', () => {
 
   describe('tryPush', () => {
     it('returns false on full queue', () => {
-      const stack = ArrayStack.create(1);
+      const stack = new ArrayStack(1);
       stack.push('a');
       expect(stack.tryPush('b')).to.be.false;
       expect(stack.peek()).equal('a');
     });
     it('returns true on non-full queue', () => {
-      const stack = ArrayStack.create(1);
+      const stack = new ArrayStack(1);
       expect(stack.tryPush('a')).to.be.true;
       expect(stack.peek()).equal('a');
     });
@@ -152,7 +152,7 @@ describe('ArrayStack', () => {
 
   describe('contains', () => {
     it('should return false on empty stack', () => {
-      const stack = ArrayStack.create();
+      const stack = new ArrayStack();
       expect(stack.contains('foo')).to.be.false;
     });
     it('should return false if absent', () => {
@@ -167,7 +167,7 @@ describe('ArrayStack', () => {
 
   describe('find', () => {
     it('should return undefined on empty stack', () => {
-      const stack = ArrayStack.create();
+      const stack = new ArrayStack();
       expect(stack.find(x => x === 'foo')).to.be.undefined;
     });
     it('should return undefined if no match', () => {
@@ -182,7 +182,7 @@ describe('ArrayStack', () => {
 
   describe('removeItem', () => {
     it('should return false on empty stack', () => {
-      const stack = ArrayStack.create();
+      const stack = new ArrayStack();
       expect(stack.removeItem(1)).to.be.false;
       expect(stack.isEmpty()).to.be.true;
       expect(stack.size()).equal(0);
@@ -206,7 +206,7 @@ describe('ArrayStack', () => {
 
   describe('filter', () => {
     it('should return false on empty stack', () => {
-      const stack = ArrayStack.create();
+      const stack = new ArrayStack();
       expect(stack.filter(i => i === 0)).to.be.false;
       expect(stack.isEmpty()).to.be.true;
       expect(stack.size()).equal(0);

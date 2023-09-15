@@ -9,7 +9,7 @@ function* generator(): IterableIterator<number> {
 describe('ArrayDeque', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       expect(deque.capacity()).equal(Infinity);
       expect(deque.size()).equal(0);
       expect(deque.remaining()).equal(Infinity);
@@ -18,7 +18,7 @@ describe('ArrayDeque', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const deque = ArrayDeque.create(2);
+      const deque = new ArrayDeque(2);
       expect(deque.capacity()).equal(2);
       expect(deque.size()).equal(0);
       expect(deque.remaining()).equal(2);
@@ -27,7 +27,7 @@ describe('ArrayDeque', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const deque = ArrayDeque.create({ capacity: 2 });
+      const deque = new ArrayDeque({ capacity: 2 });
       expect(deque.capacity()).equal(2);
       expect(deque.isEmpty()).to.be.true;
     });
@@ -127,7 +127,7 @@ describe('ArrayDeque', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = ArrayDeque.create();
+      const a = new ArrayDeque();
       const b = a.clone();
       expect(b).to.deep.equal(a);
       expect(b.overflowStrategy()).equal('throw');
@@ -137,7 +137,7 @@ describe('ArrayDeque', () => {
     });
 
     it('should create a deep equal copy with overwrite strategy', () => {
-      const a = ArrayDeque.create({ overflowStrategy: 'overwrite' });
+      const a = new ArrayDeque({ overflowStrategy: 'overwrite' });
       const b = a.clone();
       expect(b).to.deep.equal(a);
       expect(b.overflowStrategy()).equal('overwrite');
@@ -149,7 +149,7 @@ describe('ArrayDeque', () => {
 
   describe('FIFO', () => {
     it('should behave as a FIFO with standard methods', () => {
-      const deque = ArrayDeque.create({ capacity: 2 });
+      const deque = new ArrayDeque({ capacity: 2 });
       deque.add('foo');
       deque.add('bar');
       expect(deque.size()).equal(2);
@@ -161,7 +161,7 @@ describe('ArrayDeque', () => {
       expect(() => deque.remove()).to.throw(UnderflowException);
     });
     it('should behave as a FIFO with addFirst/removeLast', () => {
-      const deque = ArrayDeque.create({ capacity: 2 });
+      const deque = new ArrayDeque({ capacity: 2 });
       deque.addFirst('foo');
       deque.addFirst('bar');
       expect(deque.size()).equal(2);
@@ -173,7 +173,7 @@ describe('ArrayDeque', () => {
       expect(() => deque.removeLast()).to.throw(UnderflowException);
     });
     it('should behave as a FIFO with addLast/removeFirst', () => {
-      const deque = ArrayDeque.create({ capacity: 2 });
+      const deque = new ArrayDeque({ capacity: 2 });
       deque.addLast('foo');
       deque.addLast('bar');
       expect(deque.size()).equal(2);
@@ -186,7 +186,7 @@ describe('ArrayDeque', () => {
     });
 
     it('should overwrite if overflow', () => {
-      const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      const deque = new ArrayDeque({ capacity: 2, overflowStrategy: 'overwrite' });
       expect(deque.overflowStrategy()).equal('overwrite');
       deque.add('foo');
       deque.add('bar');
@@ -203,7 +203,7 @@ describe('ArrayDeque', () => {
 
   describe('LIFO', () => {
     it('can be used as a Stack with addLast/removeLast', () => {
-      const deque = ArrayDeque.create({ capacity: 2 });
+      const deque = new ArrayDeque({ capacity: 2 });
       deque.addLast('foo');
       deque.addLast('bar');
       expect(deque.size()).equal(2);
@@ -214,7 +214,7 @@ describe('ArrayDeque', () => {
       expect(() => deque.removeLast()).to.throw(UnderflowException);
     });
     it('can be used as a Stack with addFirst/removeFirst', () => {
-      const deque = ArrayDeque.create({ capacity: 2 });
+      const deque = new ArrayDeque({ capacity: 2 });
       deque.addFirst('foo');
       deque.addFirst('bar');
       expect(deque.size()).equal(2);
@@ -226,7 +226,7 @@ describe('ArrayDeque', () => {
     });
 
     it('should overwrite first if overflow', () => {
-      const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      const deque = new ArrayDeque({ capacity: 2, overflowStrategy: 'overwrite' });
       expect(deque.overflowStrategy()).equal('overwrite');
       deque.add('foo');
       deque.add('bar');
@@ -243,14 +243,14 @@ describe('ArrayDeque', () => {
 
   describe('offerFirst', () => {
     it('should add item on an empty list', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       expect(deque.offerFirst('foo')).equal(true);
       expect(deque.size()).equal(1);
       expect(deque.peekFirst()).equal('foo');
       expect(deque.peekLast()).equal('foo');
     });
     it('should return false if capacity is reached', () => {
-      const deque = ArrayDeque.create(1);
+      const deque = new ArrayDeque(1);
       expect(deque.offerFirst('foo')).equal(true);
       expect(deque.isFull()).equal(true);
       expect(deque.offerFirst('bar')).equal(false);
@@ -272,7 +272,7 @@ describe('ArrayDeque', () => {
 
   describe('contains', () => {
     it('should return false on empty deque', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       expect(deque.contains('foo')).to.be.false;
     });
     it('should return false if absent', () => {
@@ -287,7 +287,7 @@ describe('ArrayDeque', () => {
 
   describe('find', () => {
     it('should return undefined on empty deque', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       expect(deque.find(x => x === 'foo')).to.be.undefined;
     });
     it('should return undefined if no match', () => {
@@ -302,7 +302,7 @@ describe('ArrayDeque', () => {
 
   describe('removeItem', () => {
     it('should return false on empty deque', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       expect(deque.removeItem(1)).to.be.false;
       expect(deque.isEmpty()).to.be.true;
       expect(deque.size()).equal(0);
@@ -326,7 +326,7 @@ describe('ArrayDeque', () => {
 
   describe('filter', () => {
     it('should return false on empty deque', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       expect(deque.filter(i => i === 0)).to.be.false;
       expect(deque.isEmpty()).to.be.true;
       expect(deque.size()).equal(0);
@@ -351,7 +351,7 @@ describe('ArrayDeque', () => {
 
   describe('grow deque as necessary', () => {
     it('with add/remove', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       for (let i = 0; i < 8; ++i) deque.add(i);
       for (let i = 0; i < 4; ++i) {
         expect(deque.remove()).equal(i);
@@ -363,7 +363,7 @@ describe('ArrayDeque', () => {
       expect(deque.isEmpty()).to.be.true;
     });
     it('with addLast/removeFirst', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       for (let i = 0; i < 8; ++i) deque.addLast(i);
       for (let i = 0; i < 4; ++i) {
         expect(deque.removeFirst()).equal(i);
@@ -376,7 +376,7 @@ describe('ArrayDeque', () => {
     });
 
     it('with addFirst/removeLast', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       for (let i = 0; i < 8; ++i) deque.addFirst(i);
       for (let i = 0; i < 4; ++i) {
         expect(deque.removeLast()).equal(i);
@@ -391,7 +391,7 @@ describe('ArrayDeque', () => {
 
   describe('all', () => {
     it('should return true on empty', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       expect(deque.all(_ => false)).to.be.true;
     });
     it('should return true if predicate is true for all elements', () => {
@@ -406,7 +406,7 @@ describe('ArrayDeque', () => {
 
   describe('some', () => {
     it('should return false on empty', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       expect(deque.some(_ => true)).to.be.false;
     });
     it('should return true if predicate is true for at least one element', () => {
@@ -421,7 +421,7 @@ describe('ArrayDeque', () => {
 
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
-      const deque = ArrayDeque.create(2);
+      const deque = new ArrayDeque(2);
       const data = [1, 2, 3];
       expect(deque.offerFully(data)).equal(0);
       expect(deque.isEmpty()).to.be.true;
@@ -429,7 +429,7 @@ describe('ArrayDeque', () => {
       expect(deque.isEmpty()).to.be.true;
     });
     it('should accept all items if enough capacity remaining', () => {
-      const deque = ArrayDeque.create(6);
+      const deque = new ArrayDeque(6);
       const data = [1, 2, 3];
       expect(deque.offerFully(data)).equal(3);
       expect(deque.size()).equal(3);
@@ -437,7 +437,7 @@ describe('ArrayDeque', () => {
       expect(deque.size()).equal(6);
     });
     it("should refuse the items even if overflowStrategy is overwrite if we can't free enough room", () => {
-      const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      const deque = new ArrayDeque({ capacity: 2, overflowStrategy: 'overwrite' });
       const data = [1, 2, 3];
       expect(deque.offerFully(data)).equal(0);
       expect(deque.size()).equal(0);
@@ -464,7 +464,7 @@ describe('ArrayDeque', () => {
       expect(deque.toArray()).to.deep.equal([1, 2]);
     });
     it('should accept all items if enough capacity remaining', () => {
-      const deque = ArrayDeque.create(6);
+      const deque = new ArrayDeque(6);
       const data = [1, 2, 3];
       expect(deque.offerPartially(data)).equal(3);
       expect(deque.size()).equal(3);
@@ -472,13 +472,13 @@ describe('ArrayDeque', () => {
       expect(deque.size()).equal(6);
     });
     it('should accept only elements as up to the capacity and overwrite', () => {
-      const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
+      const deque = new ArrayDeque({ capacity: 2, overflowStrategy: 'overwrite' });
       const data = [1, 2, 3];
       expect(deque.offerPartially(data)).equal(2);
       expect(deque.toArray()).to.deep.equal([1, 2]);
     });
     it('should accept all items', () => {
-      const deque = ArrayDeque.create({ capacity: 6, overflowStrategy: 'overwrite' });
+      const deque = new ArrayDeque({ capacity: 6, overflowStrategy: 'overwrite' });
       const data = [1, 2, 3];
       expect(deque.offerPartially(data)).equal(3);
       expect(deque.size()).equal(3);
@@ -496,7 +496,7 @@ describe('ArrayDeque', () => {
       expect(x).to.deep.equal(x);
     });
     it('should do nothing if empty', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       deque.forEach(_ => {
         throw new Error('Should not be invoked');
       });
@@ -511,7 +511,7 @@ describe('ArrayDeque', () => {
       expect(sum).equal(7);
     });
     it('should return initial value if empty', () => {
-      const deque = ArrayDeque.create<number>();
+      const deque = new ArrayDeque<number>();
       const sum = deque.fold((a, b) => a + b, 1);
       expect(sum).equal(1);
     });
@@ -525,7 +525,7 @@ describe('ArrayDeque', () => {
       expect(sum).equal(7);
     });
     it('should return initial value if empty', () => {
-      const deque = ArrayDeque.create<number>();
+      const deque = new ArrayDeque<number>();
       const sum = deque.fold((a, b) => a + b, 1);
       expect(sum).equal(1);
     });
@@ -536,7 +536,7 @@ describe('ArrayDeque', () => {
       expect(sum).equal(6);
     });
     it('should return undefined if empty and no initial value', () => {
-      const deque = ArrayDeque.create<number>();
+      const deque = new ArrayDeque<number>();
       const sum = deque.reduce((a, b: number) => a + b);
       expect(sum).to.be.undefined;
     });
@@ -549,7 +549,7 @@ describe('ArrayDeque', () => {
       expect(deque.size()).equal(3);
     });
     it('should throw on an empty list', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       expect(() => deque.getFirst()).to.throw(UnderflowException);
     });
   });
@@ -561,7 +561,7 @@ describe('ArrayDeque', () => {
       expect(deque.size()).equal(3);
     });
     it('should throw on an empty list', () => {
-      const deque = ArrayDeque.create();
+      const deque = new ArrayDeque();
       expect(() => deque.getLast()).to.throw(UnderflowException);
     });
   });

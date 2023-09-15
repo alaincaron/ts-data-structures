@@ -4,7 +4,7 @@ import { expect } from 'chai';
 describe('HashMap', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       expect(map.capacity()).equal(Infinity);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(Infinity);
@@ -13,7 +13,7 @@ describe('HashMap', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const map = HashMap.create(2);
+      const map = new HashMap(2);
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
@@ -22,7 +22,7 @@ describe('HashMap', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const map = HashMap.create({ capacity: 2 });
+      const map = new HashMap({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
     });
@@ -35,7 +35,7 @@ describe('HashMap', () => {
     });
 
     it('should initialize with the provided IMap', () => {
-      const map1 = HashMap.create();
+      const map1 = new HashMap();
       map1.put('a', 1);
       map1.put('b', 2);
       const map = HashMap.create({ initial: map1 });
@@ -59,13 +59,13 @@ describe('HashMap', () => {
 
   describe('put/get', () => {
     it('should return undefined if key is newly added', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
     });
     it('should return the old value if key already present', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.put('foo', 2)).equal(4);
       expect(map.size()).equal(1);
@@ -73,7 +73,7 @@ describe('HashMap', () => {
     });
 
     it('should throw if adding a new element and map is full', () => {
-      const map = HashMap.create(1);
+      const map = new HashMap(1);
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(() => map.put('bar', 1)).to.throw(OverflowException);
@@ -84,7 +84,7 @@ describe('HashMap', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = HashMap.create();
+      const a = new HashMap();
       a.put('foo', 1);
       const b = a.clone();
       expect(b).to.deep.equal(a);
@@ -96,7 +96,7 @@ describe('HashMap', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const map = HashMap.create({ capacity: 3 });
+      const map = new HashMap({ capacity: 3 });
       map.put('a', 1);
       map.put('b', 2);
       expect(map.size()).to.equal(2);
@@ -109,16 +109,16 @@ describe('HashMap', () => {
 
   describe('containsKey', () => {
     it('should return false on empty map', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       expect(map.containsKey('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       map.put('foo', 1);
       expect(map.containsKey('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       map.put('foo', 1);
       expect(map.containsKey('foo')).to.be.true;
     });
@@ -126,16 +126,16 @@ describe('HashMap', () => {
 
   describe('containsValue', () => {
     it('should return false on empty map', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       expect(map.containsValue('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       map.put('foo', 1);
       expect(map.containsValue('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       map.put('foo', 1);
       expect(map.containsValue(1)).to.be.true;
     });
@@ -143,13 +143,13 @@ describe('HashMap', () => {
 
   describe('remove', () => {
     it('should return undefined on empty map', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       expect(map.remove('foo')).to.be.undefined;
       expect(map.isEmpty()).to.be.true;
       expect(map.size()).equal(0);
     });
     it('should return false if item is missing', () => {
-      const map = HashMap.create();
+      const map = new HashMap();
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.remove('bar')).to.be.undefined;
       expect(map.isEmpty()).to.be.false;
@@ -160,7 +160,7 @@ describe('HashMap', () => {
 
   describe('filterKeys', () => {
     it('should remove keys not matching predicate', () => {
-      const map = HashMap.create<string, number>();
+      const map = new HashMap<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
@@ -173,7 +173,7 @@ describe('HashMap', () => {
   });
   describe('filterValues', () => {
     it('should remove values not matching predicate', () => {
-      const map = HashMap.create<string, number>();
+      const map = new HashMap<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);

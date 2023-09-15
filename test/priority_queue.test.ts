@@ -21,7 +21,7 @@ function isHeap<E>(items: E[]): boolean {
 describe('PriorityQueue', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const queue = PriorityQueue.create();
+      const queue = new PriorityQueue();
       expect(queue.capacity()).equal(Infinity);
       expect(queue.size()).equal(0);
       expect(queue.remaining()).equal(Infinity);
@@ -30,7 +30,7 @@ describe('PriorityQueue', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const queue = PriorityQueue.create(2);
+      const queue = new PriorityQueue(2);
       expect(queue.capacity()).equal(2);
       expect(queue.size()).equal(0);
       expect(queue.remaining()).equal(2);
@@ -39,7 +39,7 @@ describe('PriorityQueue', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const queue = PriorityQueue.create({ capacity: 2 });
+      const queue = new PriorityQueue({ capacity: 2 });
       expect(queue.capacity()).equal(2);
       expect(queue.isEmpty()).to.be.true;
     });
@@ -100,7 +100,7 @@ describe('PriorityQueue', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = PriorityQueue.create();
+      const a = new PriorityQueue();
       const b = a.clone();
       expect(b).to.deep.equal(a);
       b.add('foo');
@@ -111,7 +111,7 @@ describe('PriorityQueue', () => {
 
   describe('ordering', () => {
     it('should remove object according to sort order', () => {
-      const queue = PriorityQueue.create({ capacity: 2 });
+      const queue = new PriorityQueue({ capacity: 2 });
       queue.add('foo');
       queue.add('bar');
       expect(queue.size()).equal(2);
@@ -138,7 +138,7 @@ describe('PriorityQueue', () => {
 
   describe('contains', () => {
     it('should return false on empty queue', () => {
-      const queue = PriorityQueue.create();
+      const queue = new PriorityQueue();
       expect(queue.contains('foo')).to.be.false;
     });
     it('should return false if absent', () => {
@@ -153,7 +153,7 @@ describe('PriorityQueue', () => {
 
   describe('find', () => {
     it('should return undefined on empty queue', () => {
-      const queue = PriorityQueue.create();
+      const queue = new PriorityQueue();
       expect(queue.find(x => x === 'foo')).to.be.undefined;
     });
     it('should return undefined if no match', () => {
@@ -168,7 +168,7 @@ describe('PriorityQueue', () => {
 
   describe('removeItem', () => {
     it('should return false on empty queue', () => {
-      const queue = PriorityQueue.create();
+      const queue = new PriorityQueue();
       expect(queue.removeItem(1)).to.be.false;
       expect(queue.isEmpty()).to.be.true;
       expect(queue.size()).equal(0);
@@ -194,7 +194,7 @@ describe('PriorityQueue', () => {
 
   describe('filter', () => {
     it('should return false on empty queue', () => {
-      const queue = PriorityQueue.create();
+      const queue = new PriorityQueue();
       expect(queue.filter(i => i === 0)).to.be.false;
       expect(queue.isEmpty()).to.be.true;
       expect(queue.size()).equal(0);
@@ -221,7 +221,7 @@ describe('PriorityQueue', () => {
 
   describe('all', () => {
     it('should return true on empty', () => {
-      const queue = PriorityQueue.create();
+      const queue = new PriorityQueue();
       expect(queue.all(_ => false)).to.be.true;
     });
     it('should return true if predicate is true for all elements', () => {
@@ -236,7 +236,7 @@ describe('PriorityQueue', () => {
 
   describe('some', () => {
     it('should return false on empty', () => {
-      const queue = PriorityQueue.create();
+      const queue = new PriorityQueue();
       expect(queue.some(_ => true)).to.be.false;
     });
     it('should return true if predicate is true for at least one element', () => {
@@ -251,7 +251,7 @@ describe('PriorityQueue', () => {
 
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
-      const queue = PriorityQueue.create(2);
+      const queue = new PriorityQueue(2);
       const data = [1, 2, 3];
       expect(queue.offerFully(data)).equal(0);
       expect(queue.isEmpty()).to.be.true;
@@ -259,7 +259,7 @@ describe('PriorityQueue', () => {
       expect(queue.isEmpty()).to.be.true;
     });
     it('should accept all items if enough capacity remaining', () => {
-      const queue = PriorityQueue.create(6);
+      const queue = new PriorityQueue(6);
       const data = [1, 2, 3];
       expect(queue.offerFully(data)).equal(3);
       expect(queue.size()).equal(3);
@@ -270,7 +270,7 @@ describe('PriorityQueue', () => {
 
   describe('offerPartially', () => {
     it('should accept elements up to the remaining capacity', () => {
-      const queue = PriorityQueue.create(2);
+      const queue = new PriorityQueue(2);
       const data = [1, 2, 3];
       expect(queue.offerPartially(data)).equal(2);
       expect(queue.toArray()).to.deep.equal([1, 2]);
@@ -279,7 +279,7 @@ describe('PriorityQueue', () => {
       expect(queue.toArray()).to.deep.equal([1, 2]);
     });
     it('should accept all items if enough capacity remaining', () => {
-      const queue = PriorityQueue.create(6);
+      const queue = new PriorityQueue(6);
       const data = [1, 2, 3];
       expect(queue.offerPartially(data)).equal(3);
       expect(queue.size()).equal(3);
