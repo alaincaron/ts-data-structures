@@ -1,21 +1,14 @@
-import { mapToJSON } from '../utils';
+import { OptionsBuilder, mapToJSON, ContainerOptions, CapacityMixin } from '../utils';
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry } from './map';
-import { MapOptions, MapInitializer, MapLike } from './types';
+import { MapInitializer, MapLike } from './types';
 
-export abstract class AbstractMap<K, V> implements IMap<K, V> {
-  private readonly _capacity: number;
-
-  constructor(options?: number | MapOptions) {
-    const capacity = typeof options === 'number' ? options : options?.capacity;
-    this._capacity = capacity ?? Infinity;
-  }
+export abstract class AbstractMap<K, V> implements IMap<K, V>, OptionsBuilder {
+  constructor(_options?: number | ContainerOptions) {}
 
   abstract size(): number;
 
-  capacity() {
-    return this._capacity;
-  }
+  abstract capacity(): number;
 
   isEmpty() {
     return this.size() === 0;
@@ -116,10 +109,8 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     return this.entries();
   }
 
-  buildOptions(): MapOptions {
-    return {
-      capacity: this._capacity,
-    };
+  buildOptions(): ContainerOptions {
+    return {};
   }
 
   toJson() {
@@ -130,7 +121,7 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     K,
     V,
     M extends IMap<K, V>,
-    Options extends MapOptions = MapOptions,
+    Options extends ContainerOptions = ContainerOptions,
     Initializer extends MapInitializer<K, V> = MapInitializer<K, V>,
   >(factory: (options?: number | Options) => M, initializer?: number | (Options & Initializer)): M {
     if (initializer == null || typeof initializer === 'number') return factory(initializer);
@@ -138,7 +129,7 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
 
     let options: any = undefined;
     if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-      options = { ...(initialElements.buildOptions() as MapOptions), ...initializer };
+      options = { ...(initialElements.buildOptions() as ContainerOptions), ...initializer };
     } else {
       options = { ...initializer };
     }
@@ -150,3 +141,5 @@ export abstract class AbstractMap<K, V> implements IMap<K, V> {
     return result;
   }
 }
+
+export const BoundedMap = CapacityMixin(AbstractMap);

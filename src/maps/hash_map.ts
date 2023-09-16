@@ -1,7 +1,7 @@
-import { AbstractMap } from './abstract_map';
-import { MapInitializer, MapOptions } from './types';
+import { BoundedMap } from './abstract_map';
+import { MapInitializer } from './types';
 import { MapEntry } from './map';
-import { nextPrime, hashAny, HashFunction, LARGEST_PRIME, OverflowException } from '../utils';
+import { ContainerOptions, nextPrime, hashAny, HashFunction, LARGEST_PRIME, OverflowException } from '../utils';
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 
 export interface HashEntry<K, V> extends MapEntry<K, V> {
@@ -16,7 +16,7 @@ export enum AccessType {
   REMOVE,
 }
 
-export interface HashMapOptions<K> extends MapOptions {
+export interface HashMapOptions<K> extends ContainerOptions {
   hash?: HashFunction<K>;
   loadFactor?: number;
 }
@@ -24,7 +24,7 @@ export interface HashMapOptions<K> extends MapOptions {
 const MIN_INITIAL_CAPACITY = nextPrime(5);
 const DEFAULT_LOAD_FACTOR = 0.75;
 
-export class HashMap<K, V> extends AbstractMap<K, V> {
+export class HashMap<K, V> extends BoundedMap<K, V> {
   private _size: number;
   private slots: Array<HashEntry<K, V> | undefined>;
   public readonly hash: HashFunction<K>;
@@ -53,7 +53,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
   }
 
   static create<K, V>(initializer?: number | HashMapOptions<K> | MapInitializer<K, V>): HashMap<K, V> {
-    return AbstractMap.buildMap<K, V, HashMap<K, V>, HashMapOptions<K>>(options => new HashMap(options), initializer);
+    return HashMap.buildMap<K, V, HashMap<K, V>, HashMapOptions<K>>(options => new HashMap(options), initializer);
   }
 
   size(): number {

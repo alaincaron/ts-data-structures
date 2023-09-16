@@ -9,11 +9,11 @@ export class EmptyMap<K, V> extends AbstractMap<K, V> {
     return EmptyMap.MAP as EmptyMap<K, V>;
   }
 
-  constructor() {
-    super({ capacity: 0 });
+  size() {
+    return 0;
   }
 
-  size() {
+  capacity() {
     return 0;
   }
 

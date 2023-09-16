@@ -1,11 +1,10 @@
 import { Collection } from './collection';
 import { Predicate, Reducer, IteratorLike, Iterators, FluentIterator, Mapper } from 'ts-fluent-iterators';
-import { OverflowException, iterableToJSON } from '../utils';
-import { OptionsBuilder, CollectionOptions, CollectionInitializer, CollectionLike, getSize } from './types';
-import { CapacityMixin } from './capacity_mixin';
+import { OverflowException, iterableToJSON, OptionsBuilder, ContainerOptions, CapacityMixin } from '../utils';
+import { CollectionInitializer, CollectionLike, getSize } from './types';
 
 export abstract class AbstractCollection<E> implements Collection<E>, OptionsBuilder {
-  public constructor(_options?: number | CollectionOptions) {}
+  public constructor(_options?: number | ContainerOptions) {}
 
   abstract size(): number;
   abstract capacity(): number;
@@ -114,7 +113,7 @@ export abstract class AbstractCollection<E> implements Collection<E>, OptionsBui
 
   abstract clone(): AbstractCollection<E>;
 
-  buildOptions(): CollectionOptions {
+  buildOptions(): ContainerOptions {
     return {};
   }
 
@@ -125,7 +124,7 @@ export abstract class AbstractCollection<E> implements Collection<E>, OptionsBui
   static buildCollection<
     E,
     C extends Collection<E>,
-    Options extends CollectionOptions = CollectionOptions,
+    Options extends ContainerOptions = ContainerOptions,
     Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
   >(factory: (options?: number | Options) => C, initializer?: number | (Options & Initializer)): C {
     if (initializer == null || typeof initializer === 'number') return factory(initializer);
@@ -134,7 +133,7 @@ export abstract class AbstractCollection<E> implements Collection<E>, OptionsBui
     let options: any = undefined;
 
     if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-      options = { ...(initialElements.buildOptions() as CollectionOptions), ...initializer };
+      options = { ...(initialElements.buildOptions() as ContainerOptions), ...initializer };
     }
     if (!options) {
       options = { ...initializer };

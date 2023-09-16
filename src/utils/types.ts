@@ -6,3 +6,14 @@ export interface RandomAccess<E> {
   getAt(idx: number): E;
   setAt(idx: number, value: E): E;
 }
+
+export interface ContainerOptions {
+  capacity?: number;
+}
+
+export interface OptionsBuilder {
+  buildOptions(): ContainerOptions;
+}
+
+export type Constructor<T = {}> = new (...args: any[]) => T;
+export type AbstractConstructor<T = {}> = abstract new (...args: any[]) => T;

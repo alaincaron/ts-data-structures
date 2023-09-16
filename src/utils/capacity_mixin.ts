@@ -1,5 +1,4 @@
-import { AbstractConstructor } from '../utils';
-import { CollectionOptions, OptionsBuilder } from './types';
+import { ContainerOptions, OptionsBuilder, AbstractConstructor } from './types';
 
 export function CapacityMixin<TBase extends AbstractConstructor<OptionsBuilder>>(Base: TBase) {
   abstract class Derived extends Base {
@@ -16,7 +15,7 @@ export function CapacityMixin<TBase extends AbstractConstructor<OptionsBuilder>>
       return this._capacity;
     }
 
-    buildOptions(): CollectionOptions {
+    buildOptions(): ContainerOptions {
       return {
         ...super.buildOptions(),
         capacity: this._capacity,

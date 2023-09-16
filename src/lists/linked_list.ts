@@ -1,7 +1,7 @@
 import { BoundedList } from './abstract_list';
 import { ListIterator } from './list';
-import { DoubleLinkedList, IndexOutOfBoundsException, UnderflowException } from '../utils';
-import { CollectionOptions, CollectionInitializer } from '../collections';
+import { DoubleLinkedList, IndexOutOfBoundsException, UnderflowException, ContainerOptions } from '../utils';
+import { CollectionInitializer } from '../collections';
 
 interface ListEntry<E> {
   value: E;
@@ -11,11 +11,11 @@ export class LinkedList<E> extends BoundedList<E> {
   private readonly linkedList: DoubleLinkedList;
   private _size: number;
 
-  static create<E>(initializer?: number | (CollectionOptions & CollectionInitializer<E>)): LinkedList<E> {
+  static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)): LinkedList<E> {
     return BoundedList.buildCollection<E, LinkedList<E>>(options => new LinkedList(options), initializer);
   }
 
-  constructor(options?: number | CollectionOptions) {
+  constructor(options?: number | ContainerOptions) {
     super(options);
     this._size = 0;
     this.linkedList = new DoubleLinkedList();

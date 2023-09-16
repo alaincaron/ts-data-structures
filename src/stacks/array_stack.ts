@@ -1,17 +1,18 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { ArrayDeque } from '../deques';
 import { AbstractStack } from './abstract_stack';
-import { CollectionInitializer, CollectionOptions } from '../collections';
+import { CollectionInitializer } from '../collections';
+import { ContainerOptions } from '../utils';
 
 export class ArrayStack<E> extends AbstractStack<E> {
   private readonly buffer: ArrayDeque<E>;
 
-  constructor(options?: number | CollectionOptions) {
+  constructor(options?: number | ContainerOptions) {
     super(options);
     this.buffer = ArrayDeque.create(options);
   }
 
-  static create<E>(initializer?: number | (CollectionOptions & CollectionInitializer<E>)) {
+  static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)) {
     return AbstractStack.buildCollection<E, ArrayStack<E>>(options => new ArrayStack(options), initializer);
   }
 
