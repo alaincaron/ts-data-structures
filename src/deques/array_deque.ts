@@ -196,18 +196,18 @@ export class ArrayDeque<E = any> extends BoundedDeque<E> implements RandomAccess
     return undefined;
   }
 
-  filter(predicate: Predicate<E>): boolean {
+  filter(predicate: Predicate<E>): number {
     let cursor = this.head;
-    let modified = false;
+    let count = 0;
     while (cursor !== this.tail) {
       if (!predicate(this.elements[cursor]!)) {
         this.elements[cursor] = undefined!;
-        modified = true;
+        ++count;
       }
       cursor = this.slot(cursor + 1);
     }
-    if (modified) this.compact();
-    return modified;
+    if (count) this.compact();
+    return count;
   }
 
   private slot(idx: number) {

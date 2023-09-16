@@ -42,7 +42,7 @@ export abstract class AbstractCollection<E = any> implements Collection<E>, Opti
     return this.removeMatchingItem(x => x === item) != null;
   }
 
-  abstract filter(predicate: Predicate<E>): boolean;
+  abstract filter(predicate: Predicate<E>): number;
 
   find(predicate: Predicate<E>): E | undefined {
     return this.iterator().first(predicate);

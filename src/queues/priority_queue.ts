@@ -132,22 +132,22 @@ export class PriorityQueue<E> extends BoundedQueue<E> {
     return item;
   }
 
-  filter(predicate: Predicate<E>): boolean {
+  filter(predicate: Predicate<E>) {
     let i = 0;
-    let modified = false;
+    let count = 0;
     while (i < this._size) {
       const item = this.buffer[i];
       if (predicate(item)) {
         ++i;
       } else {
-        modified = true;
+        ++count;
         --this._size;
         this.buffer[i] = undefined!;
         if (i < this._size) this.swap(i, this._size);
       }
     }
-    if (modified) this.heapify();
-    return modified;
+    if (count) this.heapify();
+    return count;
   }
 
   clear(): void {

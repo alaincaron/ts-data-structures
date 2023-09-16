@@ -205,24 +205,24 @@ describe('ArrayStack', () => {
   });
 
   describe('filter', () => {
-    it('should return false on empty stack', () => {
+    it('should return 0 on empty stack', () => {
       const stack = new ArrayStack();
-      expect(stack.filter(i => i === 0)).to.be.false;
+      expect(stack.filter(i => i === 0)).equal(0);
       expect(stack.isEmpty()).to.be.true;
       expect(stack.size()).equal(0);
     });
 
-    it('should return false if all items match the predicate', () => {
+    it('should return 0 if all items match the predicate', () => {
       const arr = [1, 2, 3];
       const stack = ArrayStack.create({ initial: arr });
-      expect(stack.filter(i => i > 0)).to.be.false;
+      expect(stack.filter(i => i > 0)).equal(0);
       expect(stack.isEmpty()).to.be.false;
       expect(stack.size()).equal(3);
     });
     it('should remove all items not matching the filter', () => {
       const arr = [1, 0, 2, -1, 3];
       const stack = ArrayStack.create({ initial: arr });
-      expect(stack.filter(i => i > 0)).to.be.true;
+      expect(stack.filter(i => i > 0)).equal(2);
       expect(stack.isEmpty()).to.be.false;
       expect(stack.size()).equal(3);
       expect(stack.toArray()).deep.equal([3, 2, 1]);

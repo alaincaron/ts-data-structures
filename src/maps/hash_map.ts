@@ -154,7 +154,8 @@ export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
     return this.removeEntry(key)?.value;
   }
 
-  filterEntries(predicate: Predicate<[K, V]>): void {
+  filterEntries(predicate: Predicate<[K, V]>): number {
+    let count = 0;
     for (let i = 0; i < this.slots.length; ++i) {
       let prev: HashEntry<K, V> | undefined = undefined;
       let e = this.slots[i];
@@ -167,12 +168,14 @@ export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
           }
           this.recordAccess(e, AccessType.REMOVE);
           --this._size;
+          ++count;
         } else {
           prev = e;
         }
         e = e.next;
       }
     }
+    return count;
   }
 
   clear() {

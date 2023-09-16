@@ -13,7 +13,7 @@ export interface Collection<E = any> extends Iterable<E> {
   add(item: E): boolean;
   removeMatchingItem(predicate: Predicate<E>): E | undefined;
   removeItem(item: E): boolean;
-  filter(predicate: Predicate<E>): boolean;
+  filter(predicate: Predicate<E>): number;
   find(predicate: Predicate<E>): E | undefined;
 
   all(predicate: Predicate<E>): boolean;

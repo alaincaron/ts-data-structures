@@ -164,7 +164,7 @@ describe('HashMap', () => {
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
-      map.filterKeys(k => k.startsWith('b'));
+      expect(map.filterKeys(k => k.startsWith('b'))).equal(2);
       expect(map.size()).equal(1);
       expect(map.containsKey('foo')).to.be.false;
       expect(map.containsKey('foobar')).to.be.false;
@@ -177,7 +177,7 @@ describe('HashMap', () => {
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
-      map.filterValues(v => v % 2 === 0);
+      expect(map.filterValues(v => v % 2 === 0)).equal(2);
       expect(map.size()).equal(1);
       expect(map.containsKey('foo')).to.be.false;
       expect(map.containsKey('foobar')).to.be.false;

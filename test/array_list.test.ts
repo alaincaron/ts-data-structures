@@ -304,24 +304,24 @@ describe('ArrayList', () => {
   });
 
   describe('filter', () => {
-    it('should return false on empty list', () => {
+    it('should return 0 on empty list', () => {
       const list = new ArrayList();
-      expect(list.filter(i => i === 0)).to.be.false;
+      expect(list.filter(i => i === 0)).equal(0);
       expect(list.isEmpty()).to.be.true;
       expect(list.size()).equal(0);
     });
 
-    it('should return false if all items match the predicate', () => {
+    it('should return 0 if all items match the predicate', () => {
       const arr = [1, 2, 3];
       const list = ArrayList.create({ initial: arr });
-      expect(list.filter(i => i > 0)).to.be.false;
+      expect(list.filter(i => i > 0)).equal(0);
       expect(list.isEmpty()).to.be.false;
       expect(list.size()).equal(3);
     });
     it('should remove all items not matching the filter', () => {
       const arr = [1, 0, 2, -1, 3];
       const list = ArrayList.create({ initial: arr });
-      expect(list.filter(i => i > 0)).to.be.true;
+      expect(list.filter(i => i > 0)).equal(2);
       expect(list.isEmpty()).to.be.false;
       expect(list.size()).equal(3);
       expect(list.toArray()).deep.equal([1, 2, 3]);

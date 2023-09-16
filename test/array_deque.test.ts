@@ -325,24 +325,24 @@ describe('ArrayDeque', () => {
   });
 
   describe('filter', () => {
-    it('should return false on empty deque', () => {
+    it('should return 0 on empty deque', () => {
       const deque = new ArrayDeque();
-      expect(deque.filter(i => i === 0)).to.be.false;
+      expect(deque.filter(i => i === 0)).equal(0);
       expect(deque.isEmpty()).to.be.true;
       expect(deque.size()).equal(0);
     });
 
-    it('should return false if all items match the predicate', () => {
+    it('should return 0 if all items match the predicate', () => {
       const arr = [1, 2, 3];
       const deque = ArrayDeque.create({ initial: arr });
-      expect(deque.filter(i => i > 0)).to.be.false;
+      expect(deque.filter(i => i > 0)).equal(0);
       expect(deque.isEmpty()).to.be.false;
       expect(deque.size()).equal(3);
     });
     it('should remove all items not matching the filter', () => {
       const arr = [1, 0, 2, -1, 3];
       const deque = ArrayDeque.create({ initial: arr });
-      expect(deque.filter(i => i > 0)).to.be.true;
+      expect(deque.filter(i => i > 0)).equal(2);
       expect(deque.isEmpty()).to.be.false;
       expect(deque.size()).equal(3);
       expect(deque.toArray()).deep.equal([1, 2, 3]);

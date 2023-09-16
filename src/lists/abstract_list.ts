@@ -60,18 +60,18 @@ export abstract class AbstractList<E = any> extends AbstractCollection<E> implem
     return this.removeAt(this.size() - 1);
   }
 
-  filter(predicate: Predicate<E>): boolean {
+  filter(predicate: Predicate<E>) {
     const iterator = this.listIterator();
-    let modified = false;
+    let count = 0;
     for (;;) {
       const item = iterator.next();
       if (item.done) break;
       if (!predicate(item.value)) {
         iterator.remove();
-        modified = true;
+        ++count;
       }
     }
-    return modified;
+    return count;
   }
 
   reverseIterator() {

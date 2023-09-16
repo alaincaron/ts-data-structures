@@ -193,24 +193,24 @@ describe('PriorityQueue', () => {
   });
 
   describe('filter', () => {
-    it('should return false on empty queue', () => {
+    it('should return 0 on empty queue', () => {
       const queue = new PriorityQueue();
-      expect(queue.filter(i => i === 0)).to.be.false;
+      expect(queue.filter(i => i === 0)).equal(0);
       expect(queue.isEmpty()).to.be.true;
       expect(queue.size()).equal(0);
     });
 
-    it('should return false if all items match the predicate', () => {
+    it('should return 0 if all items match the predicate', () => {
       const arr = [1, 2, 3];
       const queue = PriorityQueue.create({ initial: arr });
-      expect(queue.filter(i => i > 0)).to.be.false;
+      expect(queue.filter(i => i > 0)).equal(0);
       expect(queue.isEmpty()).to.be.false;
       expect(queue.size()).equal(3);
     });
     it('should remove all items not matching the filter', () => {
       const arr = [1, 0, 2, -1, 3];
       const queue = PriorityQueue.create({ initial: arr });
-      expect(queue.filter(i => i > 0)).to.be.true;
+      expect(queue.filter(i => i > 0)).equal(2);
       expect(queue.isEmpty()).to.be.false;
       expect(queue.size()).equal(3);
       expect(isHeap(queue.toArray())).to.be.true;

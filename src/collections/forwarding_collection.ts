@@ -56,7 +56,7 @@ export abstract class ForwardingCollection<E = any> implements Collection<E> {
     return this._delegate.removeItem(item);
   }
 
-  filter(predicate: Predicate<E>): boolean {
+  filter(predicate: Predicate<E>) {
     return this._delegate.filter(predicate);
   }
 

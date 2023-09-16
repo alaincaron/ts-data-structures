@@ -62,7 +62,7 @@ export class ArrayStack<E = any> extends AbstractStack<E> {
     return this.buffer.removeLastMatchingItem(predicate);
   }
 
-  filter(predicate: (item: E) => boolean): boolean {
+  filter(predicate: (item: E) => boolean) {
     return this.buffer.filter(predicate);
   }
 

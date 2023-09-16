@@ -61,15 +61,15 @@ export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, Optio
 
   abstract remove(key: K): V | undefined;
 
-  filterKeys(predicate: Predicate<K>): void {
-    this.filterEntries(([k, _]) => predicate(k));
+  filterKeys(predicate: Predicate<K>) {
+    return this.filterEntries(([k, _]) => predicate(k));
   }
 
-  filterValues(predicate: Predicate<V>): void {
-    this.filterEntries(([_, v]) => predicate(v));
+  filterValues(predicate: Predicate<V>) {
+    return this.filterEntries(([_, v]) => predicate(v));
   }
 
-  abstract filterEntries(predicate: Predicate<[K, V]>): void;
+  abstract filterEntries(predicate: Predicate<[K, V]>): number;
 
   putAll<K1 extends K, V1 extends V>(map: MapLike<K1, V1>) {
     for (const [key, value] of map) {

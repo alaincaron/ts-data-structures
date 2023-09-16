@@ -75,12 +75,18 @@ export class SetFromMap<E = any> extends AbstractSet<E> {
     return !this._delegate.put(item, true);
   }
 
-  removeMatchingItem(_predicate: Predicate<E>): E | undefined {
-    throw new Error();
+  removeMatchingItem(predicate: Predicate<E>): E | undefined {
+    for (const k of this._delegate.keys()) {
+      if (predicate(k)) {
+        this._delegate.remove(k);
+        return k;
+      }
+    }
+    return undefined;
   }
 
-  filter(_predicate: Predicate<E>): boolean {
-    throw new Error();
+  filter(predicate: Predicate<E>) {
+    return this._delegate.filterKeys(predicate);
   }
 
   [Symbol.iterator](): Iterator<E> {

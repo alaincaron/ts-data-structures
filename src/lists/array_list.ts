@@ -87,18 +87,18 @@ export class ArrayList<E = any> extends BoundedList<E> {
     }
   }
 
-  filter(predicate: Predicate<E>): boolean {
+  filter(predicate: Predicate<E>): number {
     let cursor = 0;
-    let modified = false;
+    let count = 0;
     while (cursor < this.size()) {
       if (!predicate(this.elements[cursor]!)) {
         this.elements[cursor] = undefined!;
-        modified = true;
+        ++count;
       }
       ++cursor;
     }
-    if (modified) this.compact();
-    return modified;
+    if (count) this.compact();
+    return count;
   }
 
   private compact(cursor?: number): number {

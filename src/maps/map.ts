@@ -23,9 +23,9 @@ export interface IMap<K = any, V = any> extends Iterable<[K, V]> {
   containsValue(value: V): boolean;
 
   remove(key: K): V | undefined;
-  filterKeys(predicate: Predicate<K>): void;
-  filterValues(predicate: Predicate<V>): void;
-  filterEntries(predicate: Predicate<[K, V]>): void;
+  filterKeys(predicate: Predicate<K>): number;
+  filterValues(predicate: Predicate<V>): number;
+  filterEntries(predicate: Predicate<[K, V]>): number;
 
   putAll<K1 extends K, V1 extends V>(map: MapLike<K1, V1>): void;
 
