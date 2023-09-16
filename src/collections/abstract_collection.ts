@@ -119,7 +119,7 @@ export abstract class AbstractCollection<E> implements Collection<E> {
     return new FluentIterator(this[Symbol.iterator]());
   }
 
-  abstract clone(): Collection<E>;
+  abstract clone(): AbstractCollection<E>;
 
   buildOptions(): CollectionOptions {
     return {
