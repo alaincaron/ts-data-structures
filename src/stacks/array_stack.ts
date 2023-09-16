@@ -1,10 +1,10 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { Deque, ArrayDeque } from '../deques';
+import { ArrayDeque } from '../deques';
 import { AbstractStack } from './abstract_stack';
 import { CollectionInitializer, CollectionOptions } from '../collections';
 
 export class ArrayStack<E> extends AbstractStack<E> {
-  private readonly buffer: Deque<E>;
+  private readonly buffer: ArrayDeque<E>;
 
   constructor(options?: number | CollectionOptions) {
     super(options);
@@ -45,6 +45,10 @@ export class ArrayStack<E> extends AbstractStack<E> {
 
   peek(): E | undefined {
     return this.buffer.peekLast();
+  }
+
+  buildOptions() {
+    return this.buffer.buildOptions();
   }
 
   clone(): ArrayStack<E> {

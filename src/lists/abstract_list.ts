@@ -1,7 +1,7 @@
 import { List, ListIterator } from './list';
 import { OverflowException, RandomAccess, UnderflowException, shuffle } from '../utils';
 import { Comparator, Predicate, FluentIterator } from 'ts-fluent-iterators';
-import { AbstractCollection, CollectionOptions } from '../collections';
+import { CapacityMixin, CollectionOptions, AbstractCollection } from '../collections';
 
 export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>, RandomAccess<E> {
   constructor(options?: number | CollectionOptions) {
@@ -191,3 +191,5 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
 
   abstract clone(): AbstractList<E>;
 }
+
+export const BoundedList = CapacityMixin(AbstractList);

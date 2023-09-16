@@ -5,6 +5,10 @@ export interface CollectionOptions {
   capacity?: number;
 }
 
+export interface OptionsBuilder {
+  buildOptions(): CollectionOptions;
+}
+
 export type CollectionLike<E> = Set<E> | Array<E> | Collection<E> | ArrayGenerator<E>;
 
 export interface CollectionInitializer<E> {

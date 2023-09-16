@@ -1,6 +1,6 @@
 import { UnderflowException, OverflowException } from '../utils';
 import { FluentIterator, IteratorLike, Iterators } from 'ts-fluent-iterators';
-import { AbstractCollection, CollectionOptions, CollectionLike, getSize } from '../collections';
+import { AbstractCollection, CollectionOptions, CollectionLike, getSize, CapacityMixin } from '../collections';
 import { Queue, OverflowQueueStrategy } from './queue';
 
 export interface QueueOptions extends CollectionOptions {
@@ -103,10 +103,11 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
 
   buildOptions(): QueueOptions {
     return {
-      ...super.buildOptions(),
       overflowStrategy: this._overflowStrategy,
     };
   }
 
   abstract clone(): AbstractQueue<E>;
 }
+
+export const BoundedQueue = CapacityMixin(AbstractQueue);

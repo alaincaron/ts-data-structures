@@ -1,7 +1,7 @@
 import { UnderflowException } from '../utils';
 import { AbstractQueue } from '../queues';
 import { Stack } from './stack';
-import { CollectionOptions } from '../collections';
+import { CollectionOptions, CapacityMixin } from '../collections';
 
 export abstract class AbstractStack<E> extends AbstractQueue<E> implements Stack<E> {
   constructor(options?: number | CollectionOptions) {
@@ -37,3 +37,5 @@ export abstract class AbstractStack<E> extends AbstractQueue<E> implements Stack
 
   abstract clone(): AbstractStack<E>;
 }
+
+export const BoundedStack = CapacityMixin(AbstractStack);

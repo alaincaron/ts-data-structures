@@ -2,6 +2,7 @@ import { AbstractQueue, QueueOptions } from '../queues';
 import { Deque } from './deque';
 import { OverflowException, UnderflowException } from '../utils';
 import { Predicate } from 'ts-fluent-iterators';
+import { CapacityMixin } from '../collections';
 
 export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque<E> {
   constructor(options?: number | QueueOptions) {
@@ -80,3 +81,5 @@ export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque
 
   abstract clone(): AbstractDeque<E>;
 }
+
+export const BoundedDeque = CapacityMixin(AbstractDeque);

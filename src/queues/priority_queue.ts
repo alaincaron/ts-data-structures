@@ -1,4 +1,4 @@
-import { AbstractQueue, QueueOptions } from './abstract_queue';
+import { BoundedQueue, QueueOptions } from './abstract_queue';
 import { CollectionInitializer, AbstractCollection } from '../collections';
 import { nextPowerOfTwo } from '../utils';
 import { Comparator, Predicate } from 'ts-fluent-iterators';
@@ -9,7 +9,7 @@ export interface PriorityQueueOptions<E> extends QueueOptions {
 
 export type PriorityQueueInitializer<E> = PriorityQueueOptions<E> & CollectionInitializer<E>;
 
-export class PriorityQueue<E> extends AbstractQueue<E> {
+export class PriorityQueue<E> extends BoundedQueue<E> {
   private buffer: Array<E>;
   private _size: number;
   private readonly comparator: Comparator<E>;

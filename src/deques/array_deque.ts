@@ -1,4 +1,4 @@
-import { AbstractDeque } from './abstract_deque';
+import { BoundedDeque } from './abstract_deque';
 import { QueueOptions } from '../queues';
 import { CollectionInitializer } from '../collections';
 import { nextPowerOfTwo, RandomAccess, IndexOutOfBoundsException } from '../utils';
@@ -10,7 +10,7 @@ import { Predicate } from 'ts-fluent-iterators';
  */
 const MIN_INITIAL_CAPACITY = 8;
 
-export class ArrayDeque<E> extends AbstractDeque<E> implements RandomAccess<E> {
+export class ArrayDeque<E> extends BoundedDeque<E> implements RandomAccess<E> {
   private elements: Array<E>;
   private head: number;
   private tail: number;
@@ -27,7 +27,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> implements RandomAccess<E> {
   }
 
   static create<E>(initializer?: number | (QueueOptions & CollectionInitializer<E>)): ArrayDeque<E> {
-    return AbstractDeque.buildCollection<E, ArrayDeque<E>>(options => new ArrayDeque(options), initializer);
+    return BoundedDeque.buildCollection<E, ArrayDeque<E>>(options => new ArrayDeque(options), initializer);
   }
 
   private nextArraySize(numElements: number) {

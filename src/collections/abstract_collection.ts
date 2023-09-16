@@ -1,24 +1,17 @@
 import { Collection } from './collection';
 import { Predicate, Reducer, IteratorLike, Iterators, FluentIterator, Mapper } from 'ts-fluent-iterators';
 import { OverflowException, iterableToJSON } from '../utils';
-import { CollectionOptions, CollectionInitializer, CollectionLike, getSize } from './types';
+import { OptionsBuilder, CollectionOptions, CollectionInitializer, CollectionLike, getSize } from './types';
+import { CapacityMixin } from './capacity_mixin';
 
-export abstract class AbstractCollection<E> implements Collection<E> {
-  private readonly _capacity: number;
-
-  public constructor(options?: number | CollectionOptions) {
-    const capacity = typeof options === 'number' ? options : options?.capacity;
-    this._capacity = capacity ?? Infinity;
-  }
+export abstract class AbstractCollection<E> implements Collection<E>, OptionsBuilder {
+  public constructor(_options?: number | CollectionOptions) {}
 
   abstract size(): number;
+  abstract capacity(): number;
 
   isEmpty(): boolean {
     return this.size() === 0;
-  }
-
-  capacity() {
-    return this._capacity;
   }
 
   isFull(): boolean {
@@ -122,9 +115,7 @@ export abstract class AbstractCollection<E> implements Collection<E> {
   abstract clone(): AbstractCollection<E>;
 
   buildOptions(): CollectionOptions {
-    return {
-      capacity: this._capacity,
-    };
+    return {};
   }
 
   toJson() {
@@ -155,3 +146,5 @@ export abstract class AbstractCollection<E> implements Collection<E> {
     return result;
   }
 }
+
+export const BoundedCollection = CapacityMixin(AbstractCollection);
