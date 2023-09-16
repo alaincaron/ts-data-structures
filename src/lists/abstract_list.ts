@@ -1,16 +1,9 @@
 import { List, ListIterator } from './list';
-import {
-  OverflowException,
-  RandomAccess,
-  UnderflowException,
-  shuffle,
-  CapacityMixin,
-  ContainerOptions,
-} from '../utils';
+import { OverflowException, UnderflowException, shuffle, CapacityMixin, ContainerOptions } from '../utils';
 import { Comparator, Predicate, FluentIterator } from 'ts-fluent-iterators';
 import { AbstractCollection } from '../collections';
 
-export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>, RandomAccess<E> {
+export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E> {
   constructor(options?: number | ContainerOptions) {
     super(options);
   }
