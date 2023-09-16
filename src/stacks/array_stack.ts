@@ -1,10 +1,10 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { ArrayDeque } from '../deques';
 import { AbstractStack } from './abstract_stack';
-import { CollectionInitializer } from '../collections';
+import { CollectionInitializer, buildCollection } from '../collections';
 import { ContainerOptions } from '../utils';
 
-export class ArrayStack<E> extends AbstractStack<E> {
+export class ArrayStack<E = any> extends AbstractStack<E> {
   private readonly buffer: ArrayDeque<E>;
 
   constructor(options?: number | ContainerOptions) {
@@ -13,7 +13,7 @@ export class ArrayStack<E> extends AbstractStack<E> {
   }
 
   static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)) {
-    return AbstractStack.buildCollection<E, ArrayStack<E>>(options => new ArrayStack(options), initializer);
+    return buildCollection<E, ArrayStack<E>>(options => new ArrayStack(options), initializer);
   }
 
   size() {
@@ -53,8 +53,9 @@ export class ArrayStack<E> extends AbstractStack<E> {
   }
 
   clone(): ArrayStack<E> {
-    const options = this.buildOptions();
-    return ArrayStack.create({ ...options, initial: { length: this.size(), seed: this.buffer.iterator() } });
+    return buildCollection<E, ArrayStack<E>>(options => new ArrayStack(options), {
+      initial: this.buffer,
+    });
   }
 
   removeMatchingItem(predicate: Predicate<E>): E | undefined {

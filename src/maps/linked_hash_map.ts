@@ -1,7 +1,7 @@
 import { HashMap, HashEntry, HashMapOptions, AccessType } from './hash_map';
 import { MapEntry } from './map';
 import { OverflowException, DoubleLinkedList } from '../utils';
-import { AbstractMap } from './abstract_map';
+import { buildMap } from './abstract_map';
 import { MapInitializer } from './types';
 
 export enum Ordering {
@@ -22,7 +22,7 @@ export interface LinkedHashMapOptions<K> extends HashMapOptions<K> {
   overflowStrategy?: OverflowStrategy;
 }
 
-export class LinkedHashMap<K, V> extends HashMap<K, V> {
+export class LinkedHashMap<K = any, V = any> extends HashMap<K, V> {
   private readonly ordering: Ordering;
   private readonly overflowStrategy: OverflowStrategy;
   private readonly linkedList: DoubleLinkedList;
@@ -35,7 +35,7 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   }
 
   static create<K, V>(initializer?: number | (LinkedHashMapOptions<K> & MapInitializer<K, V>)): LinkedHashMap<K, V> {
-    return AbstractMap.buildMap<K, V, LinkedHashMap<K, V>, LinkedHashMapOptions<K>>(
+    return buildMap<K, V, LinkedHashMap<K, V>, LinkedHashMapOptions<K>>(
       options => new LinkedHashMap(options),
       initializer
     );

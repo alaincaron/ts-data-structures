@@ -1,4 +1,4 @@
-import { BoundedMap } from './abstract_map';
+import { BoundedMap, buildMap } from './abstract_map';
 import { MapInitializer } from './types';
 import { MapEntry } from './map';
 import { ContainerOptions, nextPrime, hashAny, HashFunction, LARGEST_PRIME, OverflowException } from '../utils';
@@ -24,7 +24,7 @@ export interface HashMapOptions<K> extends ContainerOptions {
 const MIN_INITIAL_CAPACITY = nextPrime(5);
 const DEFAULT_LOAD_FACTOR = 0.75;
 
-export class HashMap<K, V> extends BoundedMap<K, V> {
+export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
   private _size: number;
   private slots: Array<HashEntry<K, V> | undefined>;
   public readonly hash: HashFunction<K>;
@@ -53,7 +53,7 @@ export class HashMap<K, V> extends BoundedMap<K, V> {
   }
 
   static create<K, V>(initializer?: number | HashMapOptions<K> | MapInitializer<K, V>): HashMap<K, V> {
-    return HashMap.buildMap<K, V, HashMap<K, V>, HashMapOptions<K>>(options => new HashMap(options), initializer);
+    return buildMap<K, V, HashMap<K, V>, HashMapOptions<K>>(options => new HashMap(options), initializer);
   }
 
   size(): number {

@@ -3,7 +3,7 @@ import { Deque } from './deque';
 import { OverflowException, UnderflowException, CapacityMixin } from '../utils';
 import { Predicate } from 'ts-fluent-iterators';
 
-export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque<E> {
+export abstract class AbstractDeque<E = any> extends AbstractQueue<E> implements Deque<E> {
   constructor(options?: number | QueueOptions) {
     super(options);
   }

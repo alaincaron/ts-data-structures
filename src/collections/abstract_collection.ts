@@ -3,7 +3,7 @@ import { Predicate, Reducer, IteratorLike, Iterators, FluentIterator, Mapper } f
 import { OverflowException, iterableToJSON, OptionsBuilder, ContainerOptions, CapacityMixin } from '../utils';
 import { CollectionInitializer, CollectionLike, getSize } from './types';
 
-export abstract class AbstractCollection<E> implements Collection<E>, OptionsBuilder {
+export abstract class AbstractCollection<E = any> implements Collection<E>, OptionsBuilder {
   public constructor(_options?: number | ContainerOptions) {}
 
   abstract size(): number;
@@ -120,30 +120,30 @@ export abstract class AbstractCollection<E> implements Collection<E>, OptionsBui
   toJson() {
     return iterableToJSON(this);
   }
-
-  static buildCollection<
-    E,
-    C extends Collection<E>,
-    Options extends ContainerOptions = ContainerOptions,
-    Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
-  >(factory: (options?: number | Options) => C, initializer?: number | (Options & Initializer)): C {
-    if (initializer == null || typeof initializer === 'number') return factory(initializer);
-    const initialElements = initializer.initial;
-
-    let options: any = undefined;
-
-    if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-      options = { ...(initialElements.buildOptions() as ContainerOptions), ...initializer };
-    }
-    if (!options) {
-      options = { ...initializer };
-    }
-    delete options.initial;
-
-    const result = factory(options);
-    if (initialElements) result.addFully(initialElements);
-    return result;
-  }
 }
 
 export const BoundedCollection = CapacityMixin(AbstractCollection);
+
+export function buildCollection<
+  E,
+  C extends Collection<E>,
+  Options extends ContainerOptions = ContainerOptions,
+  Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
+>(factory: (options?: number | Options) => C, initializer?: number | (Options & Initializer)): C {
+  if (initializer == null || typeof initializer === 'number') return factory(initializer);
+  const initialElements = initializer.initial;
+
+  let options: any = undefined;
+
+  if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
+    options = { ...(initialElements.buildOptions() as ContainerOptions), ...initializer };
+  }
+  if (!options) {
+    options = { ...initializer };
+  }
+  delete options.initial;
+
+  const result = factory(options);
+  if (initialElements) result.addFully(initialElements);
+  return result;
+}

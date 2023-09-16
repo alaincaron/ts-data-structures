@@ -1,10 +1,10 @@
 import { BoundedList } from './abstract_list';
 import { ListIterator } from './list';
-import { CollectionInitializer } from '../collections';
+import { CollectionInitializer, buildCollection } from '../collections';
 import { UnderflowException, IndexOutOfBoundsException, shuffle, ContainerOptions } from '../utils';
 import { Predicate, Comparator } from 'ts-fluent-iterators';
 
-export class ArrayList<E> extends BoundedList<E> {
+export class ArrayList<E = any> extends BoundedList<E> {
   private elements: Array<E>;
 
   constructor(options?: number | ContainerOptions) {
@@ -13,7 +13,7 @@ export class ArrayList<E> extends BoundedList<E> {
   }
 
   static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)): ArrayList<E> {
-    return BoundedList.buildCollection<E, ArrayList<E>>(options => new ArrayList(options), initializer);
+    return buildCollection<E, ArrayList<E>>(options => new ArrayList(options), initializer);
   }
 
   offerAt(idx: number, item: E): boolean {

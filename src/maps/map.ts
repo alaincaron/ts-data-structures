@@ -6,7 +6,7 @@ export interface MapEntry<K, V> {
   value: V;
 }
 
-export interface IMap<K, V> extends Iterable<[K, V]> {
+export interface IMap<K = any, V = any> extends Iterable<[K, V]> {
   size(): number;
   isEmpty(): boolean;
   capacity(): number;
@@ -41,5 +41,6 @@ export interface IMap<K, V> extends Iterable<[K, V]> {
 
   toJson(): string;
 
+  toMap(): Map<K, V>;
   clone(): IMap<K, V>;
 }

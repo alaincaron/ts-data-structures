@@ -1,18 +1,18 @@
 import { BoundedList } from './abstract_list';
 import { ListIterator } from './list';
 import { DoubleLinkedList, IndexOutOfBoundsException, UnderflowException, ContainerOptions } from '../utils';
-import { CollectionInitializer } from '../collections';
+import { CollectionInitializer, buildCollection } from '../collections';
 
 interface ListEntry<E> {
   value: E;
 }
 
-export class LinkedList<E> extends BoundedList<E> {
+export class LinkedList<E = any> extends BoundedList<E> {
   private readonly linkedList: DoubleLinkedList;
   private _size: number;
 
   static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)): LinkedList<E> {
-    return BoundedList.buildCollection<E, LinkedList<E>>(options => new LinkedList(options), initializer);
+    return buildCollection<E, LinkedList<E>>(options => new LinkedList(options), initializer);
   }
 
   constructor(options?: number | ContainerOptions) {

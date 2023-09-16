@@ -3,7 +3,7 @@ import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry } from './map';
 import { MapInitializer, MapLike } from './types';
 
-export abstract class AbstractMap<K, V> implements IMap<K, V>, OptionsBuilder {
+export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, OptionsBuilder {
   constructor(_options?: number | ContainerOptions) {}
 
   abstract size(): number;
@@ -103,6 +103,10 @@ export abstract class AbstractMap<K, V> implements IMap<K, V>, OptionsBuilder {
     }
   }
 
+  toMap() {
+    return new Map(this);
+  }
+
   abstract clone(): IMap<K, V>;
 
   [Symbol.iterator](): Iterator<[K, V]> {
@@ -116,30 +120,30 @@ export abstract class AbstractMap<K, V> implements IMap<K, V>, OptionsBuilder {
   toJson() {
     return mapToJSON(this);
   }
-
-  static buildMap<
-    K,
-    V,
-    M extends IMap<K, V>,
-    Options extends ContainerOptions = ContainerOptions,
-    Initializer extends MapInitializer<K, V> = MapInitializer<K, V>,
-  >(factory: (options?: number | Options) => M, initializer?: number | (Options & Initializer)): M {
-    if (initializer == null || typeof initializer === 'number') return factory(initializer);
-    const initialElements = initializer.initial;
-
-    let options: any = undefined;
-    if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-      options = { ...(initialElements.buildOptions() as ContainerOptions), ...initializer };
-    } else {
-      options = { ...initializer };
-    }
-
-    delete options.initial;
-    const result = factory(options);
-
-    if (initialElements) result.putAll(initialElements);
-    return result;
-  }
 }
 
 export const BoundedMap = CapacityMixin(AbstractMap);
+
+export function buildMap<
+  K,
+  V,
+  M extends IMap<K, V>,
+  Options extends ContainerOptions = ContainerOptions,
+  Initializer extends MapInitializer<K, V> = MapInitializer<K, V>,
+>(factory: (options?: number | Options) => M, initializer?: number | (Options & Initializer)): M {
+  if (initializer == null || typeof initializer === 'number') return factory(initializer);
+  const initialElements = initializer.initial;
+
+  let options: any = undefined;
+  if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
+    options = { ...(initialElements.buildOptions() as ContainerOptions), ...initializer };
+  } else {
+    options = { ...initializer };
+  }
+
+  delete options.initial;
+  const result = factory(options);
+
+  if (initialElements) result.putAll(initialElements);
+  return result;
+}

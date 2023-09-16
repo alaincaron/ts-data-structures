@@ -2,7 +2,7 @@ import { UnderflowException, ContainerOptions, CapacityMixin } from '../utils';
 import { AbstractQueue } from '../queues';
 import { Stack } from './stack';
 
-export abstract class AbstractStack<E> extends AbstractQueue<E> implements Stack<E> {
+export abstract class AbstractStack<E = any> extends AbstractQueue<E> implements Stack<E> {
   constructor(options?: number | ContainerOptions) {
     super(options);
   }

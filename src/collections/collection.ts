@@ -1,7 +1,7 @@
 import { FluentIterator, Predicate, Reducer } from 'ts-fluent-iterators';
 import { CollectionLike } from './types';
 
-export interface Collection<E> extends Iterable<E> {
+export interface Collection<E = any> extends Iterable<E> {
   size(): number;
   isEmpty(): boolean;
   capacity(): number;

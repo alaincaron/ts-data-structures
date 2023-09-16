@@ -2,7 +2,7 @@ import { Collection } from './collection';
 import { Predicate, Reducer } from 'ts-fluent-iterators';
 import { CollectionLike } from './types';
 
-export abstract class ForwardingCollection<E> implements Collection<E> {
+export abstract class ForwardingCollection<E = any> implements Collection<E> {
   private readonly _delegate: Collection<E>;
 
   constructor(delegate: Collection<E>) {

@@ -3,7 +3,7 @@ import { OverflowException, UnderflowException, shuffle, CapacityMixin, Containe
 import { Comparator, Predicate, FluentIterator } from 'ts-fluent-iterators';
 import { AbstractCollection } from '../collections';
 
-export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E> {
+export abstract class AbstractList<E = any> extends AbstractCollection<E> implements List<E> {
   constructor(options?: number | ContainerOptions) {
     super(options);
   }

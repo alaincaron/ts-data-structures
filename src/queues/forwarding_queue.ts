@@ -1,7 +1,7 @@
 import { Queue } from './queue';
 import { ForwardingCollection } from '../collections';
 
-export abstract class ForwardingQueue<E> extends ForwardingCollection<E> implements Queue<E> {
+export abstract class ForwardingQueue<E = any> extends ForwardingCollection<E> implements Queue<E> {
   constructor(delegate: Queue<E>) {
     super(delegate);
   }
