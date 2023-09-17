@@ -104,7 +104,7 @@ export class ArraySet<E = any> extends SetFromCollection<E> {
   }
 
   clone(): ArraySet<E> {
-    return buildCollection<E, ArraySet<E>>(options => new ArraySet(options), { initial: this.delegate() });
+    return buildCollection<E, ArraySet<E>>(ArraySet, { initial: this.delegate() });
   }
 }
 
@@ -114,7 +114,7 @@ export class HashSet<E = any> extends SetFromMap<E> {
   }
 
   clone(): HashSet<E> {
-    return buildCollection<E, HashSet<E>, HashMapOptions<E>>(options => new HashSet(options), {
+    return buildCollection<E, HashSet<E>, HashMapOptions<E>>(HashSet, {
       initial: { length: this.delegate().size(), seed: this.delegate().keys() },
     });
   }
@@ -126,7 +126,7 @@ export class LinkedHashSet<E = any> extends SetFromMap<E> {
   }
 
   clone(): LinkedHashSet<E> {
-    return buildCollection<E, LinkedHashSet<E>, LinkedHashMapOptions<E>>(options => new LinkedHashSet(options), {
+    return buildCollection<E, LinkedHashSet<E>, LinkedHashMapOptions<E>>(LinkedHashSet, {
       initial: { length: this.delegate().size(), seed: this.delegate().keys() },
     });
   }

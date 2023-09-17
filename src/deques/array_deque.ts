@@ -27,7 +27,7 @@ export class ArrayDeque<E = any> extends BoundedDeque<E> implements RandomAccess
   }
 
   static create<E>(initializer?: number | (QueueOptions & CollectionInitializer<E>)): ArrayDeque<E> {
-    return buildCollection<E, ArrayDeque<E>>(options => new ArrayDeque(options), initializer);
+    return buildCollection<E, ArrayDeque<E>>(ArrayDeque, initializer);
   }
 
   private nextArraySize(numElements: number) {

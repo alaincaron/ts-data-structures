@@ -13,7 +13,7 @@ export class ArrayStack<E = any> extends AbstractStack<E> {
   }
 
   static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)) {
-    return buildCollection<E, ArrayStack<E>>(options => new ArrayStack(options), initializer);
+    return buildCollection<E, ArrayStack<E>>(ArrayStack, initializer);
   }
 
   size() {
@@ -53,9 +53,7 @@ export class ArrayStack<E = any> extends AbstractStack<E> {
   }
 
   clone(): ArrayStack<E> {
-    return buildCollection<E, ArrayStack<E>>(options => new ArrayStack(options), {
-      initial: this.buffer,
-    });
+    return buildCollection<E, ArrayStack<E>>(ArrayStack, { initial: this.buffer });
   }
 
   removeMatchingItem(predicate: Predicate<E>): E | undefined {

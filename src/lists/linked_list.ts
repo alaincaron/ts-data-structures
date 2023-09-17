@@ -12,7 +12,7 @@ export class LinkedList<E = any> extends BoundedList<E> {
   private _size: number;
 
   static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)): LinkedList<E> {
-    return buildCollection<E, LinkedList<E>>(options => new LinkedList(options), initializer);
+    return buildCollection<E, LinkedList<E>>(LinkedList, initializer);
   }
 
   constructor(options?: number | ContainerOptions) {

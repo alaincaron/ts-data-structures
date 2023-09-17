@@ -30,10 +30,7 @@ export class PriorityQueue<E> extends BoundedQueue<E> {
   }
 
   static create<E>(initializer?: number | (PriorityQueueOptions<E> & CollectionInitializer<E>)): PriorityQueue<E> {
-    return buildCollection<E, PriorityQueue<E>, PriorityQueueOptions<E>>(
-      options => new PriorityQueue(options),
-      initializer
-    );
+    return buildCollection<E, PriorityQueue<E>, PriorityQueueOptions<E>>(PriorityQueue, initializer);
   }
 
   size(): number {

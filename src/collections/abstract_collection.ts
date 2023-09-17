@@ -129,8 +129,8 @@ export function buildCollection<
   C extends Collection<E>,
   Options extends ContainerOptions = ContainerOptions,
   Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
->(factory: (options?: number | Options) => C, initializer?: number | (Options & Initializer)): C {
-  if (initializer == null || typeof initializer === 'number') return factory(initializer);
+>(factory: new (...args: any[]) => C, initializer?: number | (Options & Initializer)): C {
+  if (initializer == null || typeof initializer === 'number') return new factory(initializer);
   const initialElements = initializer.initial;
 
   let options: any = undefined;
@@ -143,7 +143,7 @@ export function buildCollection<
   }
   delete options.initial;
 
-  const result = factory(options);
+  const result = new factory(options);
   if (initialElements) result.addFully(initialElements);
   return result;
 }

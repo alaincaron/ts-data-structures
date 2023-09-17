@@ -13,7 +13,7 @@ export class ArrayList<E = any> extends BoundedList<E> {
   }
 
   static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)): ArrayList<E> {
-    return buildCollection<E, ArrayList<E>>(options => new ArrayList(options), initializer);
+    return buildCollection<E, ArrayList<E>>(ArrayList, initializer);
   }
 
   offerAt(idx: number, item: E): boolean {

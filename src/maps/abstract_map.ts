@@ -130,8 +130,8 @@ export function buildMap<
   M extends IMap<K, V>,
   Options extends ContainerOptions = ContainerOptions,
   Initializer extends MapInitializer<K, V> = MapInitializer<K, V>,
->(factory: (options?: number | Options) => M, initializer?: number | (Options & Initializer)): M {
-  if (initializer == null || typeof initializer === 'number') return factory(initializer);
+>(factory: new (...args: any[]) => M, initializer?: number | (Options & Initializer)): M {
+  if (initializer == null || typeof initializer === 'number') return new factory(initializer);
   const initialElements = initializer.initial;
 
   let options: any = undefined;
@@ -142,7 +142,7 @@ export function buildMap<
   }
 
   delete options.initial;
-  const result = factory(options);
+  const result = new factory(options);
 
   if (initialElements) result.putAll(initialElements);
   return result;
