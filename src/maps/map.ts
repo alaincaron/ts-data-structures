@@ -1,5 +1,6 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { MapLike } from './types';
+import { ContainerOptions } from '../utils';
 
 export interface MapEntry<K, V> {
   readonly key: K;
@@ -40,6 +41,7 @@ export interface IMap<K = any, V = any> extends Iterable<[K, V]> {
   entryIterator(): FluentIterator<MapEntry<K, V>>;
 
   toJson(): string;
+  buildOptions?(): ContainerOptions;
 
   toMap(): Map<K, V>;
   clone(): IMap<K, V>;

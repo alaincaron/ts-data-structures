@@ -80,8 +80,7 @@ export abstract class AbstractCollection<E = any> implements Collection<E>, Opti
     for (;;) {
       const item = iter.next();
       if (item.done) break;
-      this.add(item.value);
-      ++count;
+      if (this.add(item.value)) ++count;
     }
     return count;
   }
