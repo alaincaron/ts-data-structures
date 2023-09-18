@@ -489,7 +489,7 @@ describe('ArrayDeque', () => {
       const deque = ArrayDeque.create({ initial: data });
       const x: number[] = [];
       deque.forEach(e => x.push(e));
-      expect(x).to.deep.equal(x);
+      expect(deque.toArray()).to.deep.equal(x);
     });
     it('should do nothing if empty', () => {
       const deque = new ArrayDeque();

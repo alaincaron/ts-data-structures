@@ -399,7 +399,7 @@ describe('ArrayList', () => {
       const list = ArrayList.create({ initial: data });
       const x: number[] = [];
       list.forEach(e => x.push(e));
-      expect(x).to.deep.equal(x);
+      expect(list.toArray()).to.deep.equal(x);
     });
     it('should do nothing if empty', () => {
       const list = new ArrayList();

@@ -307,7 +307,7 @@ describe('ArraySet', () => {
       const set = ArraySet.create({ initial: data });
       const x: number[] = [];
       set.forEach(e => x.push(e));
-      expect(x).to.deep.equal(x);
+      expect(set.toArray()).to.deep.equal(x);
     });
     it('should do nothing if empty', () => {
       const set = new ArraySet();

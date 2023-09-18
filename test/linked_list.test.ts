@@ -399,7 +399,7 @@ describe('LinkedList', () => {
       const list = LinkedList.create({ initial: data });
       const x: number[] = [];
       list.forEach(e => x.push(e));
-      expect(x).to.deep.equal(x);
+      expect(list.toArray()).to.deep.equal(x);
     });
     it('should do nothing if empty', () => {
       const list = new LinkedList();
