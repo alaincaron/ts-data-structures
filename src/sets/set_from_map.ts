@@ -2,7 +2,6 @@ import { IMap, HashMap, HashMapOptions, LinkedHashMap, LinkedHashMapOptions } fr
 import { AbstractSet } from './abstract_set';
 import { Predicate } from 'ts-fluent-iterators';
 import { buildCollection, CollectionInitializer } from '../collections';
-import { ContainerOptions } from '../utils';
 
 export class SetFromMap<E = any> extends AbstractSet<E> {
   private readonly _delegate: IMap<E, boolean>;
@@ -34,6 +33,10 @@ export class SetFromMap<E = any> extends AbstractSet<E> {
 
   add(item: E) {
     return !this._delegate.put(item, true);
+  }
+
+  contains(item: E) {
+    return this._delegate.containsKey(item);
   }
 
   removeMatchingItem(predicate: Predicate<E>): E | undefined {
@@ -68,7 +71,7 @@ export class HashSet<E = any> extends SetFromMap<E> {
     super(new HashMap<E>(options));
   }
 
-  static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)): HashSet<E> {
+  static create<E>(initializer?: number | (HashMapOptions<E> & CollectionInitializer<E>)): HashSet<E> {
     return buildCollection<E, HashSet<E>>(HashSet, initializer);
   }
 
@@ -82,7 +85,7 @@ export class LinkedHashSet<E = any> extends SetFromMap<E> {
     super(new LinkedHashMap<E>(options));
   }
 
-  static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)): LinkedHashSet<E> {
+  static create<E>(initializer?: number | (LinkedHashMapOptions<E> & CollectionInitializer<E>)): LinkedHashSet<E> {
     return buildCollection<E, LinkedHashSet<E>>(LinkedHashSet, initializer);
   }
 

@@ -1,4 +1,4 @@
-import { LinkedHashSet, OverflowException } from '../src';
+import { LinkedHashSet, OverflowException, Ordering } from '../src';
 import { Generators } from 'ts-fluent-iterators';
 import { expect } from 'chai';
 
@@ -26,6 +26,15 @@ describe('LinkedHashSet', () => {
       const set = LinkedHashSet.create({ capacity: 2 });
       expect(set.capacity()).equal(2);
       expect(set.isEmpty()).to.be.true;
+    });
+
+    it('should initialize with the provided Map and respect ordering', () => {
+      const set = LinkedHashSet.create({ ordering: Ordering.ACCESS, initial: ['a', 'b'] });
+      expect(set.size()).equal(2);
+      expect(set.toArray()).to.deep.equal(['a', 'b']);
+      expect(set.contains('b')).to.be.true;
+      expect(set.contains('a')).to.be.true;
+      expect(set.toArray()).to.deep.equal(['b', 'a']);
     });
 
     it('should have the same elements as the array argument', () => {
