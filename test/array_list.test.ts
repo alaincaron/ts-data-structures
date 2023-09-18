@@ -1,10 +1,6 @@
 import { ArrayList, IndexOutOfBoundsException, OverflowException, UnderflowException } from '../src';
 import { expect } from 'chai';
-
-function* generator(): IterableIterator<number> {
-  let i = 0;
-  for (;;) yield i++;
-}
+import { Generators } from 'ts-fluent-iterators';
 
 describe('ArrayList', () => {
   describe('constructor', () => {
@@ -67,7 +63,7 @@ describe('ArrayList', () => {
     });
 
     it('should use the iterator provided in the ArrayGenerator', () => {
-      const list = ArrayList.create({ initial: { length: 10, seed: generator() } });
+      const list = ArrayList.create({ initial: { length: 10, seed: Generators.range() } });
       expect(list.size()).equal(10);
       expect(list.toArray()).to.deep.equal(Array.from({ length: 10 }, (_, i) => i));
     });

@@ -1,10 +1,6 @@
 import { ArrayDeque, OverflowException, UnderflowException } from '../src';
 import { expect } from 'chai';
-
-function* generator(): IterableIterator<number> {
-  let i = 0;
-  for (;;) yield i++;
-}
+import { Generators } from 'ts-fluent-iterators';
 
 describe('ArrayDeque', () => {
   describe('constructor', () => {
@@ -67,7 +63,7 @@ describe('ArrayDeque', () => {
     });
 
     it('should use the iterator provided in the ArrayGenerator', () => {
-      const deque = ArrayDeque.create({ initial: { length: 10, seed: generator() } });
+      const deque = ArrayDeque.create({ initial: { length: 10, seed: Generators.range() } });
       expect(deque.size()).equal(10);
       expect(deque.toArray()).to.deep.equal(Array.from({ length: 10 }, (_, i) => i));
     });

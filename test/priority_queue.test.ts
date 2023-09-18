@@ -1,10 +1,6 @@
 import { PriorityQueue, OverflowException, UnderflowException } from '../src';
 import { expect } from 'chai';
-
-function* generator(): IterableIterator<number> {
-  let i = 0;
-  for (;;) yield i++;
-}
+import { Generators } from 'ts-fluent-iterators';
 
 function isHeap<E>(items: E[]): boolean {
   let parent = 0;
@@ -79,7 +75,7 @@ describe('PriorityQueue', () => {
     });
 
     it('should use the iterator provided in the ArrayGenerator', () => {
-      const queue = PriorityQueue.create({ initial: { length: 10, seed: generator() } });
+      const queue = PriorityQueue.create({ initial: { length: 10, seed: Generators.range() } });
       expect(queue.size()).equal(10);
       expect(queue.toArray()).to.deep.equal(Array.from({ length: 10 }, (_, i) => i));
     });
