@@ -50,10 +50,10 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
     this.hash = hashAny as (k: K) => number;
     this.loadFactor = DEFAULT_LOAD_FACTOR;
 
-    if (options == null) {
-      this.slots = new Array(DEFAULT_INITIAL_SIZE);
-    } else if (typeof options === 'number') {
+    if (typeof options === 'number') {
       this.slots = new Array(nextPrime(Math.max(options, DEFAULT_INITIAL_SIZE)));
+    } else if (!options) {
+      this.slots = new Array(DEFAULT_INITIAL_SIZE);
     } else {
       this.slots = new Array(DEFAULT_INITIAL_SIZE);
       if (options.loadFactor != null) {
@@ -125,7 +125,7 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
       const e: Entry<K, V> = this.slots[idx];
       if (!e) break;
       if (e === DELETED) continue;
-      if (e.hash == h && e.key === key) return idx;
+      if (e.hash === h && e.key === key) return idx;
     }
     return -1;
   }
@@ -196,7 +196,7 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
     const tmp: Entry<K, V>[] = new Array(newCap);
 
     for (const e of this.slots) {
-      if (!e || e == DELETED) {
+      if (!e || e === DELETED) {
         continue;
       }
 

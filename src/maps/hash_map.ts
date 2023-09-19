@@ -38,10 +38,10 @@ export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
     this.hash = hashAny as (k: K) => number;
     this.loadFactor = DEFAULT_LOAD_FACTOR;
 
-    if (options == null) {
-      this.slots = new Array(MIN_INITIAL_CAPACITY);
-    } else if (typeof options === 'number') {
+    if (typeof options === 'number') {
       this.slots = new Array(nextPrime(Math.max(options, MIN_INITIAL_CAPACITY)));
+    } else if (options == null) {
+      this.slots = new Array(MIN_INITIAL_CAPACITY);
     } else {
       this.slots = new Array(MIN_INITIAL_CAPACITY);
       if (options.loadFactor != null) {
