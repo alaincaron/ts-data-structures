@@ -109,7 +109,7 @@ export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
   }
 
   private rehash() {
-    let newLength = this.slots.length * 1.5;
+    let newLength = this.slots.length * 2;
     if (newLength < 0 || newLength >= LARGEST_PRIME) {
       newLength = LARGEST_PRIME;
     } else {
