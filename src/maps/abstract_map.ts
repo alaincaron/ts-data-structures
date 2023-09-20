@@ -1,6 +1,6 @@
 import { OptionsBuilder, mapToJSON, ContainerOptions, CapacityMixin } from '../utils';
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { IMap, MapEntry } from './map';
+import { IMap, MapEntry, OfferResult } from './map';
 import { MapInitializer, MapLike } from './types';
 
 export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, OptionsBuilder {
@@ -33,17 +33,19 @@ export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, Optio
   }
 
   offer(key: K, value: V) {
+    const result: OfferResult<V> = { accepted: true };
     if (this.isFull()) {
       const entry = this.getEntry(key);
       if (entry) {
-        const old_value = entry.value;
-        entry.value = value;
-        return { accepted: true, previous: old_value };
+        result.previous = entry.value;
+      } else {
+        result.accepted = false;
       }
-      return { accepted: false };
+    } else {
+      const previous = this.put(key, value);
+      if (previous != null) result.previous = previous;
     }
-
-    return { accepted: true, previous: this.put(key, value) };
+    return result;
   }
 
   abstract put(key: K, value: V): V | undefined;

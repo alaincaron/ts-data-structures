@@ -8,6 +8,10 @@ export class AdapterSet<E = any> extends AbstractSet<E> {
     this._delegate = delegate ?? new Set<E>();
   }
 
+  protected delegate() {
+    return this._delegate;
+  }
+
   size() {
     return this._delegate.size;
   }

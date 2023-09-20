@@ -5,7 +5,7 @@ import { MapInitializer } from './types';
 import { MAX_ARRAY_SIZE, hashNumber, HashFunction, nextPrime, hashAny, OverflowException } from '../utils';
 import { Predicate, FluentIterator } from 'ts-fluent-iterators';
 
-const DEFAULT_INITIAL_SIZE = 17; // should be prime.
+const DEFAULT_INITIAL_SIZE = 5; // should be prime.
 const DEFAULT_LOAD_FACTOR = 0.7;
 const DELETED = 'DELETED';
 

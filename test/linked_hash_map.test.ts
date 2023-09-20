@@ -91,6 +91,31 @@ describe('LinkedHashMap', () => {
     });
   });
 
+  describe('offer', () => {
+    it('should return undefined if key is newly added', () => {
+      const map = new LinkedHashMap();
+      expect(map.offer('foo', 4)).to.deep.equal({ accepted: true });
+      expect(map.size()).equal(1);
+      expect(map.get('foo')).equal(4);
+    });
+    it('should return the old value if key already present', () => {
+      const map = new LinkedHashMap();
+      expect(map.put('foo', 4)).to.be.undefined;
+      expect(map.offer('foo', 2)).to.deep.equal({ accepted: true, previous: 4 });
+      expect(map.size()).equal(1);
+      expect(map.get('foo')).equal(2);
+    });
+
+    it('should return false if offering a new element and map is full', () => {
+      const map = new LinkedHashMap(1);
+      expect(map.put('foo', 1)).to.be.undefined;
+      expect(map.put('foo', 2)).equal(1);
+      expect(map.offer('bar', 1)).to.deep.equal({ accepted: false });
+      expect(map.isFull()).to.be.true;
+      expect(map.size()).equal(1);
+    });
+  });
+
   describe('clone', () => {
     it('should create a deep equal copy', () => {
       const a = new LinkedHashMap();

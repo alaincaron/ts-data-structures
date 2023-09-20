@@ -3,8 +3,14 @@ import { MapLike } from './types';
 import { ContainerOptions } from '../utils';
 
 export interface MapEntry<K, V> {
-  readonly key: K;
-  value: V;
+  get key(): K;
+  set value(v: V);
+  get value(): V;
+}
+
+export interface OfferResult<V> {
+  accepted: boolean;
+  previous?: V;
 }
 
 export interface IMap<K = any, V = any> extends Iterable<[K, V]> {
@@ -17,7 +23,7 @@ export interface IMap<K = any, V = any> extends Iterable<[K, V]> {
   getEntry(key: K): MapEntry<K, V> | undefined;
   get(key: K): V | undefined;
 
-  offer(key: K, value: V): { accepted: boolean; previous?: V };
+  offer(key: K, value: V): OfferResult<V>;
   put(key: K, value: V): V | undefined;
 
   containsKey(key: K): boolean;

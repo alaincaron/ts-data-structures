@@ -1,10 +1,10 @@
-import { OpenHashMap, OverflowException } from '../src';
+import { AdapterMap, OverflowException } from '../src';
 import { expect } from 'chai';
 
-describe('OpenHashMap', () => {
+describe('AdapterMap', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       expect(map.capacity()).equal(Infinity);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(Infinity);
@@ -13,7 +13,7 @@ describe('OpenHashMap', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const map = new OpenHashMap(2);
+      const map = new AdapterMap(2);
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
@@ -22,30 +22,30 @@ describe('OpenHashMap', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const map = new OpenHashMap({ capacity: 2 });
+      const map = new AdapterMap({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
     });
 
     it('should initialize with the provided Map', () => {
-      const map = OpenHashMap.create({ initial: new Map().set('a', 1).set('b', 2) });
+      const map = AdapterMap.create({ initial: new Map().set('a', 1).set('b', 2) });
       expect(map.size()).equal(2);
       expect(map.get('a')).equal(1);
       expect(map.get('b')).equal(2);
     });
 
     it('should initialize with the provided IMap', () => {
-      const map1 = new OpenHashMap();
+      const map1 = new AdapterMap();
       map1.put('a', 1);
       map1.put('b', 2);
-      const map = OpenHashMap.create({ initial: map1 });
+      const map = AdapterMap.create({ initial: map1 });
       expect(map.size()).equal(2);
       expect(map.get('a')).equal(1);
       expect(map.get('b')).equal(2);
     });
 
     it('should initialize with the provided Iterable', () => {
-      const map = OpenHashMap.create({
+      const map = AdapterMap.create({
         initial: [
           ['a', 1],
           ['b', 2],
@@ -59,13 +59,13 @@ describe('OpenHashMap', () => {
 
   describe('put/get', () => {
     it('should return undefined if key is newly added', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
     });
     it('should return the old value if key already present', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.put('foo', 2)).equal(4);
       expect(map.size()).equal(1);
@@ -73,7 +73,7 @@ describe('OpenHashMap', () => {
     });
 
     it('should throw if adding a new element and map is full', () => {
-      const map = new OpenHashMap(1);
+      const map = new AdapterMap(1);
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(() => map.put('bar', 1)).to.throw(OverflowException);
@@ -84,13 +84,13 @@ describe('OpenHashMap', () => {
 
   describe('offer', () => {
     it('should return undefined if key is newly added', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       expect(map.offer('foo', 4)).to.deep.equal({ accepted: true });
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
     });
     it('should return the old value if key already present', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.offer('foo', 2)).to.deep.equal({ accepted: true, previous: 4 });
       expect(map.size()).equal(1);
@@ -98,7 +98,7 @@ describe('OpenHashMap', () => {
     });
 
     it('should return false if offering a new element and map is full', () => {
-      const map = new OpenHashMap(1);
+      const map = new AdapterMap(1);
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(map.offer('bar', 1)).to.deep.equal({ accepted: false });
@@ -109,7 +109,7 @@ describe('OpenHashMap', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = new OpenHashMap();
+      const a = new AdapterMap();
       a.put('foo', 1);
       const b = a.clone();
       expect(b).to.deep.equal(a);
@@ -121,7 +121,7 @@ describe('OpenHashMap', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const map = new OpenHashMap({ capacity: 3 });
+      const map = new AdapterMap({ capacity: 3 });
       map.put('a', 1);
       map.put('b', 2);
       expect(map.size()).to.equal(2);
@@ -134,16 +134,16 @@ describe('OpenHashMap', () => {
 
   describe('containsKey', () => {
     it('should return false on empty map', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       expect(map.containsKey('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       map.put('foo', 1);
       expect(map.containsKey('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       map.put('foo', 1);
       expect(map.containsKey('foo')).to.be.true;
     });
@@ -151,16 +151,16 @@ describe('OpenHashMap', () => {
 
   describe('containsValue', () => {
     it('should return false on empty map', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       expect(map.containsValue('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       map.put('foo', 1);
       expect(map.containsValue('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       map.put('foo', 1);
       expect(map.containsValue(1)).to.be.true;
     });
@@ -168,13 +168,13 @@ describe('OpenHashMap', () => {
 
   describe('remove', () => {
     it('should return undefined on empty map', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       expect(map.remove('foo')).to.be.undefined;
       expect(map.isEmpty()).to.be.true;
       expect(map.size()).equal(0);
     });
     it('should return false if item is missing', () => {
-      const map = new OpenHashMap();
+      const map = new AdapterMap();
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.remove('bar')).to.be.undefined;
       expect(map.isEmpty()).to.be.false;
@@ -185,7 +185,7 @@ describe('OpenHashMap', () => {
 
   describe('filterKeys', () => {
     it('should remove keys not matching predicate', () => {
-      const map = new OpenHashMap<string, number>();
+      const map = new AdapterMap<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
@@ -198,7 +198,7 @@ describe('OpenHashMap', () => {
   });
   describe('filterValues', () => {
     it('should remove values not matching predicate', () => {
-      const map = new OpenHashMap<string, number>();
+      const map = new AdapterMap<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);

@@ -4,3 +4,4 @@ export * from './map';
 export * from './types';
 export * from './linked_hash_map';
 export * from './open_hash_map';
+export * from './adapter_map';
