@@ -22,7 +22,7 @@ export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, Optio
     return this.capacity() - this.size();
   }
 
-  abstract getEntry(key: K): MapEntry<K, V> | undefined;
+  protected abstract getEntry(key: K): MapEntry<K, V> | undefined;
 
   get(key: K): V | undefined {
     return this.getEntry(key)?.value;

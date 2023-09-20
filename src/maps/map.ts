@@ -20,7 +20,6 @@ export interface IMap<K = any, V = any> extends Iterable<[K, V]> {
   isFull(): boolean;
   remaining(): number;
 
-  getEntry(key: K): MapEntry<K, V> | undefined;
   get(key: K): V | undefined;
 
   offer(key: K, value: V): OfferResult<V>;

@@ -139,10 +139,6 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
     return idx >= 0 ? (this.slots[idx] as MapEntry<K, V>) : undefined;
   }
 
-  get(key: K) {
-    return this.getEntry(key)?.value;
-  }
-
   put(key: K, value: V) {
     const h = this.hash(key);
     let idx = findIndexForInsertion(key, h, this.slots);

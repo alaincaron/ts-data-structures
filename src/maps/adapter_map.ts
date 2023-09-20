@@ -33,7 +33,7 @@ export class AdapterMap<K = any, V = any> extends BoundedMap<K, V> {
     this._delegate.clear();
   }
 
-  getEntry(key: K): MapEntry<K, V> | undefined {
+  protected getEntry(key: K): MapEntry<K, V> | undefined {
     const value = this._delegate.get(key);
     if (value == null) return undefined;
     return { key, value };
@@ -90,6 +90,6 @@ export class AdapterMap<K = any, V = any> extends BoundedMap<K, V> {
   }
 
   clone(): AdapterMap<K, V> {
-    return AdapterMap.create<K, V>({ capacity: this.capacity(), initial: this });
+    return AdapterMap.create<K, V>({ initial: this });
   }
 }
