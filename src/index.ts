@@ -1,4 +1,5 @@
 export * from './collections';
+export * from './collectors';
 export * from './deques';
 export * from './maps';
 export * from './queues';
