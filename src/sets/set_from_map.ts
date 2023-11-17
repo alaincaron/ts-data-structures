@@ -1,4 +1,4 @@
-import { IMap, HashMap, HashMapOptions, LinkedHashMap, LinkedHashMapOptions } from '../maps';
+import { IMap, HashMap, HashMapOptions, LinkedHashMap, LinkedHashMapOptions, OpenHashMap } from '../maps';
 import { AbstractSet } from './abstract_set';
 import { Predicate } from 'ts-fluent-iterators';
 import { buildCollection, CollectionInitializer } from '../collections';
@@ -68,7 +68,7 @@ export class SetFromMap<E = any> extends AbstractSet<E> {
 
 export class HashSet<E = any> extends SetFromMap<E> {
   constructor(options?: number | HashMapOptions<E>) {
-    super(new HashMap<E>(options));
+    super(new HashMap<E, boolean>(options));
   }
 
   static create<E>(initializer?: number | (HashMapOptions<E> & CollectionInitializer<E>)): HashSet<E> {
@@ -82,7 +82,7 @@ export class HashSet<E = any> extends SetFromMap<E> {
 
 export class LinkedHashSet<E = any> extends SetFromMap<E> {
   constructor(options?: number | LinkedHashMapOptions<E>) {
-    super(new LinkedHashMap<E>(options));
+    super(new LinkedHashMap<E, boolean>(options));
   }
 
   static create<E>(initializer?: number | (LinkedHashMapOptions<E> & CollectionInitializer<E>)): LinkedHashSet<E> {
@@ -91,5 +91,18 @@ export class LinkedHashSet<E = any> extends SetFromMap<E> {
 
   clone(): LinkedHashSet<E> {
     return LinkedHashSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
+  }
+}
+
+export class OpenHashSet<E = any> extends SetFromMap<E> {
+  constructor(options?: number | HashMapOptions<E>) {
+    super(new OpenHashMap<E, boolean>(options));
+  }
+  static create<E>(initializer?: number | (HashMapOptions<E> & CollectionInitializer<E>)): OpenHashSet<E> {
+    return buildCollection<E, OpenHashSet<E>>(OpenHashSet, initializer);
+  }
+
+  clone(): OpenHashSet<E> {
+    return OpenHashSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
   }
 }
