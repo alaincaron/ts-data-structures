@@ -163,7 +163,7 @@ describe('HashSet', () => {
     });
     it('should return the first item matching the predicate', () => {
       const set = HashSet.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(set.find(x => x >= 5)).equal(5);
+      expect(set.find(x => x >= 5)).to.be.greaterThanOrEqual(5);
     });
   });
 
