@@ -50,4 +50,8 @@ export class DecoratorCollection<E = any> extends AbstractCollection<E> {
   clone(): DecoratorCollection<E> {
     throw new Error();
   }
+
+  equals(other: unknown) {
+    return this._delegate.equals(other);
+  }
 }

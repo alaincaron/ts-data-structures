@@ -67,11 +67,11 @@ export class SetFromMap<E = any> extends AbstractSet<E> {
 }
 
 export class HashSet<E = any> extends SetFromMap<E> {
-  constructor(options?: number | HashMapOptions<E>) {
+  constructor(options?: number | HashMapOptions) {
     super(new HashMap<E, boolean>(options));
   }
 
-  static create<E>(initializer?: number | (HashMapOptions<E> & CollectionInitializer<E>)): HashSet<E> {
+  static create<E>(initializer?: number | (HashMapOptions & CollectionInitializer<E>)): HashSet<E> {
     return buildCollection<E, HashSet<E>>(HashSet, initializer);
   }
 
@@ -81,11 +81,11 @@ export class HashSet<E = any> extends SetFromMap<E> {
 }
 
 export class LinkedHashSet<E = any> extends SetFromMap<E> {
-  constructor(options?: number | LinkedHashMapOptions<E>) {
+  constructor(options?: number | LinkedHashMapOptions) {
     super(new LinkedHashMap<E, boolean>(options));
   }
 
-  static create<E>(initializer?: number | (LinkedHashMapOptions<E> & CollectionInitializer<E>)): LinkedHashSet<E> {
+  static create<E>(initializer?: number | (LinkedHashMapOptions & CollectionInitializer<E>)): LinkedHashSet<E> {
     return buildCollection<E, LinkedHashSet<E>>(LinkedHashSet, initializer);
   }
 
@@ -95,10 +95,10 @@ export class LinkedHashSet<E = any> extends SetFromMap<E> {
 }
 
 export class OpenHashSet<E = any> extends SetFromMap<E> {
-  constructor(options?: number | HashMapOptions<E>) {
+  constructor(options?: number | HashMapOptions) {
     super(new OpenHashMap<E, boolean>(options));
   }
-  static create<E>(initializer?: number | (HashMapOptions<E> & CollectionInitializer<E>)): OpenHashSet<E> {
+  static create<E>(initializer?: number | (HashMapOptions & CollectionInitializer<E>)): OpenHashSet<E> {
     return buildCollection<E, OpenHashSet<E>>(OpenHashSet, initializer);
   }
 

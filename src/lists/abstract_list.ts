@@ -1,5 +1,5 @@
 import { List, ListIterator } from './list';
-import { OverflowException, UnderflowException, shuffle, CapacityMixin, ContainerOptions } from '../utils';
+import { OverflowException, UnderflowException, shuffle, CapacityMixin, ContainerOptions, equalsAny } from '../utils';
 import { Comparator, Predicate, FluentIterator } from 'ts-fluent-iterators';
 import { AbstractCollection } from '../collections';
 
@@ -100,7 +100,7 @@ export abstract class AbstractList<E = any> extends AbstractCollection<E> implem
   }
 
   indexOf(e: E): number {
-    return this.indexOfFirstOccurence(x => x === e);
+    return this.indexOfFirstOccurence(x => equalsAny(e, x));
   }
 
   indexOfLastOccurence(predicate: Predicate<E>): number {
@@ -113,7 +113,7 @@ export abstract class AbstractList<E = any> extends AbstractCollection<E> implem
   }
 
   lastIndexOf(e: E): number {
-    return this.indexOfLastOccurence(x => x === e);
+    return this.indexOfLastOccurence(x => equalsAny(e, x));
   }
 
   sort(comparator?: Comparator<E>) {
@@ -182,14 +182,28 @@ export abstract class AbstractList<E = any> extends AbstractCollection<E> implem
   }
 
   removeFirstOccurence(item: E) {
-    return this.removeFirstMatchingItem(x => item === x) != null;
+    return this.removeFirstMatchingItem(x => equalsAny(item, x)) != null;
   }
 
   removeLastOccurence(item: E) {
-    return this.removeLastMatchingItem(x => item === x) != null;
+    return this.removeLastMatchingItem(x => equalsAny(item, x)) != null;
   }
 
   abstract clone(): AbstractList<E>;
+
+  equals(other: unknown) {
+    if (this === other) return true;
+    if (!(other instanceof AbstractList)) return false;
+    if (other.size() != this.size()) return false;
+    const iter1 = this[Symbol.iterator]();
+    const iter2 = other[Symbol.iterator]();
+    for (;;) {
+      const item1 = iter1.next();
+      const item2 = iter2.next();
+      if (item1.done || item2.done) return item1.done === item2.done;
+      if (!equalsAny(item1.value, item2.value)) return false;
+    }
+  }
 }
 
 export const BoundedList = CapacityMixin(AbstractList);

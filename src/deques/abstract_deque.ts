@@ -1,6 +1,6 @@
 import { AbstractQueue, QueueOptions } from '../queues';
 import { Deque } from './deque';
-import { OverflowException, UnderflowException, CapacityMixin } from '../utils';
+import { OverflowException, UnderflowException, CapacityMixin, equalsAny } from '../utils';
 import { Predicate } from 'ts-fluent-iterators';
 
 export abstract class AbstractDeque<E = any> extends AbstractQueue<E> implements Deque<E> {
@@ -34,11 +34,11 @@ export abstract class AbstractDeque<E = any> extends AbstractQueue<E> implements
   abstract removeLastMatchingItem(predicate: Predicate<E>): E | undefined;
 
   removeFirstOccurence(item: E) {
-    return this.removeFirstMatchingItem(x => item === x) != null;
+    return this.removeFirstMatchingItem(x => equalsAny(item, x)) != null;
   }
 
   removeLastOccurence(item: E) {
-    return this.removeLastMatchingItem(x => item === x) != null;
+    return this.removeLastMatchingItem(x => equalsAny(item, x)) != null;
   }
 
   removeFirst() {

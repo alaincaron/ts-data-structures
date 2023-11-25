@@ -40,6 +40,13 @@ export abstract class AbstractSet<E = any> extends AbstractCollection<E> impleme
   }
 
   abstract clone(): AbstractSet<E>;
+
+  equals(other: unknown): boolean {
+    if (this === other) return true;
+    if (!(other instanceof AbstractSet)) return false;
+    if (this.size() != other.size()) return false;
+    return this.containsAll(other);
+  }
 }
 
 export const BoundedSet = CapacityMixin(AbstractSet);

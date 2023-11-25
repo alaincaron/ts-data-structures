@@ -2,7 +2,7 @@ import { BoundedMap, buildMap } from './abstract_map';
 import { HashMapOptions } from './hash_map';
 import { MapEntry } from './map';
 import { MapInitializer } from './types';
-import { MAX_ARRAY_SIZE, hashNumber, HashFunction, nextPrime, hashAny, OverflowException } from '../utils';
+import { MAX_ARRAY_SIZE, hashNumber, nextPrime, hashAny, equalsAny, OverflowException } from '../utils';
 import { Predicate, FluentIterator } from 'ts-fluent-iterators';
 
 const DEFAULT_INITIAL_SIZE = 5; // should be prime.
@@ -15,39 +15,15 @@ interface HashEntry<K, V> extends MapEntry<K, V> {
 
 type Entry<K, V> = HashEntry<K, V> | 'DELETED' | undefined;
 
-function findIndexForInsertion<K, V>(key: K, h: number, entries: Entry<K, V>[]): number {
-  let idx = h;
-  let firstDeleted = -1;
-  const probe = 1 + (hashNumber(h) % (entries.length - 2));
-
-  for (let i = 0; i < entries.length; ++i) {
-    idx = (idx + probe) % entries.length;
-    const e: Entry<K, V> = entries[idx];
-    if (!e) {
-      return firstDeleted < 0 ? idx : firstDeleted;
-    }
-    if (e === DELETED) {
-      if (firstDeleted < 0) {
-        firstDeleted = idx;
-      }
-      continue;
-    }
-    if (e.hash === h && e.key === key) return idx;
-  }
-  return firstDeleted;
-}
-
 export class OpenHashMap<K, V> extends BoundedMap<K, V> {
   private _size: number;
-  public readonly hash: HashFunction<K>;
   public readonly loadFactor: number;
   private slots: Array<Entry<K, V>>;
   private _occupancy: number;
 
-  constructor(options?: number | HashMapOptions<K>) {
+  constructor(options?: number | HashMapOptions) {
     super(options);
     this._size = this._occupancy = 0;
-    this.hash = hashAny as (k: K) => number;
     this.loadFactor = DEFAULT_LOAD_FACTOR;
 
     if (typeof options === 'number') {
@@ -60,12 +36,11 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
         if (options.loadFactor <= 0.0) throw new Error(`Invalid load factor: ${options.loadFactor}`);
         this.loadFactor = options.loadFactor;
       }
-      if (options.hash) this.hash = options.hash;
     }
   }
 
-  static create<K, V>(initializer?: number | HashMapOptions<K> | MapInitializer<K, V>): OpenHashMap<K, V> {
-    return buildMap<K, V, OpenHashMap<K, V>, HashMapOptions<K>>(OpenHashMap, initializer);
+  static create<K, V>(initializer?: number | HashMapOptions | MapInitializer<K, V>): OpenHashMap<K, V> {
+    return buildMap<K, V, OpenHashMap<K, V>, HashMapOptions>(OpenHashMap, initializer);
   }
 
   size(): number {
@@ -107,25 +82,32 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
     return OpenHashMap.create({ initial: this });
   }
 
-  buildOptions(): HashMapOptions<K> {
+  buildOptions(): HashMapOptions {
     return {
       ...super.buildOptions(),
-      hash: this.hash,
       loadFactor: this.loadFactor,
     };
   }
 
+  private computeProbe(h: number) {
+    const probeRange = this.slots.length - 2;
+    let p = hashNumber(h) % probeRange;
+    if (p < 0) p += probeRange;
+    return p + 1;
+  }
+
   private findIndex(key: K): number {
-    const h = this.hash(key);
-    let idx = h;
-    const probe = 1 + (hashNumber(h) % (this.slots.length - 2));
+    const h = hashAny(key);
+    let idx = h % this.slots.length;
+    if (idx < 0) idx += this.slots.length;
+    const probe = this.computeProbe(h);
 
     for (let i = 0; i < this.slots.length; ++i) {
       idx = (idx + probe) % this.slots.length;
       const e: Entry<K, V> = this.slots[idx];
       if (!e) break;
       if (e === DELETED) continue;
-      if (e.hash === h && e.key === key) return idx;
+      if (e.hash === h && equalsAny(key, e.key)) return idx;
     }
     return -1;
   }
@@ -140,14 +122,14 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
   }
 
   put(key: K, value: V) {
-    const h = this.hash(key);
-    let idx = findIndexForInsertion(key, h, this.slots);
+    const h = hashAny(key);
+    let idx = this.findIndexForInsertion(key, h, this.slots);
     if (idx < 0) {
       // this should not really happen since we perform a rehash if necessary
       // after insertion.
       // But better err on the safe of safety.
       this.rehashIfNecessary();
-      idx = findIndexForInsertion(key, h, this.slots);
+      idx = this.findIndexForInsertion(key, h, this.slots);
     }
 
     const e = this.slots[idx];
@@ -196,10 +178,33 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
         continue;
       }
 
-      const idx = findIndexForInsertion(e.key, e.hash, tmp);
+      const idx = this.findIndexForInsertion(e.key, e.hash, tmp);
       tmp[idx] = e;
     }
     this.slots = tmp;
+  }
+
+  findIndexForInsertion<K, V>(key: K, h: number, entries: Entry<K, V>[]): number {
+    let idx = h % this.slots.length;
+    if (idx < 0) idx += this.slots.length;
+    let firstDeleted = -1;
+    const probe = this.computeProbe(h);
+
+    for (let i = 0; i < entries.length; ++i) {
+      idx = (idx + probe) % entries.length;
+      const e: Entry<K, V> = entries[idx];
+      if (!e) {
+        return firstDeleted < 0 ? idx : firstDeleted;
+      }
+      if (e === DELETED) {
+        if (firstDeleted < 0) {
+          firstDeleted = idx;
+        }
+        continue;
+      }
+      if (e.hash === h && equalsAny(key, e.key)) return idx;
+    }
+    return firstDeleted;
   }
 
   rehash() {
@@ -213,7 +218,7 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
       this.slots[i] = undefined;
     }
     for (const e of tmp) {
-      const idx = findIndexForInsertion(e.key, e.hash, this.slots);
+      const idx = this.findIndexForInsertion(e.key, e.hash, this.slots);
       this.slots[idx] = e;
     }
   }

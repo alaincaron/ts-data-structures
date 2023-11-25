@@ -1,6 +1,13 @@
 import { Collection } from './collection';
 import { Predicate, Reducer, IteratorLike, Iterators, FluentIterator, Mapper } from 'ts-fluent-iterators';
-import { OverflowException, iterableToJSON, OptionsBuilder, ContainerOptions, CapacityMixin } from '../utils';
+import {
+  OverflowException,
+  iterableToJSON,
+  OptionsBuilder,
+  ContainerOptions,
+  CapacityMixin,
+  equalsAny,
+} from '../utils';
 import { CollectionInitializer, CollectionLike, getSize } from './types';
 
 export abstract class AbstractCollection<E = any> implements Collection<E>, OptionsBuilder {
@@ -22,7 +29,7 @@ export abstract class AbstractCollection<E = any> implements Collection<E>, Opti
   }
 
   contains(item: E): boolean {
-    return this.iterator().includes(item);
+    return this.iterator().contains(x => equalsAny(item, x));
   }
 
   toArray(): E[] {
@@ -39,7 +46,7 @@ export abstract class AbstractCollection<E = any> implements Collection<E>, Opti
   abstract removeMatchingItem(predicate: Predicate<E>): E | undefined;
 
   removeItem(item: E): boolean {
-    return this.removeMatchingItem(x => x === item) != null;
+    return this.removeMatchingItem(x => equalsAny(item, x)) != null;
   }
 
   abstract filter(predicate: Predicate<E>): number;
@@ -104,6 +111,13 @@ export abstract class AbstractCollection<E = any> implements Collection<E>, Opti
 
   abstract clear(): void;
 
+  containsAll<E1 extends E>(c: Collection<E1>): boolean {
+    for (const item of c) {
+      if (!this.contains(item)) return false;
+    }
+    return true;
+  }
+
   abstract [Symbol.iterator](): Iterator<E>;
 
   iterator() {
@@ -119,6 +133,8 @@ export abstract class AbstractCollection<E = any> implements Collection<E>, Opti
   toJson() {
     return iterableToJSON(this);
   }
+
+  abstract equals(other: unknown): boolean;
 }
 
 export const BoundedCollection = CapacityMixin(AbstractCollection);

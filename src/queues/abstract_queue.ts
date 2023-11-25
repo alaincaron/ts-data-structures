@@ -108,6 +108,10 @@ export abstract class AbstractQueue<E = any> extends AbstractCollection<E> imple
   }
 
   abstract clone(): AbstractQueue<E>;
+
+  equals(other: unknown) {
+    return this === other;
+  }
 }
 
 export const BoundedQueue = CapacityMixin(AbstractQueue);

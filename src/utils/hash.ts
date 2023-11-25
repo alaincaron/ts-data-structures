@@ -1,3 +1,5 @@
+import { Mapper } from 'ts-fluent-iterators';
+
 export function cyrb53(s: string, seed = 0): number {
   let h1 = 0xdeadbeef ^ seed,
     h2 = 0x41c6ce57 ^ seed;
@@ -15,18 +17,27 @@ export function cyrb53(s: string, seed = 0): number {
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 }
 
-export function hashStringJava(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; ++i) {
-    h = (h << 5) - h + s.charCodeAt(i);
-    h |= 0;
-  }
-  return h;
+function hashInteger(h: number): number {
+  h ^= (h >>> 20) ^ (h >>> 12);
+  return h ^ (h >>> 7) ^ (h >>> 4);
+}
+
+function FloatToIEEE(h: number): number {
+  var buf = new ArrayBuffer(4);
+  new Float32Array(buf)[0] = h;
+  return new Uint32Array(buf)[0];
 }
 
 export function hashNumber(h: number): number {
-  h ^= (h >>> 20) ^ (h >>> 12);
-  return h ^ (h >>> 7) ^ (h >>> 4);
+  return hashInteger(FloatToIEEE(h));
+}
+
+export function hashIterable<X>(iter: Iterable<X>, hasher: Mapper<X, number> = hashAny): number {
+  let hash = 31;
+  for (const item of iter) {
+    hash = ((hash << 5) - hash + hashNumber(hasher(item))) | 0;
+  }
+  return hash;
 }
 
 export function hashAny(x: any): number {
@@ -39,15 +50,45 @@ export function hashAny(x: any): number {
       return hashNumber(x);
     case 'boolean':
       return x ? 1231 : 1237;
+    case 'function':
+    case 'symbol':
+      return cyrb53(x.toString());
+    case 'bigint':
+      return hashNumber(Number(BigInt.asIntN(32, x)));
     default:
       if (typeof x[Symbol.iterator] === 'function') {
-        let hash = 0;
-        for (const y of x) {
-          hash = ((hash << 5) - hash + hashAny(y)) | 0;
-        }
-        return hash;
+        return hashIterable(x);
       }
-      if (typeof x.toString === 'function') return cyrb53(x.toString() as string);
-      return cyrb53(JSON.stringify(x));
+      return hashIterable(Object.entries(x));
+  }
+}
+
+export function equalsIterable(x: Iterable<any>, y: Iterable<any>): boolean {
+  const iter1 = x[Symbol.iterator]();
+  const iter2 = y[Symbol.iterator]();
+  for (;;) {
+    const item1 = iter1.next();
+    const item2 = iter2.next();
+    if (item1.done || item2.done) return item1.done === item2.done;
+    if (!equalsAny(item1.value, item2.value)) return false;
+  }
+}
+
+export function equalsAny(x: any, y: any): boolean {
+  if (x === y) return true;
+  if (typeof x != typeof y) return false;
+  if (x == null || y == null) return x === y;
+  switch (typeof x) {
+    case 'object':
+      if (typeof x.equals === 'function') return x.equals(y);
+      if (x.constructor != y.constructor) return false;
+      const isIterableX = typeof x[Symbol.iterator] === 'function';
+      const isIterableY = typeof y[Symbol.iterator] === 'function';
+      if (isIterableX) {
+        return isIterableY && equalsIterable(x, y);
+      }
+      return !isIterableY && equalsIterable(Object.entries(x), Object.entries(y));
+    default:
+      return false;
   }
 }

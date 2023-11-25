@@ -209,4 +209,16 @@ describe('HashMap', () => {
       expect(map.containsKey('bar')).to.be.true;
     });
   });
+
+  describe('non-primitive-types', () => {
+    it('should handle objects', () => {
+      const map = new HashMap();
+      map.put({ a: 5 }, 'foo');
+      expect(map.get({ a: 5 })).equal('foo');
+      expect(map.put({ a: 5 }, 'bar')).equal('foo');
+      expect(map.get({ a: 5 })).equal('bar');
+      expect(map.get({ a: 6 })).to.be.undefined;
+      expect(map.size()).equals(1);
+    });
+  });
 });

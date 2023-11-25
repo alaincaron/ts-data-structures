@@ -1,7 +1,7 @@
 import { BoundedMap, buildMap } from './abstract_map';
 import { MapInitializer } from './types';
 import { MapEntry } from './map';
-import { ContainerOptions, nextPrime, hashAny, HashFunction, LARGEST_PRIME, OverflowException } from '../utils';
+import { ContainerOptions, nextPrime, hashAny, LARGEST_PRIME, OverflowException, equalsAny } from '../utils';
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 
 export interface HashEntry<K, V> extends MapEntry<K, V> {
@@ -16,8 +16,7 @@ export enum AccessType {
   REMOVE,
 }
 
-export interface HashMapOptions<K> extends ContainerOptions {
-  hash?: HashFunction<K>;
+export interface HashMapOptions extends ContainerOptions {
   loadFactor?: number;
 }
 
@@ -27,15 +26,13 @@ const DEFAULT_LOAD_FACTOR = 0.75;
 export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
   private _size: number;
   private slots: Array<HashEntry<K, V> | undefined>;
-  public readonly hash: HashFunction<K>;
   public readonly loadFactor: number;
 
   protected recordAccess(_e: HashEntry<K, V>, _accessType: AccessType) {}
 
-  constructor(options?: number | HashMapOptions<K>) {
+  constructor(options?: number | HashMapOptions) {
     super(options);
     this._size = 0;
-    this.hash = hashAny as (k: K) => number;
     this.loadFactor = DEFAULT_LOAD_FACTOR;
 
     if (typeof options === 'number') {
@@ -48,12 +45,11 @@ export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
         if (options.loadFactor <= 0.0) throw new Error(`Invalid load factor: ${options.loadFactor}`);
         this.loadFactor = options.loadFactor;
       }
-      if (options.hash) this.hash = options.hash;
     }
   }
 
-  static create<K, V>(initializer?: number | HashMapOptions<K> | MapInitializer<K, V>): HashMap<K, V> {
-    return buildMap<K, V, HashMap<K, V>, HashMapOptions<K>>(HashMap, initializer);
+  static create<K, V>(initializer?: number | HashMapOptions | MapInitializer<K, V>): HashMap<K, V> {
+    return buildMap<K, V, HashMap<K, V>, HashMapOptions>(HashMap, initializer);
   }
 
   size(): number {
@@ -67,20 +63,20 @@ export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
   }
 
   getEntry(key: K): MapEntry<K, V> | undefined {
-    const h = this.hash(key);
+    const h = hashAny(key);
     const slot = this.getSlot(h, this.slots);
     let e = this.slots[slot];
-    while (e && (e.hash !== h || e.key !== key)) e = e.next;
+    while (e && (e.hash !== h || !equalsAny(key, e.key))) e = e.next;
     if (e) this.recordAccess(e, AccessType.GET);
     return e;
   }
 
   put(key: K, value: V): V | undefined {
-    const hash = this.hash(key);
+    const hash = hashAny(key);
     const slot = this.getSlot(hash, this.slots);
     let prev: HashEntry<K, V> | undefined = undefined;
     let e = this.slots[slot];
-    while (e && (e.hash !== hash || e.key !== key)) {
+    while (e && (e.hash !== hash || !equalsAny(key, e.key))) {
       prev = e;
       e = e.next;
     }
@@ -130,11 +126,11 @@ export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
   }
 
   private removeEntry(key: K): HashEntry<K, V> | undefined {
-    const h = this.hash(key);
+    const h = hashAny(key);
     const slot = this.getSlot(h, this.slots);
     let prev: HashEntry<K, V> | undefined = undefined;
     let e = this.slots[slot];
-    while (e && (e.hash !== h || e.key !== key)) {
+    while (e && (e.hash !== h || !equalsAny(key, e.key))) {
       prev = e;
       e = e.next;
     }
@@ -201,10 +197,9 @@ export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
     return HashMap.create({ initial: this });
   }
 
-  buildOptions(): HashMapOptions<K> {
+  buildOptions(): HashMapOptions {
     return {
       ...super.buildOptions(),
-      hash: this.hash,
       loadFactor: this.loadFactor,
     };
   }

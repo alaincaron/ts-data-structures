@@ -1,4 +1,4 @@
-import { OptionsBuilder, mapToJSON, ContainerOptions, CapacityMixin } from '../utils';
+import { OptionsBuilder, mapToJSON, ContainerOptions, CapacityMixin, equalsAny } from '../utils';
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry, OfferResult } from './map';
 import { MapInitializer, MapLike } from './types';
@@ -56,7 +56,7 @@ export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, Optio
 
   containsValue(value: V) {
     for (const v of this.values()) {
-      if (value === v) return true;
+      if (equalsAny(value, v)) return true;
     }
     return false;
   }
@@ -121,6 +121,17 @@ export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, Optio
 
   toJson() {
     return mapToJSON(this);
+  }
+
+  equals(other: unknown) {
+    if (this === other) return true;
+    if (!(other instanceof AbstractMap)) return false;
+    if (this.size() !== other.size()) return false;
+    for (const [k, v] of this) {
+      const entry = other.getEntry(k);
+      if (!entry || !equalsAny(v, entry.value)) return false;
+    }
+    return true;
   }
 }
 

@@ -33,7 +33,10 @@ export interface Collection<E = any> extends Iterable<E> {
 
   iterator(): FluentIterator<E>;
 
+  containsAll<E1 extends E>(c: Collection<E1>): boolean;
   clone(): Collection<E>;
   toJson(): string;
   buildOptions?(): ContainerOptions;
+
+  equals(other: unknown): boolean;
 }
