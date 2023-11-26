@@ -353,8 +353,9 @@ describe('HashSet', () => {
 
   describe('toJson', () => {
     it('should return the JSON string', () => {
-      const set = HashSet.create({ initial: [1, 2, 3] });
-      expect(set.toJson()).equal('[1,2,3]');
+      const set = HashSet.create({ initial: [1, 2, 3, 4, { x: true }, 'alain'] });
+      const set2 = HashSet.create({ initial: JSON.parse(set.toJson()) });
+      expect(set.equals(set2)).to.be.true;
     });
   });
 });

@@ -1,25 +1,27 @@
 import { Iterators, IteratorGenerator } from 'ts-fluent-iterators';
 export function toJSON(x: any) {
   if (x == null) return JSON.stringify(x);
+  if (typeof x.toJson === 'function') return x.toJson();
   switch (typeof x) {
     case 'string':
     case 'number':
     case 'boolean':
       return JSON.stringify(x);
     case 'bigint':
-      return JSON.stringify(x.toString());
+      return x.toString();
     case 'symbol':
       return JSON.stringify(x.description);
   }
-  if (typeof x.toJson === 'function') return x.toJson();
+
   if (x instanceof Map) {
     return mapToJSON(x);
   }
+
   const iter = Iterators.toIteratorMaybe(x);
   if (iter) {
     return iterableToJSON(iter);
   }
-  return JSON.stringify(x);
+  return mapToJSON(Object.entries(x));
 }
 
 export function mapToJSON<K = any, V = any>(entries: Map<K, V> | IteratorGenerator<[K, V]>) {
