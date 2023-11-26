@@ -1,6 +1,6 @@
 {
   "name": "ts-data-structures",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Misc TS data structures",
   "main": "./dist/index.js",
   "engines": {
@@ -69,6 +69,6 @@
     "dist"
   ],
   "dependencies": {
-    "ts-fluent-iterators": "^5.0.0"
+    "ts-fluent-iterators": "^5.2.0"
   }
 }
