@@ -89,8 +89,8 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
     };
   }
 
-  private computeProbe(h: number) {
-    const probeRange = this.slots.length - 2;
+  private computeProbe(h: number, nbEntries: number) {
+    const probeRange = nbEntries - 2;
     let p = hashNumber(h) % probeRange;
     if (p < 0) p += probeRange;
     return p + 1;
@@ -100,11 +100,11 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
     const h = hashAny(key);
     let idx = h % this.slots.length;
     if (idx < 0) idx += this.slots.length;
-    const probe = this.computeProbe(h);
+    const probe = this.computeProbe(h, this.slots.length);
 
     for (let i = 0; i < this.slots.length; ++i) {
       idx = (idx + probe) % this.slots.length;
-      const e: Entry<K, V> = this.slots[idx];
+      const e = this.slots[idx];
       if (!e) break;
       if (e === DELETED) continue;
       if (e.hash === h && equalsAny(key, e.key)) return idx;
@@ -185,14 +185,14 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
   }
 
   findIndexForInsertion<K, V>(key: K, h: number, entries: Entry<K, V>[]): number {
-    let idx = h % this.slots.length;
-    if (idx < 0) idx += this.slots.length;
+    let idx = h % entries.length;
+    if (idx < 0) idx += entries.length;
     let firstDeleted = -1;
-    const probe = this.computeProbe(h);
+    const probe = this.computeProbe(h, entries.length);
 
     for (let i = 0; i < entries.length; ++i) {
       idx = (idx + probe) % entries.length;
-      const e: Entry<K, V> = entries[idx];
+      const e = entries[idx];
       if (!e) {
         return firstDeleted < 0 ? idx : firstDeleted;
       }
@@ -202,7 +202,9 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
         }
         continue;
       }
-      if (e.hash === h && equalsAny(key, e.key)) return idx;
+      if (e.hash === h && equalsAny(key, e.key)) {
+        return idx;
+      }
     }
     return firstDeleted;
   }
