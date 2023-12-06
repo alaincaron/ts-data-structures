@@ -1,5 +1,5 @@
-import { AdapterMap, OverflowException } from '../src';
 import { expect } from 'chai';
+import { AdapterMap, OverflowException } from '../src';
 
 describe('AdapterMap', () => {
   describe('constructor', () => {

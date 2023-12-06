@@ -1,8 +1,8 @@
-import { BoundedDeque } from './abstract_deque';
-import { QueueOptions } from '../queues';
-import { CollectionInitializer, buildCollection } from '../collections';
-import { nextPowerOfTwo, RandomAccess, IndexOutOfBoundsException } from '../utils';
 import { Predicate } from 'ts-fluent-iterators';
+import { BoundedDeque } from './abstract_deque';
+import { buildCollection, CollectionInitializer } from '../collections';
+import { QueueOptions } from '../queues';
+import { IndexOutOfBoundsException, nextPowerOfTwo, RandomAccess } from '../utils';
 
 /*
  * The minimum capacity that we'll use for a newly created deque.

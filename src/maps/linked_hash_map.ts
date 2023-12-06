@@ -1,8 +1,8 @@
-import { HashMap, HashEntry, HashMapOptions, AccessType } from './hash_map';
-import { MapEntry } from './map';
-import { OverflowException, DoubleLinkedList } from '../utils';
 import { buildMap } from './abstract_map';
+import { AccessType, HashEntry, HashMap, HashMapOptions } from './hash_map';
+import { MapEntry } from './map';
 import { MapInitializer } from './types';
+import { DoubleLinkedList, OverflowException } from '../utils';
 
 export enum Ordering {
   INSERTION = 1,

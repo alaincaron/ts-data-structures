@@ -1,6 +1,6 @@
-import { AdapterSet, OverflowException } from '../src';
 import { expect } from 'chai';
 import { Generators } from 'ts-fluent-iterators';
+import { AdapterSet, OverflowException } from '../src';
 
 describe('AdapterSet', () => {
   describe('constructor', () => {

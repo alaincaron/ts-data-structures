@@ -1,7 +1,7 @@
+import { Comparator, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { List, ListIterator } from './list';
-import { OverflowException, UnderflowException, shuffle, CapacityMixin, ContainerOptions, equalsAny } from '../utils';
-import { Comparator, Predicate, FluentIterator } from 'ts-fluent-iterators';
 import { AbstractCollection } from '../collections';
+import { CapacityMixin, ContainerOptions, equalsAny, OverflowException, shuffle, UnderflowException } from '../utils';
 
 export abstract class AbstractList<E = any> extends AbstractCollection<E> implements List<E> {
   constructor(options?: number | ContainerOptions) {

@@ -1,8 +1,8 @@
-import { ContainerOptions, OverflowException } from '../utils';
+import { Predicate } from 'ts-fluent-iterators';
 import { BoundedMap, buildMap } from './abstract_map';
 import { MapEntry } from './map';
-import { Predicate } from 'ts-fluent-iterators';
 import { MapInitializer } from './types';
+import { ContainerOptions, OverflowException } from '../utils';
 
 export interface AdapterMapOptions<K, V> extends ContainerOptions {
   delegate?: Map<K, V>;

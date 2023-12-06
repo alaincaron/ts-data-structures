@@ -13,7 +13,7 @@
     "build": "rimraf ./dist && tsc",
     "repl": "npm run build && env NODE_PATH=./dist ts-node -i",
     "htmldoc": "./scripts/htmldoc",
-    "eslint": "eslint",
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "coverage": "nyc npm run test",
     "format": "prettier --write .",
     "precommit": "lint-staged",
@@ -40,16 +40,21 @@
   },
   "homepage": "https://github.com/alaincaron/ts-data-structures#readme",
   "lint-staged": {
-    "*.ts": "prettier --write",
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
     "*.json": "prettier --write",
     "*.js": "prettier --write"
   },
   "devDependencies": {
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
     "benny": "^3.7.1",
     "chai": "^4.3.10",
     "eslint": "^8.54.0",
+    "eslint-plugin-import": "^2.29.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.1.0",
     "mocha": "^10.2.0",

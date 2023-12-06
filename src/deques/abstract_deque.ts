@@ -1,7 +1,7 @@
-import { AbstractQueue, QueueOptions } from '../queues';
-import { Deque } from './deque';
-import { OverflowException, UnderflowException, CapacityMixin, equalsAny } from '../utils';
 import { Predicate } from 'ts-fluent-iterators';
+import { Deque } from './deque';
+import { AbstractQueue, QueueOptions } from '../queues';
+import { CapacityMixin, equalsAny, OverflowException, UnderflowException } from '../utils';
 
 export abstract class AbstractDeque<E = any> extends AbstractQueue<E> implements Deque<E> {
   constructor(options?: number | QueueOptions) {

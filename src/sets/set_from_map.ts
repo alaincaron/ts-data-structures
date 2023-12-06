@@ -1,7 +1,7 @@
-import { IMap, HashMap, HashMapOptions, LinkedHashMap, LinkedHashMapOptions, OpenHashMap } from '../maps';
-import { AbstractSet } from './abstract_set';
 import { Predicate } from 'ts-fluent-iterators';
+import { AbstractSet } from './abstract_set';
 import { buildCollection, CollectionInitializer } from '../collections';
+import { HashMap, HashMapOptions, IMap, LinkedHashMap, LinkedHashMapOptions, OpenHashMap } from '../maps';
 
 export class SetFromMap<E = any> extends AbstractSet<E> {
   private readonly _delegate: IMap<E, boolean>;

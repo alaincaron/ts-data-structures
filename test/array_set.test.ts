@@ -1,6 +1,6 @@
-import { ArraySet, OverflowException } from '../src';
 import { expect } from 'chai';
 import { Generators } from 'ts-fluent-iterators';
+import { ArraySet, OverflowException } from '../src';
 
 describe('ArraySet', () => {
   describe('constructor', () => {

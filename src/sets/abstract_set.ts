@@ -1,7 +1,7 @@
-import { CapacityMixin, ContainerOptions, OverflowException } from '../utils';
-import { AbstractCollection, CollectionLike } from '../collections';
 import { ISet } from './set';
 import { getItemsToAdd } from './utils';
+import { AbstractCollection, CollectionLike } from '../collections';
+import { CapacityMixin, ContainerOptions, OverflowException } from '../utils';
 
 export abstract class AbstractSet<E = any> extends AbstractCollection<E> implements ISet<E> {
   constructor(options?: number | ContainerOptions) {

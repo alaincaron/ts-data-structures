@@ -1,4 +1,4 @@
-import { ContainerOptions, OptionsBuilder, AbstractConstructor } from './types';
+import { AbstractConstructor, ContainerOptions, OptionsBuilder } from './types';
 
 export function CapacityMixin<TBase extends AbstractConstructor<OptionsBuilder>>(Base: TBase) {
   abstract class Derived extends Base {

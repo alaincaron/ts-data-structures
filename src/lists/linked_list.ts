@@ -1,7 +1,7 @@
 import { BoundedList } from './abstract_list';
 import { ListIterator } from './list';
-import { DoubleLinkedList, IndexOutOfBoundsException, UnderflowException, ContainerOptions } from '../utils';
-import { CollectionInitializer, buildCollection } from '../collections';
+import { buildCollection, CollectionInitializer } from '../collections';
+import { ContainerOptions, DoubleLinkedList, IndexOutOfBoundsException, UnderflowException } from '../utils';
 
 interface ListEntry<E> {
   value: E;

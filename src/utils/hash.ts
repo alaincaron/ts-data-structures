@@ -23,7 +23,7 @@ function hashInteger(h: number): number {
 }
 
 function FloatToIEEE(h: number): number {
-  var buf = new ArrayBuffer(4);
+  const buf = new ArrayBuffer(4);
   new Float32Array(buf)[0] = h;
   return new Uint32Array(buf)[0];
 }

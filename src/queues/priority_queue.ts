@@ -1,7 +1,7 @@
-import { BoundedQueue, QueueOptions } from './abstract_queue';
-import { CollectionInitializer, buildCollection } from '../collections';
-import { nextPowerOfTwo } from '../utils';
 import { Comparator, Predicate } from 'ts-fluent-iterators';
+import { BoundedQueue, QueueOptions } from './abstract_queue';
+import { buildCollection, CollectionInitializer } from '../collections';
+import { nextPowerOfTwo } from '../utils';
 
 export interface PriorityQueueOptions<E> extends QueueOptions {
   comparator?: Comparator<E>;

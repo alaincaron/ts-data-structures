@@ -1,7 +1,7 @@
+import { Predicate } from 'ts-fluent-iterators';
+import { BoundedSet } from './abstract_set';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { ContainerOptions, OverflowException } from '../utils';
-import { BoundedSet } from './abstract_set';
-import { Predicate } from 'ts-fluent-iterators';
 
 export interface AdapterSetOptions<E> extends ContainerOptions {
   delegate?: Set<E>;

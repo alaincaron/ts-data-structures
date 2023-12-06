@@ -1,8 +1,8 @@
+import { Comparator, Predicate } from 'ts-fluent-iterators';
 import { BoundedList } from './abstract_list';
 import { ListIterator } from './list';
-import { CollectionInitializer, buildCollection } from '../collections';
-import { UnderflowException, IndexOutOfBoundsException, shuffle, ContainerOptions } from '../utils';
-import { Predicate, Comparator } from 'ts-fluent-iterators';
+import { buildCollection, CollectionInitializer } from '../collections';
+import { ContainerOptions, IndexOutOfBoundsException, shuffle, UnderflowException } from '../utils';
 
 export class ArrayList<E = any> extends BoundedList<E> {
   private elements: Array<E>;

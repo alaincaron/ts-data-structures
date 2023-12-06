@@ -1,14 +1,14 @@
+import { FluentIterator, IteratorLike, Iterators, Mapper, Predicate, Reducer } from 'ts-fluent-iterators';
 import { Collection } from './collection';
-import { Predicate, Reducer, IteratorLike, Iterators, FluentIterator, Mapper } from 'ts-fluent-iterators';
+import { CollectionInitializer, CollectionLike, getSize } from './types';
 import {
-  OverflowException,
+  CapacityMixin,
+  ContainerOptions,
+  equalsAny,
   iterableToJSON,
   OptionsBuilder,
-  ContainerOptions,
-  CapacityMixin,
-  equalsAny,
+  OverflowException,
 } from '../utils';
-import { CollectionInitializer, CollectionLike, getSize } from './types';
 
 export abstract class AbstractCollection<E = any> implements Collection<E>, OptionsBuilder {
   public constructor(_options?: number | ContainerOptions) {}

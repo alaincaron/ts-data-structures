@@ -3,8 +3,8 @@ export function bsearch<T>(arr: T[], el: T, compare_fn?: (a: T, b: T) => number)
   let m = 0;
   let n = arr.length - 1;
   while (m <= n) {
-    let k = (n + m) >> 1;
-    let cmp = compare_fn(el, arr[k]);
+    const k = (n + m) >> 1;
+    const cmp = compare_fn(el, arr[k]);
     if (cmp > 0) {
       m = k + 1;
     } else if (cmp < 0) {

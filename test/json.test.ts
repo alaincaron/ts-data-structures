@@ -1,5 +1,5 @@
-import { toJSON } from '../src';
 import { expect } from 'chai';
+import { toJSON } from '../src';
 
 describe('toJSON', () => {
   it('should serialize null', () => {

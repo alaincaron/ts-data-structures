@@ -1,14 +1,14 @@
-import {
-  DecoratorCollection,
-  Collection,
-  CollectionLike,
-  buildCollection,
-  CollectionInitializer,
-} from '../collections';
-import { OverflowException, ContainerOptions } from '../utils';
 import { ISet } from './set';
-import { ArrayList } from '../lists';
 import { getItemsToAdd } from './utils';
+import {
+  buildCollection,
+  Collection,
+  CollectionInitializer,
+  CollectionLike,
+  DecoratorCollection,
+} from '../collections';
+import { ArrayList } from '../lists';
+import { ContainerOptions, OverflowException } from '../utils';
 
 export class SetFromCollection<E = any> extends DecoratorCollection<E> implements ISet<E> {
   constructor(delegate: Collection<E>) {

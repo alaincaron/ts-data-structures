@@ -1,6 +1,6 @@
+import { Comparator, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
 import { RandomAccess } from '../utils';
-import { Comparator, FluentIterator, Predicate } from 'ts-fluent-iterators';
 
 export interface ListIterator<E> extends IterableIterator<E> {
   setValue(item: E): E;

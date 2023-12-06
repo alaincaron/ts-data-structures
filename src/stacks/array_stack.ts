@@ -1,7 +1,7 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { ArrayDeque } from '../deques';
 import { AbstractStack } from './abstract_stack';
-import { CollectionInitializer, buildCollection } from '../collections';
+import { buildCollection, CollectionInitializer } from '../collections';
+import { ArrayDeque } from '../deques';
 import { ContainerOptions } from '../utils';
 
 export class ArrayStack<E = any> extends AbstractStack<E> {

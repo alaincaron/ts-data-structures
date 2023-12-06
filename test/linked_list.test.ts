@@ -1,6 +1,6 @@
-import { LinkedList, OverflowException, UnderflowException, IndexOutOfBoundsException } from '../src';
 import { expect } from 'chai';
 import { Generators } from 'ts-fluent-iterators';
+import { IndexOutOfBoundsException, LinkedList, OverflowException, UnderflowException } from '../src';
 
 describe('LinkedList', () => {
   describe('constructor', () => {

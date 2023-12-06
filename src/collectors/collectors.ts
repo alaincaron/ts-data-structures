@@ -1,8 +1,8 @@
 import { Collectors } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
 import { ArrayList, LinkedList } from '../lists';
-import { HashSet, LinkedHashSet } from '../sets';
 import { PriorityQueue } from '../queues';
+import { HashSet, LinkedHashSet } from '../sets';
 
 export class CollectionCollector<A, C extends Collection<A>> implements Collectors.Collector<A, C> {
   private readonly c: C;

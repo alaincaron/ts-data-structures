@@ -1,5 +1,5 @@
-import { ArrayList, LinkedList } from '../src';
 import { expect } from 'chai';
+import { ArrayList, LinkedList } from '../src';
 
 describe('list-equals', () => {
   it('should return true for same object', () => {

@@ -1,5 +1,5 @@
-import { LinkedHashMap, Ordering, OverflowException } from '../src';
 import { expect } from 'chai';
+import { LinkedHashMap, Ordering, OverflowException } from '../src';
 
 function collectKeys<K, V>(m: LinkedHashMap<K, V>): K[] {
   return Array.from(m.keys());

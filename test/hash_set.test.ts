@@ -1,6 +1,6 @@
-import { HashSet, OverflowException } from '../src';
-import { Generators } from 'ts-fluent-iterators';
 import { expect } from 'chai';
+import { Generators } from 'ts-fluent-iterators';
+import { HashSet, OverflowException } from '../src';
 
 describe('HashSet', () => {
   describe('constructor', () => {

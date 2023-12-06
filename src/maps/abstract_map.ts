@@ -1,7 +1,7 @@
-import { OptionsBuilder, mapToJSON, ContainerOptions, CapacityMixin, equalsAny } from '../utils';
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry, OfferResult } from './map';
 import { MapInitializer, MapLike } from './types';
+import { CapacityMixin, ContainerOptions, equalsAny, mapToJSON, OptionsBuilder, OverflowException } from '../utils';
 
 export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, OptionsBuilder {
   constructor(_options?: number | ContainerOptions) {}
@@ -32,6 +32,13 @@ export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, Optio
     return false;
   }
 
+  protected handleOverflow(key: K, value: V): boolean {
+    if (!this.isFull()) return false;
+    if (this.overflowHandler(key, value)) return true;
+    if (this.isFull()) throw new OverflowException();
+    return false;
+  }
+
   offer(key: K, value: V) {
     const result: OfferResult<V> = { accepted: true };
     if (this.isFull()) {
@@ -51,7 +58,7 @@ export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, Optio
   abstract put(key: K, value: V): V | undefined;
 
   containsKey(key: K) {
-    return this.getEntry(key) !== undefined;
+    return !!this.getEntry(key);
   }
 
   containsValue(value: V) {

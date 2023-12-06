@@ -1,5 +1,5 @@
-import { OpenHashMap, OverflowException } from '../src';
 import { expect } from 'chai';
+import { OpenHashMap, OverflowException } from '../src';
 
 describe('OpenHashMap', () => {
   describe('constructor', () => {

@@ -1,7 +1,7 @@
-import { UnderflowException, OverflowException, ContainerOptions, CapacityMixin } from '../utils';
 import { FluentIterator, IteratorLike, Iterators } from 'ts-fluent-iterators';
+import { OverflowQueueStrategy, Queue } from './queue';
 import { AbstractCollection, CollectionLike, getSize } from '../collections';
-import { Queue, OverflowQueueStrategy } from './queue';
+import { CapacityMixin, ContainerOptions, OverflowException, UnderflowException } from '../utils';
 
 export interface QueueOptions extends ContainerOptions {
   overflowStrategy?: OverflowQueueStrategy;

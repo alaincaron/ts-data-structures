@@ -1,7 +1,7 @@
-import { Collection } from './collection';
 import { Predicate } from 'ts-fluent-iterators';
-import { ContainerOptions } from '../utils';
 import { AbstractCollection } from './abstract_collection';
+import { Collection } from './collection';
+import { ContainerOptions } from '../utils';
 
 export class DecoratorCollection<E = any> extends AbstractCollection<E> {
   private readonly _delegate: Collection<E>;

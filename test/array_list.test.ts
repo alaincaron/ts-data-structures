@@ -1,6 +1,6 @@
-import { ArrayList, IndexOutOfBoundsException, OverflowException, UnderflowException } from '../src';
 import { expect } from 'chai';
 import { Generators } from 'ts-fluent-iterators';
+import { ArrayList, IndexOutOfBoundsException, OverflowException, UnderflowException } from '../src';
 
 describe('ArrayList', () => {
   describe('constructor', () => {

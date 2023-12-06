@@ -1,6 +1,6 @@
-import { LinkedHashSet, OverflowException, Ordering } from '../src';
-import { Generators } from 'ts-fluent-iterators';
 import { expect } from 'chai';
+import { Generators } from 'ts-fluent-iterators';
+import { LinkedHashSet, Ordering, OverflowException } from '../src';
 
 describe('LinkedHashSet', () => {
   describe('constructor', () => {
