@@ -1,7 +1,7 @@
-import { Comparator, FluentIterator, Functions, Predicate } from 'ts-fluent-iterators';
-import { AbstractMap } from './abstract_map';
+import { FluentIterator } from 'ts-fluent-iterators';
+import { AbstractSortedMap } from './abstract_sorted_map';
 import { MapEntry } from './map';
-import { SortedMap, SortedMapOptions } from './sorted_map';
+import { SortedMapOptions } from './sorted_map';
 import { ArrayStack } from '../stacks';
 import { CapacityMixin } from '../utils';
 
@@ -10,12 +10,9 @@ export interface BinaryNode<K, V> extends MapEntry<K, V> {
   get right(): BinaryNode<K, V> | undefined;
 }
 
-export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> implements SortedMap<K, V> {
-  public readonly comparator: Comparator<K>;
-
+export abstract class AbstractTreeMap<K, V> extends AbstractSortedMap<K, V> {
   constructor(options?: number | SortedMapOptions<K>) {
     super(options);
-    this.comparator = (options as any)?.comparator ?? Functions.defaultComparator;
   }
 
   protected abstract getRoot(): BinaryNode<K, V> | undefined;
@@ -42,7 +39,7 @@ export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> impl
 
   protected abstract removeEntry(key: K): BinaryNode<K, V> | undefined;
 
-  protected findMinNode() {
+  firstEntry() {
     let child = this.getRoot();
     if (child) {
       let left: BinaryNode<K, V> | undefined;
@@ -54,7 +51,7 @@ export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> impl
     return child;
   }
 
-  protected findMaxNode() {
+  lastEntry() {
     let child = this.getRoot();
     if (child) {
       let right: BinaryNode<K, V> | undefined;
@@ -66,16 +63,8 @@ export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> impl
     return child;
   }
 
-  lastEntry() {
-    return this.findMaxNode();
-  }
-
-  firstEntry() {
-    return this.findMinNode();
-  }
-
   pollLastEntry() {
-    const entry = this.findMaxNode();
+    const entry = this.lastEntry();
     if (entry) {
       this.remove(entry.key);
     }
@@ -83,21 +72,11 @@ export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> impl
   }
 
   pollFirstEntry() {
-    const entry = this.findMinNode();
+    const entry = this.firstEntry();
     if (entry) {
       this.remove(entry.key);
     }
     return entry;
-  }
-
-  firstKey() {
-    const e = this.findMinNode();
-    return e?.key;
-  }
-
-  lastKey() {
-    const e = this.findMaxNode();
-    return e?.key;
   }
 
   lowerEntry(key: K) {
@@ -123,11 +102,6 @@ export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> impl
       }
     }
     return undefined;
-  }
-
-  lowerKey(key: K) {
-    const e = this.lowerEntry(key);
-    return e?.key;
   }
 
   floorEntry(key: K) {
@@ -157,11 +131,6 @@ export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> impl
     return undefined;
   }
 
-  floorKey(key: K) {
-    const e = this.floorEntry(key);
-    return e?.key;
-  }
-
   ceilingEntry(key: K) {
     let node = this.getRoot();
     let lastLeft: BinaryNode<K, V> | undefined = undefined;
@@ -189,11 +158,6 @@ export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> impl
     return undefined;
   }
 
-  ceilingKey(key: K) {
-    const e = this.ceilingEntry(key);
-    return e?.key;
-  }
-
   higherEntry(key: K) {
     let node = this.getRoot();
     let lastLeft: BinaryNode<K, V> | undefined = undefined;
@@ -219,25 +183,12 @@ export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> impl
     return undefined;
   }
 
-  higherKey(key: K) {
-    const e = this.higherEntry(key);
-    return e?.key;
-  }
-
   public remove(key: K) {
     const e = this.removeEntry(key);
     return e?.value;
   }
 
-  filterEntries(predicate: Predicate<[K, V]>): number {
-    const entriesToKeep = new FluentIterator(this.entries()).filter(predicate).collect();
-    const originalSize = this.size();
-    this.clear();
-    this.putAll(entriesToKeep);
-    return originalSize - entriesToKeep.length;
-  }
-
-  protected *entryGenerator(): IterableIterator<MapEntry<K, V>> {
+  private *entryGenerator(): IterableIterator<MapEntry<K, V>> {
     const stack = new ArrayStack<BinaryNode<K, V>>();
     let cursor = this.getRoot();
 
@@ -252,18 +203,30 @@ export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> impl
     }
   }
 
+  private *reverseEntryGenerator(): IterableIterator<MapEntry<K, V>> {
+    const stack = new ArrayStack<BinaryNode<K, V>>();
+    let cursor = this.getRoot();
+
+    while (cursor || !stack.isEmpty()) {
+      while (cursor) {
+        stack.push(cursor);
+        cursor = cursor.right;
+      }
+      cursor = stack.pop()!;
+      yield cursor;
+      cursor = cursor.left;
+    }
+  }
+
   entryIterator() {
     return new FluentIterator(this.entryGenerator());
   }
 
-  buildOptions(): SortedMapOptions<K> {
-    return {
-      ...super.buildOptions(),
-      comparator: this.comparator,
-    };
+  reverseEntryIterator() {
+    return new FluentIterator(this.reverseEntryGenerator());
   }
 
-  abstract clone(): AbstractBinaryTreeMap<K, V>;
+  abstract clone(): AbstractTreeMap<K, V>;
 }
 
-export const BoundedBinaryTreeMap = CapacityMixin(AbstractBinaryTreeMap);
+export const BoundedTreeMap = CapacityMixin(AbstractTreeMap);

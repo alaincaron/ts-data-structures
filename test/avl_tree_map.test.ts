@@ -251,14 +251,25 @@ describe('AvlTreeMap', () => {
       map.put('c', 3);
       map.put('a', 1);
       map.put('b', 2);
-      expect(map.get('a')).equal(1);
-      expect(map.get('b')).equal(2);
-      expect(map.get('c')).equal(3);
-      expect(map.size()).equal(3);
       expect(Array.from(map.entries())).deep.equal([
         ['a', 1],
         ['b', 2],
         ['c', 3],
+      ]);
+      assertAvlProperty(map);
+    });
+  });
+
+  describe('reverseEntryIterator', () => {
+    it('should iterate over all entries in reverse order', () => {
+      const map = new AvlTreeMap();
+      map.put('c', 3);
+      map.put('a', 1);
+      map.put('b', 2);
+      expect(Array.from(map.reverseEntries())).deep.equal([
+        ['c', 3],
+        ['b', 2],
+        ['a', 1],
       ]);
       assertAvlProperty(map);
     });

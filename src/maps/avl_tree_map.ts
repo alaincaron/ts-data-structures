@@ -1,5 +1,5 @@
-import { BinaryNode, BoundedBinaryTreeMap } from './abstract_binary_tree_map';
 import { buildMap } from './abstract_map';
+import { BinaryNode, BoundedTreeMap } from './abstract_tree_map';
 import { SortedMapOptions } from './sorted_map';
 import { MapInitializer } from './types';
 
@@ -117,7 +117,7 @@ function leftMost<K, V>(root: AvlNode<K, V>): AvlNode<K, V> {
   return leftMostNode;
 }
 
-export class AvlTreeMap<K, V> extends BoundedBinaryTreeMap<K, V> {
+export class AvlTreeMap<K, V> extends BoundedTreeMap<K, V> {
   private root: AvlNode<K, V> | undefined;
   private _size: number = 0;
 
