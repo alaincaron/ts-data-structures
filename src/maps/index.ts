@@ -8,4 +8,5 @@ export * from './linked_hash_map';
 export * from './map';
 export * from './open_hash_map';
 export * from './sorted_map';
+export * from './splay_tree_map';
 export * from './types';

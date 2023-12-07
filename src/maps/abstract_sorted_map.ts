@@ -2,6 +2,7 @@ import { Comparator, FluentIterator, Functions, Predicate } from 'ts-fluent-iter
 import { AbstractMap } from './abstract_map';
 import { MapEntry } from './map';
 import { SortedMap, SortedMapOptions } from './sorted_map';
+import { CapacityMixin } from '../utils';
 
 export abstract class AbstractSortedMap<K, V> extends AbstractMap<K, V> implements SortedMap<K, V> {
   public readonly comparator: Comparator<K>;
@@ -70,11 +71,20 @@ export abstract class AbstractSortedMap<K, V> extends AbstractMap<K, V> implemen
   }
 
   filterEntries(predicate: Predicate<[K, V]>): number {
-    const entriesToKeep = new FluentIterator(this.entries()).filter(predicate).collect();
-    const originalSize = this.size();
-    this.clear();
-    this.putAll(entriesToKeep);
-    return originalSize - entriesToKeep.length;
+    const partitions = new FluentIterator(this.entries()).groupBy(predicate);
+    const entriesToKeep = partitions.get(true) ?? [];
+    const entriesToDelete = partitions.get(false) ?? [];
+    if (entriesToKeep.length < entriesToKeep.length) {
+      const originalSize = this.size();
+      this.clear();
+      this.putAll(entriesToKeep);
+      return originalSize - entriesToKeep.length;
+    } else {
+      for (const [k, _v] of entriesToDelete) {
+        this.remove(k);
+      }
+      return entriesToDelete.length;
+    }
   }
 
   buildOptions(): SortedMapOptions<K> {
@@ -86,3 +96,5 @@ export abstract class AbstractSortedMap<K, V> extends AbstractMap<K, V> implemen
 
   abstract clone(): AbstractSortedMap<K, V>;
 }
+
+export const BoundedSortedMap = CapacityMixin(AbstractSortedMap);
