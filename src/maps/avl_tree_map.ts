@@ -1,4 +1,3 @@
-import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { BinaryNode, BoundedBinaryTreeMap } from './abstract_binary_tree_map';
 import { buildMap } from './abstract_map';
 import { SortedMapOptions } from './sorted_map';
@@ -370,14 +369,6 @@ export class AvlTreeMap<K, V> extends BoundedBinaryTreeMap<K, V> {
 
     root.left = root.right = undefined;
     return newRoot;
-  }
-
-  filterEntries(predicate: Predicate<[K, V]>): number {
-    const entriesToKeep = new FluentIterator(this.entries()).filter(predicate).collect();
-    const originalSize = this.size();
-    this.clear();
-    this.putAll(entriesToKeep);
-    return originalSize - entriesToKeep.length;
   }
 
   clone(): AvlTreeMap<K, V> {

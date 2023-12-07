@@ -1,4 +1,4 @@
-import { Comparator, FluentIterator, Functions } from 'ts-fluent-iterators';
+import { Comparator, FluentIterator, Functions, Predicate } from 'ts-fluent-iterators';
 import { AbstractMap } from './abstract_map';
 import { MapEntry } from './map';
 import { SortedMap, SortedMapOptions } from './sorted_map';
@@ -227,6 +227,14 @@ export abstract class AbstractBinaryTreeMap<K, V> extends AbstractMap<K, V> impl
   public remove(key: K) {
     const e = this.removeEntry(key);
     return e?.value;
+  }
+
+  filterEntries(predicate: Predicate<[K, V]>): number {
+    const entriesToKeep = new FluentIterator(this.entries()).filter(predicate).collect();
+    const originalSize = this.size();
+    this.clear();
+    this.putAll(entriesToKeep);
+    return originalSize - entriesToKeep.length;
   }
 
   protected *entryGenerator(): IterableIterator<MapEntry<K, V>> {
