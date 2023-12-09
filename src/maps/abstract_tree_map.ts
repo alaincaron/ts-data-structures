@@ -1,5 +1,5 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { AbstractSortedMap } from './abstract_sorted_map';
+import { AbstractNavigableMap } from './abstract_navigable_map';
 import { MapEntry } from './map';
 import { SortedMapOptions } from './sorted_map';
 import { ArrayStack } from '../stacks';
@@ -10,7 +10,7 @@ export interface BinaryNode<K, V> extends MapEntry<K, V> {
   get right(): BinaryNode<K, V> | undefined;
 }
 
-export abstract class AbstractTreeMap<K, V> extends AbstractSortedMap<K, V> {
+export abstract class AbstractTreeMap<K, V> extends AbstractNavigableMap<K, V> {
   constructor(options?: number | SortedMapOptions<K>) {
     super(options);
   }

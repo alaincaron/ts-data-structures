@@ -1,5 +1,7 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { AbstractSet } from './abstract_set';
+import { NavigableSet } from './navigable_set';
+import { SortedSet } from './sorted_set';
 import { buildCollection, CollectionInitializer } from '../collections';
 import {
   AvlTreeMap,
@@ -9,9 +11,11 @@ import {
   LinkedHashMap,
   LinkedHashMapOptions,
   OpenHashMap,
+  SortedMap,
   SortedMapOptions,
   SplayTreeMap,
 } from '../maps';
+import { NavigableMap } from '../maps/navigable_map';
 
 export class SetFromMap<E> extends AbstractSet<E> {
   private readonly _delegate: IMap<E, boolean>;
@@ -117,12 +121,69 @@ export class OpenHashSet<E> extends SetFromMap<E> {
   }
 }
 
-export class AvlTreeSet<E> extends SetFromMap<E> {
+export class SortedSetFromMap<E> extends SetFromMap<E> implements SortedSet<E> {
+  constructor(delegate: SortedMap<E, boolean>) {
+    super(delegate);
+  }
+
+  protected delegate() {
+    return super.delegate() as SortedMap<E, boolean>;
+  }
+
+  first() {
+    return this.delegate().firstKey();
+  }
+
+  last() {
+    return this.delegate().lastKey();
+  }
+}
+
+export class NavigableSetFromMap<E> extends SortedSetFromMap<E> implements NavigableSet<E> {
+  constructor(delegate: NavigableMap<E, boolean>) {
+    super(delegate);
+  }
+
+  protected delegate() {
+    return super.delegate() as NavigableMap<E, boolean>;
+  }
+
+  floor(e: E) {
+    return this.delegate().floorKey(e);
+  }
+
+  ceiling(e: E) {
+    return this.delegate().ceilingKey(e);
+  }
+
+  lower(e: E) {
+    return this.delegate().lowerKey(e);
+  }
+
+  higher(e: E) {
+    return this.delegate().higherKey(e);
+  }
+
+  pollFirst() {
+    return this.delegate().pollFirstEntry()?.key;
+  }
+
+  pollLast() {
+    return this.delegate().pollLastEntry()?.key;
+  }
+
+  reverseIterator() {
+    return this.delegate().reverseKeyIterator();
+  }
+}
+
+export class AvlTreeSet<E> extends NavigableSetFromMap<E> {
   constructor(options?: number | SortedMapOptions<E>) {
     super(new AvlTreeMap<E, boolean>(options));
   }
-  static create<E>(initializer?: number | (HashMapOptions & CollectionInitializer<E>)): AvlTreeSet<E> {
-    return buildCollection<E, AvlTreeSet<E>>(OpenHashSet, initializer);
+
+  static create<E>(initializer?: number | (SortedMapOptions<E> & CollectionInitializer<E>)): AvlTreeSet<E> {
+    return buildCollection<E, AvlTreeSet<E>>(AvlTreeSet, initializer);
   }
 
   clone(): AvlTreeSet<E> {
@@ -130,12 +191,13 @@ export class AvlTreeSet<E> extends SetFromMap<E> {
   }
 }
 
-export class SplayTreeSet<E> extends SetFromMap<E> {
+export class SplayTreeSet<E> extends NavigableSetFromMap<E> {
   constructor(options?: number | SortedMapOptions<E>) {
     super(new SplayTreeMap<E, boolean>(options));
   }
-  static create<E>(initializer?: number | (HashMapOptions & CollectionInitializer<E>)): SplayTreeSet<E> {
-    return buildCollection<E, SplayTreeSet<E>>(OpenHashSet, initializer);
+
+  static create<E>(initializer?: number | (SortedMapOptions<E> & CollectionInitializer<E>)): SplayTreeSet<E> {
+    return buildCollection<E, SplayTreeSet<E>>(SplayTreeSet, initializer);
   }
 
   clone(): SplayTreeSet<E> {

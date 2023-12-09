@@ -25,51 +25,6 @@ export abstract class AbstractSortedMap<K, V> extends AbstractMap<K, V> implemen
     return e?.key;
   }
 
-  abstract floorEntry(k: K): MapEntry<K, V> | undefined;
-
-  floorKey(key: K) {
-    const e = this.floorEntry(key);
-    return e?.key;
-  }
-
-  ceilingKey(key: K) {
-    const e = this.ceilingEntry(key);
-    return e?.key;
-  }
-
-  abstract ceilingEntry(k: K): MapEntry<K, V> | undefined;
-
-  abstract pollFirstEntry(): MapEntry<K, V> | undefined;
-  abstract pollLastEntry(): MapEntry<K, V> | undefined;
-
-  lowerKey(key: K) {
-    const e = this.lowerEntry(key);
-    return e?.key;
-  }
-
-  abstract lowerEntry(k: K): MapEntry<K, V> | undefined;
-
-  higherKey(key: K) {
-    const e = this.higherEntry(key);
-    return e?.key;
-  }
-
-  abstract higherEntry(k: K): MapEntry<K, V> | undefined;
-
-  abstract reverseEntryIterator(): FluentIterator<MapEntry<K, V>>;
-
-  reverseKeyIterator() {
-    return this.reverseEntryIterator().map(e => e.key);
-  }
-
-  reverseValueIterator() {
-    return this.reverseEntryIterator().map(e => e.value);
-  }
-
-  *reverseEntries(): IterableIterator<[K, V]> {
-    for (const e of this.reverseEntryIterator()) yield [e.key, e.value];
-  }
-
   filterEntries(predicate: Predicate<[K, V]>): number {
     const partitions = new FluentIterator(this.entries()).groupBy(predicate);
     const entriesToKeep = partitions.get(true) ?? [];
