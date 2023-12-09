@@ -3,7 +3,7 @@ import { AbstractCollection } from './abstract_collection';
 import { Collection } from './collection';
 import { ContainerOptions } from '../utils';
 
-export class DecoratorCollection<E = any> extends AbstractCollection<E> {
+export class DecoratorCollection<E> extends AbstractCollection<E> {
   private readonly _delegate: Collection<E>;
 
   constructor(delegate: Collection<E>) {

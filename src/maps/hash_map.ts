@@ -23,7 +23,7 @@ export interface HashMapOptions extends ContainerOptions {
 const MIN_INITIAL_CAPACITY = nextPrime(5);
 const DEFAULT_LOAD_FACTOR = 0.75;
 
-export class HashMap<K = any, V = any> extends BoundedMap<K, V> {
+export class HashMap<K, V> extends BoundedMap<K, V> {
   private _size: number;
   private slots: Array<HashEntry<K, V> | undefined>;
   public readonly loadFactor: number;

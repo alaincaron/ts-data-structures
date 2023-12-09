@@ -1,9 +1,19 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { AbstractSet } from './abstract_set';
 import { buildCollection, CollectionInitializer } from '../collections';
-import { HashMap, HashMapOptions, IMap, LinkedHashMap, LinkedHashMapOptions, OpenHashMap } from '../maps';
+import {
+  AvlTreeMap,
+  HashMap,
+  HashMapOptions,
+  IMap,
+  LinkedHashMap,
+  LinkedHashMapOptions,
+  OpenHashMap,
+  SortedMapOptions,
+  SplayTreeMap,
+} from '../maps';
 
-export class SetFromMap<E = any> extends AbstractSet<E> {
+export class SetFromMap<E> extends AbstractSet<E> {
   private readonly _delegate: IMap<E, boolean>;
 
   constructor(delegate: IMap<E, boolean>) {
@@ -66,7 +76,7 @@ export class SetFromMap<E = any> extends AbstractSet<E> {
   }
 }
 
-export class HashSet<E = any> extends SetFromMap<E> {
+export class HashSet<E> extends SetFromMap<E> {
   constructor(options?: number | HashMapOptions) {
     super(new HashMap<E, boolean>(options));
   }
@@ -80,7 +90,7 @@ export class HashSet<E = any> extends SetFromMap<E> {
   }
 }
 
-export class LinkedHashSet<E = any> extends SetFromMap<E> {
+export class LinkedHashSet<E> extends SetFromMap<E> {
   constructor(options?: number | LinkedHashMapOptions) {
     super(new LinkedHashMap<E, boolean>(options));
   }
@@ -94,7 +104,7 @@ export class LinkedHashSet<E = any> extends SetFromMap<E> {
   }
 }
 
-export class OpenHashSet<E = any> extends SetFromMap<E> {
+export class OpenHashSet<E> extends SetFromMap<E> {
   constructor(options?: number | HashMapOptions) {
     super(new OpenHashMap<E, boolean>(options));
   }
@@ -104,5 +114,31 @@ export class OpenHashSet<E = any> extends SetFromMap<E> {
 
   clone(): OpenHashSet<E> {
     return OpenHashSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
+  }
+}
+
+export class AvlTreeSet<E> extends SetFromMap<E> {
+  constructor(options?: number | SortedMapOptions<E>) {
+    super(new AvlTreeMap<E, boolean>(options));
+  }
+  static create<E>(initializer?: number | (HashMapOptions & CollectionInitializer<E>)): AvlTreeSet<E> {
+    return buildCollection<E, AvlTreeSet<E>>(OpenHashSet, initializer);
+  }
+
+  clone(): AvlTreeSet<E> {
+    return AvlTreeSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
+  }
+}
+
+export class SplayTreeSet<E> extends SetFromMap<E> {
+  constructor(options?: number | SortedMapOptions<E>) {
+    super(new SplayTreeMap<E, boolean>(options));
+  }
+  static create<E>(initializer?: number | (HashMapOptions & CollectionInitializer<E>)): SplayTreeSet<E> {
+    return buildCollection<E, SplayTreeSet<E>>(OpenHashSet, initializer);
+  }
+
+  clone(): SplayTreeSet<E> {
+    return SplayTreeSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
   }
 }

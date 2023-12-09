@@ -7,7 +7,7 @@ import { ContainerOptions, OverflowException } from '../utils';
 export interface AdapterMapOptions<K, V> extends ContainerOptions {
   delegate?: Map<K, V>;
 }
-export class AdapterMap<K = any, V = any> extends BoundedMap<K, V> {
+export class AdapterMap<K, V> extends BoundedMap<K, V> {
   protected readonly _delegate: Map<K, V>;
 
   constructor(options?: number | AdapterMapOptions<K, V>) {

@@ -1,7 +1,7 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { Queue } from '../queues';
 
-export interface Deque<E = any> extends Queue<E> {
+export interface Deque<E> extends Queue<E> {
   addFirst(item: E): void;
   addLast(item: E): void;
 

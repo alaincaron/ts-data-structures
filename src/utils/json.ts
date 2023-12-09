@@ -24,7 +24,7 @@ export function toJSON(x: any) {
   return mapToJSON(Object.entries(x));
 }
 
-export function mapToJSON<K = any, V = any>(entries: Map<K, V> | IteratorGenerator<[K, V]>) {
+export function mapToJSON<K, V>(entries: Map<K, V> | IteratorGenerator<[K, V]>) {
   const iterator = entries instanceof Map ? entries[Symbol.iterator]() : Iterators.toIterator(entries);
   let s = '{';
 
@@ -49,7 +49,7 @@ export function mapToJSON<K = any, V = any>(entries: Map<K, V> | IteratorGenerat
   return s;
 }
 
-export function iterableToJSON<E = any>(items: IteratorGenerator<E>) {
+export function iterableToJSON<E>(items: IteratorGenerator<E>) {
   const iterator = Iterators.toIterator(items);
   let s = '[';
   for (;;) {

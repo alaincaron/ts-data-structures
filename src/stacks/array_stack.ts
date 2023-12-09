@@ -4,7 +4,7 @@ import { buildCollection, CollectionInitializer } from '../collections';
 import { ArrayDeque } from '../deques';
 import { ContainerOptions } from '../utils';
 
-export class ArrayStack<E = any> extends AbstractStack<E> {
+export class ArrayStack<E> extends AbstractStack<E> {
   private readonly buffer: ArrayDeque<E>;
 
   constructor(options?: number | ContainerOptions) {

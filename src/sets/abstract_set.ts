@@ -3,7 +3,7 @@ import { getItemsToAdd } from './utils';
 import { AbstractCollection, CollectionLike } from '../collections';
 import { CapacityMixin, ContainerOptions, OverflowException } from '../utils';
 
-export abstract class AbstractSet<E = any> extends AbstractCollection<E> implements ISet<E> {
+export abstract class AbstractSet<E> extends AbstractCollection<E> implements ISet<E> {
   constructor(options?: number | ContainerOptions) {
     super(options);
   }

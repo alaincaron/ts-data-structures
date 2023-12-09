@@ -7,7 +7,7 @@ export interface ListIterator<E> extends IterableIterator<E> {
   remove(): E;
 }
 
-export interface List<E = any> extends Collection<E>, RandomAccess<E> {
+export interface List<E> extends Collection<E>, RandomAccess<E> {
   getAt(idx: number): E;
   getFirst(): E;
   getLast(): E;

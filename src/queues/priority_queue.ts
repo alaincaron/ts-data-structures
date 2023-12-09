@@ -7,7 +7,7 @@ export interface PriorityQueueOptions<E> extends QueueOptions {
   comparator?: Comparator<E>;
 }
 
-export type PriorityQueueInitializer<E = any> = PriorityQueueOptions<E> & CollectionInitializer<E>;
+export type PriorityQueueInitializer<E> = PriorityQueueOptions<E> & CollectionInitializer<E>;
 
 export class PriorityQueue<E> extends BoundedQueue<E> {
   private buffer: Array<E>;

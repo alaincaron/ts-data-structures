@@ -2,7 +2,7 @@ import { FluentIterator, Predicate, Reducer } from 'ts-fluent-iterators';
 import { CollectionLike } from './types';
 import { ContainerOptions } from '../utils';
 
-export interface Collection<E = any> extends Iterable<E> {
+export interface Collection<E> extends Iterable<E> {
   size(): number;
   isEmpty(): boolean;
   capacity(): number;
@@ -33,7 +33,10 @@ export interface Collection<E = any> extends Iterable<E> {
 
   iterator(): FluentIterator<E>;
 
-  containsAll<E1 extends E>(c: Collection<E1>): boolean;
+  containsAll<E1 extends E>(c: Iterable<E1>): boolean;
+  removeAll(c: Collection<E>): number;
+  retainAll(c: Collection<E>): number;
+
   clone(): Collection<E>;
   toJson(): string;
   buildOptions?(): ContainerOptions;

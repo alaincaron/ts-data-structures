@@ -3,7 +3,7 @@ import { IMap, MapEntry, OfferResult } from './map';
 import { MapInitializer, MapLike } from './types';
 import { CapacityMixin, ContainerOptions, equalsAny, mapToJSON, OptionsBuilder, OverflowException } from '../utils';
 
-export abstract class AbstractMap<K = any, V = any> implements IMap<K, V>, OptionsBuilder {
+export abstract class AbstractMap<K, V> implements IMap<K, V>, OptionsBuilder {
   constructor(_options?: number | ContainerOptions) {}
 
   abstract size(): number;

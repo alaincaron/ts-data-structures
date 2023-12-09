@@ -10,7 +10,7 @@ import { IndexOutOfBoundsException, nextPowerOfTwo, RandomAccess } from '../util
  */
 const MIN_INITIAL_CAPACITY = 8;
 
-export class ArrayDeque<E = any> extends BoundedDeque<E> implements RandomAccess<E> {
+export class ArrayDeque<E> extends BoundedDeque<E> implements RandomAccess<E> {
   private elements: Array<E>;
   private head: number;
   private tail: number;

@@ -4,7 +4,7 @@ import { ListIterator } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { ContainerOptions, IndexOutOfBoundsException, shuffle, UnderflowException } from '../utils';
 
-export class ArrayList<E = any> extends BoundedList<E> {
+export class ArrayList<E> extends BoundedList<E> {
   private elements: Array<E>;
 
   constructor(options?: number | ContainerOptions) {

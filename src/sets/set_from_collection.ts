@@ -10,7 +10,7 @@ import {
 import { ArrayList } from '../lists';
 import { ContainerOptions, OverflowException } from '../utils';
 
-export class SetFromCollection<E = any> extends DecoratorCollection<E> implements ISet<E> {
+export class SetFromCollection<E> extends DecoratorCollection<E> implements ISet<E> {
   constructor(delegate: Collection<E>) {
     super(delegate);
   }
@@ -60,7 +60,7 @@ export class SetFromCollection<E = any> extends DecoratorCollection<E> implement
   }
 }
 
-export class ArraySet<E = any> extends SetFromCollection<E> {
+export class ArraySet<E> extends SetFromCollection<E> {
   constructor(options?: number | ContainerOptions) {
     super(new ArrayList<E>(options));
   }

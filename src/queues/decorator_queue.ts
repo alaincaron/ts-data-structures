@@ -1,7 +1,7 @@
 import { Queue } from './queue';
 import { DecoratorCollection } from '../collections';
 
-export abstract class DecoratorQueue<E = any> extends DecoratorCollection<E> implements Queue<E> {
+export abstract class DecoratorQueue<E> extends DecoratorCollection<E> implements Queue<E> {
   constructor(delegate: Queue<E>) {
     super(delegate);
   }

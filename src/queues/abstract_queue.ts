@@ -7,7 +7,7 @@ export interface QueueOptions extends ContainerOptions {
   overflowStrategy?: OverflowQueueStrategy;
 }
 
-export abstract class AbstractQueue<E = any> extends AbstractCollection<E> implements Queue<E> {
+export abstract class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
   private readonly _overflowStrategy: OverflowQueueStrategy;
   constructor(options?: number | QueueOptions) {
     super(options);

@@ -3,7 +3,7 @@ import { List, ListIterator } from './list';
 import { AbstractCollection } from '../collections';
 import { CapacityMixin, ContainerOptions, equalsAny, OverflowException, shuffle, UnderflowException } from '../utils';
 
-export abstract class AbstractList<E = any> extends AbstractCollection<E> implements List<E> {
+export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E> {
   constructor(options?: number | ContainerOptions) {
     super(options);
   }

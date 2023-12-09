@@ -13,7 +13,7 @@ export interface OfferResult<V> {
   previous?: V;
 }
 
-export interface IMap<K = any, V = any> extends Iterable<[K, V]> {
+export interface IMap<K, V> extends Iterable<[K, V]> {
   size(): number;
   isEmpty(): boolean;
   capacity(): number;

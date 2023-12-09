@@ -7,7 +7,7 @@ export interface AdapterSetOptions<E> extends ContainerOptions {
   delegate?: Set<E>;
 }
 
-export class AdapterSet<E = any> extends BoundedSet<E> {
+export class AdapterSet<E> extends BoundedSet<E> {
   protected readonly _delegate: Set<E>;
 
   constructor(options?: number | AdapterSetOptions<E>) {

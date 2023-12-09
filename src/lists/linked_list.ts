@@ -7,7 +7,7 @@ interface ListEntry<E> {
   value: E;
 }
 
-export class LinkedList<E = any> extends BoundedList<E> {
+export class LinkedList<E> extends BoundedList<E> {
   private readonly linkedList: DoubleLinkedList;
   private _size: number;
 

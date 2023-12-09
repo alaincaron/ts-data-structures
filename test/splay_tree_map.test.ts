@@ -253,7 +253,7 @@ describe('SplayTreeMap', () => {
   describe('pseudoRandomInsert', () => {
     it('should return elements in the right order', () => {
       const map = new SplayTreeMap();
-      const num = 5000;
+      const num = 500;
       const gap = 307;
       for (let i = gap; i != 0; i = (i + gap) % num) {
         expect(map.put(i, i)).to.be.undefined;

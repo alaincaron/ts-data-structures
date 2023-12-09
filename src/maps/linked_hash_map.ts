@@ -22,7 +22,7 @@ export interface LinkedHashMapOptions extends HashMapOptions {
   overflowStrategy?: OverflowStrategy;
 }
 
-export class LinkedHashMap<K = any, V = any> extends HashMap<K, V> {
+export class LinkedHashMap<K, V> extends HashMap<K, V> {
   private readonly ordering: Ordering;
   private readonly overflowStrategy: OverflowStrategy;
   private readonly linkedList: DoubleLinkedList;

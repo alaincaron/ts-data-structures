@@ -3,7 +3,7 @@ import { Deque } from './deque';
 import { AbstractQueue, QueueOptions } from '../queues';
 import { CapacityMixin, equalsAny, OverflowException, UnderflowException } from '../utils';
 
-export abstract class AbstractDeque<E = any> extends AbstractQueue<E> implements Deque<E> {
+export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque<E> {
   constructor(options?: number | QueueOptions) {
     super(options);
   }

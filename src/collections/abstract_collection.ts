@@ -10,7 +10,7 @@ import {
   OverflowException,
 } from '../utils';
 
-export abstract class AbstractCollection<E = any> implements Collection<E>, OptionsBuilder {
+export abstract class AbstractCollection<E> implements Collection<E>, OptionsBuilder {
   public constructor(_options?: number | ContainerOptions) {}
 
   abstract size(): number;
@@ -111,11 +111,19 @@ export abstract class AbstractCollection<E = any> implements Collection<E>, Opti
 
   abstract clear(): void;
 
-  containsAll<E1 extends E>(c: Collection<E1>): boolean {
+  containsAll<E1 extends E>(c: Iterable<E1>): boolean {
     for (const item of c) {
       if (!this.contains(item)) return false;
     }
     return true;
+  }
+
+  removeAll(c: Collection<E>): number {
+    return this.filter(e => !c.contains(e));
+  }
+
+  retainAll(c: Collection<E>): number {
+    return this.filter(e => c.contains(e));
   }
 
   abstract [Symbol.iterator](): Iterator<E>;
