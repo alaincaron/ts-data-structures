@@ -5,25 +5,64 @@ export namespace DoubleLinkedList {
   }
 }
 
-export class DoubleLinkedList {
-  public readonly header: DoubleLinkedList.Entry;
+type Entry = DoubleLinkedList.Entry;
+export class DoubleLinkedList<K = Entry> {
+  public readonly header: Entry;
   constructor() {
-    this.header = {} as DoubleLinkedList.Entry;
+    this.header = {} as Entry;
     this.header.before = this.header.after = this.header;
   }
 
-  addLast(e: DoubleLinkedList.Entry) {
-    this.addBefore(e, this.header);
+  isEmpty() {
+    return this.header.before === this.header;
   }
 
-  addBefore(e: DoubleLinkedList.Entry, existingEntry: DoubleLinkedList.Entry) {
-    e.after = existingEntry;
-    e.before = existingEntry.before;
-    e.before.after = e;
-    e.after.before = e;
+  after(e: K) {
+    const node = (e as Entry).after;
+    return node === this.header ? undefined : (node as K);
   }
 
-  remove(e: DoubleLinkedList.Entry) {
+  before(e: K) {
+    const node = (e as Entry).before;
+    return node === this.header ? undefined : (node as K);
+  }
+
+  isLast(e: K) {
+    return (e as Entry).after === this.header;
+  }
+
+  isFirst(e: K) {
+    return (e as Entry).before === this.header;
+  }
+
+  addLast(e: K) {
+    this.addBefore(e, this.header as unknown as K);
+  }
+
+  addFirst(e: K) {
+    this.addAfter(e, this.header as unknown as K);
+  }
+
+  addBefore(e: K, existingEntry: K) {
+    const toAdd = e as Entry;
+    const existingNode = existingEntry as Entry;
+    toAdd.after = existingNode;
+    toAdd.before = existingNode.before;
+    toAdd.before.after = toAdd;
+    toAdd.after.before = toAdd;
+  }
+
+  addAfter(e: K, existingEntry: K) {
+    const toAdd = e as Entry;
+    const existingNode = existingEntry as Entry;
+    toAdd.before = existingNode;
+    toAdd.after = existingNode.after;
+    toAdd.after.before = toAdd;
+    toAdd.before.after = toAdd;
+  }
+
+  remove(entry: K) {
+    const e = entry as Entry;
     e.before.after = e.after;
     e.after.before = e.before;
   }
@@ -32,21 +71,21 @@ export class DoubleLinkedList {
     this.header.before = this.header.after = this.header;
   }
 
-  first() {
+  first(): K | undefined {
     const eldest = this.header.after;
-    return eldest === this.header ? undefined : eldest;
+    return eldest === this.header ? undefined : (eldest as K);
   }
 
-  last() {
+  last(): K | undefined {
     const youngest = this.header.before;
-    return youngest === this.header ? undefined : youngest;
+    return youngest === this.header ? undefined : (youngest as K);
   }
 
-  *entries(): IterableIterator<DoubleLinkedList.Entry> {
-    for (let e = this.header.after; e != this.header; e = e.after) yield e;
+  *entries(): IterableIterator<K> {
+    for (let e = this.header.after; e != this.header; e = e.after) yield e as K;
   }
 
-  *entriesReversed(): IterableIterator<DoubleLinkedList.Entry> {
-    for (let e = this.header.before; e != this.header; e = e.before) yield e;
+  *entriesReversed(): IterableIterator<K> {
+    for (let e = this.header.before; e != this.header; e = e.before) yield e as K;
   }
 }

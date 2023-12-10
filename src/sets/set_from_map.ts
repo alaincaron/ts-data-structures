@@ -11,6 +11,8 @@ import {
   LinkedHashMap,
   LinkedHashMapOptions,
   OpenHashMap,
+  SkipListMap,
+  SkipListMapOptions,
   SortedMap,
   SortedMapOptions,
   SplayTreeMap,
@@ -202,5 +204,23 @@ export class SplayTreeSet<E> extends NavigableSetFromMap<E> {
 
   clone(): SplayTreeSet<E> {
     return SplayTreeSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
+  }
+}
+
+export class SkipListSet<E> extends SortedSetFromMap<E> {
+  constructor(options?: number | SkipListMapOptions<E>) {
+    super(new SkipListMap<E, boolean>(options));
+  }
+
+  static create<E>(initializer?: number | (SkipListMapOptions<E> & CollectionInitializer<E>)): SkipListSet<E> {
+    return buildCollection<E, SkipListSet<E>>(SkipListSet, initializer);
+  }
+
+  layers() {
+    (this.delegate() as SkipListMap<E, boolean>).layers();
+  }
+
+  clone(): SkipListSet<E> {
+    return SkipListSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
   }
 }

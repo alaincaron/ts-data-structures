@@ -25,7 +25,7 @@ export interface LinkedHashMapOptions extends HashMapOptions {
 export class LinkedHashMap<K, V> extends HashMap<K, V> {
   private readonly ordering: Ordering;
   private readonly overflowStrategy: OverflowStrategy;
-  private readonly linkedList: DoubleLinkedList;
+  private readonly linkedList: DoubleLinkedList<HashEntry<K, V>>;
 
   constructor(options?: number | LinkedHashMapOptions) {
     super(options);
@@ -39,26 +39,24 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   }
 
   protected recordAccess(e: HashEntry<K, V>, accessType: AccessType) {
-    const ee = e as unknown as DoubleLinkedList.Entry;
-
     switch (accessType) {
       case AccessType.INSERT:
-        this.linkedList.addLast(ee);
+        this.linkedList.addLast(e);
         break;
       case AccessType.MODIFY:
         if (this.ordering === Ordering.ACCESS || this.ordering === Ordering.MODIFICATION) {
-          this.linkedList.remove(ee);
-          this.linkedList.addLast(ee);
+          this.linkedList.remove(e);
+          this.linkedList.addLast(e);
         }
         break;
       case AccessType.GET:
         if (this.ordering === Ordering.ACCESS) {
-          this.linkedList.remove(ee);
-          this.linkedList.addLast(ee);
+          this.linkedList.remove(e);
+          this.linkedList.addLast(e);
         }
         break;
       case AccessType.REMOVE:
-        this.linkedList.remove(ee);
+        this.linkedList.remove(e);
         break;
       default:
         throw new Error(`Unexpected access type: ${accessType}`);
