@@ -116,7 +116,7 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
     return this.findIndex(key) >= 0;
   }
 
-  getEntry(key: K) {
+  protected getEntry(key: K) {
     const idx = this.findIndex(key);
     return idx >= 0 ? (this.slots[idx] as MapEntry<K, V>) : undefined;
   }

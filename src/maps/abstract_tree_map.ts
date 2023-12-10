@@ -17,7 +17,7 @@ export abstract class AbstractTreeMap<K, V> extends AbstractNavigableMap<K, V> {
 
   protected abstract getRoot(): BinaryNode<K, V> | undefined;
 
-  getEntry(key: K): BinaryNode<K, V> | undefined {
+  protected getEntry(key: K): BinaryNode<K, V> | undefined {
     let child = this.getRoot();
     while (child) {
       const c = this.comparator(key, child.key);

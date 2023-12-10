@@ -62,7 +62,7 @@ export class HashMap<K, V> extends BoundedMap<K, V> {
     return h;
   }
 
-  getEntry(key: K): MapEntry<K, V> | undefined {
+  protected getEntry(key: K): MapEntry<K, V> | undefined {
     const h = hashAny(key);
     const slot = this.getSlot(h, this.slots);
     let e = this.slots[slot];

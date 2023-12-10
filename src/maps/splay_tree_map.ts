@@ -51,7 +51,7 @@ export class SplayTreeMap<K, V> extends BoundedTreeMap<K, V> {
     return this._size;
   }
 
-  getEntry(key: K): SplayNode<K, V> | undefined {
+  protected getEntry(key: K): SplayNode<K, V> | undefined {
     let root = this.getRoot();
     if (!root) return root;
 
