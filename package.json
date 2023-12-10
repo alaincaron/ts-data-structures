@@ -1,7 +1,7 @@
 {
-  "name": "ts-data-structures",
+  "name": "ts-data-collections",
   "version": "0.0.0",
-  "description": "Misc TS data structures",
+  "description": "Misc TS data structures such as Sets, Maps and Collections",
   "main": "./dist/index.js",
   "engines": {
     "node": "*"
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alaincaron/ts-data-structures.git"
+    "url": "git+https://github.com/alaincaron/ts-data-collections.git"
   },
   "keywords": [
     "data",
@@ -36,9 +36,9 @@
   "author": "Alain Caron",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/alaincaron/ts-data-structures/issues"
+    "url": "https://github.com/alaincaron/ts-data-collections/issues"
   },
-  "homepage": "https://github.com/alaincaron/ts-data-structures#readme",
+  "homepage": "https://github.com/alaincaron/ts-data-collections#readme",
   "lint-staged": {
     "*.ts": [
       "eslint --fix",
