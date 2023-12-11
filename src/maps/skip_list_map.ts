@@ -1,4 +1,4 @@
-import { FluentIterator, iterator } from 'ts-fluent-iterators';
+import { FluentIterator, iterator, Predicate } from 'ts-fluent-iterators';
 import { buildMap } from './abstract_map';
 import { BoundedNavigableMap } from './abstract_navigable_map';
 import { MapEntry } from './map';
@@ -45,9 +45,12 @@ export class SkipListMap<K, V> extends BoundedNavigableMap<K, V> {
   }
 
   put(key: K, value: V): V | undefined {
-    const node = this.findNode(key);
-    if (node && this.comparator(node.key, key) === 0) {
-      return this.updateValueDown(node, value);
+    const { node, exact } = this.findNode(key);
+
+    if (node && exact) {
+      const oldValue = node.value;
+      node.value = value;
+      return oldValue;
     }
 
     if (this.handleOverflow(key, value)) return undefined;
@@ -79,63 +82,54 @@ export class SkipListMap<K, V> extends BoundedNavigableMap<K, V> {
   }
 
   lowerEntry(key: K) {
-    let node = this.findNode(key);
-    if (!node || this.comparator(node.key, key) < 0) return node;
-    while (node.down) node = node.down;
+    const { node, exact } = this.findNode(key);
+    if (!node || !exact) return node;
     return this._layers[0].before(node);
   }
 
   higherEntry(key: K) {
-    let node = this.findNode(key) ?? this._layers[0].first();
-
-    if (!node) return node;
-
-    const c = this.comparator(node.key, key);
-    if (c > 0) return node;
-    if (c === 0) {
-      while (node.down) node = node.down;
+    let { node } = this.findNode(key);
+    if (node) {
+      return this._layers[0].after(node);
     }
-    return this._layers[0].after(node);
+
+    node = this._layers[0].first();
+    return node && this.comparator(node.key, key) > 0 ? node : undefined;
   }
 
   ceilingEntry(key: K) {
-    let node = this.findNode(key);
+    let { node, exact } = this.findNode(key);
 
-    if (!node) {
-      node = this._layers[0].first();
-      if (!node) return node;
-      return this.comparator(node.key, key) >= 0 ? node : undefined;
+    if (node) {
+      return exact ? node : this._layers[0].after(node);
     }
 
-    while (node.down) node = node.down;
-
-    if (this.comparator(node.key, key) === 0) return node;
-
-    return this._layers[0].after(node);
+    node = this._layers[0].first();
+    return node && this.comparator(node.key, key) >= 0 ? node : undefined;
   }
 
   floorEntry(key: K) {
-    return this.findNode(key);
+    return this.findNode(key)?.node;
   }
 
   pollLastEntry() {
     const e = this._layers[0].last();
     if (!e) return undefined;
-    this.removeEntryUpward(e);
+    this.removeEntry(e);
     return e;
   }
 
   pollFirstEntry() {
     const e = this._layers[0].first();
     if (!e) return undefined;
-    this.removeEntryUpward(e);
+    this.removeEntry(e);
     return e;
   }
 
   remove(key: K) {
     const e = this.getEntry(key);
     if (!e) return undefined;
-    this.removeEntryDownward(e);
+    this.removeEntry(e);
     return e.value;
   }
 
@@ -159,7 +153,7 @@ export class SkipListMap<K, V> extends BoundedNavigableMap<K, V> {
     }
   }
 
-  private removeEntryUpward(entry: SkipListNode<K, V>) {
+  private removeEntry(entry: SkipListNode<K, V>) {
     let e: SkipListNode<K, V> | undefined = entry;
     while (e) {
       this._layers[e.level].remove(e);
@@ -169,19 +163,19 @@ export class SkipListMap<K, V> extends BoundedNavigableMap<K, V> {
     --this._size;
   }
 
-  private removeEntryDownward(entry: SkipListNode<K, V>) {
-    let e: SkipListNode<K, V> | undefined = entry;
-    while (e) {
-      this._layers[e.level].remove(e);
-      e = e.down;
+  filterEntries(predicate: Predicate<[K, V]>): number {
+    const original_size = this.size();
+    for (const e of this._layers[0].entries()) {
+      if (!predicate([e.key, e.value])) {
+        this.removeEntry(e);
+      }
     }
-    this.removeEmptyLayers();
-    --this._size;
+    return original_size - this.size();
   }
 
   protected getEntry(key: K): SkipListNode<K, V> | undefined {
-    const n = this.findNode(key);
-    return n && this.comparator(n.key, key) === 0 ? n : undefined;
+    const { node, exact } = this.findNode(key);
+    return node && exact ? node : undefined;
   }
 
   private addNodeToNextLevel(level: number, node: SkipListNode<K, V>, upNode: SkipListNode<K, V>) {
@@ -207,23 +201,25 @@ export class SkipListMap<K, V> extends BoundedNavigableMap<K, V> {
     this.horizontalInsert(level, node.up, upNode);
   }
 
-  private findNode(key: K): SkipListNode<K, V> | undefined {
+  private findNode(key: K): { node?: SkipListNode<K, V>; exact?: boolean } {
     let idx = this._layers.length - 1;
     let node: SkipListNode<K, V> | undefined;
+    let c: number | undefined = undefined;
 
     for (;;) {
       const linkedList = this._layers[idx];
       node = linkedList.first();
       if (!node) {
-        return node;
+        return {};
       }
-      const c = this.comparator(node.key, key);
+      c = this.comparator(node.key, key);
       if (c === 0) {
-        return node;
+        while (node.down) node = node.down;
+        return { node, exact: true };
       }
       if (c > 0) {
         if (idx === 0) {
-          return undefined;
+          return {};
         }
         --idx;
         continue;
@@ -234,12 +230,15 @@ export class SkipListMap<K, V> extends BoundedNavigableMap<K, V> {
     for (;;) {
       const linkedList = this._layers[idx];
       let next = linkedList.after(node);
-      while (next && this.comparator(next.key, key) <= 0) {
+      let c1: number | undefined = undefined;
+      while (next && (c1 = this.comparator(next.key, key)) <= 0) {
         node = next;
+        c = c1;
         next = linkedList.after(node);
       }
-      if (this.comparator(node.key, key) === 0) {
-        break;
+      if (c === 0) {
+        while (node.down) node = node.down;
+        return { node, exact: true };
       }
 
       if (!node.down) break;
@@ -247,7 +246,7 @@ export class SkipListMap<K, V> extends BoundedNavigableMap<K, V> {
       node = node.down;
     }
 
-    return node;
+    return { node };
   }
 
   layers() {
@@ -260,17 +259,6 @@ export class SkipListMap<K, V> extends BoundedNavigableMap<K, V> {
       );
     }
     return result;
-  }
-
-  private updateValueDown(node: SkipListNode<K, V>, value: V) {
-    if (node.value === value) return value;
-    const oldValue = node.value;
-    for (;;) {
-      node.value = value;
-      if (!node.down) break;
-      node = node.down;
-    }
-    return oldValue;
   }
 
   private shouldPropagateUp() {

@@ -82,10 +82,24 @@ export class DoubleLinkedList<K = Entry> {
   }
 
   *entries(): IterableIterator<K> {
-    for (let e = this.header.after; e != this.header; e = e.after) yield e as K;
+    // this loop is more complicated than regular inspection of the after field because it
+    // allows to change the list at 'current' point without affecting iteration.
+    let current = this.first();
+    while (current) {
+      const next = this.after(current);
+      yield current as K;
+      current = next;
+    }
   }
 
   *entriesReversed(): IterableIterator<K> {
-    for (let e = this.header.before; e != this.header; e = e.before) yield e as K;
+    // this loop is more complicated than regular inspection of the before field because it
+    // allows to change the list at 'current' point without affecting iteration.
+    let current = this.last();
+    while (current) {
+      const next = this.before(current);
+      yield current as K;
+      current = next;
+    }
   }
 }

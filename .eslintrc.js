@@ -12,6 +12,12 @@ module.exports = {
   },
   ignorePatterns: ['.eslintrc.js', 'tailwind.config.js'],
   rules: {
+    'prefer-const': [
+      'error',
+      {
+        destructuring: 'all',
+      },
+    ],
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': [
       'error',
