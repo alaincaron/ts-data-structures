@@ -48,7 +48,7 @@ export class HashMap<K, V> extends BoundedMap<K, V> {
     }
   }
 
-  static create<K, V>(initializer?: number | HashMapOptions | MapInitializer<K, V>): HashMap<K, V> {
+  static create<K, V>(initializer?: number | (HashMapOptions & MapInitializer<K, V>)): HashMap<K, V> {
     return buildMap<K, V, HashMap<K, V>, HashMapOptions>(HashMap, initializer);
   }
 

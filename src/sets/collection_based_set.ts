@@ -1,23 +1,27 @@
-import { ISet } from './set';
+import { Predicate } from 'ts-fluent-iterators';
+import { AbstractSet } from './abstract_set';
 import { getItemsToAdd } from './utils';
-import {
-  buildCollection,
-  Collection,
-  CollectionInitializer,
-  CollectionLike,
-  DecoratorCollection,
-} from '../collections';
+import { buildCollection, Collection, CollectionInitializer, CollectionLike } from '../collections';
 import { ArrayList } from '../lists';
 import { ContainerOptions, OverflowException } from '../utils';
 
-export class SetFromCollection<E> extends DecoratorCollection<E> implements ISet<E> {
+export class CollectionBasedSet<E> extends AbstractSet<E> {
+  private _delegate: Collection<E>;
   constructor(delegate: Collection<E>) {
-    super(delegate);
+    super();
+    this._delegate = delegate;
   }
 
-  // TODO try to get these in a Mixin... hwoever generics and mixin don't always work together
-  toSet() {
-    return this.iterator().collectToSet();
+  protected delegate() {
+    return this._delegate;
+  }
+
+  size(): number {
+    return this._delegate.size();
+  }
+
+  capacity(): number {
+    return this._delegate.capacity();
   }
 
   offer(item: E) {
@@ -27,40 +31,56 @@ export class SetFromCollection<E> extends DecoratorCollection<E> implements ISet
     return d.add(item);
   }
 
-  // TODO mixin
+  removeMatchingItem(predicate: Predicate<E>): E | undefined {
+    return this._delegate.removeMatchingItem(predicate);
+  }
+
+  filter(predicate: Predicate<E>) {
+    return this._delegate.filter(predicate);
+  }
+
+  clear(): void {
+    this._delegate.clear();
+  }
+
+  [Symbol.iterator](): Iterator<E> {
+    return this._delegate[Symbol.iterator]();
+  }
+
+  buildOptions(): ContainerOptions {
+    return this._delegate.buildOptions?.() ?? {};
+  }
+
   add(item: E) {
     const d = this.delegate();
     if (d.contains(item)) return false;
     return d.add(item);
   }
 
-  // TODO mixin
   offerPartially<E1 extends E>(items: Iterable<E1>): number {
     const initial_size = this.size();
     super.offerPartially(items);
     return this.size() - initial_size;
   }
 
-  // TODO mixin
   offerFully<E1 extends E>(items: CollectionLike<E1>): number {
     const itemsToAdd = getItemsToAdd(this, items);
     if (this.remaining() < itemsToAdd.size) return 0;
     return this.offerPartially(itemsToAdd);
   }
 
-  // TODO mixin
   addFully<E1 extends E>(items: CollectionLike<E1>): number {
     const itemsToAdd = getItemsToAdd(this, items);
     if (this.remaining() < itemsToAdd.size) throw new OverflowException();
     return this.addPartially(itemsToAdd);
   }
 
-  clone(): SetFromCollection<E> {
-    return new SetFromCollection(this.delegate().clone());
+  clone(): CollectionBasedSet<E> {
+    return new CollectionBasedSet(this.delegate().clone());
   }
 }
 
-export class ArraySet<E> extends SetFromCollection<E> {
+export class ArraySet<E> extends CollectionBasedSet<E> {
   constructor(options?: number | ContainerOptions) {
     super(new ArrayList<E>(options));
   }

@@ -1,7 +1,7 @@
 import { ISet } from './set';
 import { getItemsToAdd } from './utils';
 import { AbstractCollection, CollectionLike } from '../collections';
-import { CapacityMixin, ContainerOptions, OverflowException } from '../utils';
+import { CapacityMixin, ContainerOptions, hashIterableUnordered, OverflowException } from '../utils';
 
 export abstract class AbstractSet<E> extends AbstractCollection<E> implements ISet<E> {
   constructor(options?: number | ContainerOptions) {
@@ -41,10 +41,15 @@ export abstract class AbstractSet<E> extends AbstractCollection<E> implements IS
 
   abstract clone(): AbstractSet<E>;
 
-  equals(other: unknown): boolean {
+  hashCode() {
+    return hashIterableUnordered(this);
+  }
+
+  equals(other: any): boolean {
     if (this === other) return true;
-    if (!(other instanceof AbstractSet)) return false;
-    if (this.size() != other.size()) return false;
+    if (!other || typeof other !== 'object') return false;
+    if (typeof other.size !== 'function' || other.size() !== this.size()) return false;
+    if (typeof other[Symbol.iterator] !== 'function') return false;
     return this.containsAll(other);
   }
 }

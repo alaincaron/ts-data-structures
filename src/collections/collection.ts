@@ -37,6 +37,9 @@ export interface Collection<E> extends Iterable<E> {
   removeAll(c: Collection<E>): number;
   retainAll(c: Collection<E>): number;
 
+  hashCode(): number;
+  equals(other: unknown): boolean;
+
   clone(): Collection<E>;
   toJson(): string;
   buildOptions?(): ContainerOptions;

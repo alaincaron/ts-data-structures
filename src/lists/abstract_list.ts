@@ -1,7 +1,15 @@
 import { Comparator, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { List, ListIterator } from './list';
 import { AbstractCollection } from '../collections';
-import { CapacityMixin, ContainerOptions, equalsAny, OverflowException, shuffle, UnderflowException } from '../utils';
+import {
+  CapacityMixin,
+  ContainerOptions,
+  equalsAny,
+  hashIterableOrdered,
+  OverflowException,
+  shuffle,
+  UnderflowException,
+} from '../utils';
 
 export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E> {
   constructor(options?: number | ContainerOptions) {
@@ -191,10 +199,15 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
 
   abstract clone(): AbstractList<E>;
 
-  equals(other: unknown) {
+  hashCode() {
+    return hashIterableOrdered(this);
+  }
+
+  equals(other: any) {
     if (this === other) return true;
-    if (!(other instanceof AbstractList)) return false;
-    if (other.size() != this.size()) return false;
+    if (!other || typeof other !== 'object') return false;
+    if (typeof other.size !== 'function' || other.size() !== this.size()) return false;
+    if (typeof other[Symbol.iterator] !== 'function') return false;
     const iter1 = this[Symbol.iterator]();
     const iter2 = other[Symbol.iterator]();
     for (;;) {

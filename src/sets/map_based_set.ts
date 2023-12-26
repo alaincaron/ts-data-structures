@@ -19,7 +19,7 @@ import {
 } from '../maps';
 import { NavigableMap } from '../maps/navigable_map';
 
-export class SetFromMap<E> extends AbstractSet<E> {
+export class MapBasedSet<E> extends AbstractSet<E> {
   private readonly _delegate: IMap<E, boolean>;
 
   constructor(delegate: IMap<E, boolean>) {
@@ -73,8 +73,8 @@ export class SetFromMap<E> extends AbstractSet<E> {
     return this._delegate.keys();
   }
 
-  clone(): SetFromMap<E> {
-    return new SetFromMap(this._delegate.clone());
+  clone(): MapBasedSet<E> {
+    return new MapBasedSet(this._delegate.clone());
   }
 
   buildOptions() {
@@ -82,7 +82,7 @@ export class SetFromMap<E> extends AbstractSet<E> {
   }
 }
 
-export class HashSet<E> extends SetFromMap<E> {
+export class HashSet<E> extends MapBasedSet<E> {
   constructor(options?: number | HashMapOptions) {
     super(new HashMap<E, boolean>(options));
   }
@@ -96,7 +96,7 @@ export class HashSet<E> extends SetFromMap<E> {
   }
 }
 
-export class LinkedHashSet<E> extends SetFromMap<E> {
+export class LinkedHashSet<E> extends MapBasedSet<E> {
   constructor(options?: number | LinkedHashMapOptions) {
     super(new LinkedHashMap<E, boolean>(options));
   }
@@ -110,7 +110,7 @@ export class LinkedHashSet<E> extends SetFromMap<E> {
   }
 }
 
-export class OpenHashSet<E> extends SetFromMap<E> {
+export class OpenHashSet<E> extends MapBasedSet<E> {
   constructor(options?: number | HashMapOptions) {
     super(new OpenHashMap<E, boolean>(options));
   }
@@ -123,7 +123,7 @@ export class OpenHashSet<E> extends SetFromMap<E> {
   }
 }
 
-export class SortedSetFromMap<E> extends SetFromMap<E> implements SortedSet<E> {
+export class SortedMapBasedSet<E> extends MapBasedSet<E> implements SortedSet<E> {
   constructor(delegate: SortedMap<E, boolean>) {
     super(delegate);
   }
@@ -141,7 +141,7 @@ export class SortedSetFromMap<E> extends SetFromMap<E> implements SortedSet<E> {
   }
 }
 
-export class NavigableSetFromMap<E> extends SortedSetFromMap<E> implements NavigableSet<E> {
+export class NavigableMapBasedSet<E> extends SortedMapBasedSet<E> implements NavigableSet<E> {
   constructor(delegate: NavigableMap<E, boolean>) {
     super(delegate);
   }
@@ -179,7 +179,7 @@ export class NavigableSetFromMap<E> extends SortedSetFromMap<E> implements Navig
   }
 }
 
-export class AvlTreeSet<E> extends NavigableSetFromMap<E> {
+export class AvlTreeSet<E> extends NavigableMapBasedSet<E> {
   constructor(options?: number | SortedMapOptions<E>) {
     super(new AvlTreeMap<E, boolean>(options));
   }
@@ -193,7 +193,7 @@ export class AvlTreeSet<E> extends NavigableSetFromMap<E> {
   }
 }
 
-export class SplayTreeSet<E> extends NavigableSetFromMap<E> {
+export class SplayTreeSet<E> extends NavigableMapBasedSet<E> {
   constructor(options?: number | SortedMapOptions<E>) {
     super(new SplayTreeMap<E, boolean>(options));
   }
@@ -207,7 +207,7 @@ export class SplayTreeSet<E> extends NavigableSetFromMap<E> {
   }
 }
 
-export class SkipListSet<E> extends SortedSetFromMap<E> {
+export class SkipListSet<E> extends SortedMapBasedSet<E> {
   constructor(options?: number | SkipListMapOptions<E>) {
     super(new SkipListMap<E, boolean>(options));
   }

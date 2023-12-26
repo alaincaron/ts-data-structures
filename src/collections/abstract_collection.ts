@@ -132,6 +132,9 @@ export abstract class AbstractCollection<E> implements Collection<E>, OptionsBui
     return new FluentIterator(this[Symbol.iterator]());
   }
 
+  abstract hashCode(): number;
+  abstract equals(other: unknown): boolean;
+
   abstract clone(): AbstractCollection<E>;
 
   buildOptions(): ContainerOptions {
@@ -141,8 +144,6 @@ export abstract class AbstractCollection<E> implements Collection<E>, OptionsBui
   toJson() {
     return iterableToJSON(this);
   }
-
-  abstract equals(other: unknown): boolean;
 }
 
 export const BoundedCollection = CapacityMixin(AbstractCollection);

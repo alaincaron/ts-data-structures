@@ -32,10 +32,18 @@ export function hashNumber(h: number): number {
   return hashInteger(FloatToIEEE(h));
 }
 
-export function hashIterable<X>(iter: Iterable<X>, hasher: Mapper<X, number> = hashAny): number {
+export function hashIterableOrdered<X>(iter: Iterable<X>, hasher: Mapper<X, number> = hashAny): number {
   let hash = 31;
   for (const item of iter) {
     hash = ((hash << 5) - hash + hashNumber(hasher(item))) | 0;
+  }
+  return hash;
+}
+
+export function hashIterableUnordered<X>(iter: Iterable<X>, hasher: Mapper<X, number> = hashAny): number {
+  let hash = 31;
+  for (const item of iter) {
+    hash = (hash + hashNumber(hasher(item))) | 0;
   }
   return hash;
 }
@@ -56,10 +64,13 @@ export function hashAny(x: any): number {
     case 'bigint':
       return hashNumber(Number(BigInt.asIntN(32, x)));
     default:
-      if (typeof x[Symbol.iterator] === 'function') {
-        return hashIterable(x);
+      if (x instanceof Set || x instanceof Map) {
+        return hashIterableUnordered(x);
       }
-      return hashIterable(Object.entries(x));
+      if (typeof x[Symbol.iterator] === 'function') {
+        return hashIterableOrdered(x);
+      }
+      return hashIterableUnordered(Object.entries(x));
   }
 }
 

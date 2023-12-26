@@ -1,7 +1,7 @@
 import { FluentIterator, IteratorLike, Iterators } from 'ts-fluent-iterators';
 import { OverflowQueueStrategy, Queue } from './queue';
 import { AbstractCollection, CollectionLike, getSize } from '../collections';
-import { CapacityMixin, ContainerOptions, OverflowException, UnderflowException } from '../utils';
+import { CapacityMixin, ContainerOptions, hashIterableOrdered, OverflowException, UnderflowException } from '../utils';
 
 export interface QueueOptions extends ContainerOptions {
   overflowStrategy?: OverflowQueueStrategy;
@@ -108,6 +108,10 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
   }
 
   abstract clone(): AbstractQueue<E>;
+
+  hashCode() {
+    return hashIterableOrdered(this);
+  }
 
   equals(other: unknown) {
     return this === other;

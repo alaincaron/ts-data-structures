@@ -1,7 +1,15 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry, OfferResult } from './map';
 import { MapInitializer, MapLike } from './types';
-import { CapacityMixin, ContainerOptions, equalsAny, mapToJSON, OptionsBuilder, OverflowException } from '../utils';
+import {
+  CapacityMixin,
+  ContainerOptions,
+  equalsAny,
+  hashIterableUnordered,
+  mapToJSON,
+  OptionsBuilder,
+  OverflowException,
+} from '../utils';
 
 export abstract class AbstractMap<K, V> implements IMap<K, V>, OptionsBuilder {
   constructor(_options?: number | ContainerOptions) {}
@@ -130,13 +138,18 @@ export abstract class AbstractMap<K, V> implements IMap<K, V>, OptionsBuilder {
     return mapToJSON(this);
   }
 
-  equals(other: unknown) {
+  hashCode() {
+    return hashIterableUnordered(this);
+  }
+
+  equals(other: any) {
     if (this === other) return true;
-    if (!(other instanceof AbstractMap)) return false;
-    if (this.size() !== other.size()) return false;
+    if (!other || typeof other !== 'object') return false;
+    if (typeof other.size !== 'function' || other.size() !== this.size()) return false;
+
+    if (typeof other.get !== 'function') return false;
     for (const [k, v] of this) {
-      const entry = other.getEntry(k);
-      if (!entry || !equalsAny(v, entry.value)) return false;
+      if (!equalsAny(v, other.get(k))) return false;
     }
     return true;
   }
