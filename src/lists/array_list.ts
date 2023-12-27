@@ -1,6 +1,5 @@
 import { Comparator, Predicate } from 'ts-fluent-iterators';
-import { BoundedList } from './abstract_list';
-import { ListIterator } from './list';
+import { BoundedList, ListIterator } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { ContainerOptions, IndexOutOfBoundsException, shuffle, UnderflowException } from '../utils';
 

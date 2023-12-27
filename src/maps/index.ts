@@ -1,5 +1,3 @@
-export * from './abstract_map';
-export * from './abstract_sorted_map';
 export * from './abstract_tree_map';
 export * from './adapter_map';
 export * from './avl_tree_map';
@@ -11,4 +9,3 @@ export * from './open_hash_map';
 export * from './skip_list_map';
 export * from './sorted_map';
 export * from './splay_tree_map';
-export * from './types';

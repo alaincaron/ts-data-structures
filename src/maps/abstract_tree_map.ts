@@ -1,6 +1,6 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { AbstractNavigableMap } from './abstract_navigable_map';
 import { MapEntry } from './map';
+import { NavigableMap } from './navigable_map';
 import { SortedMapOptions } from './sorted_map';
 import { ArrayStack } from '../stacks';
 import { CapacityMixin } from '../utils';
@@ -10,7 +10,7 @@ export interface BinaryNode<K, V> extends MapEntry<K, V> {
   get right(): BinaryNode<K, V> | undefined;
 }
 
-export abstract class AbstractTreeMap<K, V> extends AbstractNavigableMap<K, V> {
+export abstract class TreeMap<K, V> extends NavigableMap<K, V> {
   constructor(options?: number | SortedMapOptions<K>) {
     super(options);
   }
@@ -226,7 +226,7 @@ export abstract class AbstractTreeMap<K, V> extends AbstractNavigableMap<K, V> {
     return new FluentIterator(this.reverseEntryGenerator());
   }
 
-  abstract clone(): AbstractTreeMap<K, V>;
+  abstract clone(): TreeMap<K, V>;
 }
 
-export const BoundedTreeMap = CapacityMixin(AbstractTreeMap);
+export const BoundedTreeMap = CapacityMixin(TreeMap);

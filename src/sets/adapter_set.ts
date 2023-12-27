@@ -1,5 +1,5 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { BoundedSet } from './abstract_set';
+import { BoundedSet } from './set';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { ContainerOptions, OverflowException } from '../utils';
 

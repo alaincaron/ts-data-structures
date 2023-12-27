@@ -1,6 +1,6 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { AbstractSet } from './abstract_set';
 import { NavigableSet } from './navigable_set';
+import { ISet } from './set';
 import { SortedSet } from './sorted_set';
 import { buildCollection, CollectionInitializer } from '../collections';
 import {
@@ -19,7 +19,7 @@ import {
 } from '../maps';
 import { NavigableMap } from '../maps/navigable_map';
 
-export class MapBasedSet<E> extends AbstractSet<E> {
+export class MapBasedSet<E> extends ISet<E> {
   private readonly _delegate: IMap<E, boolean>;
 
   constructor(delegate: IMap<E, boolean>) {

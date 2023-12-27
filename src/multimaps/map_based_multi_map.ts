@@ -1,6 +1,5 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { BoundedMultiMap, buildMultiMap } from './abstract_multi_map';
-import { MultiMapInitializer, MultiMapOptions } from './types';
+import { BoundedMultiMap, buildMultiMap, MultiMapInitializer, MultiMapOptions } from './multi_map';
 import { Collection } from '../collections';
 import { ArrayList } from '../lists';
 import {
@@ -106,7 +105,7 @@ export class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
   filterEntries(predicate: Predicate<[K, V]>): number {
     const nbRemoved = this.map.entryIterator().sum(e => e.value.filter(v => predicate([e.key, v])));
     if (nbRemoved) {
-      this.map.filterEntries(([_, c]) => c.isEmpty());
+      this.map.filterEntries(([_, c]) => !c.isEmpty());
       this._size -= nbRemoved;
     }
     return nbRemoved;

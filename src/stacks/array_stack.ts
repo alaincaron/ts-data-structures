@@ -1,10 +1,10 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { AbstractStack } from './abstract_stack';
+import { Stack } from './stack';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { ArrayDeque } from '../deques';
 import { ContainerOptions } from '../utils';
 
-export class ArrayStack<E> extends AbstractStack<E> {
+export class ArrayStack<E> extends Stack<E> {
   private readonly buffer: ArrayDeque<E>;
 
   constructor(options?: number | ContainerOptions) {

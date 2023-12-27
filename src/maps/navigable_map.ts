@@ -1,25 +1,59 @@
 import { FluentIterator } from 'ts-fluent-iterators';
 import { MapEntry } from './map';
-import { SortedMap } from './sorted_map';
+import { SortedMap, SortedMapOptions } from './sorted_map';
+import { CapacityMixin } from '../utils';
 
-export interface NavigableMap<K, V> extends SortedMap<K, V> {
-  floorKey(k: K): K | undefined;
-  floorEntry(k: K): MapEntry<K, V> | undefined;
+export abstract class NavigableMap<K, V> extends SortedMap<K, V> {
+  constructor(options?: number | SortedMapOptions<K>) {
+    super(options);
+  }
 
-  ceilingKey(k: K): K | undefined;
-  ceilingEntry(k: K): MapEntry<K, V> | undefined;
+  lowerKey(key: K) {
+    const e = this.lowerEntry(key);
+    return e?.key;
+  }
 
-  lowerKey(k: K): K | undefined;
-  lowerEntry(k: K): MapEntry<K, V> | undefined;
+  abstract lowerEntry(k: K): MapEntry<K, V> | undefined;
 
-  higherKey(k: K): K | undefined;
-  higherEntry(k: K): MapEntry<K, V> | undefined;
+  higherKey(key: K) {
+    const e = this.higherEntry(key);
+    return e?.key;
+  }
 
-  pollFirstEntry(): MapEntry<K, V> | undefined;
-  pollLastEntry(): MapEntry<K, V> | undefined;
+  abstract higherEntry(k: K): MapEntry<K, V> | undefined;
 
-  reverseKeyIterator(): FluentIterator<K>;
-  reverseValueIterator(): FluentIterator<V>;
-  reverseEntryIterator(): FluentIterator<MapEntry<K, V>>;
-  reverseEntries(): IterableIterator<[K, V]>;
+  abstract floorEntry(k: K): MapEntry<K, V> | undefined;
+
+  floorKey(key: K) {
+    const e = this.floorEntry(key);
+    return e?.key;
+  }
+
+  ceilingKey(key: K) {
+    const e = this.ceilingEntry(key);
+    return e?.key;
+  }
+
+  abstract ceilingEntry(k: K): MapEntry<K, V> | undefined;
+
+  abstract pollFirstEntry(): MapEntry<K, V> | undefined;
+  abstract pollLastEntry(): MapEntry<K, V> | undefined;
+
+  abstract reverseEntryIterator(): FluentIterator<MapEntry<K, V>>;
+
+  reverseKeyIterator() {
+    return this.reverseEntryIterator().map(e => e.key);
+  }
+
+  reverseValueIterator() {
+    return this.reverseEntryIterator().map(e => e.value);
+  }
+
+  *reverseEntries(): IterableIterator<[K, V]> {
+    for (const e of this.reverseEntryIterator()) yield [e.key, e.value];
+  }
+
+  abstract clone(): NavigableMap<K, V>;
 }
+
+export const BoundedNavigableMap = CapacityMixin(NavigableMap);

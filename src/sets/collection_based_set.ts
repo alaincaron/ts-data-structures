@@ -1,11 +1,11 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { AbstractSet } from './abstract_set';
+import { ISet } from './set';
 import { getItemsToAdd } from './utils';
 import { buildCollection, Collection, CollectionInitializer, CollectionLike } from '../collections';
 import { ArrayList } from '../lists';
 import { ContainerOptions, OverflowException } from '../utils';
 
-export class CollectionBasedSet<E> extends AbstractSet<E> {
+export class CollectionBasedSet<E> extends ISet<E> {
   private _delegate: Collection<E>;
   constructor(delegate: Collection<E>) {
     super();

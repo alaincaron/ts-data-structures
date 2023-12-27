@@ -1,8 +1,6 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { BoundedMap, buildMap } from './abstract_map';
 import { HashMapOptions } from './hash_map';
-import { MapEntry } from './map';
-import { MapInitializer } from './types';
+import { BoundedMap, buildMap, MapEntry, MapInitializer } from './map';
 import { equalsAny, hashAny, hashNumber, MAX_ARRAY_SIZE, nextPrime, OverflowException } from '../utils';
 
 const DEFAULT_INITIAL_SIZE = 5; // should be prime.

@@ -10,6 +10,6 @@ export interface CollectionInitializer<E> {
 export function getSize<E>(items: CollectionLike<E>) {
   if (Array.isArray(items)) return items.length;
   if (items instanceof Set) return items.size;
-  if (typeof (items as Collection<E>).size === 'function') return (items as Collection<E>).size();
+  if (items instanceof Collection) return items.size();
   return (items as ArrayGenerator<E>).length;
 }

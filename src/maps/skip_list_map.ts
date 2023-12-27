@@ -1,9 +1,7 @@
 import { FluentIterator, iterator, Predicate } from 'ts-fluent-iterators';
-import { buildMap } from './abstract_map';
-import { BoundedNavigableMap } from './abstract_navigable_map';
-import { MapEntry } from './map';
+import { buildMap, MapEntry, MapInitializer } from './map';
+import { BoundedNavigableMap } from './navigable_map';
 import { SortedMapOptions } from './sorted_map';
-import { MapInitializer } from './types';
 import { DoubleLinkedList } from '../utils';
 
 export interface SkipListNode<K, V> extends MapEntry<K, V> {

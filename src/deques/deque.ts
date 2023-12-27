@@ -1,32 +1,83 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { Queue } from '../queues';
+import { Queue, QueueOptions } from '../queues';
+import { CapacityMixin, equalsAny, OverflowException, UnderflowException } from '../utils';
 
-export interface Deque<E> extends Queue<E> {
-  addFirst(item: E): void;
-  addLast(item: E): void;
+export abstract class Deque<E> extends Queue<E> {
+  constructor(options?: number | QueueOptions) {
+    super(options);
+  }
 
-  offerFirst(item: E): boolean;
-  offerLast(item: E): boolean;
+  addFirst(item: E) {
+    if (this.offerFirst(item)) return;
+    if (!this.handleOverflow(1, 'addFirst')) return;
+    if (!this.offerFirst(item)) throw new OverflowException();
+  }
 
-  removeFirstMatchingItem(predicate: Predicate<E>): E | undefined;
-  removeLastMatchingItem(predicate: Predicate<E>): E | undefined;
+  addLast(item: E) {
+    if (this.offerLast(item)) return;
+    if (!this.handleOverflow(1, 'addLast')) return;
+    if (!this.offerLast(item)) throw new OverflowException();
+  }
 
-  removeFirstOccurence(item: E): boolean;
-  removeLastOccurence(item: E): boolean;
+  abstract offerFirst(item: E): boolean;
+  abstract offerLast(item: E): boolean;
+  offer(item: E): boolean {
+    return this.offerLast(item);
+  }
 
-  removeFirst(): E;
-  removeLast(): E;
+  removeMatchingItem(predicate: Predicate<E>): E | undefined {
+    return this.removeFirstMatchingItem(predicate);
+  }
 
-  pollFirst(): E | undefined;
-  pollLast(): E | undefined;
+  abstract removeFirstMatchingItem(predicate: Predicate<E>): E | undefined;
+  abstract removeLastMatchingItem(predicate: Predicate<E>): E | undefined;
 
-  getFirst(): E;
-  getLast(): E;
+  removeFirstOccurence(item: E) {
+    return this.removeFirstMatchingItem(x => equalsAny(item, x)) != null;
+  }
 
-  peekFirst(): E | undefined;
-  peekLast(): E | undefined;
+  removeLastOccurence(item: E) {
+    return this.removeLastMatchingItem(x => equalsAny(item, x)) != null;
+  }
 
-  reverseIterator(): IterableIterator<E>;
+  removeFirst() {
+    if (this.isEmpty()) throw new UnderflowException();
+    return this.pollFirst()!;
+  }
 
-  clone(): Deque<E>;
+  removeLast() {
+    if (this.isEmpty()) throw new UnderflowException();
+    return this.pollLast()!;
+  }
+
+  remove(): E {
+    return this.removeFirst();
+  }
+
+  abstract pollFirst(): E | undefined;
+  abstract pollLast(): E | undefined;
+  poll(): E | undefined {
+    return this.pollFirst();
+  }
+
+  getFirst(): E {
+    return this.element();
+  }
+
+  getLast(): E {
+    if (this.isEmpty()) throw new UnderflowException();
+    return this.peekLast()!;
+  }
+
+  abstract peekFirst(): E | undefined;
+  abstract peekLast(): E | undefined;
+  peek(): E | undefined {
+    return this.peekFirst();
+  }
+
+  abstract reverseIterator(): IterableIterator<E>;
+
+  abstract clone(): Deque<E>;
 }
+
+export const BoundedDeque = CapacityMixin(Deque);

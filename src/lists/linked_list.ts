@@ -1,5 +1,4 @@
-import { BoundedList } from './abstract_list';
-import { ListIterator } from './list';
+import { BoundedList, ListIterator } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { ContainerOptions, DoubleLinkedList, IndexOutOfBoundsException, UnderflowException } from '../utils';
 

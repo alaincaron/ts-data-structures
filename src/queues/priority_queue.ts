@@ -1,5 +1,5 @@
 import { Comparator, Predicate } from 'ts-fluent-iterators';
-import { BoundedQueue, QueueOptions } from './abstract_queue';
+import { BoundedQueue, QueueOptions } from './queue';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { nextPowerOfTwo } from '../utils';
 

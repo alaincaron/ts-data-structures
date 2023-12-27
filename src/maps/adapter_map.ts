@@ -1,7 +1,6 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { BoundedMap, buildMap } from './abstract_map';
-import { MapEntry } from './map';
-import { MapInitializer } from './types';
+import { BoundedMap, buildMap } from './map';
+import { MapEntry, MapInitializer } from './map';
 import { ContainerOptions, OverflowException } from '../utils';
 
 export interface AdapterMapOptions<K, V> extends ContainerOptions {

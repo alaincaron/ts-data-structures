@@ -1,5 +1,5 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { BoundedDeque } from './abstract_deque';
+import { BoundedDeque } from './deque';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { QueueOptions } from '../queues';
 import { IndexOutOfBoundsException, nextPowerOfTwo, RandomAccess } from '../utils';

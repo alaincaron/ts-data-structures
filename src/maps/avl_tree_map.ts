@@ -1,7 +1,6 @@
-import { buildMap } from './abstract_map';
 import { BinaryNode, BoundedTreeMap } from './abstract_tree_map';
+import { buildMap, MapInitializer } from './map';
 import { SortedMapOptions } from './sorted_map';
-import { MapInitializer } from './types';
 
 enum Direction {
   LEFT,
