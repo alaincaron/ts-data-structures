@@ -1,5 +1,4 @@
 import { Collectors } from 'ts-fluent-iterators';
-import { buildObject, Factory } from './helpers';
 import { Collection } from '../collections';
 import { ArrayList, LinkedList } from '../lists';
 import { PriorityQueue } from '../queues';
@@ -7,8 +6,8 @@ import { HashSet, LinkedHashSet } from '../sets';
 
 export class CollectionCollector<A, C extends Collection<A>> implements Collectors.Collector<A, C> {
   private readonly c: C;
-  constructor(factory: Factory<C>) {
-    this.c = buildObject(factory);
+  constructor(factory: C | (new () => C)) {
+    this.c = typeof factory === 'function' ? new factory() : factory;
   }
 
   collect(a: A) {
@@ -20,22 +19,22 @@ export class CollectionCollector<A, C extends Collection<A>> implements Collecto
   }
 }
 
-export function arrayListCollector<A>(list?: Factory<ArrayList<A>>): CollectionCollector<A, ArrayList<A>> {
-  return new CollectionCollector(list ?? new ArrayList<A>());
+export function arrayListCollector<A>(list?: ArrayList<A>): CollectionCollector<A, ArrayList<A>> {
+  return new CollectionCollector(list ?? ArrayList<A>);
 }
 
-export function linkedListCollector<A>(list?: Factory<LinkedList<A>>): CollectionCollector<A, LinkedList<A>> {
-  return new CollectionCollector(list ?? new LinkedList<A>());
+export function linkedListCollector<A>(list?: LinkedList<A>): CollectionCollector<A, LinkedList<A>> {
+  return new CollectionCollector(list ?? LinkedList<A>);
 }
 
-export function hashIterableUnorderedCollector<A>(set?: Factory<HashSet<A>>): CollectionCollector<A, HashSet<A>> {
-  return new CollectionCollector(set ?? new HashSet<A>());
+export function hashIterableUnorderedCollector<A>(set?: HashSet<A>): CollectionCollector<A, HashSet<A>> {
+  return new CollectionCollector(set ?? HashSet<A>);
 }
 
-export function linkedHashSetCollector<A>(set?: Factory<LinkedHashSet<A>>): CollectionCollector<A, LinkedHashSet<A>> {
-  return new CollectionCollector(set ?? new LinkedHashSet<A>());
+export function linkedHashSetCollector<A>(set?: LinkedHashSet<A>): CollectionCollector<A, LinkedHashSet<A>> {
+  return new CollectionCollector(set ?? LinkedHashSet<A>);
 }
 
-export function priorityQueueCollector<A>(queue?: Factory<PriorityQueue<A>>): CollectionCollector<A, PriorityQueue<A>> {
-  return new CollectionCollector(queue ?? new PriorityQueue<A>());
+export function priorityQueueCollector<A>(queue?: PriorityQueue<A>): CollectionCollector<A, PriorityQueue<A>> {
+  return new CollectionCollector(queue ?? PriorityQueue<A>);
 }

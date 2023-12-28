@@ -11,7 +11,7 @@ describe('Collectors', () => {
     expect(result).equal(col);
   });
   it('should add items to the built collection', () => {
-    const collector = new CollectionCollector(() => new ArrayList());
+    const collector = new CollectionCollector(ArrayList);
     collector.collect(25);
     const result = collector.result;
     expect(result.toArray()).deep.equal([25]);
