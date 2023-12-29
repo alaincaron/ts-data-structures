@@ -1,13 +1,13 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { BoundedMultiSet, Count, MultiSetOptions } from './multi_set';
+import { BoundedMultiSet, Count } from './multi_set';
 import { IMap } from '../maps';
-import { OverflowException } from '../utils';
+import { ContainerOptions, OverflowException } from '../utils';
 
 export abstract class MapBasedMultiSet<E> extends BoundedMultiSet<E> {
   private readonly map: IMap<E, Count>;
   private _size: number;
 
-  constructor(mapFactory: IMap<E, Count> | (new () => IMap<E, Count>), options?: number | MultiSetOptions) {
+  constructor(mapFactory: IMap<E, Count> | (new () => IMap<E, Count>), options?: number | ContainerOptions) {
     super(options);
     this._size = 0;
     if (typeof mapFactory === 'function') {

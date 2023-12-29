@@ -7,14 +7,12 @@ export interface Count {
 
 export type MultiSetLike<E> = CollectionLike<E> | MultiSet<E>;
 
-export interface MultiSetOptions extends ContainerOptions {}
-
 export interface MultiSetInitializer<E> {
   initial?: MultiSetLike<E>;
 }
 
 export abstract class MultiSet<E> extends Collection<E> {
-  constructor(options?: number | MultiSetOptions) {
+  constructor(options?: number | ContainerOptions) {
     super(options);
   }
 
@@ -64,7 +62,7 @@ export const BoundedMultiSet = CapacityMixin(MultiSet);
 export function buildMultiSet<
   E,
   MS extends MultiSet<E>,
-  Options extends MultiSetOptions = MultiSetOptions,
+  Options extends ContainerOptions = ContainerOptions,
   Initializer extends MultiSetInitializer<E> = MultiSetInitializer<E>,
 >(factory: new (...args: any[]) => MS, initializer?: number | (Options & Initializer)): MS {
   if (initializer == null || typeof initializer === 'number') return new factory(initializer);
@@ -72,7 +70,7 @@ export function buildMultiSet<
 
   let options: any = undefined;
   if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-    options = { ...(initialElements.buildOptions() as MultiSetOptions), ...initializer };
+    options = { ...(initialElements.buildOptions() as ContainerOptions), ...initializer };
   } else {
     options = { ...initializer };
   }

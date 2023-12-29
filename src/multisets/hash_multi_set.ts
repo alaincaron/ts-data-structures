@@ -1,14 +1,13 @@
 import { MapBasedMultiSet } from './map_based_multi_set';
-import { buildMultiSet, MultiSetInitializer, MultiSetOptions } from './multi_set';
-import { HashMap } from '../maps';
-import { ContainerOptions } from '../utils';
+import { buildMultiSet, MultiSetInitializer } from './multi_set';
+import { HashMap, HashMapOptions } from '../maps';
 
 export class HashMultiSet<E> extends MapBasedMultiSet<E> {
-  constructor(options?: number | ContainerOptions) {
-    super(HashMap, options);
+  constructor(options?: number | HashMapOptions) {
+    super(new HashMap(options), options);
   }
 
-  static create<E>(initializer?: number | (MultiSetOptions & MultiSetInitializer<E>)): HashMultiSet<E> {
+  static create<E>(initializer?: number | (HashMapOptions & MultiSetInitializer<E>)): HashMultiSet<E> {
     return buildMultiSet<E, HashMultiSet<E>>(HashMultiSet, initializer);
   }
 
