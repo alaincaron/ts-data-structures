@@ -1,10 +1,6 @@
 import { Collection, CollectionLike } from '../collections';
 import { CapacityMixin, ContainerOptions, hashIterableUnordered, OverflowException } from '../utils';
 
-export interface Count {
-  count: number;
-}
-
 export type MultiSetLike<E> = CollectionLike<E> | MultiSet<E>;
 
 export interface MultiSetInitializer<E> {
