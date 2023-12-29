@@ -16,8 +16,6 @@ export interface MultiMapInitializer<K, V> {
   initial?: MultiMapLike<K, V>;
 }
 
-export interface MultiMapOptions extends ContainerOptions {}
-
 export abstract class MultiMap<K, V> implements Iterable<[K, V]>, OptionsBuilder {
   constructor(_options?: number | ContainerOptions) {}
 
@@ -180,7 +178,7 @@ export function buildMultiMap<
   K,
   V,
   M extends MultiMap<K, V>,
-  Options extends MultiMapOptions = MultiMapOptions,
+  Options extends ContainerOptions = ContainerOptions,
   Initializer extends MultiMapInitializer<K, V> = MultiMapInitializer<K, V>,
 >(factory: new (...args: any[]) => M, initializer?: number | (Options & Initializer)): M {
   if (initializer == null || typeof initializer === 'number') return new factory(initializer);
@@ -188,7 +186,7 @@ export function buildMultiMap<
 
   let options: any = undefined;
   if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-    options = { ...(initialElements.buildOptions() as MultiMapOptions), ...initializer };
+    options = { ...(initialElements.buildOptions() as Options), ...initializer };
   } else {
     options = { ...initializer };
   }

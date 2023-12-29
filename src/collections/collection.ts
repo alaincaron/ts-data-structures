@@ -159,7 +159,7 @@ export function buildCollection<
   let options: any = undefined;
 
   if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-    options = { ...(initialElements.buildOptions() as ContainerOptions), ...initializer };
+    options = { ...(initialElements.buildOptions() as Options), ...initializer };
   }
   if (!options) {
     options = { ...initializer };

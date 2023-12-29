@@ -6,13 +6,13 @@ export type SkipListMultiMapOptions<K, V> = SkipListMapOptions<K> & MapBasedMult
 
 export class SkipListMultiMap<K, V> extends MapBasedMultiMap<K, V> {
   constructor(options?: number | SkipListMultiMapOptions<K, V>) {
-    super(SkipListMap, options);
+    super(new SkipListMap(options), options);
   }
 
   static create<K, V>(
     initializer?: number | (SkipListMultiMapOptions<K, V> & MultiMapInitializer<K, V>)
   ): SkipListMultiMap<K, V> {
-    return buildMultiMap<K, V, SkipListMultiMap<K, V>, SkipListMultiMapOptions<K, V>>(SkipListMultiMap, initializer);
+    return buildMultiMap<K, V, SkipListMultiMap<K, V>>(SkipListMultiMap, initializer);
   }
 
   clone(): SkipListMultiMap<K, V> {

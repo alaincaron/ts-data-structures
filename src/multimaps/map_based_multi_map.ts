@@ -1,11 +1,11 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { BoundedMultiMap, MultiMapOptions } from './multi_map';
+import { BoundedMultiMap } from './multi_map';
 import { Collection } from '../collections';
 import { ArrayList } from '../lists';
 import { IMap } from '../maps';
-import { OverflowException } from '../utils';
+import { ContainerOptions, OverflowException } from '../utils';
 
-export interface MapBasedMultiMapOptions<V> extends MultiMapOptions {
+export interface MapBasedMultiMapOptions<V> extends ContainerOptions {
   collectionFactory?: new () => Collection<V>;
 }
 

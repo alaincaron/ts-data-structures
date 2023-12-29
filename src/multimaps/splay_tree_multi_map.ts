@@ -5,13 +5,13 @@ import { SplayTreeMap } from '../maps';
 
 export class SplayTreeMultiMap<K, V> extends NavigableMultiMap<K, V> {
   constructor(options?: number | SortedMultiMapOptions<K, V>) {
-    super(SplayTreeMap, options);
+    super(new SplayTreeMap(options), options);
   }
 
   static create<K, V>(
     initializer?: number | (SortedMultiMapOptions<K, V> & MultiMapInitializer<K, V>)
   ): SplayTreeMultiMap<K, V> {
-    return buildMultiMap<K, V, SplayTreeMultiMap<K, V>, SortedMultiMapOptions<K, V>>(SplayTreeMultiMap, initializer);
+    return buildMultiMap<K, V, SplayTreeMultiMap<K, V>>(SplayTreeMultiMap, initializer);
   }
 
   clone(): SplayTreeMultiMap<K, V> {

@@ -1,16 +1,16 @@
 import { MapBasedMultiMap, MapBasedMultiMapOptions } from './map_based_multi_map';
 import { buildMultiMap, MultiMapInitializer } from './multi_map';
-import { HashMap } from '../maps';
+import { HashMap, HashMapOptions } from '../maps';
 
 export class HashMultiMap<K, V> extends MapBasedMultiMap<K, V> {
-  constructor(options?: number | MapBasedMultiMapOptions<V>) {
-    super(HashMap, options);
+  constructor(options?: number | (HashMapOptions & MapBasedMultiMapOptions<V>)) {
+    super(new HashMap(options), options);
   }
 
   static create<K, V>(
-    initializer?: number | (MapBasedMultiMapOptions<V> & MultiMapInitializer<K, V>)
+    initializer?: number | (HashMapOptions & MapBasedMultiMapOptions<V> & MultiMapInitializer<K, V>)
   ): HashMultiMap<K, V> {
-    return buildMultiMap<K, V, HashMultiMap<K, V>, MapBasedMultiMapOptions<V>>(HashMultiMap, initializer);
+    return buildMultiMap<K, V, HashMultiMap<K, V>>(HashMultiMap, initializer);
   }
 
   clone(): HashMultiMap<K, V> {

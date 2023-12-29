@@ -5,13 +5,13 @@ import { AvlTreeMap } from '../maps';
 
 export class AvlTreeMultiMap<K, V> extends NavigableMultiMap<K, V> {
   constructor(options?: number | SortedMultiMapOptions<K, V>) {
-    super(AvlTreeMap, options);
+    super(new AvlTreeMap(options), options);
   }
 
   static create<K, V>(
     initializer?: number | (SortedMultiMapOptions<K, V> & MultiMapInitializer<K, V>)
   ): AvlTreeMultiMap<K, V> {
-    return buildMultiMap<K, V, AvlTreeMultiMap<K, V>, SortedMultiMapOptions<K, V>>(AvlTreeMultiMap, initializer);
+    return buildMultiMap<K, V, AvlTreeMultiMap<K, V>>(AvlTreeMultiMap, initializer);
   }
 
   clone(): AvlTreeMultiMap<K, V> {
