@@ -78,7 +78,7 @@ export function buildMultiSet<
       result.setCount(e, count);
     }
   } else if (initialElements) {
-    result.offerFully(initialElements);
+    result.addFully(initialElements);
   }
 
   return result;
