@@ -17,6 +17,7 @@ export interface MultiMapInitializer<K, V> {
 }
 
 export interface MultiMapOptions extends ContainerOptions {}
+
 export abstract class MultiMap<K, V> implements Iterable<[K, V]>, OptionsBuilder {
   constructor(_options?: number | ContainerOptions) {}
 
