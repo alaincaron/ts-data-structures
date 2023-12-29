@@ -43,7 +43,7 @@ export class CollectionBasedSet<E> extends ISet<E> {
     this._delegate.clear();
   }
 
-  [Symbol.iterator](): Iterator<E> {
+  [Symbol.iterator](): IterableIterator<E> {
     return this._delegate[Symbol.iterator]();
   }
 

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { ArrayDeque, ArrayStack, OverflowException, UnderflowException } from '../src';
+import { ArrayDeque, ArrayStack, OverflowException, UnderflowException } from '../../src';
 
 describe('ArrayStack', () => {
   describe('constructor', () => {

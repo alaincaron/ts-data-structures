@@ -1,62 +1,81 @@
 import { expect } from 'chai';
-import { OverflowException, SplayTreeMap } from '../src';
+import { AvlNode, AvlTreeMap, OverflowException } from '../../src';
 
-function getRoot<K, V>(map: SplayTreeMap<K, V>) {
-  const root = (map as any).getRoot();
-  return root && { [root.key]: root.value };
+function assertAvlProperty<K, V>(map: AvlTreeMap<K, V>) {
+  function assertAvlProperty0<K, V>(map: AvlTreeMap<K, V>, root: AvlNode<K, V>): number {
+    if (root.left) {
+      expect(map.comparator(root.left.key, root.key)).to.be.lessThan(0);
+    }
+
+    if (root.right) {
+      expect(map.comparator(root.right.key, root.key)).to.be.greaterThan(0);
+    }
+
+    const leftHeight = root.left ? assertAvlProperty0(map, root.left) : -1;
+    const rightHeight = root.right ? assertAvlProperty0(map, root.right) : -1;
+
+    expect(Math.abs(rightHeight - leftHeight)).to.be.lessThanOrEqual(1);
+
+    const computedHeight = Math.max(rightHeight, leftHeight) + 1;
+
+    expect(computedHeight).equal(root.height);
+    return computedHeight;
+  }
+
+  const root = map.getRoot();
+  if (root) assertAvlProperty0(map, root);
 }
 
-describe('SplayTreeMap', () => {
+describe('AvlTreeMap', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.capacity()).equal(Infinity);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(Infinity);
       expect(map.isEmpty()).to.be.true;
       expect(map.isFull()).to.be.false;
-      expect(getRoot(map)).to.be.undefined;
+      assertAvlProperty(map);
     });
 
     it('should have specified capacity as unique argument', () => {
-      const map = new SplayTreeMap(2);
+      const map = new AvlTreeMap(2);
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
       expect(map.isEmpty()).to.be.true;
       expect(map.isFull()).to.be.false;
-      expect(getRoot(map)).to.be.undefined;
+      assertAvlProperty(map);
     });
 
     it('should use the specified capacity as per options', () => {
-      const map = new SplayTreeMap({ capacity: 2 });
+      const map = new AvlTreeMap({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
-      expect(getRoot(map)).to.be.undefined;
+      assertAvlProperty(map);
     });
 
     it('should initialize with the provided Map', () => {
-      const map = SplayTreeMap.create({ initial: new Map().set('a', 1).set('b', 2) });
+      const map = AvlTreeMap.create({ initial: new Map().set('a', 1).set('b', 2) });
       expect(map.size()).equal(2);
       expect(map.get('a')).equal(1);
       expect(map.get('b')).equal(2);
-      expect(getRoot(map)).to.have.property('b', 2);
+      assertAvlProperty(map);
     });
 
     it('should initialize with the provided IMap', () => {
-      const map1 = new SplayTreeMap();
+      const map1 = new AvlTreeMap();
       map1.put('a', 1);
       map1.put('b', 2);
-      const map = SplayTreeMap.create({ initial: map1 });
+      const map = AvlTreeMap.create({ initial: map1 });
       expect(map.get('a')).equal(1);
-      expect(getRoot(map)).to.have.property('a', 1);
       expect(map.get('b')).equal(2);
-      expect(getRoot(map)).to.have.property('b', 2);
       expect(map.size()).equal(2);
+      assertAvlProperty(map);
     });
 
     it('should initialize with the provided Iterable', () => {
-      const map = SplayTreeMap.create({
+      const map = AvlTreeMap.create({
         initial: [
           ['a', 1],
           ['b', 2],
@@ -65,26 +84,29 @@ describe('SplayTreeMap', () => {
       expect(map.size()).equal(2);
       expect(map.get('a')).equal(1);
       expect(map.get('b')).equal(2);
+      assertAvlProperty(map);
     });
   });
 
   describe('put/get', () => {
     it('should return undefined if key is newly added', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
+      assertAvlProperty(map);
     });
     it('should return the old value if key already present', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.put('foo', 2)).equal(4);
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(2);
+      assertAvlProperty(map);
     });
 
     it('should throw if adding a new element and map is full', () => {
-      const map = new SplayTreeMap(1);
+      const map = new AvlTreeMap(1);
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(() => map.put('bar', 1)).to.throw(OverflowException);
@@ -95,13 +117,13 @@ describe('SplayTreeMap', () => {
 
   describe('offer', () => {
     it('should return undefined if key is newly added', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.offer('foo', 4)).to.deep.equal({ accepted: true });
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
     });
     it('should return the old value if key already present', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.offer('foo', 2)).to.deep.equal({ accepted: true, previous: 4 });
       expect(map.size()).equal(1);
@@ -109,7 +131,7 @@ describe('SplayTreeMap', () => {
     });
 
     it('should return false if offering a new element and map is full', () => {
-      const map = new SplayTreeMap(1);
+      const map = new AvlTreeMap(1);
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(map.offer('bar', 1)).to.deep.equal({ accepted: false });
@@ -120,7 +142,7 @@ describe('SplayTreeMap', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = new SplayTreeMap();
+      const a = new AvlTreeMap();
       a.put('foo', 1);
       const b = a.clone();
       expect(b).to.deep.equal(a);
@@ -132,7 +154,7 @@ describe('SplayTreeMap', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const map = new SplayTreeMap({ capacity: 3 });
+      const map = new AvlTreeMap({ capacity: 3 });
       map.put('a', 1);
       map.put('b', 2);
       expect(map.size()).to.equal(2);
@@ -145,16 +167,16 @@ describe('SplayTreeMap', () => {
 
   describe('containsKey', () => {
     it('should return false on empty map', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.containsKey('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       map.put('foo', 1);
       expect(map.containsKey('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       map.put('foo', 1);
       expect(map.containsKey('foo')).to.be.true;
     });
@@ -162,16 +184,16 @@ describe('SplayTreeMap', () => {
 
   describe('containsValue', () => {
     it('should return false on empty map', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.containsValue('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       map.put('foo', 1);
       expect(map.containsValue('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       map.put('foo', 1);
       expect(map.containsValue(1)).to.be.true;
     });
@@ -179,13 +201,13 @@ describe('SplayTreeMap', () => {
 
   describe('remove', () => {
     it('should return undefined on empty map', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.remove('foo')).to.be.undefined;
       expect(map.isEmpty()).to.be.true;
       expect(map.size()).equal(0);
     });
     it('should return false if item is missing', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.remove('bar')).to.be.undefined;
       expect(map.isEmpty()).to.be.false;
@@ -196,7 +218,7 @@ describe('SplayTreeMap', () => {
 
   describe('filterKeys', () => {
     it('should remove keys not matching predicate', () => {
-      const map = new SplayTreeMap<string, number>();
+      const map = new AvlTreeMap<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
@@ -205,12 +227,13 @@ describe('SplayTreeMap', () => {
       expect(map.containsKey('foo')).to.be.false;
       expect(map.containsKey('foobar')).to.be.false;
       expect(map.containsKey('bar')).to.be.true;
+      assertAvlProperty(map);
     });
   });
 
   describe('filterValues', () => {
     it('should remove values not matching predicate', () => {
-      const map = new SplayTreeMap<string, number>();
+      const map = new AvlTreeMap<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
@@ -224,7 +247,7 @@ describe('SplayTreeMap', () => {
 
   describe('entries', () => {
     it('should iterate over all entries', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       map.put('c', 3);
       map.put('a', 1);
       map.put('b', 2);
@@ -233,12 +256,13 @@ describe('SplayTreeMap', () => {
         ['b', 2],
         ['c', 3],
       ]);
+      assertAvlProperty(map);
     });
   });
 
   describe('reverseEntryIterator', () => {
     it('should iterate over all entries in reverse order', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       map.put('c', 3);
       map.put('a', 1);
       map.put('b', 2);
@@ -247,18 +271,19 @@ describe('SplayTreeMap', () => {
         ['b', 2],
         ['a', 1],
       ]);
+      assertAvlProperty(map);
     });
   });
 
   describe('pseudoRandomInsert', () => {
     it('should return elements in the right order', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       const num = 500;
       const gap = 307;
       for (let i = gap; i != 0; i = (i + gap) % num) {
         expect(map.put(i, i)).to.be.undefined;
-        expect(getRoot(map)).to.have.property('' + i, i);
       }
+      assertAvlProperty(map);
 
       for (let i = num - 1; i >= 1; --i) {
         expect(map.pollLastEntry()!.value).equal(i);
@@ -270,12 +295,12 @@ describe('SplayTreeMap', () => {
 
   describe('lastEntry/pollLastEntry/lastKey', () => {
     it('should return undefined on empty map', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.lastEntry()).to.be.undefined;
       expect(map.pollLastEntry()).to.be.undefined;
     });
     it('should return the last entry', () => {
-      const map = SplayTreeMap.create({
+      const map = AvlTreeMap.create({
         initial: [
           ['b', 1],
           ['a', 2],
@@ -296,12 +321,12 @@ describe('SplayTreeMap', () => {
 
   describe('firstEntry/pollFirstEntry/firstKey', () => {
     it('should return undefined on empty map', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       expect(map.firstEntry()).to.be.undefined;
       expect(map.pollFirstEntry()).to.be.undefined;
     });
     it('should return the first entry', () => {
-      const map = SplayTreeMap.create({
+      const map = AvlTreeMap.create({
         initial: [
           ['b', 1],
           ['a', 2],
@@ -322,7 +347,7 @@ describe('SplayTreeMap', () => {
 
   describe('lowerEntry', () => {
     it('should resolve lowerEntry', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       map.put('a', 1);
       map.put('b', 2);
 
@@ -346,7 +371,7 @@ describe('SplayTreeMap', () => {
 
   describe('higherEntry', () => {
     it('should resolve lowerEntry', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       map.put('a', 1);
       map.put('b', 2);
 
@@ -370,7 +395,7 @@ describe('SplayTreeMap', () => {
 
   describe('floorEntry', () => {
     it('should resolve floorEntry', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       map.put('a', 1);
       map.put('b', 2);
 
@@ -396,7 +421,7 @@ describe('SplayTreeMap', () => {
 
   describe('ceilingEntry', () => {
     it('should resolve floorEntry', () => {
-      const map = new SplayTreeMap();
+      const map = new AvlTreeMap();
       map.put('a', 1);
       map.put('b', 2);
 

@@ -69,7 +69,7 @@ export class MapBasedSet<E> extends ISet<E> {
     return this._delegate.filterKeys(predicate);
   }
 
-  [Symbol.iterator](): Iterator<E> {
+  [Symbol.iterator](): IterableIterator<E> {
     return this._delegate.keys();
   }
 

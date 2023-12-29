@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { ArrayList, arrayListCollector, CollectionCollector } from '../src/';
+import { ArrayList, arrayListCollector, CollectionCollector } from '../../src';
 
 describe('Collectors', () => {
   it('should add items to the wrapped collection', () => {

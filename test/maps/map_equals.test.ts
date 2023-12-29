@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { HashMap, LinkedHashMap, OpenHashMap } from '../src';
+import { HashMap, LinkedHashMap, OpenHashMap } from '../../src';
 
 describe('map-equals', () => {
   it('should return true for same object', () => {

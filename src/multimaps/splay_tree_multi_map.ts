@@ -1,9 +1,9 @@
-import { MapBasedMultiMap } from './map_based_multi_map';
 import { buildMultiMap, MultiMapInitializer } from './multi_map';
+import { NavigableMultiMap } from './navigable_multi_map';
 import { SortedMultiMapOptions } from './sorted_multi_map';
 import { SplayTreeMap } from '../maps';
 
-export class SplayTreeMultiMap<K, V> extends MapBasedMultiMap<K, V> {
+export class SplayTreeMultiMap<K, V> extends NavigableMultiMap<K, V> {
   constructor(options?: number | SortedMultiMapOptions<K, V>) {
     super(SplayTreeMap, options);
   }

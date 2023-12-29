@@ -64,7 +64,7 @@ export class ArrayStack<E> extends Stack<E> {
     return this.buffer.filter(predicate);
   }
 
-  [Symbol.iterator](): Iterator<E> {
+  [Symbol.iterator](): IterableIterator<E> {
     return this.buffer.reverseIterator();
   }
 }

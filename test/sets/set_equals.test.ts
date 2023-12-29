@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { ArraySet, HashSet, OpenHashSet } from '../src';
+import { ArraySet, HashSet, OpenHashSet } from '../../src';
 
 describe('set-equals', () => {
   it('should return true for same object', () => {

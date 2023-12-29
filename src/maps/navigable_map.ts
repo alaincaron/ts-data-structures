@@ -9,32 +9,29 @@ export abstract class NavigableMap<K, V> extends SortedMap<K, V> {
   }
 
   lowerKey(key: K) {
-    const e = this.lowerEntry(key);
-    return e?.key;
+    return this.lowerEntry(key)?.key;
   }
 
-  abstract lowerEntry(k: K): MapEntry<K, V> | undefined;
+  abstract lowerEntry(key: K): MapEntry<K, V> | undefined;
 
   higherKey(key: K) {
     const e = this.higherEntry(key);
     return e?.key;
   }
 
-  abstract higherEntry(k: K): MapEntry<K, V> | undefined;
+  abstract higherEntry(key: K): MapEntry<K, V> | undefined;
 
-  abstract floorEntry(k: K): MapEntry<K, V> | undefined;
+  abstract floorEntry(key: K): MapEntry<K, V> | undefined;
 
   floorKey(key: K) {
-    const e = this.floorEntry(key);
-    return e?.key;
+    return this.floorEntry(key)?.key;
   }
 
   ceilingKey(key: K) {
-    const e = this.ceilingEntry(key);
-    return e?.key;
+    return this.ceilingEntry(key)?.key;
   }
 
-  abstract ceilingEntry(k: K): MapEntry<K, V> | undefined;
+  abstract ceilingEntry(key: K): MapEntry<K, V> | undefined;
 
   abstract pollFirstEntry(): MapEntry<K, V> | undefined;
   abstract pollLastEntry(): MapEntry<K, V> | undefined;

@@ -1,14 +1,10 @@
 import { expect } from 'chai';
-import { LinkedHashMap, Ordering, OverflowException } from '../src';
+import { AdapterMap, OverflowException } from '../../src';
 
-function collectKeys<K, V>(m: LinkedHashMap<K, V>): K[] {
-  return Array.from(m.keys());
-}
-
-describe('LinkedHashMap', () => {
+describe('AdapterMap', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       expect(map.capacity()).equal(Infinity);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(Infinity);
@@ -17,7 +13,7 @@ describe('LinkedHashMap', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const map = new LinkedHashMap(2);
+      const map = new AdapterMap(2);
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
@@ -26,35 +22,30 @@ describe('LinkedHashMap', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const map = new LinkedHashMap({ capacity: 2 });
+      const map = new AdapterMap({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
     });
 
-    it('should initialize with the provided Map and respect ordering', () => {
-      const map = LinkedHashMap.create({ ordering: Ordering.ACCESS, initial: new Map().set('a', 1).set('b', 2) });
+    it('should initialize with the provided Map', () => {
+      const map = AdapterMap.create({ initial: new Map().set('a', 1).set('b', 2) });
       expect(map.size()).equal(2);
-      expect(collectKeys(map)).to.deep.equal(['a', 'b']);
-      expect(map.get('b')).equal(2);
       expect(map.get('a')).equal(1);
-      expect(collectKeys(map)).to.deep.equal(['b', 'a']);
-      expect(map.mostRecent().key).equal('a');
-      expect(map.leastRecent().key).equal('b');
+      expect(map.get('b')).equal(2);
     });
 
     it('should initialize with the provided IMap', () => {
-      const map1 = new LinkedHashMap();
+      const map1 = new AdapterMap();
       map1.put('a', 1);
       map1.put('b', 2);
-      const map = LinkedHashMap.create({ initial: map1 });
+      const map = AdapterMap.create({ initial: map1 });
       expect(map.size()).equal(2);
-      expect(map.get('b')).equal(2);
       expect(map.get('a')).equal(1);
-      expect(collectKeys(map)).to.deep.equal(['a', 'b']);
+      expect(map.get('b')).equal(2);
     });
 
     it('should initialize with the provided Iterable', () => {
-      const map = LinkedHashMap.create({
+      const map = AdapterMap.create({
         initial: [
           ['a', 1],
           ['b', 2],
@@ -68,13 +59,13 @@ describe('LinkedHashMap', () => {
 
   describe('put/get', () => {
     it('should return undefined if key is newly added', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
     });
     it('should return the old value if key already present', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.put('foo', 2)).equal(4);
       expect(map.size()).equal(1);
@@ -82,7 +73,7 @@ describe('LinkedHashMap', () => {
     });
 
     it('should throw if adding a new element and map is full', () => {
-      const map = new LinkedHashMap(1);
+      const map = new AdapterMap(1);
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(() => map.put('bar', 1)).to.throw(OverflowException);
@@ -93,13 +84,13 @@ describe('LinkedHashMap', () => {
 
   describe('offer', () => {
     it('should return undefined if key is newly added', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       expect(map.offer('foo', 4)).to.deep.equal({ accepted: true });
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
     });
     it('should return the old value if key already present', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.offer('foo', 2)).to.deep.equal({ accepted: true, previous: 4 });
       expect(map.size()).equal(1);
@@ -107,7 +98,7 @@ describe('LinkedHashMap', () => {
     });
 
     it('should return false if offering a new element and map is full', () => {
-      const map = new LinkedHashMap(1);
+      const map = new AdapterMap(1);
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(map.offer('bar', 1)).to.deep.equal({ accepted: false });
@@ -118,10 +109,10 @@ describe('LinkedHashMap', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = new LinkedHashMap();
+      const a = new AdapterMap();
       a.put('foo', 1);
       const b = a.clone();
-      expect(collectKeys(b)).to.deep.equal(collectKeys(a));
+      expect(b).to.deep.equal(a);
       b.put('bar', 1);
       expect(b.size()).equal(2);
       expect(a.size()).equal(1);
@@ -130,7 +121,7 @@ describe('LinkedHashMap', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const map = new LinkedHashMap({ capacity: 3 });
+      const map = new AdapterMap({ capacity: 3 });
       map.put('a', 1);
       map.put('b', 2);
       expect(map.size()).to.equal(2);
@@ -143,16 +134,16 @@ describe('LinkedHashMap', () => {
 
   describe('containsKey', () => {
     it('should return false on empty map', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       expect(map.containsKey('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       map.put('foo', 1);
       expect(map.containsKey('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       map.put('foo', 1);
       expect(map.containsKey('foo')).to.be.true;
     });
@@ -160,16 +151,16 @@ describe('LinkedHashMap', () => {
 
   describe('containsValue', () => {
     it('should return false on empty map', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       expect(map.containsValue('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       map.put('foo', 1);
       expect(map.containsValue('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       map.put('foo', 1);
       expect(map.containsValue(1)).to.be.true;
     });
@@ -177,13 +168,13 @@ describe('LinkedHashMap', () => {
 
   describe('remove', () => {
     it('should return undefined on empty map', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       expect(map.remove('foo')).to.be.undefined;
       expect(map.isEmpty()).to.be.true;
       expect(map.size()).equal(0);
     });
     it('should return false if item is missing', () => {
-      const map = new LinkedHashMap();
+      const map = new AdapterMap();
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.remove('bar')).to.be.undefined;
       expect(map.isEmpty()).to.be.false;
@@ -194,7 +185,7 @@ describe('LinkedHashMap', () => {
 
   describe('filterKeys', () => {
     it('should remove keys not matching predicate', () => {
-      const map = new LinkedHashMap<string, number>();
+      const map = new AdapterMap<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
@@ -207,7 +198,7 @@ describe('LinkedHashMap', () => {
   });
   describe('filterValues', () => {
     it('should remove values not matching predicate', () => {
-      const map = new LinkedHashMap<string, number>();
+      const map = new AdapterMap<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
@@ -216,18 +207,6 @@ describe('LinkedHashMap', () => {
       expect(map.containsKey('foo')).to.be.false;
       expect(map.containsKey('foobar')).to.be.false;
       expect(map.containsKey('bar')).to.be.true;
-    });
-  });
-
-  describe('toJson', () => {
-    it('should return the JSON string', () => {
-      const map = LinkedHashMap.create({
-        initial: [
-          ['a', 1],
-          ['b', 2],
-        ] as Array<[string, number]>,
-      });
-      expect(map.toJson()).equal('{"a":1,"b":2}');
     });
   });
 });

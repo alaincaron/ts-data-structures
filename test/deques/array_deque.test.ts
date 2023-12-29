@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { Generators } from 'ts-fluent-iterators';
-import { ArrayDeque, OverflowException, UnderflowException } from '../src';
+import { ArrayDeque, OverflowException, UnderflowException } from '../../src';
 
 describe('ArrayDeque', () => {
   describe('constructor', () => {

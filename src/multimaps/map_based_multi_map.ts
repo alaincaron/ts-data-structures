@@ -10,7 +10,7 @@ export interface MapBasedMultiMapOptions<V> extends MultiMapOptions {
 }
 
 export abstract class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
-  private readonly map: IMap<K, Collection<V>>;
+  protected readonly map: IMap<K, Collection<V>>;
   private _size: number;
   private readonly collectionFactory: new () => Collection<V>;
 

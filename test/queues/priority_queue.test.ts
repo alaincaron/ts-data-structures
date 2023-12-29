@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { Generators } from 'ts-fluent-iterators';
-import { OverflowException, PriorityQueue, UnderflowException } from '../src';
+import { OverflowException, PriorityQueue, UnderflowException } from '../../src';
 
 function isHeap<E>(items: E[]): boolean {
   let parent = 0;

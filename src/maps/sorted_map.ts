@@ -18,13 +18,11 @@ export abstract class SortedMap<K, V> extends IMap<K, V> {
   abstract lastEntry(): MapEntry<K, V> | undefined;
 
   firstKey() {
-    const e = this.firstEntry();
-    return e?.key;
+    return this.firstEntry()?.key;
   }
 
   lastKey() {
-    const e = this.lastEntry();
-    return e?.key;
+    return this.lastEntry()?.key;
   }
 
   filterEntries(predicate: Predicate<[K, V]>): number {

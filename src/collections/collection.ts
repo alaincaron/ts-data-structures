@@ -125,7 +125,7 @@ export abstract class Collection<E> implements Iterable<E>, OptionsBuilder {
     return this.filter(e => c.contains(e));
   }
 
-  abstract [Symbol.iterator](): Iterator<E>;
+  abstract [Symbol.iterator](): IterableIterator<E>;
 
   iterator() {
     return new FluentIterator(this[Symbol.iterator]());

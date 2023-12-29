@@ -150,7 +150,7 @@ export class ArrayDeque<E> extends BoundedDeque<E> implements RandomAccess<E> {
     return ArrayDeque.create({ initial: this });
   }
 
-  *[Symbol.iterator](): Iterator<E> {
+  *[Symbol.iterator](): IterableIterator<E> {
     let cursor = this.head;
     while (cursor !== this.tail) {
       yield this.elements[cursor]!;

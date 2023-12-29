@@ -141,7 +141,7 @@ export abstract class IMap<K, V> implements Iterable<[K, V]>, OptionsBuilder {
 
   abstract clone(): IMap<K, V>;
 
-  [Symbol.iterator](): Iterator<[K, V]> {
+  [Symbol.iterator](): IterableIterator<[K, V]> {
     return this.entries();
   }
 

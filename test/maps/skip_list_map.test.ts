@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { OverflowException, SkipListMap } from '../src';
+import { OverflowException, SkipListMap } from '../../src';
 
 describe('SkipListMap', () => {
   describe('constructor', () => {
