@@ -18,20 +18,18 @@ export interface MapBasedMultiMapOptions<V> extends MultiMapOptions {
   collectionFactory?: new () => Collection<V>;
 }
 
-export class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
+export abstract class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
   private readonly map: IMap<K, Collection<V>>;
   private _size: number;
   private readonly collectionFactory: new () => Collection<V>;
 
   constructor(
-    mapFactory?: IMap<K, Collection<V>> | (new () => IMap<K, Collection<V>>),
+    mapFactory: IMap<K, Collection<V>> | (new () => IMap<K, Collection<V>>),
     options?: number | MapBasedMultiMapOptions<V>
   ) {
     super(options);
     this._size = 0;
-    if (!mapFactory) {
-      this.map = new HashMap();
-    } else if (typeof mapFactory === 'function') {
+    if (typeof mapFactory === 'function') {
       this.map = new mapFactory();
     } else {
       this.map = mapFactory;
@@ -129,12 +127,6 @@ export class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
       collectionFactory: this.collectionFactory,
     };
   }
-
-  clone(): MapBasedMultiMap<K, V> {
-    const m = new MapBasedMultiMap(this.map.clone(), this.buildOptions());
-    m.map.entryIterator().forEach(e => (e.value = e.value.clone()));
-    return m;
-  }
 }
 
 export class HashMultiMap<K, V> extends MapBasedMultiMap<K, V> {
@@ -149,9 +141,7 @@ export class HashMultiMap<K, V> extends MapBasedMultiMap<K, V> {
   }
 
   clone(): HashMultiMap<K, V> {
-    const m = new HashMultiMap<K, V>(this.buildOptions());
-    m.putAll(this);
-    return m;
+    return HashMultiMap.create({ initial: this });
   }
 }
 
@@ -167,9 +157,7 @@ export class LinkedHashMultiMap<K, V> extends MapBasedMultiMap<K, V> {
   }
 
   clone(): LinkedHashMultiMap<K, V> {
-    const m = new LinkedHashMultiMap<K, V>(this.buildOptions());
-    m.putAll(this);
-    return m;
+    return LinkedHashMultiMap.create({ initial: this });
   }
 }
 
@@ -185,9 +173,7 @@ export class OpenHashMultiMap<K, V> extends MapBasedMultiMap<K, V> {
   }
 
   clone(): OpenHashMultiMap<K, V> {
-    const m = new OpenHashMultiMap<K, V>(this.buildOptions());
-    m.putAll(this);
-    return m;
+    return OpenHashMultiMap.create({ initial: this });
   }
 }
 
@@ -205,9 +191,7 @@ export class SkipListMultiMap<K, V> extends MapBasedMultiMap<K, V> {
   }
 
   clone(): SkipListMultiMap<K, V> {
-    const m = new SkipListMultiMap<K, V>(this.buildOptions());
-    m.putAll(this);
-    return m;
+    return SkipListMultiMap.create({ initial: this });
   }
 }
 
@@ -225,9 +209,7 @@ export class AvlTreeMultiMap<K, V> extends MapBasedMultiMap<K, V> {
   }
 
   clone(): AvlTreeMultiMap<K, V> {
-    const m = new AvlTreeMultiMap<K, V>(this.buildOptions());
-    m.putAll(this);
-    return m;
+    return AvlTreeMultiMap.create({ initial: this });
   }
 }
 
@@ -243,8 +225,6 @@ export class SplayTreeMultiMap<K, V> extends MapBasedMultiMap<K, V> {
   }
 
   clone(): SplayTreeMultiMap<K, V> {
-    const m = new SplayTreeMultiMap<K, V>(this.buildOptions());
-    m.putAll(this);
-    return m;
+    return SplayTreeMultiMap.create({ initial: this });
   }
 }

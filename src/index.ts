@@ -3,6 +3,7 @@ export * from './collectors';
 export * from './deques';
 export * from './maps';
 export * from './multimaps';
+export * from './multisets';
 export * from './queues';
 export * from './stacks';
 export * from './utils';
