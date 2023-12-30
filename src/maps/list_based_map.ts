@@ -1,6 +1,6 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { buildMap, IMap, MapEntry, MapInitializer } from './map';
-import { ArrayList, List } from '../lists';
+import { ArrayList, LinkedList, List } from '../lists';
 import { ContainerOptions, equalsAny } from '../utils';
 
 export class ListBasedMap<K, V> extends IMap<K, V> {
@@ -71,5 +71,19 @@ export class ArrayMap<K, V> extends ListBasedMap<K, V> {
 
   clone(): ArrayMap<K, V> {
     return ArrayMap.create({ initial: this });
+  }
+}
+
+export class LinkedMap<K, V> extends ListBasedMap<K, V> {
+  constructor(options?: number | ContainerOptions) {
+    super(new LinkedList<MapEntry<K, V>>(options));
+  }
+
+  static create<K, V>(initializer?: number | (ContainerOptions & MapInitializer<K, V>)): LinkedMap<K, V> {
+    return buildMap<K, V, LinkedMap<K, V>>(LinkedMap, initializer);
+  }
+
+  clone(): LinkedMap<K, V> {
+    return LinkedMap.create({ initial: this });
   }
 }
