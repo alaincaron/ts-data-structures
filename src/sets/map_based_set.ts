@@ -20,11 +20,8 @@ import {
 import { NavigableMap } from '../maps/navigable_map';
 
 export class MapBasedSet<E> extends ISet<E> {
-  private readonly _delegate: IMap<E, boolean>;
-
-  constructor(delegate: IMap<E, boolean>) {
+  constructor(private readonly _delegate: IMap<E, boolean>) {
     super();
-    this._delegate = delegate;
   }
 
   protected delegate() {
