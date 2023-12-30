@@ -32,28 +32,28 @@ export function linkedHashMapCollector<A, K>(
 
 export function openHashMapCollector<A, K>(
   mapper: Mapper<A, K>,
-  map: OpenHashMap<K, A>
+  map?: OpenHashMap<K, A>
 ): IMapCollector<A, K, OpenHashMap<K, A>> {
   return new IMapCollector(mapper, map ?? OpenHashMap<K, A>);
 }
 
 export function splayTreeMapCollector<A, K>(
   mapper: Mapper<A, K>,
-  map: SplayTreeMap<K, A>
+  map?: SplayTreeMap<K, A>
 ): IMapCollector<A, K, SplayTreeMap<K, A>> {
   return new IMapCollector(mapper, map ?? SplayTreeMap<K, A>);
 }
 
 export function avlTreeMapCollector<A, K>(
   mapper: Mapper<A, K>,
-  map: AvlTreeMap<K, A>
+  map?: AvlTreeMap<K, A>
 ): IMapCollector<A, K, AvlTreeMap<K, A>> {
   return new IMapCollector(mapper, map ?? AvlTreeMap<K, A>);
 }
 
 export function skipListMapCollector<A, K>(
   mapper: Mapper<A, K>,
-  map: SkipListMap<K, A>
+  map?: SkipListMap<K, A>
 ): IMapCollector<A, K, SkipListMap<K, A>> {
   return new IMapCollector(mapper, map ?? SkipListMap<K, A>);
 }

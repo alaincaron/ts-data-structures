@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { ArrayList, arrayListCollector, CollectionCollector } from '../../src';
 
-describe('Collectors', () => {
+describe('CollectionCollector', () => {
   it('should add items to the wrapped collection', () => {
     const col = new ArrayList<number>();
     const collector = arrayListCollector(col);

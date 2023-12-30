@@ -29,42 +29,42 @@ export class MultiMapCollector<A, K, M extends MultiMap<K, A>> implements Collec
 
 export function hashMultiMapCollector<A, K>(
   mapper: Mapper<A, K>,
-  map: HashMultiMap<K, A>
+  map?: HashMultiMap<K, A>
 ): MultiMapCollector<A, K, HashMultiMap<K, A>> {
   return new MultiMapCollector(mapper, map ?? HashMultiMap<K, A>);
 }
 
 export function linkedHashMultiMapCollector<A, K>(
   mapper: Mapper<A, K>,
-  map: LinkedHashMultiMap<K, A>
+  map?: LinkedHashMultiMap<K, A>
 ): MultiMapCollector<A, K, LinkedHashMultiMap<K, A>> {
   return new MultiMapCollector(mapper, map ?? LinkedHashMultiMap<K, A>);
 }
 
 export function openHashMultiMapCollector<A, K>(
   mapper: Mapper<A, K>,
-  map: OpenHashMultiMap<K, A>
+  map?: OpenHashMultiMap<K, A>
 ): MultiMapCollector<A, K, OpenHashMultiMap<K, A>> {
   return new MultiMapCollector(mapper, map ?? OpenHashMultiMap<K, A>);
 }
 
 export function splayTreeMultiMapCollector<A, K>(
   mapper: Mapper<A, K>,
-  map: SplayTreeMultiMap<K, A>
+  map?: SplayTreeMultiMap<K, A>
 ): MultiMapCollector<A, K, SplayTreeMultiMap<K, A>> {
   return new MultiMapCollector(mapper, map ?? SplayTreeMultiMap<K, A>);
 }
 
 export function avlTreeMultiMapCollector<A, K>(
   mapper: Mapper<A, K>,
-  map: AvlTreeMultiMap<K, A>
+  map?: AvlTreeMultiMap<K, A>
 ): MultiMapCollector<A, K, AvlTreeMultiMap<K, A>> {
   return new MultiMapCollector(mapper, map ?? AvlTreeMultiMap<K, A>);
 }
 
 export function skipListMultiMapCollector<A, K>(
   mapper: Mapper<A, K>,
-  map: SkipListMultiMap<K, A>
+  map?: SkipListMultiMap<K, A>
 ): MultiMapCollector<A, K, SkipListMultiMap<K, A>> {
   return new MultiMapCollector(mapper, map ?? SkipListMultiMap<K, A>);
 }
