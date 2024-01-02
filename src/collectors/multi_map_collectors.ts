@@ -1,4 +1,4 @@
-import { Collectors, Mapper } from 'ts-fluent-iterators';
+import { Collectors } from 'ts-fluent-iterators';
 import {
   AvlTreeMultiMap,
   HashMultiMap,
@@ -9,17 +9,14 @@ import {
   SplayTreeMultiMap,
 } from '../multimaps';
 
-export class MultiMapCollector<A, K, M extends MultiMap<K, A>> implements Collectors.Collector<A, M> {
+export class MultiMapCollector<K, V, M extends MultiMap<K, V>> implements Collectors.Collector<[K, V], M> {
   private readonly m: M;
-  constructor(
-    private readonly mapper: Mapper<A, K>,
-    factory: M | (new () => M)
-  ) {
+  constructor(factory: M | (new () => M)) {
     this.m = typeof factory === 'function' ? new factory() : factory;
   }
 
-  collect(a: A) {
-    this.m.put(this.mapper(a), a);
+  collect([k, v]: [K, V]) {
+    this.m.put(k, v);
   }
 
   get result(): M {
@@ -27,44 +24,36 @@ export class MultiMapCollector<A, K, M extends MultiMap<K, A>> implements Collec
   }
 }
 
-export function hashMultiMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: HashMultiMap<K, A>
-): MultiMapCollector<A, K, HashMultiMap<K, A>> {
-  return new MultiMapCollector(mapper, map ?? HashMultiMap<K, A>);
+export function hashMultiMapCollector<K, V>(map?: HashMultiMap<K, V>): MultiMapCollector<K, V, HashMultiMap<K, V>> {
+  return new MultiMapCollector(map ?? HashMultiMap<K, V>);
 }
 
-export function linkedHashMultiMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: LinkedHashMultiMap<K, A>
-): MultiMapCollector<A, K, LinkedHashMultiMap<K, A>> {
-  return new MultiMapCollector(mapper, map ?? LinkedHashMultiMap<K, A>);
+export function linkedHashMultiMapCollector<K, V>(
+  map?: LinkedHashMultiMap<K, V>
+): MultiMapCollector<K, V, LinkedHashMultiMap<K, V>> {
+  return new MultiMapCollector(map ?? LinkedHashMultiMap<K, V>);
 }
 
-export function openHashMultiMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: OpenHashMultiMap<K, A>
-): MultiMapCollector<A, K, OpenHashMultiMap<K, A>> {
-  return new MultiMapCollector(mapper, map ?? OpenHashMultiMap<K, A>);
+export function openHashMultiMapCollector<K, V>(
+  map?: OpenHashMultiMap<K, V>
+): MultiMapCollector<K, V, OpenHashMultiMap<K, V>> {
+  return new MultiMapCollector(map ?? OpenHashMultiMap<K, V>);
 }
 
-export function splayTreeMultiMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: SplayTreeMultiMap<K, A>
-): MultiMapCollector<A, K, SplayTreeMultiMap<K, A>> {
-  return new MultiMapCollector(mapper, map ?? SplayTreeMultiMap<K, A>);
+export function splayTreeMultiMapCollector<K, V>(
+  map?: SplayTreeMultiMap<K, V>
+): MultiMapCollector<K, V, SplayTreeMultiMap<K, V>> {
+  return new MultiMapCollector(map ?? SplayTreeMultiMap<K, V>);
 }
 
-export function avlTreeMultiMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: AvlTreeMultiMap<K, A>
-): MultiMapCollector<A, K, AvlTreeMultiMap<K, A>> {
-  return new MultiMapCollector(mapper, map ?? AvlTreeMultiMap<K, A>);
+export function avlTreeMultiMapCollector<K, V>(
+  map?: AvlTreeMultiMap<K, V>
+): MultiMapCollector<K, V, AvlTreeMultiMap<K, V>> {
+  return new MultiMapCollector(map ?? AvlTreeMultiMap<K, V>);
 }
 
-export function skipListMultiMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: SkipListMultiMap<K, A>
-): MultiMapCollector<A, K, SkipListMultiMap<K, A>> {
-  return new MultiMapCollector(mapper, map ?? SkipListMultiMap<K, A>);
+export function skipListMultiMapCollector<K, V>(
+  map?: SkipListMultiMap<K, V>
+): MultiMapCollector<K, V, SkipListMultiMap<K, V>> {
+  return new MultiMapCollector(map ?? SkipListMultiMap<K, V>);
 }
