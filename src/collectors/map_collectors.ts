@@ -1,17 +1,29 @@
-import { Collectors, Mapper } from 'ts-fluent-iterators';
+import { Collectors, CollisionHandler } from 'ts-fluent-iterators';
 import { AvlTreeMap, HashMap, IMap, LinkedHashMap, OpenHashMap, SkipListMap, SplayTreeMap } from '../maps';
 
-export class IMapCollector<A, K, M extends IMap<K, A>> implements Collectors.Collector<A, M> {
+export class IMapCollector<K, V, M extends IMap<K, V>> implements Collectors.Collector<[K, V], M> {
   private readonly m: M;
+
   constructor(
-    private readonly mapper: Mapper<A, K>,
-    factory: M | (new () => M)
+    factory: M | (new () => M),
+    private readonly collisionHandler?: CollisionHandler<K, V>
   ) {
     this.m = typeof factory === 'function' ? new factory() : factory;
   }
 
-  collect(a: A) {
-    this.m.put(this.mapper(a), a);
+  collect([k, v]: [K, V]) {
+    const oldValue = this.m.put(k, v);
+    if (oldValue != null) {
+      if (this.collisionHandler) {
+        try {
+          const effectiveValue = this.collisionHandler(k, oldValue, v);
+          if (effectiveValue !== v) this.m.put(k, effectiveValue);
+        } catch (e) {
+          this.m.put(k, oldValue);
+          throw e;
+        }
+      }
+    }
   }
 
   get result(): M {
@@ -19,41 +31,62 @@ export class IMapCollector<A, K, M extends IMap<K, A>> implements Collectors.Col
   }
 }
 
-export function hashMapCollector<A, K>(mapper: Mapper<A, K>, map?: HashMap<K, A>): IMapCollector<A, K, HashMap<K, A>> {
-  return new IMapCollector(mapper, map ?? HashMap<K, A>);
+export function hashMapCollector<K, V>({
+  map,
+  collisionHandler,
+}: {
+  map?: HashMap<K, V>;
+  collisionHandler?: CollisionHandler<K, V>;
+} = {}): IMapCollector<K, V, HashMap<K, V>> {
+  return new IMapCollector(map ?? HashMap<K, V>, collisionHandler);
 }
 
-export function linkedHashMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: LinkedHashMap<K, A>
-): IMapCollector<A, K, LinkedHashMap<K, A>> {
-  return new IMapCollector(mapper, map ?? LinkedHashMap<K, A>);
+export function linkedHashMapCollector<K, V>({
+  map,
+  collisionHandler,
+}: {
+  map?: LinkedHashMap<K, V>;
+  collisionHandler?: CollisionHandler<K, V>;
+} = {}): IMapCollector<K, V, LinkedHashMap<K, V>> {
+  return new IMapCollector(map ?? LinkedHashMap<K, V>, collisionHandler);
 }
 
-export function openHashMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: OpenHashMap<K, A>
-): IMapCollector<A, K, OpenHashMap<K, A>> {
-  return new IMapCollector(mapper, map ?? OpenHashMap<K, A>);
+export function openHashMapCollector<K, V>({
+  map,
+  collisionHandler,
+}: {
+  map?: OpenHashMap<K, V>;
+  collisionHandler?: CollisionHandler<K, V>;
+} = {}): IMapCollector<K, V, OpenHashMap<K, V>> {
+  return new IMapCollector(map ?? OpenHashMap<K, V>, collisionHandler);
 }
 
-export function splayTreeMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: SplayTreeMap<K, A>
-): IMapCollector<A, K, SplayTreeMap<K, A>> {
-  return new IMapCollector(mapper, map ?? SplayTreeMap<K, A>);
+export function splayTreeMapCollector<K, V>({
+  map,
+  collisionHandler,
+}: {
+  map?: SplayTreeMap<K, V>;
+  collisionHandler?: CollisionHandler<K, V>;
+}): IMapCollector<K, V, SplayTreeMap<K, V>> {
+  return new IMapCollector(map ?? SplayTreeMap<K, V>, collisionHandler);
 }
 
-export function avlTreeMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: AvlTreeMap<K, A>
-): IMapCollector<A, K, AvlTreeMap<K, A>> {
-  return new IMapCollector(mapper, map ?? AvlTreeMap<K, A>);
+export function avlTreeMapCollector<K, V>({
+  map,
+  collisionHandler,
+}: {
+  map?: AvlTreeMap<K, V>;
+  collisionHandler?: CollisionHandler<K, V>;
+} = {}): IMapCollector<K, V, AvlTreeMap<K, V>> {
+  return new IMapCollector(map ?? AvlTreeMap<K, V>, collisionHandler);
 }
 
-export function skipListMapCollector<A, K>(
-  mapper: Mapper<A, K>,
-  map?: SkipListMap<K, A>
-): IMapCollector<A, K, SkipListMap<K, A>> {
-  return new IMapCollector(mapper, map ?? SkipListMap<K, A>);
+export function skipListMapCollector<K, V>({
+  map,
+  collisionHandler,
+}: {
+  map?: SkipListMap<K, V>;
+  collisionHandler?: CollisionHandler<K, V>;
+} = {}): IMapCollector<K, V, SkipListMap<K, V>> {
+  return new IMapCollector(map ?? SkipListMap<K, V>, collisionHandler);
 }
