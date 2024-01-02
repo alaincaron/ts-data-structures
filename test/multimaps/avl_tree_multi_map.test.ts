@@ -1,9 +1,6 @@
 import { expect } from 'chai';
-import { ArrayList, AvlTreeMultiMap, OverflowException } from '../../src';
-
-function list<K>(...x: K[]) {
-  return ArrayList.create({ initial: x });
-}
+import { list } from './helper';
+import { AvlTreeMultiMap, OverflowException } from '../../src';
 
 describe('AvlTreeMultiMap', () => {
   describe('constructor', () => {
@@ -218,6 +215,7 @@ describe('AvlTreeMultiMap', () => {
       expect(map.containsKey('bar')).to.be.true;
     });
   });
+
   describe('filterValues', () => {
     it('should remove values not matching predicate', () => {
       const map = new AvlTreeMultiMap<string, number>();
@@ -229,6 +227,54 @@ describe('AvlTreeMultiMap', () => {
       expect(map.containsKey('foo')).to.be.false;
       expect(map.containsKey('foobar')).to.be.false;
       expect(map.containsKey('bar')).to.be.true;
+    });
+  });
+
+  describe('containsEntry', () => {
+    it('should return whether an entry is present or not', () => {
+      const map = new AvlTreeMultiMap<string, number>();
+      map.put('foo', 1);
+      expect(map.containsEntry('foo', 1)).to.be.true;
+      expect(map.containsEntry('foo', 2)).to.be.false;
+      expect(map.containsEntry('foobar', 1)).to.be.false;
+    });
+  });
+
+  describe('iterators', () => {
+    const map = new AvlTreeMultiMap<string, number>();
+    map.put('foo', 1);
+    map.put('bar', 2);
+    map.put('foobar', 3);
+    map.put('foo', 4);
+    map.put('foobar', 5);
+    const sortedKeys = ['bar', 'foo', 'foobar'];
+    it('keys should return all the keys in sorted order', () => {
+      expect(Array.from(map.keys())).to.deep.equal(sortedKeys);
+    });
+    it('keyIterator should return all the keys in sorted order', () => {
+      expect(map.keyIterator().collect()).to.deep.equal(sortedKeys);
+    });
+    it('entryIterator should return all entries sorted according to their key', () => {
+      expect(map.entryIterator().collect()).to.deep.equal([
+        ['bar', 2],
+        ['foo', 1],
+        ['foo', 4],
+        ['foobar', 3],
+        ['foobar', 5],
+      ]);
+    });
+    it('valueIterator should return all values ordered according to the their key order', () => {
+      expect(map.valueIterator().collect()).to.deep.equal([2, 1, 4, 3, 5]);
+    });
+    it('partitionIterator should return partitions ordered according to their key order', () => {
+      const result = map.partitionIterator().collect();
+      expect(result.length === 3);
+      expect(result[0][0]).equal('bar');
+      expect(result[0][1]?.equals(list(2))).to.be.true;
+      expect(result[1][0]).equal('foo');
+      expect(result[1][1]?.equals(list(1, 4))).to.be.true;
+      expect(result[2][0]).equal('foobar');
+      expect(result[2][1]?.equals(list(3, 5))).to.be.true;
     });
   });
 });

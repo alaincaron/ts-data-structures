@@ -66,18 +66,18 @@ export abstract class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
       this.map.put(key, values);
     }
 
-    const result = values.add(value);
-    if (result) {
-      if (this.isFull()) {
-        values.removeItem(value);
-        if (values.isEmpty()) this.map.remove(key);
-        throw new OverflowException();
-      }
-      ++this._size;
-    } else if (values.isEmpty()) {
-      this.map.remove(key);
+    if (!this.isFull()) {
+      const result = values.add(value);
+      if (values.isEmpty()) this.map.remove(key);
+      if (result) ++this._size;
+      return result;
     }
-    return result;
+
+    if (values.isEmpty()) this.map.remove(key);
+    if (values.clone().add(value)) {
+      throw new OverflowException();
+    }
+    return false;
   }
 
   clear() {
@@ -106,10 +106,6 @@ export abstract class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
       this._size -= nbRemoved;
     }
     return nbRemoved;
-  }
-
-  filterValues(predicate: Predicate<V>): number {
-    return this.filterEntries(([_, v]) => predicate(v));
   }
 
   protected rawIterator(): IterableIterator<[K, Collection<V>]> {

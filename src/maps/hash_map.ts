@@ -1,7 +1,7 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { BoundedMap, buildMap, MapInitializer } from './map';
 import { MapEntry } from './map';
-import { ContainerOptions, equalsAny, hashAny, LARGEST_PRIME, nextPrime, OverflowException } from '../utils';
+import { ContainerOptions, equalsAny, hashAny, LARGEST_PRIME, nextPrime } from '../utils';
 
 export interface HashEntry<K, V> extends MapEntry<K, V> {
   next: HashEntry<K, V> | undefined;
@@ -80,10 +80,7 @@ export class HashMap<K, V> extends BoundedMap<K, V> {
       e = e.next;
     }
     if (!e) {
-      if (this.isFull()) {
-        if (this.overflowHandler(key, value)) return undefined;
-        if (this.isFull()) throw new OverflowException();
-      }
+      if (this.handleOverflow(key, value)) return undefined;
 
       e = { key, value, next: undefined, hash };
       this.recordAccess(e, AccessType.INSERT);

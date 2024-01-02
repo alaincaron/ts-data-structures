@@ -1,7 +1,7 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { HashMapOptions } from './hash_map';
 import { BoundedMap, buildMap, MapEntry, MapInitializer } from './map';
-import { equalsAny, hashAny, hashNumber, MAX_ARRAY_SIZE, nextPrime, OverflowException } from '../utils';
+import { equalsAny, hashAny, hashNumber, MAX_ARRAY_SIZE, nextPrime } from '../utils';
 
 const DEFAULT_INITIAL_SIZE = 5; // should be prime.
 const DEFAULT_LOAD_FACTOR = 0.7;
@@ -132,10 +132,7 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
 
     const e = this.slots[idx];
     if (!e || e === DELETED) {
-      if (this.isFull()) {
-        if (this.overflowHandler(key, value)) return undefined;
-        if (this.isFull()) throw new OverflowException();
-      }
+      if (this.handleOverflow(key, value)) return undefined;
       if (!e) ++this._occupancy;
       ++this._size;
       this.slots[idx] = { key, value, hash: h };

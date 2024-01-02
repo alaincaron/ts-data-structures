@@ -1,9 +1,6 @@
 import { expect } from 'chai';
-import { ArrayList, OpenHashMultiMap, OverflowException } from '../../src';
-
-function list<K>(...x: K[]) {
-  return ArrayList.create({ initial: x });
-}
+import { list, multiMapComparator } from './helper';
+import { OpenHashMultiMap, OverflowException } from '../../src';
 
 describe('OpenHashMultiMap', () => {
   describe('constructor', () => {
@@ -241,6 +238,44 @@ describe('OpenHashMultiMap', () => {
       expect(map.get({ a: 5 })?.equals(list('foo', 'bar'))).to.be.true;
       expect(map.get({ a: 6 })).to.be.undefined;
       expect(map.size()).equals(2);
+    });
+  });
+
+  describe('iterators', () => {
+    const map = new OpenHashMultiMap<string, number>();
+    map.put('foo', 1);
+    map.put('bar', 2);
+    map.put('foobar', 3);
+    map.put('foo', 4);
+    map.put('foobar', 5);
+    const sortedKeys = ['bar', 'foo', 'foobar'];
+    it('keys should return all the keys', () => {
+      expect(Array.from(map.keys()).sort()).to.deep.equal(sortedKeys);
+    });
+    it('keyIterator should return all the keys', () => {
+      expect(map.keyIterator().collect().sort()).to.deep.equal(sortedKeys);
+    });
+    it('entryIterator should return all entries', () => {
+      expect(map.entryIterator().collect().sort(multiMapComparator)).to.deep.equal([
+        ['bar', 2],
+        ['foo', 1],
+        ['foo', 4],
+        ['foobar', 3],
+        ['foobar', 5],
+      ]);
+    });
+    it('valueIterator should return all values ordered according to the their key order', () => {
+      expect(map.valueIterator().collect().sort()).to.deep.equal([1, 2, 3, 4, 5]);
+    });
+    it('partitionIterator should return partitions ordered according to their key order', () => {
+      const result = map.partitionIterator().collect().sort(multiMapComparator);
+      expect(result.length === 3);
+      expect(result[0][0]).equal('bar');
+      expect(result[0][1]?.equals(list(2))).to.be.true;
+      expect(result[1][0]).equal('foo');
+      expect(result[1][1]?.equals(list(1, 4))).to.be.true;
+      expect(result[2][0]).equal('foobar');
+      expect(result[2][1]?.equals(list(3, 5))).to.be.true;
     });
   });
 });
