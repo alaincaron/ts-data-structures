@@ -187,6 +187,24 @@ describe('HashMultiMap', () => {
     });
   });
 
+  describe('removeEntry', () => {
+    it('should return undefined on empty map', () => {
+      const map = new HashMultiMap();
+      expect(map.removeEntry('foo', 1)).to.be.false;
+      expect(map.isEmpty()).to.be.true;
+      expect(map.size()).equal(0);
+    });
+    it('should return false if item is missing', () => {
+      const map = new HashMultiMap();
+      expect(map.put('foo', 1)).to.be.true;
+      expect(map.removeEntry('foo', 2)).to.be.false;
+      expect(map.isEmpty()).to.be.false;
+      expect(map.size()).equal(1);
+      expect(map.removeEntry('foo', 1)).to.be.true;
+      expect(map.isEmpty()).to.be.true;
+    });
+  });
+
   describe('filterKeys', () => {
     it('should remove keys not matching predicate', () => {
       const map = new HashMultiMap<string, number>();
