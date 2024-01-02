@@ -50,7 +50,7 @@
   "devDependencies": {
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
-    "@typescript-eslint/eslint-plugin": "^6.16.0",
+    "@typescript-eslint/eslint-plugin": "^6.17.0",
     "benny": "^3.7.1",
     "chai": "^4.3.10",
     "eslint": "^8.56.0",
@@ -74,6 +74,6 @@
     "dist"
   ],
   "dependencies": {
-    "ts-fluent-iterators": "^6.0.2"
+    "ts-fluent-iterators": "^7.0.0"
   }
 }

@@ -1,9 +1,11 @@
-import { Predicate } from 'ts-fluent-iterators';
+import { Collectors, Predicate } from 'ts-fluent-iterators';
 import { BoundedMultiMap } from './multi_map';
 import { Collection } from '../collections';
 import { ArrayList } from '../lists';
 import { IMap } from '../maps';
 import { ContainerOptions, OverflowException } from '../utils';
+
+const SumCollector = Collectors.SumCollector;
 
 export interface MapBasedMultiMapOptions<V> extends ContainerOptions {
   collectionFactory?: new () => Collection<V>;
@@ -87,12 +89,18 @@ export abstract class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
     const initial_size = this.size();
     const nbRemovedKeys = this.map.filterKeys(predicate);
     if (!nbRemovedKeys) return 0;
-    this._size = this.map.valueIterator().sum(c => c.size());
+    this._size = this.map
+      .valueIterator()
+      .map(c => c.size())
+      .collectTo(new SumCollector());
     return initial_size - this._size;
   }
 
   filterEntries(predicate: Predicate<[K, V]>): number {
-    const nbRemoved = this.map.entryIterator().sum(e => e.value.filter(v => predicate([e.key, v])));
+    const nbRemoved = this.map
+      .entryIterator()
+      .map(e => e.value.filter(v => predicate([e.key, v])))
+      .collectTo(new SumCollector());
     if (nbRemoved) {
       this.map.filterEntries(([_, c]) => !c.isEmpty());
       this._size -= nbRemoved;
