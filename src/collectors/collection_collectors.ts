@@ -27,7 +27,7 @@ export function linkedListCollector<A>(list?: LinkedList<A>): CollectionCollecto
   return new CollectionCollector(list ?? LinkedList<A>);
 }
 
-export function hashIterableUnorderedCollector<A>(set?: HashSet<A>): CollectionCollector<A, HashSet<A>> {
+export function hashSetCollector<A>(set?: HashSet<A>): CollectionCollector<A, HashSet<A>> {
   return new CollectionCollector(set ?? HashSet<A>);
 }
 
