@@ -84,4 +84,6 @@ export abstract class NavigableMultiSet<E> extends SortedMultiSet<E> {
   reverseIterator(): FluentIterator<E> {
     return this.delegate().reverseKeyIterator();
   }
+
+  abstract clone(): NavigableMultiSet<E>;
 }

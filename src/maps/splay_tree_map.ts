@@ -1,6 +1,6 @@
-import { BinaryNode, BoundedTreeMap } from './abstract_tree_map';
 import { buildMap, MapInitializer } from './map';
 import { SortedMapOptions } from './sorted_map';
+import { BinaryNode, BoundedTreeMap } from './tree_map';
 
 export interface SplayNode<K, V> extends BinaryNode<K, V> {
   left: SplayNode<K, V> | undefined;

@@ -30,4 +30,6 @@ export abstract class SortedMultiSet<E> extends MapBasedMultiSet<E> {
   lastKey() {
     return this.delegate().lastKey();
   }
+
+  abstract clone(): SortedMultiSet<E>;
 }

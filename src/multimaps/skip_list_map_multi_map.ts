@@ -1,10 +1,11 @@
-import { MapBasedMultiMap, MapBasedMultiMapOptions } from './map_based_multi_map';
+import { MapBasedMultiMapOptions } from './map_based_multi_map';
 import { buildMultiMap, MultiMapInitializer } from './multi_map';
+import { NavigableMultiMap } from './navigable_multi_map';
 import { SkipListMap, SkipListMapOptions } from '../maps';
 
 export type SkipListMultiMapOptions<K, V> = SkipListMapOptions<K> & MapBasedMultiMapOptions<V>;
 
-export class SkipListMultiMap<K, V> extends MapBasedMultiMap<K, V> {
+export class SkipListMultiMap<K, V> extends NavigableMultiMap<K, V> {
   constructor(options?: number | SkipListMultiMapOptions<K, V>) {
     super(new SkipListMap(options), options);
   }

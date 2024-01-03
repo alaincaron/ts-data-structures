@@ -123,4 +123,6 @@ export abstract class MapBasedMultiSet<E> extends BoundedMultiSet<E> {
       yield [e, count];
     }
   }
+
+  abstract clone(): MapBasedMultiSet<E>;
 }

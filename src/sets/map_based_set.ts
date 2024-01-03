@@ -19,7 +19,7 @@ import {
 } from '../maps';
 import { NavigableMap } from '../maps/navigable_map';
 
-export class MapBasedSet<E> extends ISet<E> {
+export abstract class MapBasedSet<E> extends ISet<E> {
   constructor(private readonly _delegate: IMap<E, boolean>) {
     super();
   }
@@ -70,9 +70,7 @@ export class MapBasedSet<E> extends ISet<E> {
     return this._delegate.keys();
   }
 
-  clone(): MapBasedSet<E> {
-    return new MapBasedSet(this._delegate.clone());
-  }
+  abstract clone(): MapBasedSet<E>;
 
   buildOptions() {
     return this._delegate.buildOptions?.() ?? {};
@@ -120,7 +118,7 @@ export class OpenHashSet<E> extends MapBasedSet<E> {
   }
 }
 
-export class SortedMapBasedSet<E> extends MapBasedSet<E> implements SortedSet<E> {
+export abstract class SortedMapBasedSet<E> extends MapBasedSet<E> implements SortedSet<E> {
   constructor(delegate: SortedMap<E, boolean>) {
     super(delegate);
   }
@@ -136,9 +134,11 @@ export class SortedMapBasedSet<E> extends MapBasedSet<E> implements SortedSet<E>
   last() {
     return this.delegate().lastKey();
   }
+
+  abstract clone(): SortedMapBasedSet<E>;
 }
 
-export class NavigableMapBasedSet<E> extends SortedMapBasedSet<E> implements NavigableSet<E> {
+export abstract class NavigableMapBasedSet<E> extends SortedMapBasedSet<E> implements NavigableSet<E> {
   constructor(delegate: NavigableMap<E, boolean>) {
     super(delegate);
   }
@@ -174,6 +174,8 @@ export class NavigableMapBasedSet<E> extends SortedMapBasedSet<E> implements Nav
   reverseIterator() {
     return this.delegate().reverseKeyIterator();
   }
+
+  abstract clone(): NavigableMapBasedSet<E>;
 }
 
 export class AvlTreeSet<E> extends NavigableMapBasedSet<E> {
@@ -204,7 +206,7 @@ export class SplayTreeSet<E> extends NavigableMapBasedSet<E> {
   }
 }
 
-export class SkipListSet<E> extends SortedMapBasedSet<E> {
+export class SkipListSet<E> extends NavigableMapBasedSet<E> {
   constructor(options?: number | SkipListMapOptions<E>) {
     super(new SkipListMap<E, boolean>(options));
   }

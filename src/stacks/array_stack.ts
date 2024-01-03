@@ -53,7 +53,7 @@ export class ArrayStack<E> extends Stack<E> {
   }
 
   clone(): ArrayStack<E> {
-    return buildCollection<E, ArrayStack<E>>(ArrayStack, { initial: this.buffer });
+    return ArrayStack.create({ initial: this.buffer });
   }
 
   removeMatchingItem(predicate: Predicate<E>): E | undefined {

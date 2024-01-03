@@ -51,6 +51,8 @@ export abstract class MultiSet<E> extends Collection<E> {
     }
     return true;
   }
+
+  abstract clone(): MultiSet<E>;
 }
 
 export const BoundedMultiSet = CapacityMixin(MultiSet);

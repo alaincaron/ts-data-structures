@@ -72,4 +72,6 @@ export abstract class NavigableMultiMap<K, V> extends SortedMultiMap<K, V> {
   reverseValueIterator(): FluentIterator<V> {
     return this.delegate().reverseValueIterator().collectTo(new Collectors.FlattenCollector());
   }
+
+  abstract clone(): NavigableMultiMap<K, V>;
 }

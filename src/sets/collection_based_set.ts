@@ -5,7 +5,7 @@ import { buildCollection, Collection, CollectionInitializer, CollectionLike } fr
 import { ArrayList } from '../lists';
 import { ContainerOptions, OverflowException } from '../utils';
 
-export class CollectionBasedSet<E> extends ISet<E> {
+export abstract class CollectionBasedSet<E> extends ISet<E> {
   private _delegate: Collection<E>;
   constructor(delegate: Collection<E>) {
     super();
@@ -75,9 +75,7 @@ export class CollectionBasedSet<E> extends ISet<E> {
     return this.addPartially(itemsToAdd);
   }
 
-  clone(): CollectionBasedSet<E> {
-    return new CollectionBasedSet(this.delegate().clone());
-  }
+  abstract clone(): CollectionBasedSet<E>;
 }
 
 export class ArraySet<E> extends CollectionBasedSet<E> {

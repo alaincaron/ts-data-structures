@@ -1,6 +1,6 @@
 import { MapBasedMultiMap, MapBasedMultiMapOptions } from './map_based_multi_map';
 import { Collection } from '../collections';
-import { SortedMap, SortedMapOptions } from '../maps';
+import { MapEntry, SortedMap, SortedMapOptions } from '../maps';
 
 export type SortedMultiMapOptions<K, V> = SortedMapOptions<K> & MapBasedMultiMapOptions<V>;
 
@@ -16,12 +16,12 @@ export abstract class SortedMultiMap<K, V> extends MapBasedMultiMap<K, V> {
     return this.map as SortedMap<K, Collection<V>>;
   }
 
-  firstEntry() {
+  firstEntry(): MapEntry<K, Collection<V>> | undefined {
     const e = this.delegate().firstEntry();
     return e && { key: e.key, value: e.value.clone() };
   }
 
-  lastEntry() {
+  lastEntry(): MapEntry<K, Collection<V>> | undefined {
     const e = this.delegate().lastEntry();
     return e && { key: e.key, value: e.value.clone() };
   }
@@ -33,4 +33,6 @@ export abstract class SortedMultiMap<K, V> extends MapBasedMultiMap<K, V> {
   lastKey() {
     return this.delegate().lastKey();
   }
+
+  abstract clone(): SortedMultiMap<K, V>;
 }

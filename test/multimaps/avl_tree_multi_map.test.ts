@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { Functions } from 'ts-fluent-iterators';
 import { list } from './helper';
 import { AvlTreeMultiMap, OverflowException } from '../../src';
 
@@ -275,6 +276,44 @@ describe('AvlTreeMultiMap', () => {
       expect(result[1][1]?.equals(list(1, 4))).to.be.true;
       expect(result[2][0]).equal('foobar');
       expect(result[2][1]?.equals(list(3, 5))).to.be.true;
+    });
+  });
+
+  describe('firstEntry/firstKey/lasEntry/lastKey', () => {
+    it('should return undefined on empty map', () => {
+      const map = new AvlTreeMultiMap();
+      expect(map.firstEntry()).to.be.undefined;
+      expect(map.firstKey()).to.be.undefined;
+      expect(map.lastEntry()).to.be.undefined;
+      expect(map.lastKey()).to.be.undefined;
+    });
+    it('should return first entry', () => {
+      const map = new AvlTreeMultiMap<string, number>();
+      map.put('bar', 1);
+      map.put('foo', 2);
+      map.put('bar', 3);
+      map.put('foo', 4);
+      expect(map.firstKey()).equal('bar');
+      let e = map.firstEntry()!;
+      expect(e.key).equal('bar');
+      expect(e.value!.equals(list(3, 1)));
+      e = map.lastEntry()!;
+      expect(e.key).equal('foo');
+      expect(e.value!.equals(list(2, 4))).to.be.true;
+    });
+    it('should respect the passed comparator', () => {
+      const map = new AvlTreeMultiMap<string, number>({ comparator: Functions.reverseComparator });
+      map.put('bar', 1);
+      map.put('foo', 2);
+      map.put('bar', 3);
+      map.put('foo', 4);
+      expect(map.firstKey()).equal('foo');
+      let e = map.firstEntry()!;
+      expect(e.key).equal('foo');
+      expect(e.value!.equals(list(2, 4))).to.be.true;
+      e = map.lastEntry()!;
+      expect(e.key).equal('bar');
+      expect(e.value!.equals(list(1, 3))).to.be.true;
     });
   });
 });

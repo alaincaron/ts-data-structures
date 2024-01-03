@@ -122,4 +122,6 @@ export abstract class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
       collectionFactory: this.collectionFactory,
     };
   }
+
+  abstract clone(): MapBasedMultiMap<K, V>;
 }

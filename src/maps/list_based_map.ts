@@ -3,7 +3,7 @@ import { buildMap, IMap, MapEntry, MapInitializer } from './map';
 import { ArrayList, LinkedList, List } from '../lists';
 import { ContainerOptions, equalsAny } from '../utils';
 
-export class ListBasedMap<K, V> extends IMap<K, V> {
+export abstract class ListBasedMap<K, V> extends IMap<K, V> {
   constructor(private readonly _delegate: List<MapEntry<K, V>>) {
     super();
   }
@@ -53,10 +53,6 @@ export class ListBasedMap<K, V> extends IMap<K, V> {
 
   buildOptions() {
     return this._delegate.buildOptions();
-  }
-
-  clone() {
-    return new ListBasedMap(this._delegate.clone());
   }
 }
 
