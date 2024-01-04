@@ -1,8 +1,8 @@
-import { MapBasedMultiSet } from './map_based_multi_set';
 import { buildMultiSet, MultiSetInitializer } from './multi_set';
+import { NavigableMultiSet } from './navigable_multi_set';
 import { SkipListMap, SkipListMapOptions } from '../maps';
 
-export class SkipListMultiSet<E> extends MapBasedMultiSet<E> {
+export class SkipListMultiSet<E> extends NavigableMultiSet<E> {
   constructor(options?: number | SkipListMapOptions<E>) {
     super(new SkipListMap(options), options);
   }

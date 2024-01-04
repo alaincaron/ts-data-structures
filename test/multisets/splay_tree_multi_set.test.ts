@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Generators } from 'ts-fluent-iterators';
+import { Functions, Generators } from 'ts-fluent-iterators';
 import { OverflowException, SplayTreeMultiSet } from '../../src';
 
 describe('SplayTreeMultiSet', () => {
@@ -355,6 +355,106 @@ describe('SplayTreeMultiSet', () => {
       const set = SplayTreeMultiSet.create({ initial: [1, 2, 3, 4, { x: true }, 'alain'] });
       const set2 = SplayTreeMultiSet.create({ initial: JSON.parse(set.toJson()) });
       expect(set.equals(set2)).to.be.true;
+    });
+  });
+
+  describe('setCount', () => {
+    it('should remove items when set to 0', () => {
+      const ms = SplayTreeMultiSet.create({ initial: ['foo', 'bar', 'foo'] });
+      expect(ms.setCount('foo', 0)).equal(2);
+      expect(ms.count('foo')).equals(0);
+      expect(ms.contains('foo')).to.be.false;
+      expect(ms.size()).equal(1);
+      expect(ms.isEmpty()).to.be.false;
+
+      expect(ms.setCount('bar', 0)).equals(1);
+      expect(ms.count('bar')).equals(0);
+      expect(ms.contains('foo')).to.be.false;
+      expect(ms.size()).equals(0);
+      expect(ms.isEmpty()).to.be.true;
+
+      expect(ms.setCount('foobar', 0)).equal(0);
+      expect(ms.count('foobar')).equal(0);
+      expect(ms.isEmpty()).to.be.true;
+    });
+
+    it('should increase the size if new count is greater', () => {
+      const ms = SplayTreeMultiSet.create({ initial: ['foo'] });
+      expect(ms.setCount('foo', 5)).equal(1);
+      expect(ms.size()).equal(5);
+      expect(ms.count('foo')).equal(5);
+      expect(ms.setCount('bar', 6)).equal(0);
+      expect(ms.size()).equal(11);
+      expect(ms.count('bar')).equal(6);
+    });
+
+    it('should decrease the size if new count is smaller', () => {
+      const ms = SplayTreeMultiSet.create({ initial: ['foo', 'foo'] });
+      expect(ms.setCount('foo', 1)).equal(2);
+      expect(ms.size()).equal(1);
+      expect(ms.count('foo')).equal(1);
+    });
+
+    it('should throw if not enough remaining capacity for new count', () => {
+      const ms = SplayTreeMultiSet.create(5);
+      expect(ms.setCount('foo', 4)).equal(0);
+      expect(ms.add('bar')).to.be.true;
+      expect(() => ms.setCount('foo', 5)).to.throw(OverflowException);
+      expect(() => ms.add('bar')).to.throw(OverflowException);
+      expect(ms.size()).equal(5);
+      expect(ms.isFull()).to.be.true;
+    });
+  });
+
+  describe('removeMatchingItem', () => {
+    it('should remove item matching predicate', () => {
+      const ms = SplayTreeMultiSet.create({ initial: ['foo', 'bar', 'foo'] });
+
+      expect(ms.removeMatchingItem(x => x.startsWith('f'))).equal('foo');
+      expect(ms.size()).equal(2);
+      expect(ms.count('foo')).equal(1);
+
+      expect(ms.removeMatchingItem(x => !x.startsWith('f'))).equal('bar');
+      expect(ms.size()).equal(1);
+      expect(ms.count('bar')).equal(0);
+
+      expect(ms.removeMatchingItem(x => x.length > 5)).to.be.undefined;
+      expect(ms.size()).equal(1);
+    });
+  });
+
+  describe('firstEntry/firstKey/lasEntry/lastKey', () => {
+    it('should return undefined on empty map', () => {
+      const ms = new SplayTreeMultiSet();
+      expect(ms.firstEntry()).to.be.undefined;
+      expect(ms.firstKey()).to.be.undefined;
+      expect(ms.lastEntry()).to.be.undefined;
+      expect(ms.lastKey()).to.be.undefined;
+    });
+    it('should return first entry', () => {
+      const ms = SplayTreeMultiSet.create({ initial: ['foo', 'bar', 'foo', 'bar', 'bar'] });
+      expect(ms.firstKey()).equal('bar');
+      expect(ms.lastKey()).equal('foo');
+      let e = ms.firstEntry()!;
+      expect(e.key).equal('bar');
+      expect(e.value).equals(3);
+      e = ms.lastEntry()!;
+      expect(e.key).equal('foo');
+      expect(e.value).equal(2);
+    });
+    it('should respect the passed comparator', () => {
+      const ms = SplayTreeMultiSet.create({
+        initial: ['foo', 'bar', 'foo', 'bar', 'bar'],
+        comparator: Functions.reverseComparator,
+      });
+      expect(ms.firstKey()).equal('foo');
+      expect(ms.lastKey()).equal('bar');
+      let e = ms.firstEntry()!;
+      expect(e.key).equal('foo');
+      expect(e.value).equals(2);
+      e = ms.lastEntry()!;
+      expect(e.key).equal('bar');
+      expect(e.value).equal(3);
     });
   });
 });

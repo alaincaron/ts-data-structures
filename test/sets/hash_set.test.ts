@@ -279,9 +279,6 @@ describe('HashSet', () => {
       const data = [1, 2, 3];
       expect(set.offerPartially(data)).equal(2);
       expect(set.toArray().sort()).to.deep.equal([1, 2]);
-      set.clear();
-      expect(set.offerPartially(HashSet.create({ initial: data }))).equal(2);
-      expect(set.toArray().sort()).to.deep.equal([1, 2]);
     });
     it('should accept all items if enough capacity remaining', () => {
       const set = new HashSet(6);

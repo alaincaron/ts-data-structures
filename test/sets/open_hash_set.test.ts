@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import { Generators } from 'ts-fluent-iterators';
-import { LinkedHashMultiSet, OverflowException } from '../../src';
+import { OpenHashSet, OverflowException } from '../../src';
 
-describe('LinkedHashMultiSet', () => {
+describe('OpenHashSet', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const set = new LinkedHashMultiSet();
+      const set = new OpenHashSet();
       expect(set.capacity()).equal(Infinity);
       expect(set.size()).equal(0);
       expect(set.remaining()).equal(Infinity);
@@ -14,7 +14,7 @@ describe('LinkedHashMultiSet', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const set = new LinkedHashMultiSet(2);
+      const set = new OpenHashSet(2);
       expect(set.capacity()).equal(2);
       expect(set.size()).equal(0);
       expect(set.remaining()).equal(2);
@@ -23,94 +23,92 @@ describe('LinkedHashMultiSet', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const set = LinkedHashMultiSet.create({ capacity: 2 });
+      const set = OpenHashSet.create({ capacity: 2 });
       expect(set.capacity()).equal(2);
       expect(set.isEmpty()).to.be.true;
     });
 
     it('should have the same elements as the array argument', () => {
-      const arr = [1, 2, 1];
-      const set = LinkedHashMultiSet.create({ capacity: 3, initial: arr });
-      expect(set.capacity()).equal(3);
-      expect(set.size()).equal(3);
+      const arr = [1, 2];
+      const set = OpenHashSet.create({ capacity: 2, initial: arr });
+      expect(set.capacity()).equal(2);
+      expect(set.size()).equal(2);
       expect(set.remaining()).equal(0);
       expect(set.isEmpty()).to.be.false;
       expect(set.isFull()).to.be.true;
-      expect(set.toArray().sort()).to.deep.equal(arr.sort());
+      expect(set.toArray().sort()).to.deep.equal(arr);
     });
 
-    it('should be identical to the LinkedHashMultiSet argument', () => {
-      const arr = [1, 2, 1];
-      const set1 = LinkedHashMultiSet.create({ capacity: 3, initial: arr });
+    it('should be identical to the OpenHashSet argument', () => {
+      const arr = [1, 2];
+      const set1 = OpenHashSet.create({ capacity: 3, initial: arr });
       expect(set1.capacity()).equal(3);
-      const set2 = LinkedHashMultiSet.create({ initial: set1 });
+      const set2 = OpenHashSet.create({ initial: set1 });
       expect(set2.capacity()).equal(3);
-      expect(set1.equals(set2)).to.be.true;
       expect(set2.toArray().sort()).to.deep.equal(set1.toArray().sort());
     });
 
     it('should be identical to the Collection argument', () => {
       const arr = [1, 2];
-      const set1 = LinkedHashMultiSet.create({ initial: arr });
-      const set2 = LinkedHashMultiSet.create({ initial: set1 });
+      const set1 = OpenHashSet.create({ initial: arr });
+      const set2 = OpenHashSet.create({ initial: set1 });
       expect(set2.capacity()).equal(Infinity);
       expect(set2.toArray().sort()).to.deep.equal(arr);
     });
 
     it('should use the function provided in the ArrayGenerator', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i + 1);
-      const set = LinkedHashMultiSet.create({ initial: { length: arr.length, seed: i => i + 1 } });
+      const set = OpenHashSet.create({ initial: { length: arr.length, seed: i => i + 1 } });
       expect(set.toArray().sort()).to.deep.equal(arr);
     });
 
     it('should use the iterator provided in the ArrayGenerator', () => {
-      const set = LinkedHashMultiSet.create({ initial: { length: 10, seed: Generators.range() } });
+      const set = OpenHashSet.create({ initial: { length: 10, seed: Generators.range() } });
       expect(set.size()).equal(10);
       expect(set.toArray().sort()).to.deep.equal(Array.from({ length: 10 }, (_, i) => i));
     });
 
     it('should use the iterable provided in the ArrayGenerator', () => {
       const arr = Array.from({ length: 2 }, (_, i) => i);
-      const set = LinkedHashMultiSet.create({ initial: { length: 10, seed: arr } });
+      const set = OpenHashSet.create({ initial: { length: 10, seed: arr } });
       expect(set.size()).equal(2);
       expect(set.toArray().sort()).to.deep.equal(arr);
     });
 
     it('should throw if number of initial elements exceed capacity', () => {
-      expect(() => LinkedHashMultiSet.create({ capacity: 0, initial: { length: 10, seed: i => i + 1 } })).to.throw(
+      expect(() => OpenHashSet.create({ capacity: 0, initial: { length: 10, seed: i => i + 1 } })).to.throw(
         OverflowException
       );
     });
   });
 
   describe('add', () => {
-    it('should return true and increment count if element already present', () => {
-      const set = new LinkedHashMultiSet();
+    it('should return false if element already present', () => {
+      const set = new OpenHashSet();
       expect(set.add(1)).to.be.true;
-      expect(set.add(1)).to.be.true;
-      expect(set.count(1)).equals(2);
+      expect(set.add(1)).to.be.false;
       expect(set.add(2)).to.be.true;
-      expect(set.add(2)).to.be.true;
-      expect(set.count(2)).equals(2);
-      expect(set.size()).equal(4);
-      expect(set.toArray().sort()).to.deep.equal([1, 1, 2, 2]);
+      expect(set.add(2)).to.be.false;
+      expect(set.size()).equal(2);
+      expect(set.toArray().sort()).to.deep.equal([1, 2]);
     });
-    it('should throw if full', () => {
-      const set = new LinkedHashMultiSet(1);
+    it('should throw if full and element not present', () => {
+      const set = new OpenHashSet(1);
       expect(set.add(1)).to.be.true;
       expect(set.isFull()).to.be.true;
-      expect(() => set.add(1)).to.throw(OverflowException);
+      expect(set.add(1)).to.be.false;
+      expect(() => set.add(2)).to.throw(OverflowException);
       expect(set.size()).equal(1);
     });
   });
 
   describe('offer', () => {
-    it('should refuse if full', () => {
-      const set = new LinkedHashMultiSet(1);
+    it('should refuse if full and element not present', () => {
+      const set = new OpenHashSet(1);
       expect(set.offer(1)).to.be.true;
       expect(set.offer(2)).to.be.false;
       expect(set.isFull()).to.be.true;
-      expect(set.offer(1)).to.be.false;
+      expect(set.offer(1)).to.be.true;
       expect(set.size()).equal(1);
       expect(set.isFull()).to.be.true;
     });
@@ -118,9 +116,8 @@ describe('LinkedHashMultiSet', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = new LinkedHashMultiSet();
+      const a = new OpenHashSet();
       const b = a.clone();
-      expect(b instanceof LinkedHashMultiSet).to.be.true;
       expect(b).to.deep.equal(a);
       b.add('foo');
       expect(b.size()).equal(1);
@@ -130,7 +127,7 @@ describe('LinkedHashMultiSet', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const set = LinkedHashMultiSet.create({ capacity: 3, initial: { length: 2, seed: (i: number) => i } });
+      const set = OpenHashSet.create({ capacity: 3, initial: { length: 2, seed: (i: number) => i } });
       expect(set.size()).to.equal(2);
       expect(set.remaining()).to.equal(1);
       set.clear();
@@ -142,64 +139,62 @@ describe('LinkedHashMultiSet', () => {
 
   describe('contains', () => {
     it('should return false on empty set', () => {
-      const set = new LinkedHashMultiSet();
+      const set = new OpenHashSet();
       expect(set.contains('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const set = LinkedHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
+      const set = OpenHashSet.create({ initial: { length: 10, seed: (i: number) => i } });
       expect(set.contains(10)).to.be.false;
     });
     it('should return true if present', () => {
-      const set = LinkedHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
+      const set = OpenHashSet.create({ initial: { length: 10, seed: (i: number) => i } });
       expect(set.contains(9)).to.be.true;
     });
   });
 
   describe('find', () => {
     it('should return undefined on empty set', () => {
-      const set = new LinkedHashMultiSet();
+      const set = new OpenHashSet();
       expect(set.find(x => x === 'foo')).to.be.undefined;
     });
     it('should return undefined if no match', () => {
-      const set = LinkedHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
+      const set = OpenHashSet.create({ initial: { length: 10, seed: (i: number) => i } });
       expect(set.find(x => x >= 10)).to.be.undefined;
     });
     it('should return the first item matching the predicate', () => {
-      const set = LinkedHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
+      const set = OpenHashSet.create({ initial: { length: 10, seed: (i: number) => i } });
       expect(set.find(x => x >= 5)).to.be.greaterThanOrEqual(5);
     });
   });
 
   describe('removeItem', () => {
     it('should return false on empty set', () => {
-      const set = new LinkedHashMultiSet();
+      const set = new OpenHashSet();
       expect(set.removeItem(1)).to.be.false;
       expect(set.isEmpty()).to.be.true;
       expect(set.size()).equal(0);
     });
     it('should return false if item is missing', () => {
       const arr = [1, 2, 3];
-      const set = LinkedHashMultiSet.create({ initial: arr });
+      const set = OpenHashSet.create({ initial: arr });
       expect(set.removeItem(4)).to.be.false;
       expect(set.isEmpty()).to.be.false;
       expect(set.size()).equal(3);
     });
     it('should remove occurence and return true if item is present', () => {
       const arr = [1, 0, 2, 0, 3];
-      const set = LinkedHashMultiSet.create({ initial: arr });
-      expect(set.count(0)).equal(2);
-      expect(set.toArray().sort()).to.deep.equal([0, 0, 1, 2, 3]);
+      const set = OpenHashSet.create({ initial: arr });
+      expect(set.toArray().sort()).to.deep.equal([0, 1, 2, 3]);
       expect(set.removeItem(0)).to.be.true;
-      expect(set.count(0)).equal(1);
       expect(set.isEmpty()).to.be.false;
-      expect(set.size()).equal(4);
-      expect(set.toArray().sort()).deep.equal([0, 1, 2, 3]);
+      expect(set.size()).equal(3);
+      expect(set.toArray().sort()).deep.equal([1, 2, 3]);
     });
   });
 
   describe('filter', () => {
     it('should return 0 on empty set', () => {
-      const set = new LinkedHashMultiSet();
+      const set = new OpenHashSet();
       expect(set.filter(i => i === 0)).equal(0);
       expect(set.isEmpty()).to.be.true;
       expect(set.size()).equal(0);
@@ -207,14 +202,14 @@ describe('LinkedHashMultiSet', () => {
 
     it('should return 0 if all items match the predicate', () => {
       const arr = [1, 2, 3];
-      const set = LinkedHashMultiSet.create({ initial: arr });
+      const set = OpenHashSet.create({ initial: arr });
       expect(set.filter(i => i > 0)).equal(0);
       expect(set.isEmpty()).to.be.false;
       expect(set.size()).equal(3);
     });
     it('should remove all items not matching the filter', () => {
       const arr = [1, 0, 2, -1, 3];
-      const set = LinkedHashMultiSet.create({ initial: arr });
+      const set = OpenHashSet.create({ initial: arr });
       expect(set.filter(i => i > 0)).equal(2);
       expect(set.isEmpty()).to.be.false;
       expect(set.size()).equal(3);
@@ -224,92 +219,95 @@ describe('LinkedHashMultiSet', () => {
 
   describe('all', () => {
     it('should return true on empty', () => {
-      const set = new LinkedHashMultiSet();
+      const set = new OpenHashSet();
       expect(set.all(_ => false)).to.be.true;
     });
     it('should return true if predicate is true for all elements', () => {
-      const set = LinkedHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
+      const set = OpenHashSet.create({ initial: { length: 10, seed: (i: number) => i } });
       expect(set.all(x => x >= 0)).to.be.true;
     });
     it('should return false if predicate is false for at least one element', () => {
-      const set = LinkedHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
+      const set = OpenHashSet.create({ initial: { length: 10, seed: (i: number) => i } });
       expect(set.all(x => x < 9)).to.be.false;
     });
   });
 
   describe('some', () => {
     it('should return false on empty', () => {
-      const set = new LinkedHashMultiSet();
+      const set = new OpenHashSet();
       expect(set.some(_ => true)).to.be.false;
     });
     it('should return true if predicate is true for at least one element', () => {
-      const set = LinkedHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
+      const set = OpenHashSet.create({ initial: { length: 10, seed: (i: number) => i } });
       expect(set.some(x => x === 9)).to.be.true;
     });
     it('should return false if predicate is false for all elements', () => {
-      const set = LinkedHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
+      const set = OpenHashSet.create({ initial: { length: 10, seed: (i: number) => i } });
       expect(set.some(x => x > 9)).to.be.false;
     });
   });
 
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
-      const set = new LinkedHashMultiSet(2);
+      const set = new OpenHashSet(2);
       const data = [1, 2, 3];
       expect(set.offerFully(data)).equal(0);
       expect(set.isEmpty()).to.be.true;
-      expect(set.offerFully(LinkedHashMultiSet.create({ initial: data }))).equal(0);
+      expect(set.offerFully(OpenHashSet.create({ initial: data }))).equal(0);
       expect(set.isEmpty()).to.be.true;
     });
     it('should accept all items if enough capacity remaining', () => {
-      const set = new LinkedHashMultiSet(6);
+      const set = new OpenHashSet(6);
       const data = [1, 2, 3, 1, 3, 2];
-      expect(set.offerFully(data)).equal(6);
+      expect(set.offerFully(data)).equal(3);
+      expect(set.size()).equal(3);
+      expect(set.offerFully(OpenHashSet.create({ initial: [1, 2, 3, 4, 5, 6] }))).equal(3);
       expect(set.size()).equal(6);
-      expect(set.offerFully(LinkedHashMultiSet.create({ initial: [1, 2, 3, 4, 5, 6] }))).equal(0);
-      expect(set.size()).equal(6);
+    });
+    it('should accept all the items if there is enough capacity remaining for distinct elements', () => {
+      const set = new OpenHashSet(2);
+      const data = [1, 2, 1, 2];
+      expect(set.offerFully(data)).equal(2);
+      expect(set.isEmpty()).to.be.false;
+      expect(set.size()).equal(2);
     });
   });
 
   describe('offerPartially', () => {
     it('should accept elements up to the remaining capacity', () => {
-      const set = new LinkedHashMultiSet(2);
+      const set = new OpenHashSet(2);
       const data = [1, 2, 3];
-      expect(set.offerPartially(data)).equal(2);
-      expect(set.toArray().sort()).to.deep.equal([1, 2]);
-      set.clear();
       expect(set.offerPartially(data)).equal(2);
       expect(set.toArray().sort()).to.deep.equal([1, 2]);
     });
     it('should accept all items if enough capacity remaining', () => {
-      const set = new LinkedHashMultiSet(6);
+      const set = new OpenHashSet(6);
       const data = [1, 1, 2, 2, 3, 4, 5];
-      expect(set.offerPartially(data)).equal(6);
-      expect(set.count(5)).equal(0);
-      expect(set.size()).equal(6);
-      expect(set.offerPartially(LinkedHashMultiSet.create({ initial: data }))).equal(0);
-      expect(set.size()).equal(6);
+      expect(set.offerPartially(data)).equal(5);
+      expect(set.size()).equal(5);
+      expect(set.offerPartially(OpenHashSet.create({ initial: data }))).equal(0);
+      expect(set.size()).equal(5);
     });
     it('should accept all the items if there is enough capacity remaining for distinct elements', () => {
+      const set = new OpenHashSet(2);
       const data = [1, 1, 1, 2, 1, 2, 3, 4];
-      const set = new LinkedHashMultiSet(data.length);
-      expect(set.offerPartially(data)).equal(data.length);
+      expect(set.offerPartially(data)).equal(2);
       expect(set.isEmpty()).to.be.false;
-      expect(set.size()).equal(data.length);
-      expect(set.toArray().sort()).to.deep.equal(data.sort());
+      expect(set.size()).equal(2);
+      expect(set.toArray().sort()).to.deep.equal([1, 2]);
     });
   });
 
   describe('forEach', () => {
     it('should execute for each item', () => {
       const data = [1, 2, 3];
-      const set = LinkedHashMultiSet.create({ initial: data });
+      const set = OpenHashSet.create({ initial: data });
       const x: number[] = [];
       set.forEach(e => x.push(e));
       expect(set.toArray()).to.deep.equal(x);
     });
     it('should do nothing if empty', () => {
-      const set = new LinkedHashMultiSet();
+      const set = new OpenHashSet();
       set.forEach(_ => {
         throw new Error('Should not be invoked');
       });
@@ -319,12 +317,12 @@ describe('LinkedHashMultiSet', () => {
   describe('fold', () => {
     it('should compute the sum with an initial value', () => {
       const data = [1, 2, 3];
-      const set = LinkedHashMultiSet.create({ initial: data });
+      const set = OpenHashSet.create({ initial: data });
       const sum = set.fold((a, b) => a + b, 1);
       expect(sum).equal(7);
     });
     it('should return initial value if empty', () => {
-      const set = new LinkedHashMultiSet<number>();
+      const set = new OpenHashSet<number>();
       const sum = set.fold((a, b) => a + b, 1);
       expect(sum).equal(1);
     });
@@ -333,18 +331,18 @@ describe('LinkedHashMultiSet', () => {
   describe('reduce', () => {
     it('should compute the sum with an initial value', () => {
       const data = [1, 2, 3];
-      const set = LinkedHashMultiSet.create({ initial: data });
+      const set = OpenHashSet.create({ initial: data });
       const sum = set.reduce((a, b) => a + b, 1);
       expect(sum).equal(7);
     });
     it('should compute the sum without an initial value', () => {
       const data = [1, 2, 3];
-      const set = LinkedHashMultiSet.create({ initial: data });
+      const set = OpenHashSet.create({ initial: data });
       const sum = set.reduce((a, b) => a + b);
       expect(sum).equal(6);
     });
     it('should return undefined if empty and no initial value', () => {
-      const set = new LinkedHashMultiSet<number>();
+      const set = new OpenHashSet<number>();
       const sum = set.reduce((a, b: number) => a + b);
       expect(sum).to.be.undefined;
     });
@@ -352,74 +350,9 @@ describe('LinkedHashMultiSet', () => {
 
   describe('toJson', () => {
     it('should return the JSON string', () => {
-      const set = LinkedHashMultiSet.create({ initial: [1, 2, 3, 4, { x: true }, 'alain'] });
-      const set2 = LinkedHashMultiSet.create({ initial: JSON.parse(set.toJson()) });
+      const set = OpenHashSet.create({ initial: [1, 2, 3, 4, { x: true }, 'alain'] });
+      const set2 = OpenHashSet.create({ initial: JSON.parse(set.toJson()) });
       expect(set.equals(set2)).to.be.true;
-    });
-  });
-
-  describe('setCount', () => {
-    it('should remove items when set to 0', () => {
-      const ms = LinkedHashMultiSet.create({ initial: ['foo', 'bar', 'foo'] });
-      expect(ms.setCount('foo', 0)).equal(2);
-      expect(ms.count('foo')).equals(0);
-      expect(ms.contains('foo')).to.be.false;
-      expect(ms.size()).equal(1);
-      expect(ms.isEmpty()).to.be.false;
-
-      expect(ms.setCount('bar', 0)).equals(1);
-      expect(ms.count('bar')).equals(0);
-      expect(ms.contains('foo')).to.be.false;
-      expect(ms.size()).equals(0);
-      expect(ms.isEmpty()).to.be.true;
-
-      expect(ms.setCount('foobar', 0)).equal(0);
-      expect(ms.count('foobar')).equal(0);
-      expect(ms.isEmpty()).to.be.true;
-    });
-
-    it('should increase the size if new count is greater', () => {
-      const ms = LinkedHashMultiSet.create({ initial: ['foo'] });
-      expect(ms.setCount('foo', 5)).equal(1);
-      expect(ms.size()).equal(5);
-      expect(ms.count('foo')).equal(5);
-      expect(ms.setCount('bar', 6)).equal(0);
-      expect(ms.size()).equal(11);
-      expect(ms.count('bar')).equal(6);
-    });
-
-    it('should decrease the size if new count is smaller', () => {
-      const ms = LinkedHashMultiSet.create({ initial: ['foo', 'foo'] });
-      expect(ms.setCount('foo', 1)).equal(2);
-      expect(ms.size()).equal(1);
-      expect(ms.count('foo')).equal(1);
-    });
-
-    it('should throw if not enough remaining capacity for new count', () => {
-      const ms = LinkedHashMultiSet.create(5);
-      expect(ms.setCount('foo', 4)).equal(0);
-      expect(ms.add('bar')).to.be.true;
-      expect(() => ms.setCount('foo', 5)).to.throw(OverflowException);
-      expect(() => ms.add('bar')).to.throw(OverflowException);
-      expect(ms.size()).equal(5);
-      expect(ms.isFull()).to.be.true;
-    });
-  });
-
-  describe('removeMatchingItem', () => {
-    it('should remove item matching predicate', () => {
-      const ms = LinkedHashMultiSet.create({ initial: ['foo', 'bar', 'foo'] });
-
-      expect(ms.removeMatchingItem(x => x.startsWith('f'))).equal('foo');
-      expect(ms.size()).equal(2);
-      expect(ms.count('foo')).equal(1);
-
-      expect(ms.removeMatchingItem(x => !x.startsWith('f'))).equal('bar');
-      expect(ms.size()).equal(1);
-      expect(ms.count('bar')).equal(0);
-
-      expect(ms.removeMatchingItem(x => x.length > 5)).to.be.undefined;
-      expect(ms.size()).equal(1);
     });
   });
 });

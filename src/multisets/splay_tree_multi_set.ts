@@ -1,8 +1,8 @@
-import { MapBasedMultiSet } from './map_based_multi_set';
 import { buildMultiSet, MultiSetInitializer } from './multi_set';
+import { NavigableMultiSet } from './navigable_multi_set';
 import { SortedMapOptions, SplayTreeMap } from '../maps';
 
-export class SplayTreeMultiSet<E> extends MapBasedMultiSet<E> {
+export class SplayTreeMultiSet<E> extends NavigableMultiSet<E> {
   constructor(options?: number | SortedMapOptions<E>) {
     super(new SplayTreeMap(options), options);
   }
