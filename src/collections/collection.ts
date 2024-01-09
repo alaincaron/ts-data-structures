@@ -51,7 +51,7 @@ export abstract class Collection<E> implements Iterable<E>, OptionsBuilder {
   abstract filter(predicate: Predicate<E>): number;
 
   find(predicate: Predicate<E>): E | undefined {
-    return this.iterator().first(predicate);
+    return this.iterator().filter(predicate).first();
   }
 
   all(predicate: Predicate<E>) {
