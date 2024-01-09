@@ -275,6 +275,28 @@ describe('AvlTreeMap', () => {
     });
   });
 
+  describe('reverseKeyIterator', () => {
+    it('should iterate over all keys in reverse order', () => {
+      const map = new AvlTreeMap();
+      map.put('c', 3);
+      map.put('a', 1);
+      map.put('b', 2);
+      expect(Array.from(map.reverseKeyIterator())).deep.equal(['c', 'b', 'a']);
+      assertAvlProperty(map);
+    });
+  });
+
+  describe('reverseValueIterator', () => {
+    it('should iterate over all values in reverse order', () => {
+      const map = new AvlTreeMap();
+      map.put('c', 3);
+      map.put('a', 1);
+      map.put('b', 2);
+      expect(Array.from(map.reverseValueIterator())).deep.equal([3, 2, 1]);
+      assertAvlProperty(map);
+    });
+  });
+
   describe('pseudoRandomInsert', () => {
     it('should return elements in the right order', () => {
       const map = new AvlTreeMap();

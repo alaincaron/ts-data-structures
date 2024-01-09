@@ -283,4 +283,14 @@ describe('PriorityQueue', () => {
       expect(queue.size()).equal(6);
     });
   });
+
+  describe('equals/hashCode', () => {
+    it('should return true for same queue', () => {
+      const queue = PriorityQueue.create({ initial: [1, 2] });
+      expect(queue.equals(queue)).to.be.true;
+      const cl = queue.clone();
+      expect(queue.equals(cl)).to.be.false;
+      expect(queue.hashCode() === cl.hashCode());
+    });
+  });
 });
