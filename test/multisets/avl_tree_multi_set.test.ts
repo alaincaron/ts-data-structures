@@ -423,38 +423,81 @@ describe('AvlTreeMultiSet', () => {
     });
   });
 
-  describe('firstEntry/firstKey/lasEntry/lastKey', () => {
+  describe('navigation methods', () => {
     it('should return undefined on empty map', () => {
-      const ms = new AvlTreeMultiSet();
+      const ms = new AvlTreeMultiSet<string>();
       expect(ms.firstEntry()).to.be.undefined;
-      expect(ms.firstKey()).to.be.undefined;
+      expect(ms.first()).to.be.undefined;
       expect(ms.lastEntry()).to.be.undefined;
-      expect(ms.lastKey()).to.be.undefined;
+      expect(ms.last()).to.be.undefined;
+      expect(ms.lower('a')).to.be.undefined;
+      expect(ms.lowerEntry('a')).to.be.undefined;
+      expect(ms.higher('a')).to.be.undefined;
+      expect(ms.higherEntry('a')).to.be.undefined;
+      expect(ms.floor('a')).to.be.undefined;
+      expect(ms.floorEntry('a')).to.be.undefined;
+      expect(ms.ceiling('a')).to.be.undefined;
+      expect(ms.ceilingEntry('a')).to.be.undefined;
+      expect(ms.pollFirstEntry()).to.be.undefined;
+      expect(ms.pollLastEntry()).to.be.undefined;
+      expect(ms.reverseEntryIterator().collect()).to.deep.equal([]);
+      expect(ms.reverseIterator().collect()).to.deep.equal([]);
     });
-    it('should return first entry', () => {
-      const ms = AvlTreeMultiSet.create({ initial: ['foo', 'bar', 'foo', 'bar', 'bar'] });
-      expect(ms.firstKey()).equal('bar');
-      expect(ms.lastKey()).equal('foo');
-      let e = ms.firstEntry()!;
-      expect(e.key).equal('bar');
-      expect(e.value).equals(3);
-      e = ms.lastEntry()!;
-      expect(e.key).equal('foo');
-      expect(e.value).equal(2);
+
+    it('should return right navigation values', () => {
+      const ms = new AvlTreeMultiSet<string>();
+      const barValue = 4;
+      const fooValue = 5;
+      ms.setCount('bar', barValue);
+      ms.setCount('foo', fooValue);
+
+      expect(ms.first()).equal('bar');
+      expect(ms.firstEntry()).to.deep.equal({ key: 'bar', value: barValue });
+
+      expect(ms.last()).equal('foo');
+      expect(ms.lastEntry()).to.deep.equal({ key: 'foo', value: fooValue });
+
+      expect(ms.lower('bar')).to.be.undefined;
+      expect(ms.lowerEntry('bar')).to.be.undefined;
+
+      expect(ms.lower('baz')).equal('bar');
+      expect(ms.lowerEntry('baz')).to.deep.equal({ key: 'bar', value: barValue });
+
+      expect(ms.higher('baz')).equal('foo');
+      expect(ms.higherEntry('bar')).to.deep.equal({ key: 'foo', value: fooValue });
+
+      expect(ms.floor('bar')).equal('bar');
+      expect(ms.floorEntry('bar')).to.deep.equal({ key: 'bar', value: barValue });
+
+      expect(ms.ceiling('baz')).equal('foo');
+      expect(ms.ceilingEntry('baz')).to.deep.equal({ key: 'foo', value: fooValue });
+
+      expect(ms.reverseEntryIterator().collect()).to.deep.equal([
+        { key: 'foo', value: fooValue },
+        { key: 'bar', value: barValue },
+      ]);
+
+      expect(ms.reverseIterator().collect()).to.deep.equal(['foo', 'bar']);
+
+      expect(ms.pollFirst()).equal('bar');
+      expect(ms.pollLast()).equal('foo');
+
+      expect(ms.pollFirstEntry()).deep.equal({ key: 'bar', value: barValue - 1 });
+      expect(ms.pollLastEntry()).deep.equal({ key: 'foo', value: fooValue - 1 });
     });
+
     it('should respect the passed comparator', () => {
-      const ms = AvlTreeMultiSet.create({
-        initial: ['foo', 'bar', 'foo', 'bar', 'bar'],
-        comparator: Functions.reverseComparator,
-      });
-      expect(ms.firstKey()).equal('foo');
-      expect(ms.lastKey()).equal('bar');
-      let e = ms.firstEntry()!;
-      expect(e.key).equal('foo');
-      expect(e.value).equals(2);
-      e = ms.lastEntry()!;
-      expect(e.key).equal('bar');
-      expect(e.value).equal(3);
+      const ms = new AvlTreeMultiSet<string>({ comparator: Functions.reverseComparator });
+      const barValue = 4;
+      const fooValue = 5;
+      ms.setCount('bar', barValue);
+      ms.setCount('foo', fooValue);
+
+      expect(ms.first()).equal('foo');
+      expect(ms.firstEntry()).deep.equal({ key: 'foo', value: fooValue });
+
+      expect(ms.last()).equal('bar');
+      expect(ms.lastEntry()).deep.equal({ key: 'bar', value: barValue });
     });
   });
 });

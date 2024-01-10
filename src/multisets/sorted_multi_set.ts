@@ -1,5 +1,5 @@
 import { Count, MapBasedMultiSet } from './map_based_multi_set';
-import { SortedMap, SortedMapOptions } from '../maps';
+import { MapEntry, SortedMap, SortedMapOptions } from '../maps';
 
 export abstract class SortedMultiSet<E> extends MapBasedMultiSet<E> {
   constructor(
@@ -13,21 +13,21 @@ export abstract class SortedMultiSet<E> extends MapBasedMultiSet<E> {
     return this.map as SortedMap<E, Count>;
   }
 
-  firstEntry() {
+  firstEntry(): MapEntry<E, number> | undefined {
     const e = this.delegate().firstEntry();
     return e && { key: e.key, value: e.value.count };
   }
 
-  lastEntry() {
+  lastEntry(): MapEntry<E, number> | undefined {
     const e = this.delegate().lastEntry();
     return e && { key: e.key, value: e.value.count };
   }
 
-  firstKey() {
+  first(): E | undefined {
     return this.delegate().firstKey();
   }
 
-  lastKey() {
+  last(): E | undefined {
     return this.delegate().lastKey();
   }
 

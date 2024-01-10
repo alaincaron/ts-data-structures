@@ -26,11 +26,11 @@ export abstract class SortedMultiMap<K, V> extends MapBasedMultiMap<K, V> {
     return e && { key: e.key, value: e.value.clone() };
   }
 
-  firstKey() {
+  firstKey(): K | undefined {
     return this.delegate().firstKey();
   }
 
-  lastKey() {
+  lastKey(): K | undefined {
     return this.delegate().lastKey();
   }
 

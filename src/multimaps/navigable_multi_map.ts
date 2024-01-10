@@ -15,47 +15,47 @@ export abstract class NavigableMultiMap<K, V> extends SortedMultiMap<K, V> {
     return this.map as NavigableMap<K, Collection<V>>;
   }
 
-  lowerKey(key: K) {
+  lowerKey(key: K): K | undefined {
     return this.delegate().lowerKey(key);
   }
 
-  lowerEntry(key: K) {
+  lowerEntry(key: K): MapEntry<K, Collection<V>> | undefined {
     const e = this.delegate().lowerEntry(key);
     return e && { key: e.key, value: e.value.clone() };
   }
 
-  higherKey(key: K) {
+  higherKey(key: K): K | undefined {
     return this.delegate().higherKey(key);
   }
 
-  higherEntry(key: K) {
+  higherEntry(key: K): MapEntry<K, Collection<V>> | undefined {
     const e = this.delegate().higherEntry(key);
     return e && { key: e.key, value: e.value.clone() };
   }
 
-  floorKey(key: K) {
+  floorKey(key: K): K | undefined {
     return this.delegate().floorKey(key);
   }
 
-  floorEntry(key: K) {
+  floorEntry(key: K): MapEntry<K, Collection<V>> | undefined {
     const e = this.delegate().floorEntry(key);
     return e && { key: e.key, value: e.value.clone() };
   }
 
-  ceilingKey(key: K) {
+  ceilingKey(key: K): K | undefined {
     return this.delegate().ceilingKey(key);
   }
 
-  ceilingEntry(key: K) {
+  ceilingEntry(key: K): MapEntry<K, Collection<V>> | undefined {
     const e = this.delegate().ceilingEntry(key);
     return e && { key: e.key, value: e.value.clone() };
   }
 
-  pollFirstEntry() {
+  pollFirstEntry(): MapEntry<K, Collection<V>> | undefined {
     return this.delegate().pollFirstEntry();
   }
 
-  pollLastEntry() {
+  pollLastEntry(): MapEntry<K, Collection<V>> | undefined {
     return this.delegate().pollLastEntry();
   }
 
