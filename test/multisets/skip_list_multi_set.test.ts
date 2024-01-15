@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Functions, Generators } from 'ts-fluent-iterators';
+import { Comparators, Generators } from 'ts-fluent-iterators';
 import { OverflowException, SkipListMultiSet } from '../../src';
 
 describe('SkipListMultiSet', () => {
@@ -466,7 +466,7 @@ describe('SkipListMultiSet', () => {
   });
 
   it('should respect the passed comparator', () => {
-    const ms = new SkipListMultiSet<string>({ comparator: Functions.reverseComparator });
+    const ms = new SkipListMultiSet<string>({ comparator: Comparators.reverseComparator });
     const barValue = 4;
     const fooValue = 5;
     ms.setCount('bar', barValue);

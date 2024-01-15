@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Functions, Generators } from 'ts-fluent-iterators';
+import { Comparators, Generators } from 'ts-fluent-iterators';
 import { AvlTreeMultiSet, OverflowException } from '../../src';
 
 describe('AvlTreeMultiSet', () => {
@@ -487,7 +487,7 @@ describe('AvlTreeMultiSet', () => {
     });
 
     it('should respect the passed comparator', () => {
-      const ms = new AvlTreeMultiSet<string>({ comparator: Functions.reverseComparator });
+      const ms = new AvlTreeMultiSet<string>({ comparator: Comparators.reverseComparator });
       const barValue = 4;
       const fooValue = 5;
       ms.setCount('bar', barValue);

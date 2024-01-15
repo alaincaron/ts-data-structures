@@ -2,7 +2,7 @@
   "cache": false,
   "check-coverage": false,
   "extension": [".ts"],
-  "include": ["**/*.js", "**/*.ts"],
+  "include": ["src/**/*.js", "src/**/*.ts"],
   "exclude": ["dist/**", "coverage/**", "node_modules/**", "test/**", "benchmark/**", "src/**/index.ts"],
   "sourceMap": true,
   "reporter": ["html", "text", "text-summary"],

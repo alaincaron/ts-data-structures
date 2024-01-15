@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Functions } from 'ts-fluent-iterators';
+import { Comparators } from 'ts-fluent-iterators';
 import { list } from './helper';
 import { Collection, MapEntry, OverflowException, SkipListMultiMap } from '../../src';
 
@@ -338,7 +338,7 @@ describe('SkipListMultiMap', () => {
   });
 
   it('should respect the passed comparator', () => {
-    const map = new SkipListMultiMap<string, number>({ comparator: Functions.reverseComparator });
+    const map = new SkipListMultiMap<string, number>({ comparator: Comparators.reverseComparator });
     map.put('bar', 1);
     map.put('foo', 2);
     map.put('bar', 3);

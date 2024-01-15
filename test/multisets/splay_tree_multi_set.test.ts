@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Functions, Generators } from 'ts-fluent-iterators';
+import { Comparators, Generators } from 'ts-fluent-iterators';
 import { OverflowException, SplayTreeMultiSet } from '../../src';
 
 describe('SplayTreeMultiSet', () => {
@@ -466,7 +466,7 @@ describe('SplayTreeMultiSet', () => {
   });
 
   it('should respect the passed comparator', () => {
-    const ms = new SplayTreeMultiSet<string>({ comparator: Functions.reverseComparator });
+    const ms = new SplayTreeMultiSet<string>({ comparator: Comparators.reverseComparator });
     const barValue = 4;
     const fooValue = 5;
     ms.setCount('bar', barValue);

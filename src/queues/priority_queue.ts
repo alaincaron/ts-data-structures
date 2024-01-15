@@ -1,4 +1,4 @@
-import { Comparator, Functions, Predicate } from 'ts-fluent-iterators';
+import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
 import { BoundedQueue, QueueOptions } from './queue';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { nextPowerOfTwo } from '../utils';
@@ -26,7 +26,7 @@ export class PriorityQueue<E> extends BoundedQueue<E> {
       if (options.comparator) this.comparator = options.comparator;
       this.buffer = [];
     }
-    this.comparator ??= Functions.defaultComparator;
+    this.comparator ??= Comparators.defaultComparator;
   }
 
   static create<E>(initializer?: number | (PriorityQueueOptions<E> & CollectionInitializer<E>)): PriorityQueue<E> {

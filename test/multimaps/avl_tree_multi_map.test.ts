@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Functions } from 'ts-fluent-iterators';
+import { Comparators } from 'ts-fluent-iterators';
 import { list } from './helper';
 import { AvlTreeMultiMap, Collection, MapEntry, OverflowException } from '../../src';
 
@@ -371,7 +371,7 @@ describe('AvlTreeMultiMap', () => {
     });
 
     it('should respect the passed comparator', () => {
-      const map = new AvlTreeMultiMap<string, number>({ comparator: Functions.reverseComparator });
+      const map = new AvlTreeMultiMap<string, number>({ comparator: Comparators.reverseComparator });
       map.put('bar', 1);
       map.put('foo', 2);
       map.put('bar', 3);

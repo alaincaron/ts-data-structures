@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Functions } from 'ts-fluent-iterators';
+import { CollisionHandlers } from 'ts-fluent-iterators';
 import { HashMap, OpenHashMap, openHashMapCollector } from '../../src';
 
 describe('OpenHashMapCollector', () => {
@@ -25,7 +25,7 @@ describe('OpenHashMapCollector', () => {
 
   it('should throw on collision', () => {
     const map = new OpenHashMap();
-    const collector = openHashMapCollector({ arg: map, collisionHandler: Functions.CollisionHandlers.reject });
+    const collector = openHashMapCollector({ arg: map, collisionHandler: CollisionHandlers.reject });
     collector.collect(['foo', 3]);
     expect(() => collector.collect(['foo', 6])).to.throw(Error);
     const result = collector.result;
@@ -35,7 +35,7 @@ describe('OpenHashMapCollector', () => {
   });
 
   it('should keep previous on collision', () => {
-    const collector = openHashMapCollector({ collisionHandler: Functions.CollisionHandlers.ignore });
+    const collector = openHashMapCollector({ collisionHandler: CollisionHandlers.ignore });
     collector.collect(['foo', 3]);
     collector.collect(['foo', 6]);
     const result = collector.result;
@@ -44,7 +44,7 @@ describe('OpenHashMapCollector', () => {
   });
 
   it('should overwrite previous value on collision', () => {
-    const collector = openHashMapCollector({ collisionHandler: Functions.CollisionHandlers.overwrite });
+    const collector = openHashMapCollector({ collisionHandler: CollisionHandlers.overwrite });
     collector.collect(['foo', 3]);
     collector.collect(['foo', 6]);
     const result = collector.result;

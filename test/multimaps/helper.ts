@@ -1,4 +1,4 @@
-import { Functions } from 'ts-fluent-iterators';
+import { Comparators } from 'ts-fluent-iterators';
 import { ArrayList } from '../../src';
 
 export function list<K>(...x: K[]) {
@@ -6,4 +6,4 @@ export function list<K>(...x: K[]) {
 }
 
 export const multiMapComparator = (x: [string, unknown], y: [string, unknown]) =>
-  Functions.defaultComparator(x[0], y[0]);
+  Comparators.defaultComparator(x[0], y[0]);

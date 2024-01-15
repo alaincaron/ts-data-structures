@@ -1,4 +1,4 @@
-import { Comparator, FluentIterator, Functions, Predicate } from 'ts-fluent-iterators';
+import { Comparator, Comparators, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry } from './map';
 import { CapacityMixin, ContainerOptions } from '../utils';
 
@@ -11,7 +11,7 @@ export abstract class SortedMap<K, V> extends IMap<K, V> {
 
   constructor(options?: number | SortedMapOptions<K>) {
     super(options);
-    this.comparator = (options as any)?.comparator ?? Functions.defaultComparator;
+    this.comparator = (options as any)?.comparator ?? Comparators.defaultComparator;
   }
 
   abstract firstEntry(): MapEntry<K, V> | undefined;
