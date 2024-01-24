@@ -1,0 +1,7 @@
+{
+  "disableSources": true,
+  "tsconfig": "tsconfig.json",
+  "excludePrivate": true,
+  "readme": "none",
+  "excludeNotDocumented": true
+}

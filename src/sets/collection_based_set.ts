@@ -72,7 +72,7 @@ export abstract class CollectionBasedSet<E> extends ISet<E> {
   addFully<E1 extends E>(items: CollectionLike<E1>): number {
     const itemsToAdd = getItemsToAdd(this, items);
     if (this.remaining() < itemsToAdd.size) throw new OverflowException();
-    return this.addPartially(itemsToAdd);
+    return this.offerPartially(itemsToAdd);
   }
 
   abstract clone(): CollectionBasedSet<E>;

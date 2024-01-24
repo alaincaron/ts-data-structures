@@ -71,11 +71,7 @@ export abstract class Queue<E> extends Collection<E> {
       if (!this.handleOverflow(excess, 'addFully')) return 0;
       if (this.remaining() < itemsToAdd) throw new OverflowException();
     }
-    return this.addPartially(items);
-  }
-
-  addPartially<E1 extends E>(items: IteratorLike<E1> | CollectionLike<E1>): number {
-    return super.addPartially(Iterators.take(Iterators.toIterator(items), this.remaining()));
+    return this.offerFully(items);
   }
 
   offerFully<E1 extends E>(items: CollectionLike<E1>): number {

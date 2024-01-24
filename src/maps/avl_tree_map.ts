@@ -350,7 +350,6 @@ export class AvlTreeMap<K, V> extends BoundedTreeMap<K, V> {
           newRoot.left = rightBalance(newRoot.left);
         }
       }
-      computeHeight(newRoot);
     } else {
       newRoot = leftMost(root.right!);
       newRoot.left = root.left;
@@ -363,9 +362,9 @@ export class AvlTreeMap<K, V> extends BoundedTreeMap<K, V> {
           newRoot.right = rightBalance(newRoot.right);
         }
       }
-      computeHeight(newRoot);
     }
 
+    computeHeight(newRoot);
     root.left = root.right = undefined;
     return newRoot;
   }

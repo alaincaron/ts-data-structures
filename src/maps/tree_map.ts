@@ -24,13 +24,10 @@ export abstract class TreeMap<K, V> extends NavigableMap<K, V> {
 
       if (c === 0) {
         break;
-      } else if (c > 0) {
-        // the searched node is greater, check whether the right
-        // subtree is empty or not
+      }
+      if (c > 0) {
         child = child.right;
       } else if (c < 0) {
-        // the searched node is smaller, check whether the left subtree
-        // is empty or not
         child = child.left;
       }
     }

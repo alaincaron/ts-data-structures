@@ -35,7 +35,7 @@ export abstract class ISet<E> extends Collection<E> {
   addFully<E1 extends E>(items: CollectionLike<E1>): number {
     const itemsToAdd = getItemsToAdd(this, items);
     if (this.remaining() < itemsToAdd.size) throw new OverflowException();
-    return this.addPartially(itemsToAdd);
+    return this.offerPartially(itemsToAdd);
   }
 
   abstract clone(): ISet<E>;
