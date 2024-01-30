@@ -284,10 +284,20 @@ export abstract class Collection<E> implements Iterable<E>, OptionsBuilder {
     return count;
   }
 
+  /**
+   * Removes all elements from this `Collection`
+   */
   abstract clear(): void;
 
-  containsAll<E1 extends E>(c: IteratorLike<E1>): boolean {
-    const iter = toIterator(c);
+  /**
+   * Returns true if this `Collection` contains all of the elements in the specified `IteratorLike`.
+   *
+   * @param iteratorLike The items to be checked for containment in this `Collection`.
+   *
+   * @returns true if this collection contains all of the elements in the specified `IteratorLike`
+   */
+  containsAll<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
+    const iter = toIterator(iteratorLike);
     for (;;) {
       const item = iter.next();
       if (item.done) return true;
@@ -295,16 +305,48 @@ export abstract class Collection<E> implements Iterable<E>, OptionsBuilder {
     }
   }
 
+  /**
+   * Removes all of this collection's elements that are also contained
+   * in the specified `Collection`. After this call returns, this
+   * `Collection` will contain no elements in common with the
+   * specified `Collection`.
+   *
+   * @param c `Collection` containing elements to be removed from this `Collection`.
+   *
+   * @returns The number of elements that were removed as a result of this call.
+   */
   removeAll(c: Collection<E>): number {
     return this.filter(e => !c.contains(e));
   }
 
+  /**
+   * Retains only the elements in this `Collection` that are contained
+   * in the specified `Collection`. In other words, removes from this
+   * `Collection all of its elements that are not contained in the
+   * specified `Collection`.
+   *
+   * @param c `Collection` containing elements to be retained in this `Collection`.
+   *
+   * @returns The number of elements that were removed as a result of this call.
+   */
   retainAll(c: Collection<E>): number {
     return this.filter(e => c.contains(e));
   }
 
+  /**
+   * Used to make this {@link Colleciton} being seen as an
+   * `Iterable<A>`. This allows them to be used in APIs expecting an
+   * `Iterable<A>`
+   */
   abstract [Symbol.iterator](): IterableIterator<E>;
 
+  /**
+   * Returns a @{link FluentIterator |
+   * https://github.com/alaincaron/ts-fluent-iterators/blob/main/docs/classes/FluentIterator.md}
+   * yielding all elements of this `Collection`.
+   *
+   * @returns a @{link FluentIterator | https://github.com/alaincaron/ts-fluent-iterators/blob/main/docs/classes/FluentIterator.md} yielding all elements of this `Collection`.
+   */
   iterator() {
     return new FluentIterator(this[Symbol.iterator]());
   }
