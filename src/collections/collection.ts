@@ -1,6 +1,7 @@
 import { FluentIterator, IteratorLike, Iterators, Mapper, Predicate, Reducer } from 'ts-fluent-iterators';
 import { toIterator } from 'ts-fluent-iterators/dist/lib/sync';
-import { CollectionInitializer, CollectionLike, getSize } from './types';
+import { getSize } from './helpers';
+import { CollectionInitializer, CollectionLike } from './types';
 import {
   CapacityMixin,
   ContainerOptions,
@@ -266,7 +267,7 @@ export abstract class Collection<E> implements Iterable<E>, OptionsBuilder {
    * Adds as many items as possible of the `container` to this
    * `Collection` as long there is remaining capaacity.  Items are
    * added one by one until all items are added or the `Collection` is
-   * {@link Collection.full | full}.
+   * {@link Collection.isFull | full}.
    *
    * @param container The container of items to add.
    *
@@ -334,39 +335,66 @@ export abstract class Collection<E> implements Iterable<E>, OptionsBuilder {
   }
 
   /**
-   * Used to make this {@link Colleciton} being seen as an
+   * Used to make this {@link Collection} being seen as an
    * `Iterable<A>`. This allows them to be used in APIs expecting an
    * `Iterable<A>`
    */
   abstract [Symbol.iterator](): IterableIterator<E>;
 
   /**
-   * Returns a @{link FluentIterator |
-   * https://github.com/alaincaron/ts-fluent-iterators/blob/main/docs/classes/FluentIterator.md}
+   * Returns a `FluentIterator` (
+   * https://github.com/alaincaron/ts-fluent-iterators/blob/main/docs/classes/FluentIterator.md)
    * yielding all elements of this `Collection`.
    *
-   * @returns a @{link FluentIterator | https://github.com/alaincaron/ts-fluent-iterators/blob/main/docs/classes/FluentIterator.md} yielding all elements of this `Collection`.
+   * @returns a `FluentIterator` yielding all elements of this `Collection`.
    */
   iterator() {
     return new FluentIterator(this[Symbol.iterator]());
   }
 
+  /**
+   * Returns a hashCode for this `Collection`
+   */
   abstract hashCode(): number;
+
+  /**
+   * Returns true if this collection is equal to the specified argument `other`.
+   */
   abstract equals(other: unknown): boolean;
 
+  /** * Returns a clone of this `Collection`.
+   *
+   * The clone `Collection` will have the same elements and capacity
+   as the original one and also all other settings returned by `{@link QSWCollection.buildOptions}.
+   */
   abstract clone(): Collection<E>;
 
+  /**
+   * Returns the options used to build this `Collection`.  This is
+   * used buildCollection to initialize the built `Collection` with
+   * the same options as the source `Collection`, e.g. in clone
+   * operation.
+   */
   buildOptions(): ContainerOptions {
     return {};
   }
 
+  /**
+   * Returns a JSON string representation of this `Collection`.
+   */
   toJson() {
     return iterableToJSON(this);
   }
 }
 
+/**
+ * A Collection with a capacity.
+ */
 export const BoundedCollection = CapacityMixin(Collection);
 
+/**
+ * Builds a `Collection`
+ */
 export function buildCollection<
   E,
   C extends Collection<E>,

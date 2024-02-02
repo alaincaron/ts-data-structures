@@ -1,5 +1,6 @@
 import { FluentIterator, IteratorLike, Iterators } from 'ts-fluent-iterators';
-import { Collection, CollectionLike, getSize } from '../collections';
+import { Collection, CollectionLike } from '../collections';
+import { getSize } from '../collections/helpers';
 import { CapacityMixin, ContainerOptions, hashIterableOrdered, OverflowException, UnderflowException } from '../utils';
 
 export type OverflowQueueStrategy = 'throw' | 'overwrite' | 'discard';
