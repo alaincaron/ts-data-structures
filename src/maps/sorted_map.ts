@@ -49,6 +49,20 @@ export abstract class SortedMap<K, V> extends IMap<K, V> {
     };
   }
 
+  abstract reverseEntryIterator(): FluentIterator<MapEntry<K, V>>;
+
+  reverseKeyIterator() {
+    return this.reverseEntryIterator().map(e => e.key);
+  }
+
+  reverseValueIterator() {
+    return this.reverseEntryIterator().map(e => e.value);
+  }
+
+  *reverseEntries(): IterableIterator<[K, V]> {
+    for (const e of this.reverseEntryIterator()) yield [e.key, e.value];
+  }
+
   abstract clone(): SortedMap<K, V>;
 }
 

@@ -135,6 +135,10 @@ export abstract class SortedMapBasedSet<E> extends MapBasedSet<E> implements Sor
     return this.delegate().lastKey();
   }
 
+  reverseIterator() {
+    return this.delegate().reverseKeyIterator();
+  }
+
   abstract clone(): SortedMapBasedSet<E>;
 }
 
@@ -169,10 +173,6 @@ export abstract class NavigableMapBasedSet<E> extends SortedMapBasedSet<E> imple
 
   pollLast() {
     return this.delegate().pollLastEntry()?.key;
-  }
-
-  reverseIterator() {
-    return this.delegate().reverseKeyIterator();
   }
 
   abstract clone(): NavigableMapBasedSet<E>;

@@ -1,4 +1,3 @@
-import { FluentIterator } from 'ts-fluent-iterators';
 import { MapEntry } from './map';
 import { SortedMap, SortedMapOptions } from './sorted_map';
 import { CapacityMixin } from '../utils';
@@ -35,20 +34,6 @@ export abstract class NavigableMap<K, V> extends SortedMap<K, V> {
 
   abstract pollFirstEntry(): MapEntry<K, V> | undefined;
   abstract pollLastEntry(): MapEntry<K, V> | undefined;
-
-  abstract reverseEntryIterator(): FluentIterator<MapEntry<K, V>>;
-
-  reverseKeyIterator() {
-    return this.reverseEntryIterator().map(e => e.key);
-  }
-
-  reverseValueIterator() {
-    return this.reverseEntryIterator().map(e => e.value);
-  }
-
-  *reverseEntries(): IterableIterator<[K, V]> {
-    for (const e of this.reverseEntryIterator()) yield [e.key, e.value];
-  }
 
   abstract clone(): NavigableMap<K, V>;
 }

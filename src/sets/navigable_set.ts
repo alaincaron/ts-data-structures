@@ -1,4 +1,3 @@
-import { FluentIterator } from 'ts-fluent-iterators';
 import { SortedSet } from './sorted_set';
 
 export interface NavigableSet<E> extends SortedSet<E> {
@@ -9,6 +8,4 @@ export interface NavigableSet<E> extends SortedSet<E> {
 
   pollFirst(): E | undefined;
   pollLast(): E | undefined;
-
-  reverseIterator(): FluentIterator<E>;
 }
