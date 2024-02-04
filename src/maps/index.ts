@@ -10,3 +10,4 @@ export * from './skip_list_map';
 export * from './sorted_map';
 export * from './splay_tree_map';
 export * from './tree_map';
+export * from './trie_map';

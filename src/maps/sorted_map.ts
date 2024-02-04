@@ -14,8 +14,13 @@ export abstract class SortedMap<K, V> extends IMap<K, V> {
     this.comparator = (options as any)?.comparator ?? Comparators.defaultComparator;
   }
 
-  abstract firstEntry(): MapEntry<K, V> | undefined;
-  abstract lastEntry(): MapEntry<K, V> | undefined;
+  firstEntry(): MapEntry<K, V> | undefined {
+    return this.entryIterator()?.first();
+  }
+
+  lastEntry(): MapEntry<K, V> | undefined {
+    return this.reverseEntryIterator()?.first();
+  }
 
   firstKey() {
     return this.firstEntry()?.key;

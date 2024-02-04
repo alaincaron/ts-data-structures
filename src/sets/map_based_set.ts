@@ -16,6 +16,7 @@ import {
   SortedMap,
   SortedMapOptions,
   SplayTreeMap,
+  TrieMap,
 } from '../maps';
 import { NavigableMap } from '../maps/navigable_map';
 
@@ -87,7 +88,10 @@ export class HashSet<E> extends MapBasedSet<E> {
   }
 
   clone(): HashSet<E> {
-    return HashSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
+    return HashSet.create({
+      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
+      ...this.buildOptions(),
+    });
   }
 }
 
@@ -101,7 +105,10 @@ export class LinkedHashSet<E> extends MapBasedSet<E> {
   }
 
   clone(): LinkedHashSet<E> {
-    return LinkedHashSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
+    return LinkedHashSet.create({
+      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
+      ...this.buildOptions(),
+    });
   }
 }
 
@@ -114,7 +121,10 @@ export class OpenHashSet<E> extends MapBasedSet<E> {
   }
 
   clone(): OpenHashSet<E> {
-    return OpenHashSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
+    return OpenHashSet.create({
+      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
+      ...this.buildOptions(),
+    });
   }
 }
 
@@ -188,7 +198,10 @@ export class AvlTreeSet<E> extends NavigableMapBasedSet<E> {
   }
 
   clone(): AvlTreeSet<E> {
-    return AvlTreeSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
+    return AvlTreeSet.create({
+      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
+      ...this.buildOptions(),
+    });
   }
 }
 
@@ -202,7 +215,10 @@ export class SplayTreeSet<E> extends NavigableMapBasedSet<E> {
   }
 
   clone(): SplayTreeSet<E> {
-    return SplayTreeSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
+    return SplayTreeSet.create({
+      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
+      ...this.buildOptions(),
+    });
   }
 }
 
@@ -220,6 +236,26 @@ export class SkipListSet<E> extends NavigableMapBasedSet<E> {
   }
 
   clone(): SkipListSet<E> {
-    return SkipListSet.create({ initial: { length: this.delegate().size(), seed: this.delegate().keys() } });
+    return SkipListSet.create({
+      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
+      ...this.buildOptions(),
+    });
+  }
+}
+
+export class TrieSet extends SortedMapBasedSet<string> {
+  constructor(options?: number | SortedMapOptions<string>) {
+    super(new TrieMap<boolean>(options));
+  }
+
+  static create(initializer?: number | (SortedMapOptions<string> & CollectionInitializer<string>)): TrieSet {
+    return buildCollection<string, TrieSet>(TrieSet, initializer);
+  }
+
+  clone(): TrieSet {
+    return TrieSet.create({
+      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
+      ...this.buildOptions(),
+    });
   }
 }
