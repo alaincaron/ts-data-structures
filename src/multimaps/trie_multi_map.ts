@@ -1,11 +1,62 @@
 import { buildMultiMap, MultiMapInitializer } from './multi_map';
 import { SortedMultiMap } from './sorted_multi_map';
 import { SortedMultiMapOptions } from './sorted_multi_map';
-import { TrieMap } from '../maps';
+import { Collection } from '../collections';
+import { MapEntry, TrieMap } from '../maps';
 
 export class TrieMultiMap<V> extends SortedMultiMap<string, V> {
   constructor(options?: number | SortedMultiMapOptions<string, V>) {
     super(new TrieMap(options), options);
+  }
+
+  protected delegate() {
+    return this.map as TrieMap<Collection<V>>;
+  }
+
+  firstEntry(): MapEntry<string, Collection<V>> | undefined {
+    const e = this.delegate().firstEntry();
+    return e && { key: e.key, value: e.value.clone() };
+  }
+
+  lastEntry(): MapEntry<string, Collection<V>> | undefined {
+    const e = this.delegate().lastEntry();
+    return e && { key: e.key, value: e.value.clone() };
+  }
+
+  firstKey(): string | undefined {
+    return this.delegate().firstKey();
+  }
+
+  lastKey(): string | undefined {
+    return this.delegate().lastKey();
+  }
+
+  getHeight() {
+    return this.delegate().getHeight();
+  }
+
+  hasPrefix(input: string, pure: boolean = true) {
+    return this.delegate().hasPrefix(input, pure);
+  }
+
+  hasCommonPrefix(input: string) {
+    return this.delegate().hasCommonPrefix(input);
+  }
+
+  getLongestCommonPrefix() {
+    return this.delegate().getLongestCommonPrefix();
+  }
+
+  *words(prefix: string) {
+    for (const w of this.delegate().words(prefix)) {
+      yield w.key;
+    }
+  }
+
+  wordIterator(prefix: string) {
+    return this.delegate()
+      .wordIterator(prefix)
+      .map(x => x.key);
   }
 
   static create<V>(

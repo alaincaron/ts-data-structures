@@ -245,7 +245,39 @@ export class SkipListSet<E> extends NavigableMapBasedSet<E> {
 
 export class TrieSet extends SortedMapBasedSet<string> {
   constructor(options?: number | SortedMapOptions<string>) {
-    super(new TrieMap<boolean>(options));
+    super(new TrieMap(options));
+  }
+
+  protected delegate() {
+    return super.delegate() as TrieMap<boolean>;
+  }
+
+  getHeight() {
+    return this.delegate().getHeight();
+  }
+
+  hasPrefix(input: string, pure: boolean = true) {
+    return this.delegate().hasPrefix(input, pure);
+  }
+
+  hasCommonPrefix(input: string) {
+    return this.delegate().hasCommonPrefix(input);
+  }
+
+  getLongestCommonPrefix() {
+    return this.delegate().getLongestCommonPrefix();
+  }
+
+  *words(prefix: string) {
+    for (const w of this.delegate().words(prefix)) {
+      yield w.key;
+    }
+  }
+
+  wordIterator(prefix: string) {
+    return this.delegate()
+      .wordIterator(prefix)
+      .map(x => x.key);
   }
 
   static create(initializer?: number | (SortedMapOptions<string> & CollectionInitializer<string>)): TrieSet {
