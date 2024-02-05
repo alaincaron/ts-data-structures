@@ -1,4 +1,3 @@
-import { FluentIterator } from 'ts-fluent-iterators';
 import { Count } from './map_based_multi_set';
 import { SortedMultiSet } from './sorted_multi_set';
 import { MapEntry, NavigableMap, SortedMapOptions } from '../maps';
@@ -73,16 +72,6 @@ export abstract class NavigableMultiSet<E> extends SortedMultiSet<E> {
     if (!e) return undefined;
     this.removeItem(e.key);
     return e.key;
-  }
-
-  reverseEntryIterator(): FluentIterator<MapEntry<E, number>> {
-    return this.delegate()
-      .reverseEntryIterator()
-      .map(e => ({ key: e.key, value: e.value.count }));
-  }
-
-  reverseIterator(): FluentIterator<E> {
-    return this.delegate().reverseKeyIterator();
   }
 
   abstract clone(): NavigableMultiSet<E>;

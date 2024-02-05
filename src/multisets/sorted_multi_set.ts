@@ -1,3 +1,4 @@
+import { FluentIterator } from 'ts-fluent-iterators';
 import { Count, MapBasedMultiSet } from './map_based_multi_set';
 import { MapEntry, SortedMap, SortedMapOptions } from '../maps';
 
@@ -29,6 +30,16 @@ export abstract class SortedMultiSet<E> extends MapBasedMultiSet<E> {
 
   last(): E | undefined {
     return this.delegate().lastKey();
+  }
+
+  reverseEntryIterator(): FluentIterator<MapEntry<E, number>> {
+    return this.delegate()
+      .reverseEntryIterator()
+      .map(e => ({ key: e.key, value: e.value.count }));
+  }
+
+  reverseIterator(): FluentIterator<E> {
+    return this.delegate().reverseKeyIterator();
   }
 
   abstract clone(): SortedMultiSet<E>;

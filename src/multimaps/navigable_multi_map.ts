@@ -1,4 +1,3 @@
-import { Collectors, FluentIterator } from 'ts-fluent-iterators';
 import { SortedMultiMap, SortedMultiMapOptions } from './sorted_multi_map';
 import { Collection } from '../collections';
 import { MapEntry, NavigableMap } from '../maps';
@@ -57,20 +56,6 @@ export abstract class NavigableMultiMap<K, V> extends SortedMultiMap<K, V> {
 
   pollLastEntry(): MapEntry<K, Collection<V>> | undefined {
     return this.delegate().pollLastEntry();
-  }
-
-  reverseEntryIterator(): FluentIterator<MapEntry<K, Collection<V>>> {
-    return this.delegate()
-      .reverseEntryIterator()
-      .map(e => ({ key: e.key, value: e.value.clone() }));
-  }
-
-  reverseKeyIterator(): FluentIterator<K> {
-    return this.delegate().reverseKeyIterator();
-  }
-
-  reverseValueIterator(): FluentIterator<V> {
-    return this.delegate().reverseValueIterator().collectTo(new Collectors.FlattenCollector());
   }
 
   abstract clone(): NavigableMultiMap<K, V>;
