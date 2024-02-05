@@ -324,36 +324,6 @@ describe('LinkedList', () => {
     });
   });
 
-  describe('all', () => {
-    it('should return true on empty', () => {
-      const list = new LinkedList();
-      expect(list.all(_ => false)).to.be.true;
-    });
-    it('should return true if predicate is true for all elements', () => {
-      const list = LinkedList.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(list.all(x => x >= 0)).to.be.true;
-    });
-    it('should return false if predicate is false for at least one element', () => {
-      const list = LinkedList.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(list.all(x => x < 9)).to.be.false;
-    });
-  });
-
-  describe('some', () => {
-    it('should return false on empty', () => {
-      const list = new LinkedList();
-      expect(list.some(_ => true)).to.be.false;
-    });
-    it('should return true if predicate is true for at least one element', () => {
-      const list = LinkedList.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(list.some(x => x === 9)).to.be.true;
-    });
-    it('should return false if predicate is false for all elements', () => {
-      const list = LinkedList.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(list.some(x => x > 9)).to.be.false;
-    });
-  });
-
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
       const list = LinkedList.create(2);
@@ -390,56 +360,6 @@ describe('LinkedList', () => {
       expect(list.size()).equal(3);
       expect(list.offerPartially(LinkedList.create({ initial: data }))).equal(3);
       expect(list.size()).equal(6);
-    });
-  });
-
-  describe('forEach', () => {
-    it('should execute for each item', () => {
-      const data = [1, 2, 3];
-      const list = LinkedList.create({ initial: data });
-      const x: number[] = [];
-      list.forEach(e => x.push(e));
-      expect(list.toArray()).to.deep.equal(x);
-    });
-    it('should do nothing if empty', () => {
-      const list = new LinkedList();
-      list.forEach(_ => {
-        throw new Error('Should not be invoked');
-      });
-    });
-  });
-
-  describe('fold', () => {
-    it('should compute the sum with an initial value', () => {
-      const data = [1, 2, 3];
-      const list = LinkedList.create({ initial: data });
-      const sum = list.fold((a, b) => a + b, 1);
-      expect(sum).equal(7);
-    });
-    it('should return initial value if empty', () => {
-      const list = LinkedList.create<number>();
-      const sum = list.fold((a, b) => a + b, 1);
-      expect(sum).equal(1);
-    });
-  });
-
-  describe('reduce', () => {
-    it('should compute the sum with an initial value', () => {
-      const data = [1, 2, 3];
-      const list = LinkedList.create({ initial: data });
-      const sum = list.reduce((a, b) => a + b, 1);
-      expect(sum).equal(7);
-    });
-    it('should compute the sum without an initial value', () => {
-      const data = [1, 2, 3];
-      const list = LinkedList.create({ initial: data });
-      const sum = list.reduce((a, b) => a + b);
-      expect(sum).equal(6);
-    });
-    it('should return undefined if empty and no initial value', () => {
-      const list = LinkedList.create<number>();
-      const sum = list.reduce((a, b: number) => a + b);
-      expect(sum).to.be.undefined;
     });
   });
 

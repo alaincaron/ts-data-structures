@@ -1,4 +1,4 @@
-import { FluentIterator, IteratorLike, Iterators, Mapper, Predicate, Reducer } from 'ts-fluent-iterators';
+import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
 import { toIterator } from 'ts-fluent-iterators/dist/lib/sync';
 import { getSize } from './helpers';
 import { CollectionInitializer, CollectionLike } from './types';
@@ -158,87 +158,6 @@ export abstract class Collection<E> implements Iterable<E>, OptionsBuilder {
    */
   find(predicate: Predicate<E>): E | undefined {
     return this.iterator().filter(predicate).first();
-  }
-
-  /**
-   * Returns `true` if the `predicate` evaluates to `true` for all items of this `Collection`
-   *
-   * @param predicate the predicate being evaluated
-   *
-   * @returns `true` if the `predicate` evaluates to true for all
-   * items of this `Collection` or `false` otherwise
-   */
-  all(predicate: Predicate<E>) {
-    return this.iterator().all(predicate);
-  }
-
-  /**
-   * Returns `true` if the `predicate` evaluates to `true` for at least one item of this `Collection`
-   *
-   * @param predicate the predicate being evaluated
-   *
-   * @returns `true` if the `predicate` evaluates to true for at least
-   * one item of this `Collection` or `false` otherwise
-   */
-  some(predicate: Predicate<E>) {
-    return this.iterator().some(predicate);
-  }
-
-  /**
-   * Applies the {@link Mapper | mapper} to each element of this `Collection`
-   *
-   * @param mapper the operation to be invoked on each element.
-   * @remarks The results of invoking the `mapper` are ignored unless it throws.
-   * @example
-   * collection.forEach(console.log)
-   */
-  forEach(mapper: Mapper<E, any>) {
-    this.iterator().forEach(mapper);
-  }
-
-  /**
-   * Executes the `Reducer` function on each element
-   * of this `Collection`, passing in
-   * the return value from the calculation on the preceding element. The
-   * final result of running the reducer across all elements of this `Collection`
-   * is a single value.
-
-   * @paramType B the type into which the elements are being folded to
-   * @param reducer The reducer to be applied at each iteration.
-   * @param initialValue The value of the accumulator to be used in the first call to `reducer`
-
-   * @remarks
-   * If the `Collection` is empty, `initialValue` is returned.
-   *
-   * @example
-   * To compute the sum of elements of a collection:
-   * ```
-   * const col: Collection<number> =  ...
-   * col.fold((acc, x) => acc + x, 0)
-   * ```
-   */
-  fold<B>(reducer: Reducer<E, B>, initialValue: B): B {
-    return this.iterator().fold(reducer, initialValue);
-  }
-
-  /**
-   * Special case of {@link Collection.fold} where items being iterated on and the accumulator are of the same type.
-
-   * @param reducer The reducer to be applied at each iteration.
-   * @param initialValue The value of the accumulator to be used in the first call to `reducer`. If omitted, the first element of this `Collection` is used.
-
-   * @remarks
-   * If this `Collection` is empty, `initialValue` is returned.
-   *
-   * @example
-   * To compute the sum of elements of a `Collection`:
-   * ```
-   * const col: Collection<number> = ....
-   * col.reduce((acc, x) => acc + x)
-   * ```
-   */
-  reduce(reducer: Reducer<E, E>, initialValue?: E): E | undefined {
-    return this.iterator().reduce(reducer, initialValue);
   }
 
   /**

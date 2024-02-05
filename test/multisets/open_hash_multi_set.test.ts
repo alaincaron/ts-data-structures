@@ -222,36 +222,6 @@ describe('OpenHashMultiSet', () => {
     });
   });
 
-  describe('all', () => {
-    it('should return true on empty', () => {
-      const set = new OpenHashMultiSet();
-      expect(set.all(_ => false)).to.be.true;
-    });
-    it('should return true if predicate is true for all elements', () => {
-      const set = OpenHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(set.all(x => x >= 0)).to.be.true;
-    });
-    it('should return false if predicate is false for at least one element', () => {
-      const set = OpenHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(set.all(x => x < 9)).to.be.false;
-    });
-  });
-
-  describe('some', () => {
-    it('should return false on empty', () => {
-      const set = new OpenHashMultiSet();
-      expect(set.some(_ => true)).to.be.false;
-    });
-    it('should return true if predicate is true for at least one element', () => {
-      const set = OpenHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(set.some(x => x === 9)).to.be.true;
-    });
-    it('should return false if predicate is false for all elements', () => {
-      const set = OpenHashMultiSet.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(set.some(x => x > 9)).to.be.false;
-    });
-  });
-
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
       const set = new OpenHashMultiSet(2);
@@ -297,56 +267,6 @@ describe('OpenHashMultiSet', () => {
       expect(set.isEmpty()).to.be.false;
       expect(set.size()).equal(data.length);
       expect(set.toArray().sort()).to.deep.equal(data.sort());
-    });
-  });
-
-  describe('forEach', () => {
-    it('should execute for each item', () => {
-      const data = [1, 2, 3];
-      const set = OpenHashMultiSet.create({ initial: data });
-      const x: number[] = [];
-      set.forEach(e => x.push(e));
-      expect(set.toArray()).to.deep.equal(x);
-    });
-    it('should do nothing if empty', () => {
-      const set = new OpenHashMultiSet();
-      set.forEach(_ => {
-        throw new Error('Should not be invoked');
-      });
-    });
-  });
-
-  describe('fold', () => {
-    it('should compute the sum with an initial value', () => {
-      const data = [1, 2, 3];
-      const set = OpenHashMultiSet.create({ initial: data });
-      const sum = set.fold((a, b) => a + b, 1);
-      expect(sum).equal(7);
-    });
-    it('should return initial value if empty', () => {
-      const set = new OpenHashMultiSet<number>();
-      const sum = set.fold((a, b) => a + b, 1);
-      expect(sum).equal(1);
-    });
-  });
-
-  describe('reduce', () => {
-    it('should compute the sum with an initial value', () => {
-      const data = [1, 2, 3];
-      const set = OpenHashMultiSet.create({ initial: data });
-      const sum = set.reduce((a, b) => a + b, 1);
-      expect(sum).equal(7);
-    });
-    it('should compute the sum without an initial value', () => {
-      const data = [1, 2, 3];
-      const set = OpenHashMultiSet.create({ initial: data });
-      const sum = set.reduce((a, b) => a + b);
-      expect(sum).equal(6);
-    });
-    it('should return undefined if empty and no initial value', () => {
-      const set = new OpenHashMultiSet<number>();
-      const sum = set.reduce((a, b: number) => a + b);
-      expect(sum).to.be.undefined;
     });
   });
 

@@ -385,36 +385,6 @@ describe('ArrayDeque', () => {
     });
   });
 
-  describe('all', () => {
-    it('should return true on empty', () => {
-      const deque = new ArrayDeque();
-      expect(deque.all(_ => false)).to.be.true;
-    });
-    it('should return true if predicate is true for all elements', () => {
-      const deque = ArrayDeque.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(deque.all(x => x >= 0)).to.be.true;
-    });
-    it('should return false if predicate is false for at least one element', () => {
-      const deque = ArrayDeque.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(deque.all(x => x < 9)).to.be.false;
-    });
-  });
-
-  describe('some', () => {
-    it('should return false on empty', () => {
-      const deque = new ArrayDeque();
-      expect(deque.some(_ => true)).to.be.false;
-    });
-    it('should return true if predicate is true for at least one element', () => {
-      const deque = ArrayDeque.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(deque.some(x => x === 9)).to.be.true;
-    });
-    it('should return false if predicate is false for all elements', () => {
-      const deque = ArrayDeque.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(deque.some(x => x > 9)).to.be.false;
-    });
-  });
-
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
       const deque = new ArrayDeque(2);
@@ -480,61 +450,6 @@ describe('ArrayDeque', () => {
       expect(deque.size()).equal(3);
       expect(deque.offerPartially(ArrayDeque.create({ initial: data }))).equal(3);
       expect(deque.size()).equal(6);
-    });
-  });
-
-  describe('forEach', () => {
-    it('should execute for each item', () => {
-      const data = [1, 2, 3];
-      const deque = ArrayDeque.create({ initial: data });
-      const x: number[] = [];
-      deque.forEach(e => x.push(e));
-      expect(deque.toArray()).to.deep.equal(x);
-    });
-    it('should do nothing if empty', () => {
-      const deque = new ArrayDeque();
-      deque.forEach(_ => {
-        throw new Error('Should not be invoked');
-      });
-    });
-  });
-
-  describe('fold', () => {
-    it('should compute the sum with an initial value', () => {
-      const data = [1, 2, 3];
-      const deque = ArrayDeque.create({ initial: data });
-      const sum = deque.fold((a, b) => a + b, 1);
-      expect(sum).equal(7);
-    });
-    it('should return initial value if empty', () => {
-      const deque = new ArrayDeque<number>();
-      const sum = deque.fold((a, b) => a + b, 1);
-      expect(sum).equal(1);
-    });
-  });
-
-  describe('reduce', () => {
-    it('should compute the sum with an initial value', () => {
-      const data = [1, 2, 3];
-      const deque = ArrayDeque.create({ initial: data });
-      const sum = deque.reduce((a, b) => a + b, 1);
-      expect(sum).equal(7);
-    });
-    it('should return initial value if empty', () => {
-      const deque = new ArrayDeque<number>();
-      const sum = deque.fold((a, b) => a + b, 1);
-      expect(sum).equal(1);
-    });
-    it('should compute the sum without an initial value', () => {
-      const data = [1, 2, 3];
-      const deque = ArrayDeque.create({ initial: data });
-      const sum = deque.reduce((a, b) => a + b);
-      expect(sum).equal(6);
-    });
-    it('should return undefined if empty and no initial value', () => {
-      const deque = new ArrayDeque<number>();
-      const sum = deque.reduce((a, b: number) => a + b);
-      expect(sum).to.be.undefined;
     });
   });
 

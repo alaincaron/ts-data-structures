@@ -215,36 +215,6 @@ describe('PriorityQueue', () => {
     });
   });
 
-  describe('all', () => {
-    it('should return true on empty', () => {
-      const queue = new PriorityQueue();
-      expect(queue.all(_ => false)).to.be.true;
-    });
-    it('should return true if predicate is true for all elements', () => {
-      const queue = PriorityQueue.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(queue.all(x => x >= 0)).to.be.true;
-    });
-    it('should return false if predicate is false for at least one element', () => {
-      const queue = PriorityQueue.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(queue.all(x => x < 9)).to.be.false;
-    });
-  });
-
-  describe('some', () => {
-    it('should return false on empty', () => {
-      const queue = new PriorityQueue();
-      expect(queue.some(_ => true)).to.be.false;
-    });
-    it('should return true if predicate is true for at least one element', () => {
-      const queue = PriorityQueue.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(queue.some(x => x === 9)).to.be.true;
-    });
-    it('should return false if predicate is false for all elements', () => {
-      const queue = PriorityQueue.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(queue.some(x => x > 9)).to.be.false;
-    });
-  });
-
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
       const queue = new PriorityQueue(2);
