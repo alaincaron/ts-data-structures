@@ -133,6 +133,34 @@ export class TrieMap<V> extends BoundedSortedMap<string, V> {
     return TrieMap.create({ initial: this });
   }
 
+  entries(): IterableIterator<[string, V]> {
+    function* helper(prefix: string, node: TrieMapNode<V>): IterableIterator<[string, V]> {
+      if (node.value !== undefined) {
+        yield [prefix, node.value];
+      }
+      for (const [c, child] of node.children.entries()) {
+        yield* helper(prefix + c, child);
+      }
+    }
+    return helper('', this.root);
+  }
+
+  *values(): IterableIterator<V> {
+    for (const [_, v] of this.entries()) yield v;
+  }
+
+  *keys(): IterableIterator<string> {
+    for (const [k, _] of this.entries()) yield k;
+  }
+
+  valueIterator() {
+    return new FluentIterator(this.values());
+  }
+
+  keyIterator() {
+    return new FluentIterator(this.keys());
+  }
+
   entryIterator() {
     return new FluentIterator(this.entryGenerator());
   }
@@ -253,35 +281,19 @@ export class TrieMap<V> extends BoundedSortedMap<string, V> {
    * Space Complexity: O(w * l) - The space required for the output array.
    *
    * returns an `Iterator` of all words in a Trie data structure that start with a given prefix.
-   * @param {string} prefix - The `prefix` parameter is a string that represents the prefix that we want to search for in the
+   * @param prefix - The `prefix` parameter is a string that represents the prefix that we want to search for in the
    * trie. It is an optional parameter, so if no prefix is provided, it will default to an empty string.
-   * @returns {string[]} an array of strings.
+   * @returns an `Iterator` of the entries
    */
-  private *wordGenerator(prefix: string): IterableIterator<TrieMapEntry<V>> {
-    function* dfs(node: TrieMapNode<V>, word: string): IterableIterator<TrieMapEntry<V>> {
-      if (node.value !== undefined) {
-        yield new TrieMapEntry(word, node);
-      }
-      for (const [char, child] of node.children) {
-        yield* dfs(child, word + char);
-      }
-    }
-
-    const startNode = this.getNodePrefix(prefix);
-    if (!startNode) return;
-
-    yield* dfs(startNode, prefix);
-  }
-
   words(prefix: string) {
-    return this.wordGenerator(prefix);
+    return this.entryGenerator(prefix);
   }
 
   wordIterator(prefix: string) {
-    return new FluentIterator(this.wordGenerator(prefix));
+    return new FluentIterator(this.entryGenerator(prefix));
   }
 
-  private *entryGenerator(): IterableIterator<MapEntry<string, V>> {
+  private *entryGenerator(prefix: string = ''): IterableIterator<MapEntry<string, V>> {
     function* helper(prefix: string, node: TrieMapNode<V>): IterableIterator<MapEntry<string, V>> {
       if (node.value !== undefined) {
         yield new TrieMapEntry(prefix, node);
@@ -290,7 +302,9 @@ export class TrieMap<V> extends BoundedSortedMap<string, V> {
         yield* helper(prefix + c, child);
       }
     }
-    yield* helper('', this.root);
+    const startNode = this.getNodePrefix(prefix);
+    if (!startNode) return;
+    yield* helper(prefix, startNode);
   }
 
   private *reverseEntryGenerator(): IterableIterator<MapEntry<string, V>> {
