@@ -1,15 +1,14 @@
-import { Count } from './map_based_multi_set';
-import { buildMultiSet, MultiSetInitializer } from './multi_set';
-import { SortedMultiSet } from './sorted_multi_set';
+import { SortedMapBasedSet } from './sorted_map_based_set';
+import { buildCollection, CollectionInitializer } from '../collections';
 import { SortedMapOptions, TrieMap } from '../maps';
 
-export class TrieMultiSet extends SortedMultiSet<string> {
+export class TrieSet extends SortedMapBasedSet<string> {
   constructor(options?: number | SortedMapOptions<string>) {
-    super(new TrieMap(options), options);
+    super(new TrieMap(options));
   }
 
   protected delegate() {
-    return this.map as TrieMap<Count>;
+    return super.delegate() as TrieMap<boolean>;
   }
 
   getHeight() {
@@ -40,11 +39,14 @@ export class TrieMultiSet extends SortedMultiSet<string> {
       .map(x => x.key);
   }
 
-  static create(initializer?: number | (SortedMapOptions<string> & MultiSetInitializer<string>)): TrieMultiSet {
-    return buildMultiSet<string, TrieMultiSet>(TrieMultiSet, initializer);
+  static create(initializer?: number | (SortedMapOptions<string> & CollectionInitializer<string>)): TrieSet {
+    return buildCollection<string, TrieSet>(TrieSet, initializer);
   }
 
-  clone(): TrieMultiSet {
-    return TrieMultiSet.create({ initial: this });
+  clone(): TrieSet {
+    return TrieSet.create({
+      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
+      ...this.buildOptions(),
+    });
   }
 }

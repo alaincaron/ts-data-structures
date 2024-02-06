@@ -13,10 +13,6 @@ export interface TrieMapOptions extends SortedMapOptions<string> {
   caseSensitive?: boolean;
 }
 
-function createNode<V>(key: string, value?: V) {
-  return { key, value, children: new AvlTreeMap<string, TrieMapNode<V>>() };
-}
-
 class TrieMapEntry<V> implements MapEntry<string, V> {
   constructor(
     private _key: string,
@@ -35,12 +31,13 @@ class TrieMapEntry<V> implements MapEntry<string, V> {
 }
 
 export class TrieMap<V> extends BoundedSortedMap<string, V> {
-  private root: TrieMapNode<V> = createNode('');
+  private root: TrieMapNode<V>;
   private _size = 0;
   private caseSensitive: boolean;
 
   constructor(options?: number | TrieMapOptions) {
     super(options);
+    this.root = this.createNode('');
     this.caseSensitive = typeof options === 'object' && !!options.caseSensitive;
   }
 
@@ -49,7 +46,7 @@ export class TrieMap<V> extends BoundedSortedMap<string, V> {
   }
 
   clear() {
-    this.root = createNode('');
+    this.root = this.createNode('');
     this._size = 0;
   }
 
@@ -69,7 +66,7 @@ export class TrieMap<V> extends BoundedSortedMap<string, V> {
         } else {
           first = false;
         }
-        nodeC = createNode(c);
+        nodeC = this.createNode(c);
         node.children.put(c, nodeC);
       }
       node = nodeC;
@@ -192,6 +189,10 @@ export class TrieMap<V> extends BoundedSortedMap<string, V> {
       node = e.value;
     }
     return node?.value !== undefined ? new TrieMapEntry(word, node) : undefined;
+  }
+
+  private createNode<V>(key: string, value?: V) {
+    return { key, value, children: new AvlTreeMap<string, TrieMapNode<V>>({ comparator: this.comparator }) };
   }
 
   private getNodePrefix(word: string): TrieMapNode<V> | undefined {
