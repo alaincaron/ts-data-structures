@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Comparators } from 'ts-fluent-iterators';
+import { Comparators, iterator } from 'ts-fluent-iterators';
 import { OverflowException, TrieMultiSet } from '../../src';
 
 describe('TrieMultiSet', () => {
@@ -55,6 +55,20 @@ describe('TrieMultiSet', () => {
       const set2 = TrieMultiSet.create({ initial: set1 });
       expect(set2.capacity()).equal(Infinity);
       expect(set2.toArray().sort()).to.deep.equal(arr.sort());
+    });
+
+    it('should respect the passed comparator', () => {
+      const ms = new TrieMultiSet({ comparator: Comparators.reverseComparator });
+      const barValue = 4;
+      const fooValue = 5;
+      ms.setCount('bar', barValue);
+      ms.setCount('foo', fooValue);
+
+      expect(ms.first()).equal('foo');
+      expect(ms.firstEntry()).deep.equal({ key: 'foo', value: fooValue });
+
+      expect(ms.last()).equal('bar');
+      expect(ms.lastEntry()).deep.equal({ key: 'bar', value: barValue });
     });
   });
 
@@ -318,38 +332,117 @@ describe('TrieMultiSet', () => {
     });
   });
 
-  it('should return right navigation values', () => {
-    const ms = new TrieMultiSet();
-    const barValue = 4;
-    const fooValue = 5;
-    ms.setCount('bar', barValue);
-    ms.setCount('foo', fooValue);
+  describe('navigation methods', () => {
+    it('should return undefined on empty multiset', () => {
+      const multiset = new TrieMultiSet();
+      expect(multiset.firstEntry()).to.be.undefined;
+      expect(multiset.lastEntry()).to.be.undefined;
+      expect(multiset.reverseEntryIterator().collect()).to.deep.equal([]);
+    });
 
-    expect(ms.first()).equal('bar');
-    expect(ms.firstEntry()).to.deep.equal({ key: 'bar', value: barValue });
+    it('should return right navigation values', () => {
+      const ms = new TrieMultiSet();
+      const barValue = 4;
+      const fooValue = 5;
+      ms.setCount('bar', barValue);
+      ms.setCount('foo', fooValue);
 
-    expect(ms.last()).equal('foo');
-    expect(ms.lastEntry()).to.deep.equal({ key: 'foo', value: fooValue });
+      expect(ms.first()).equal('bar');
+      expect(ms.firstEntry()).to.deep.equal({ key: 'bar', value: barValue });
 
-    expect(ms.reverseEntryIterator().collect()).to.deep.equal([
-      { key: 'foo', value: fooValue },
-      { key: 'bar', value: barValue },
-    ]);
+      expect(ms.last()).equal('foo');
+      expect(ms.lastEntry()).to.deep.equal({ key: 'foo', value: fooValue });
 
-    expect(ms.reverseIterator().collect()).to.deep.equal(['foo', 'bar']);
+      expect(ms.reverseEntryIterator().collect()).to.deep.equal([
+        { key: 'foo', value: fooValue },
+        { key: 'bar', value: barValue },
+      ]);
+
+      expect(ms.reverseIterator().collect()).to.deep.equal(['foo', 'bar']);
+    });
   });
 
-  it('should respect the passed comparator', () => {
-    const ms = new TrieMultiSet({ comparator: Comparators.reverseComparator });
-    const barValue = 4;
-    const fooValue = 5;
-    ms.setCount('bar', barValue);
-    ms.setCount('foo', fooValue);
+  describe('getHeight', () => {
+    it('should return 0 on empty multiset', () => {
+      const multiset = new TrieMultiSet();
+      expect(multiset.getHeight()).equal(0);
+    });
+    it('should return the length of the longest world', () => {
+      const multiset = TrieMultiSet.create({ initial: ['foo', 'bar', 'foobar'] });
+      expect(multiset.getHeight()).equal(6);
+    });
+  });
 
-    expect(ms.first()).equal('foo');
-    expect(ms.firstEntry()).deep.equal({ key: 'foo', value: fooValue });
+  describe('hasPrefix', () => {
+    it('should return false on empty multiset', () => {
+      const multiset = new TrieMultiSet();
+      expect(multiset.hasPrefix('')).to.be.false;
+      expect(multiset.hasPrefix('', false)).to.be.false;
+      expect(multiset.hasPrefix('foo')).to.be.false;
+      expect(multiset.hasPrefix('foo', false)).to.be.false;
+    });
+    it('should respect pure prefix setting', () => {
+      const multiset = TrieMultiSet.create({ initial: ['foo', 'bar', 'foobar'] });
+      expect(multiset.hasPrefix('')).to.be.true;
+      expect(multiset.hasPrefix('', false)).to.be.true;
+      expect(multiset.hasPrefix('foo')).to.be.true;
+      expect(multiset.hasPrefix('foo', false)).to.be.true;
+      expect(multiset.hasPrefix('bar')).to.be.false;
+      expect(multiset.hasPrefix('bar', false)).to.be.true;
+    });
+  });
 
-    expect(ms.last()).equal('bar');
-    expect(ms.lastEntry()).deep.equal({ key: 'bar', value: barValue });
+  describe('hasCommonPrefix', () => {
+    it('should return false on empty multiset', () => {
+      const multiset = new TrieMultiSet();
+      expect(multiset.hasCommonPrefix('')).to.be.false;
+      expect(multiset.hasCommonPrefix('foo')).to.be.false;
+    });
+    it('should verify for common prefix', () => {
+      const multiset = TrieMultiSet.create({ initial: ['foo', 'foobar'] });
+      expect(multiset.hasCommonPrefix('')).to.be.true;
+      expect(multiset.hasCommonPrefix('f')).to.be.true;
+      expect(multiset.hasCommonPrefix('fo')).to.be.true;
+      expect(multiset.hasCommonPrefix('foo')).to.be.true;
+      expect(multiset.hasCommonPrefix('foob')).to.be.false;
+      expect(multiset.hasCommonPrefix('fa')).to.be.false;
+      expect(multiset.hasCommonPrefix('b')).to.be.false;
+
+      multiset.add('bar');
+      expect(multiset.hasCommonPrefix('')).to.be.true;
+      expect(multiset.hasCommonPrefix('b')).to.be.false;
+    });
+  });
+
+  describe('getLongestCommonPrefix', () => {
+    it('should empty string on empty multiset', () => {
+      const multiset = new TrieMultiSet();
+      expect(multiset.getLongestCommonPrefix()).equal('');
+    });
+    it('should return longest common prefix', () => {
+      const multiset = TrieMultiSet.create({ initial: ['foo', 'foobar'] });
+      expect(multiset.getLongestCommonPrefix()).equal('foo');
+
+      multiset.add('fizz');
+      expect(multiset.getLongestCommonPrefix()).equal('f');
+
+      multiset.add('bar');
+      expect(multiset.getLongestCommonPrefix()).equal('');
+    });
+  });
+
+  describe('word/wordIterator', () => {
+    it('should iterate over all words with specified prefix', () => {
+      const multiset = TrieMultiSet.create({ initial: ['foo', 'foobar', 'bar', 'baz', 'fizz'] });
+      expect(iterator(multiset.words('f')).collect()).deep.equal(['fizz', 'foo', 'foobar']);
+      expect(iterator(multiset.words('fo')).collect()).deep.equal(['foo', 'foobar']);
+      expect(iterator(multiset.words('b')).collect()).deep.equal(['bar', 'baz']);
+      expect(iterator(multiset.words('')).collect()).deep.equal(['bar', 'baz', 'fizz', 'foo', 'foobar']);
+
+      expect(multiset.wordIterator('f').collect()).deep.equal(['fizz', 'foo', 'foobar']);
+      expect(multiset.wordIterator('fo').collect()).deep.equal(['foo', 'foobar']);
+      expect(multiset.wordIterator('b').collect()).deep.equal(['bar', 'baz']);
+      expect(multiset.wordIterator('').collect()).deep.equal(['bar', 'baz', 'fizz', 'foo', 'foobar']);
+    });
   });
 });

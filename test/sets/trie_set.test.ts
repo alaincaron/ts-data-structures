@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { iterator } from 'ts-fluent-iterators';
 import { OverflowException, TrieSet } from '../../src';
 
 describe('TrieSet', () => {
@@ -247,6 +248,90 @@ describe('TrieSet', () => {
     it('should return the JSON string', () => {
       const set = TrieSet.create({ initial: ['foo', 'foobar', 'foo', 'baz', 'bar'] });
       expect(set.toJson()).equals('["bar","baz","foo","foobar"]');
+    });
+  });
+
+  describe('getHeight', () => {
+    it('should return 0 on empty multiset', () => {
+      const set = new TrieSet();
+      expect(set.getHeight()).equal(0);
+    });
+    it('should return the length of the longest world', () => {
+      const set = TrieSet.create({ initial: ['foo', 'bar', 'foobar'] });
+      expect(set.getHeight()).equal(6);
+    });
+  });
+
+  describe('hasPrefix', () => {
+    it('should return false on empty set', () => {
+      const set = new TrieSet();
+      expect(set.hasPrefix('')).to.be.false;
+      expect(set.hasPrefix('', false)).to.be.false;
+      expect(set.hasPrefix('foo')).to.be.false;
+      expect(set.hasPrefix('foo', false)).to.be.false;
+    });
+    it('should respect pure prefix setting', () => {
+      const set = TrieSet.create({ initial: ['foo', 'bar', 'foobar'] });
+      expect(set.hasPrefix('')).to.be.true;
+      expect(set.hasPrefix('', false)).to.be.true;
+      expect(set.hasPrefix('foo')).to.be.true;
+      expect(set.hasPrefix('foo', false)).to.be.true;
+      expect(set.hasPrefix('bar')).to.be.false;
+      expect(set.hasPrefix('bar', false)).to.be.true;
+    });
+  });
+
+  describe('hasCommonPrefix', () => {
+    it('should return false on empty set', () => {
+      const set = new TrieSet();
+      expect(set.hasCommonPrefix('')).to.be.false;
+      expect(set.hasCommonPrefix('foo')).to.be.false;
+    });
+    it('should verify for common prefix', () => {
+      const set = TrieSet.create({ initial: ['foo', 'foobar'] });
+      expect(set.hasCommonPrefix('')).to.be.true;
+      expect(set.hasCommonPrefix('f')).to.be.true;
+      expect(set.hasCommonPrefix('fo')).to.be.true;
+      expect(set.hasCommonPrefix('foo')).to.be.true;
+      expect(set.hasCommonPrefix('foob')).to.be.false;
+      expect(set.hasCommonPrefix('fa')).to.be.false;
+      expect(set.hasCommonPrefix('b')).to.be.false;
+
+      set.add('bar');
+      expect(set.hasCommonPrefix('')).to.be.true;
+      expect(set.hasCommonPrefix('b')).to.be.false;
+    });
+  });
+
+  describe('getLongestCommonPrefix', () => {
+    it('should empty string on empty set', () => {
+      const set = new TrieSet();
+      expect(set.getLongestCommonPrefix()).equal('');
+    });
+    it('should return longest common prefix', () => {
+      const set = TrieSet.create({ initial: ['foo', 'foobar'] });
+      expect(set.getLongestCommonPrefix()).equal('foo');
+
+      set.add('fizz');
+      expect(set.getLongestCommonPrefix()).equal('f');
+
+      set.add('bar');
+      expect(set.getLongestCommonPrefix()).equal('');
+    });
+  });
+
+  describe('word/wordIterator', () => {
+    it('should iterate over all words with specified prefix', () => {
+      const set = TrieSet.create({ initial: ['foo', 'foobar', 'bar', 'baz', 'fizz'] });
+      expect(iterator(set.words('f')).collect()).deep.equal(['fizz', 'foo', 'foobar']);
+      expect(iterator(set.words('fo')).collect()).deep.equal(['foo', 'foobar']);
+      expect(iterator(set.words('b')).collect()).deep.equal(['bar', 'baz']);
+      expect(iterator(set.words('')).collect()).deep.equal(['bar', 'baz', 'fizz', 'foo', 'foobar']);
+
+      expect(set.wordIterator('f').collect()).deep.equal(['fizz', 'foo', 'foobar']);
+      expect(set.wordIterator('fo').collect()).deep.equal(['foo', 'foobar']);
+      expect(set.wordIterator('b').collect()).deep.equal(['bar', 'baz']);
+      expect(set.wordIterator('').collect()).deep.equal(['bar', 'baz', 'fizz', 'foo', 'foobar']);
     });
   });
 });

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Comparators } from 'ts-fluent-iterators';
+import { Comparators, iterator } from 'ts-fluent-iterators';
 import { list } from './helper';
 import { Collection, MapEntry, OverflowException, TrieMultiMap } from '../../src';
 
@@ -58,6 +58,20 @@ describe('TrieMultiMap', () => {
       expect(map.size()).equal(4);
       expect(map.get('a')?.equals(list(1, 3))).to.be.true;
       expect(map.get('b')?.equals(list(2, 4))).to.be.true;
+    });
+    it('should respect the passed comparator', () => {
+      const map = new TrieMultiMap<number>({ comparator: Comparators.reverseComparator });
+      map.put('bar', 1);
+      map.put('foo', 2);
+      map.put('bar', 3);
+      map.put('foo', 4);
+      expect(map.firstKey()).equal('foo');
+      let e = map.firstEntry()!;
+      expect(e.key).equal('foo');
+      expect(e.value!.equals(list(2, 4))).to.be.true;
+      e = map.lastEntry()!;
+      expect(e.key).equal('bar');
+      expect(e.value!.equals(list(1, 3))).to.be.true;
     });
   });
 
@@ -281,7 +295,7 @@ describe('TrieMultiMap', () => {
 
   describe('navigation methods', () => {
     it('should return undefined on empty map', () => {
-      const map = new TrieMultiMap<number>();
+      const map = new TrieMultiMap();
       expect(map.firstEntry()).to.be.undefined;
       expect(map.firstKey()).to.be.undefined;
       expect(map.lastEntry()).to.be.undefined;
@@ -324,20 +338,91 @@ describe('TrieMultiMap', () => {
 
       expect(map.reverseValueIterator().collect()).to.deep.equal(fooValue.iterator().append(barValue).collect());
     });
+  });
 
-    it('should respect the passed comparator', () => {
-      const map = new TrieMultiMap<number>({ comparator: Comparators.reverseComparator });
-      map.put('bar', 1);
-      map.put('foo', 2);
-      map.put('bar', 3);
-      map.put('foo', 4);
-      expect(map.firstKey()).equal('foo');
-      let e = map.firstEntry()!;
-      expect(e.key).equal('foo');
-      expect(e.value!.equals(list(2, 4))).to.be.true;
-      e = map.lastEntry()!;
-      expect(e.key).equal('bar');
-      expect(e.value!.equals(list(1, 3))).to.be.true;
+  describe('getHeight', () => {
+    it('should return 0 on empty map', () => {
+      const map = new TrieMultiMap();
+      expect(map.getHeight()).equal(0);
+    });
+    it('should return the length of the longest world', () => {
+      const map = TrieMultiMap.create({ initial: new Map().set('foo', 10).set('bar', 5).set('foobar', 2) });
+      expect(map.getHeight()).equal(6);
+    });
+  });
+
+  describe('hasPrefix', () => {
+    it('should return false on empty map', () => {
+      const map = new TrieMultiMap();
+      expect(map.hasPrefix('')).to.be.false;
+      expect(map.hasPrefix('', false)).to.be.false;
+      expect(map.hasPrefix('foo')).to.be.false;
+      expect(map.hasPrefix('foo', false)).to.be.false;
+    });
+    it('should respect pure prefix setting', () => {
+      const map = TrieMultiMap.create({ initial: new Map().set('foo', 10).set('bar', 5).set('foobar', 2) });
+      expect(map.hasPrefix('')).to.be.true;
+      expect(map.hasPrefix('', false)).to.be.true;
+      expect(map.hasPrefix('foo')).to.be.true;
+      expect(map.hasPrefix('foo', false)).to.be.true;
+      expect(map.hasPrefix('bar')).to.be.false;
+      expect(map.hasPrefix('bar', false)).to.be.true;
+    });
+  });
+
+  describe('hasCommonPrefix', () => {
+    it('should return false on empty map', () => {
+      const map = new TrieMultiMap();
+      expect(map.hasCommonPrefix('')).to.be.false;
+      expect(map.hasCommonPrefix('foo')).to.be.false;
+    });
+    it('should verify for common prefix', () => {
+      const map = TrieMultiMap.create({ initial: new Map().set('foo', 10).set('foobar', 2) });
+      expect(map.hasCommonPrefix('')).to.be.true;
+      expect(map.hasCommonPrefix('f')).to.be.true;
+      expect(map.hasCommonPrefix('fo')).to.be.true;
+      expect(map.hasCommonPrefix('foo')).to.be.true;
+      expect(map.hasCommonPrefix('foob')).to.be.false;
+      expect(map.hasCommonPrefix('fa')).to.be.false;
+      expect(map.hasCommonPrefix('b')).to.be.false;
+
+      map.put('bar', 25);
+      expect(map.hasCommonPrefix('')).to.be.true;
+      expect(map.hasCommonPrefix('b')).to.be.false;
+    });
+  });
+
+  describe('getLongestCommonPrefix', () => {
+    it('should empty string on empty map', () => {
+      const map = new TrieMultiMap();
+      expect(map.getLongestCommonPrefix()).equal('');
+    });
+    it('should return longest common prefix', () => {
+      const map = TrieMultiMap.create({ initial: new Map().set('foo', 10).set('foobar', 2) });
+      expect(map.getLongestCommonPrefix()).equal('foo');
+
+      map.put('fizz', 24);
+      expect(map.getLongestCommonPrefix()).equal('f');
+
+      map.put('bar', 12);
+      expect(map.getLongestCommonPrefix()).equal('');
+    });
+  });
+
+  describe('word/wordIterator', () => {
+    it('should iterate over all words with specified prefix', () => {
+      const map = TrieMultiMap.create({
+        initial: new Map().set('foo', 10).set('foobar', 2).set('bar', 1).set('baz', 3).set('fizz', 0),
+      });
+      expect(iterator(map.words('f')).collect()).deep.equal(['fizz', 'foo', 'foobar']);
+      expect(iterator(map.words('fo')).collect()).deep.equal(['foo', 'foobar']);
+      expect(iterator(map.words('b')).collect()).deep.equal(['bar', 'baz']);
+      expect(iterator(map.words('')).collect()).deep.equal(['bar', 'baz', 'fizz', 'foo', 'foobar']);
+
+      expect(map.wordIterator('f').collect()).deep.equal(['fizz', 'foo', 'foobar']);
+      expect(map.wordIterator('fo').collect()).deep.equal(['foo', 'foobar']);
+      expect(map.wordIterator('b').collect()).deep.equal(['bar', 'baz']);
+      expect(map.wordIterator('').collect()).deep.equal(['bar', 'baz', 'fizz', 'foo', 'foobar']);
     });
   });
 });

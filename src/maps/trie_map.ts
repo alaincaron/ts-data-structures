@@ -234,13 +234,14 @@ export class TrieMap<V> extends BoundedSortedMap<string, V> {
    */
   hasPrefix(input: string, pure: boolean = true): boolean {
     input = this.cleanInput(input);
+    if (this.isEmpty()) return false;
     let node = this.root;
     for (const c of input) {
       const child = node.children.get(c);
       if (!child) return false;
       node = child;
     }
-    return !pure || node.value === undefined;
+    return !pure || node.value === undefined || !node.children.isEmpty();
   }
 
   /**
@@ -252,12 +253,13 @@ export class TrieMap<V> extends BoundedSortedMap<string, V> {
   hasCommonPrefix(input: string): boolean {
     input = this.cleanInput(input);
     let commonPrefix = '';
-    const dfs = (cur: TrieMapNode<V>) => {
-      commonPrefix += cur.key;
-      if (commonPrefix === input || cur.value !== undefined) return;
-      if (cur && cur.children && cur.children.size() === 1) dfs(cur.children.firstEntry()!.value);
+    const getCommonPrefix = (node: TrieMapNode<V>) => {
+      commonPrefix += node.key;
+      if (commonPrefix === input || node.value !== undefined) return;
+      if (node?.children?.size() === 1) getCommonPrefix(node.children.firstEntry()!.value);
     };
-    dfs(this.root);
+    if (!this.size()) return false;
+    getCommonPrefix(this.root);
     return commonPrefix === input;
   }
 
@@ -268,12 +270,12 @@ export class TrieMap<V> extends BoundedSortedMap<string, V> {
    */
   getLongestCommonPrefix(): string {
     let commonPrefix = '';
-    const dfs = (cur: TrieMapNode<V>) => {
-      commonPrefix += cur.key;
-      if (cur.value !== undefined) return;
-      if (cur && cur.children && cur.children.size() === 1) dfs(cur.children.firstEntry()!.value);
+    const getCommonPrefix = (node: TrieMapNode<V>) => {
+      commonPrefix += node.key;
+      if (node.value !== undefined) return;
+      if (node?.children?.size() === 1) getCommonPrefix(node.children.firstEntry()!.value);
     };
-    dfs(this.root);
+    getCommonPrefix(this.root);
     return commonPrefix;
   }
 
