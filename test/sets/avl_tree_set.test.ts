@@ -270,6 +270,81 @@ describe('AvlTreeSet', () => {
     });
   });
 
+  describe('lastEntry/pollLastEntry/lastKey', () => {
+    it('should return undefined on empty set', () => {
+      const set = new AvlTreeSet();
+      expect(set.last()).to.be.undefined;
+      expect(set.pollLast()).to.be.undefined;
+    });
+    it('should return the last entry', () => {
+      const set = AvlTreeSet.create({ initial: ['b', 'a'] });
+      expect(set.last()).equal('b');
+      expect(set.pollLast()).equal('b');
+      expect(set.size()).equal(1);
+    });
+  });
+
+  describe('first/pollFirst', () => {
+    it('should return undefined on empty set', () => {
+      const set = new AvlTreeSet();
+      expect(set.first()).to.be.undefined;
+      expect(set.pollFirst()).to.be.undefined;
+    });
+    it('should return the first item', () => {
+      const set = AvlTreeSet.create({ initial: ['b', 'a'] });
+      expect(set.first()).equal('a');
+      expect(set.pollFirst()).equal('a');
+      expect(set.size()).equal(1);
+    });
+  });
+
+  describe('lower', () => {
+    it('should resolve lower', () => {
+      const set = AvlTreeSet.create({ initial: ['b', 'a'] });
+      expect(set.lower('z')).equal('b');
+      expect(set.lower('b')).equal('a');
+      expect(set.lower('A')).to.be.undefined;
+      expect(set.lower('a')).to.be.undefined;
+    });
+  });
+
+  describe('higher', () => {
+    it('should resolve lower', () => {
+      const set = AvlTreeSet.create({ initial: ['b', 'a'] });
+      expect(set.higher('a')).equal('b');
+      expect(set.higher('A')).equal('a');
+      expect(set.higher('z')).to.be.undefined;
+      expect(set.higher('b')).to.be.undefined;
+    });
+  });
+
+  describe('floorEntry', () => {
+    it('should resolve floorEntry', () => {
+      const set = AvlTreeSet.create({ initial: ['b', 'a'] });
+      expect(set.floor('z')).equal('b');
+      expect(set.floor('b')).equal('b');
+      expect(set.floor('a')).equal('a');
+      expect(set.floor('A')).to.be.undefined;
+    });
+  });
+
+  describe('ceilingEntry', () => {
+    it('should resolve floorEntry', () => {
+      const set = AvlTreeSet.create({ initial: ['b', 'a'] });
+      expect(set.ceiling('a')).equal('a');
+      expect(set.ceiling('A')).equal('a');
+      expect(set.ceiling('b')).equal('b');
+      expect(set.ceiling('z')).to.be.undefined;
+    });
+  });
+
+  describe('reverseIterator', () => {
+    it('should iterate over all items in reverse order', () => {
+      const set = AvlTreeSet.create({ initial: ['b', 'a', 'c'] });
+      expect(set.reverseIterator().collect()).to.deep.equal(['c', 'b', 'a']);
+    });
+  });
+
   describe('toJson', () => {
     it('should return the JSON string', () => {
       const set = AvlTreeSet.create({ initial: [4, 2, 1, 3, 2, 3, 4] });
