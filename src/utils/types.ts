@@ -8,40 +8,21 @@ export interface ContainerOptions {
   capacity?: number;
 }
 
+export type CollectionOptions = ContainerOptions | number;
+
 /**
  * A `Container` is an object that can contain objects.
  */
 export interface Container {
-  /**
-   * The number of items in the `Container`
-   */
-  size(): number;
-
-  /**
-   * The maximum number of items the `Container` may contain.
-   */
-  capacity(): number;
-
-  /**
-   * Returns `true` if the `Container` is empty.
-   */
-  isEmpty(): boolean;
-
-  /**
-   * Returns `true` if the `Container` is full.
-   */
-  isFull(): boolean;
-
-  /**
-   * Returns the number of items that can be added to this `Container`
-   */
-  remaining(): number;
-
   /**
    * Build the options to create a `Container` with the same options as this `Container`
    */
   buildOptions(): ContainerOptions;
 }
 
-export type Constructor<T = object> = new (...args: any[]) => T;
-export type AbstractConstructor<T = object> = abstract new (...args: any[]) => T;
+export type Constructor<T = object, A extends unknown[] = any[]> = new (...args: A) => T;
+export type AbstractConstructor<T = object, A extends unknown[] = any[]> = abstract new (...args: A) => T;
+export type ParameterTail<T extends readonly unknown[]> = T extends [unknown, ...infer U] ? U : never;
+export type PrependParameter<Type, Arguments extends unknown[]> = Arguments extends []
+  ? [Type]
+  : [Arguments[0] & Type, ...ParameterTail<Arguments>];
