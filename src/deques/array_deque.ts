@@ -2,7 +2,7 @@ import { Predicate } from 'ts-fluent-iterators';
 import { BoundedDeque } from './deque';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { QueueOptions } from '../queues';
-import { IndexOutOfBoundsException, nextPowerOfTwo, RandomAccess } from '../utils';
+import { nextPowerOfTwo } from '../utils';
 
 /*
  * The minimum capacity that we'll use for a newly created deque.
@@ -10,7 +10,7 @@ import { IndexOutOfBoundsException, nextPowerOfTwo, RandomAccess } from '../util
  */
 const MIN_INITIAL_CAPACITY = 8;
 
-export class ArrayDeque<E> extends BoundedDeque<E> implements RandomAccess<E> {
+export class ArrayDeque<E> extends BoundedDeque<E> {
   private elements: Array<E>;
   private head: number;
   private tail: number;
@@ -92,19 +92,6 @@ export class ArrayDeque<E> extends BoundedDeque<E> implements RandomAccess<E> {
     this.elements[t] = undefined!;
     this.tail = t;
     return result;
-  }
-
-  getAt(idx: number): E {
-    if (idx < 0 || idx >= this.size()) throw new IndexOutOfBoundsException();
-    return this.elements[this.slot(this.head + idx)];
-  }
-
-  setAt(idx: number, item: E): E {
-    if (idx < 0 || idx >= this.size()) throw new IndexOutOfBoundsException();
-    const slot = this.slot(idx);
-    const x = this.elements[slot];
-    this.elements[slot] = item;
-    return x;
   }
 
   peekFirst(): E | undefined {

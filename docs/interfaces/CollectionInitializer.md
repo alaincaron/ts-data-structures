@@ -2,13 +2,13 @@
 
 # Interface: CollectionInitializer\<E\>
 
-Interface used to specify initial elements in a create method for a Collection.
+Interface used to specify initial elements in a create method for a [Collection](../classes/Collection.md).
 
 ## Type parameters
 
 | Name |
-| :--- |
-| `E`  |
+| :------ |
+| `E` |
 
 ## Table of contents
 

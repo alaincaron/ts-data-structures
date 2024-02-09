@@ -48,7 +48,7 @@ export abstract class CollectionBasedSet<E> extends ISet<E> {
   }
 
   buildOptions(): ContainerOptions {
-    return this._delegate.buildOptions?.() ?? {};
+    return this._delegate.buildOptions();
   }
 
   add(item: E) {

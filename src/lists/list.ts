@@ -6,7 +6,6 @@ import {
   equalsAny,
   hashIterableOrdered,
   OverflowException,
-  RandomAccess,
   shuffle,
   UnderflowException,
 } from '../utils';
@@ -16,7 +15,7 @@ export interface ListIterator<E> extends IterableIterator<E> {
   remove(): E;
 }
 
-export abstract class List<E> extends Collection<E> implements RandomAccess<E> {
+export abstract class List<E> extends Collection<E> {
   constructor(options?: number | ContainerOptions) {
     super(options);
   }

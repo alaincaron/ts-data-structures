@@ -3,10 +3,10 @@ import { Collection } from '../collections';
 import { MapLike } from '../maps';
 import {
   CapacityMixin,
+  Container,
   ContainerOptions,
   equalsAny,
   hashIterableUnordered,
-  OptionsBuilder,
   OverflowException,
 } from '../utils';
 
@@ -16,7 +16,7 @@ export interface MultiMapInitializer<K, V> {
   initial?: MultiMapLike<K, V>;
 }
 
-export abstract class MultiMap<K, V> implements Iterable<[K, V]>, OptionsBuilder {
+export abstract class MultiMap<K, V> implements Iterable<[K, V]>, Container {
   constructor(_options?: number | ContainerOptions) {}
 
   abstract size(): number;

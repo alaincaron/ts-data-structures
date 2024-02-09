@@ -2,21 +2,14 @@ import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-it
 import { toIterator } from 'ts-fluent-iterators/dist/lib/sync';
 import { getSize } from './helpers';
 import { CollectionInitializer, CollectionLike } from './types';
-import {
-  CapacityMixin,
-  ContainerOptions,
-  equalsAny,
-  iterableToJSON,
-  OptionsBuilder,
-  OverflowException,
-} from '../utils';
+import { CapacityMixin, Container, ContainerOptions, equalsAny, iterableToJSON, OverflowException } from '../utils';
 
 /**
  * A `Collection` represents a group of objects, known as its
  * elements. Some collections allow duplicate elements and others do
  * not. Some are ordered and others unordered.
  */
-export abstract class Collection<E> implements Iterable<E>, OptionsBuilder {
+export abstract class Collection<E> implements Iterable<E>, Container {
   public constructor(_options?: number | ContainerOptions) {}
 
   /**
@@ -284,7 +277,7 @@ export abstract class Collection<E> implements Iterable<E>, OptionsBuilder {
   /** * Returns a clone of this `Collection`.
    *
    * The clone `Collection` will have the same elements and capacity
-   as the original one and also all other settings returned by `{@link QSWCollection.buildOptions}.
+   as the original one and also all other settings returned by `{@link Collection.buildOptions}.
    */
   abstract clone(): Collection<E>;
 

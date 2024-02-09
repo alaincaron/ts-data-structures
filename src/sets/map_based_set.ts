@@ -56,6 +56,6 @@ export abstract class MapBasedSet<E> extends ISet<E> {
   abstract clone(): MapBasedSet<E>;
 
   buildOptions() {
-    return this._delegate.buildOptions?.() ?? {};
+    return this._delegate.buildOptions();
   }
 }

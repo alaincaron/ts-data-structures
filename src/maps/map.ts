@@ -1,11 +1,11 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import {
   CapacityMixin,
+  Container,
   ContainerOptions,
   equalsAny,
   hashIterableUnordered,
   mapToJSON,
-  OptionsBuilder,
   OverflowException,
 } from '../utils';
 
@@ -26,7 +26,7 @@ export interface MapInitializer<K, V> {
   initial?: MapLike<K, V>;
 }
 
-export abstract class IMap<K, V> implements Iterable<[K, V]>, OptionsBuilder {
+export abstract class IMap<K, V> implements Iterable<[K, V]>, Container {
   constructor(_options?: number | ContainerOptions) {}
 
   abstract size(): number;
