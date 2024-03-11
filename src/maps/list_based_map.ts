@@ -1,4 +1,4 @@
-import { Predicate } from 'ts-fluent-iterators';
+import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry, MapInitializer } from './map';
 import { buildCollection } from '../collections';
 import { ArrayList, LinkedList, List } from '../lists';
@@ -54,6 +54,10 @@ export abstract class ListBasedMap<K, V> extends IMap<K, V> {
 
   buildOptions() {
     return this._delegate.buildOptions();
+  }
+
+  sort(comparator: Comparator<K> = Comparators.defaultComparator) {
+    this._delegate.sort((e1, e2) => comparator(e1.key, e2.key));
   }
 
   protected static createMap<

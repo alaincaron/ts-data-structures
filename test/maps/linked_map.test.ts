@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { Comparators } from 'ts-fluent-iterators';
 import { LinkedMap, OverflowException } from '../../src';
 
 describe('LinkedMap', () => {
@@ -219,6 +220,37 @@ describe('LinkedMap', () => {
       expect(map.get({ a: 5 })).equal('bar');
       expect(map.get({ a: 6 })).to.be.undefined;
       expect(map.size()).equals(1);
+    });
+  });
+
+  describe('sort', () => {
+    it('should sort using natural order', () => {
+      const map = LinkedMap.create();
+      map.put('b', 3);
+      map.put('a', 5);
+      expect(map.entryIterator().collect()).to.deep.equal([
+        { key: 'b', value: 3 },
+        { key: 'a', value: 5 },
+      ]);
+      map.sort();
+      expect(map.entryIterator().collect()).to.deep.equal([
+        { key: 'a', value: 5 },
+        { key: 'b', value: 3 },
+      ]);
+    });
+    it('should sort using reverse order', () => {
+      const map = LinkedMap.create();
+      map.put('a', 5);
+      map.put('b', 3);
+      expect(map.entryIterator().collect()).to.deep.equal([
+        { key: 'a', value: 5 },
+        { key: 'b', value: 3 },
+      ]);
+      map.sort(Comparators.reverseComparator);
+      expect(map.entryIterator().collect()).to.deep.equal([
+        { key: 'b', value: 3 },
+        { key: 'a', value: 5 },
+      ]);
     });
   });
 });
