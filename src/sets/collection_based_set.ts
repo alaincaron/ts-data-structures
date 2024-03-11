@@ -1,9 +1,8 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { ISet } from './set';
-import { getItemsToAdd } from './utils';
-import { buildCollection, Collection, CollectionInitializer, CollectionLike } from '../collections';
+import { buildCollection, Collection, CollectionInitializer } from '../collections';
 import { ArrayList } from '../lists';
-import { Constructor, ContainerOptions, OverflowException, WithCapacity } from '../utils';
+import { Constructor, WithCapacity } from '../utils';
 
 export abstract class CollectionBasedSet<E> extends ISet<E> {
   private _delegate: Collection<E>;
@@ -57,31 +56,13 @@ export abstract class CollectionBasedSet<E> extends ISet<E> {
     return d.add(item);
   }
 
-  offerPartially<E1 extends E>(items: Iterable<E1>): number {
-    const initial_size = this.size();
-    super.offerPartially(items);
-    return this.size() - initial_size;
-  }
-
-  offerFully<E1 extends E>(items: CollectionLike<E1>): number {
-    const itemsToAdd = getItemsToAdd(this, items);
-    if (this.remaining() < itemsToAdd.size) return 0;
-    return this.offerPartially(itemsToAdd);
-  }
-
-  addFully<E1 extends E>(items: CollectionLike<E1>): number {
-    const itemsToAdd = getItemsToAdd(this, items);
-    if (this.remaining() < itemsToAdd.size) throw new OverflowException();
-    return this.offerPartially(itemsToAdd);
-  }
-
   abstract clone(): CollectionBasedSet<E>;
 
   protected static createSet<
     E,
     C extends Collection<E>,
     S extends CollectionBasedSet<E>,
-    Options extends ContainerOptions = ContainerOptions,
+    Options extends object = object,
     Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
   >(setFactory: Constructor<S>, colFactory: (options?: Options) => C, initializer?: Options & Initializer): S {
     let delegate: C;

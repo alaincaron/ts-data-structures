@@ -2,7 +2,7 @@ import { Predicate } from 'ts-fluent-iterators';
 import { ISet } from './set';
 import { CollectionInitializer } from '../collections';
 import { buildMap, IMap } from '../maps';
-import { Constructor, ContainerOptions } from '../utils';
+import { Constructor, WithCapacity } from '../utils';
 
 export abstract class MapBasedSet<E> extends ISet<E> {
   constructor(private readonly _delegate: IMap<E, boolean>) {
@@ -65,9 +65,13 @@ export abstract class MapBasedSet<E> extends ISet<E> {
     E,
     M extends IMap<E, boolean>,
     S extends MapBasedSet<E>,
-    Options extends ContainerOptions = ContainerOptions,
+    Options extends object = object,
     Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
-  >(setFactory: Constructor<S>, mapFactory: (options?: Options) => M, initializer?: Options & Initializer): S {
+  >(
+    setFactory: Constructor<S>,
+    mapFactory: (options?: Options) => M,
+    initializer?: WithCapacity<Options & Initializer>
+  ): S {
     let delegate: M;
     let initialElements;
 

@@ -175,7 +175,7 @@ export function buildMultiMap<
   K,
   V,
   M extends MultiMap<K, V>,
-  Options extends ContainerOptions = ContainerOptions,
+  Options extends object = object,
   Initializer extends MultiMapInitializer<K, V> = MultiMapInitializer<K, V>,
 >(factory: Constructor<M>, initializer?: WithCapacity<Options & Initializer>): M {
   if (initializer == null) return new factory();

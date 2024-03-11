@@ -1,9 +1,14 @@
-import { getItemsToAdd } from './utils';
+import { iterator, Iterators } from 'ts-fluent-iterators';
 import { Collection, CollectionLike } from '../collections';
 import { hashIterableUnordered, OverflowException } from '../utils';
 
+function getItemsToAdd<E, E1 extends E>(set: ISet<E>, items: CollectionLike<E1>): Set<E> {
+  return iterator(Iterators.toIterator(items))
+    .filter(x => !set.contains(x))
+    .collectToSet();
+}
+
 export abstract class ISet<E> extends Collection<E> {
-  // TODO try to get these in a Mixin... hwoever generics and mixin don't always work together
   toSet() {
     return this.iterator().collectToSet();
   }
@@ -13,21 +18,18 @@ export abstract class ISet<E> extends Collection<E> {
     return super.add(item);
   }
 
-  // TODO mixin
   offerPartially<E1 extends E>(items: Iterable<E1>): number {
     const initial_size = this.size();
     super.offerPartially(items);
     return this.size() - initial_size;
   }
 
-  // TODO mixin
   offerFully<E1 extends E>(items: CollectionLike<E1>): number {
     const itemsToAdd = getItemsToAdd(this, items);
     if (this.remaining() < itemsToAdd.size) return 0;
     return this.offerPartially(itemsToAdd);
   }
 
-  // TODO mixin
   addFully<E1 extends E>(items: CollectionLike<E1>): number {
     const itemsToAdd = getItemsToAdd(this, items);
     if (this.remaining() < itemsToAdd.size) throw new OverflowException();

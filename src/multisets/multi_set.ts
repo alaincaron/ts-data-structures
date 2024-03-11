@@ -61,10 +61,10 @@ export abstract class MultiSet<E> extends Collection<E> {
 export function buildMultiSet<
   E,
   MS extends MultiSet<E>,
-  Options extends object,
+  Options extends object = object,
   Initializer extends MultiSetInitializer<E> = MultiSetInitializer<E>,
 >(factory: Constructor<MS>, initializer?: WithCapacity<Options & Initializer>): MS {
-  if (initializer == null) return new factory();
+  if (initializer?.capacity == null && initializer?.initial == null) return new factory(initializer);
   const initialElements = initializer.initial;
 
   let options: any = undefined;
