@@ -7,6 +7,7 @@ import {
   Container,
   ContainerOptions,
   equalsAny,
+  extractOptions,
   hashIterableUnordered,
   OverflowException,
   WithCapacity,
@@ -178,17 +179,7 @@ export function buildMultiMap<
   Options extends object = object,
   Initializer extends MultiMapInitializer<K, V> = MultiMapInitializer<K, V>,
 >(factory: Constructor<M>, initializer?: WithCapacity<Options & Initializer>): M {
-  if (initializer == null) return new factory();
-  const initialElements = initializer.initial;
-
-  let options: any = undefined;
-  if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-    options = { ...(initialElements.buildOptions() as Options), ...initializer };
-  } else {
-    options = { ...initializer };
-  }
-
-  delete options.initial;
+  const { options, initialElements } = extractOptions<MultiMapLike<K, V>>(initializer);
   const result = boundMultiMap(factory, options);
 
   if (initialElements) result.putAll(initialElements);

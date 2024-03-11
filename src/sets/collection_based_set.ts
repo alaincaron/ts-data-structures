@@ -1,8 +1,8 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { ISet } from './set';
-import { buildCollection, Collection, CollectionInitializer } from '../collections';
+import { buildCollection, Collection, CollectionInitializer, CollectionLike } from '../collections';
 import { ArrayList } from '../lists';
-import { Constructor, WithCapacity } from '../utils';
+import { Constructor, extractOptions, WithCapacity } from '../utils';
 
 export abstract class CollectionBasedSet<E> extends ISet<E> {
   private _delegate: Collection<E>;
@@ -65,25 +65,8 @@ export abstract class CollectionBasedSet<E> extends ISet<E> {
     Options extends object = object,
     Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
   >(setFactory: Constructor<S>, colFactory: (options?: Options) => C, initializer?: Options & Initializer): S {
-    let delegate: C;
-    let initialElements;
-
-    if (!initializer?.initial) {
-      delegate = colFactory(initializer as Options);
-      initialElements = undefined;
-    } else {
-      initialElements = initializer.initial;
-      let options: any = {
-        ...initializer,
-      };
-
-      if ('buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-        options = { ...options, ...initialElements.buildOptions() };
-      }
-      delete options.initial;
-
-      delegate = colFactory(options);
-    }
+    const { options, initialElements } = extractOptions<CollectionLike<E>>(initializer);
+    const delegate = colFactory(options);
     const result = new setFactory(delegate);
     if (initialElements) result.addFully(initialElements);
     return result;

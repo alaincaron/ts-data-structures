@@ -7,3 +7,4 @@ export * from './shuffle';
 export * from './types';
 export * from './json';
 export * from './capacity_mixin';
+export * from './extract_options';

@@ -3,6 +3,7 @@ import {
   CapacityMixin,
   Constructor,
   ContainerOptions,
+  extractOptions,
   hashIterableUnordered,
   OverflowException,
   WithCapacity,
@@ -64,17 +65,7 @@ export function buildMultiSet<
   Options extends object = object,
   Initializer extends MultiSetInitializer<E> = MultiSetInitializer<E>,
 >(factory: Constructor<MS>, initializer?: WithCapacity<Options & Initializer>): MS {
-  if (initializer?.capacity == null && initializer?.initial == null) return new factory(initializer);
-  const initialElements = initializer.initial;
-
-  let options: any = undefined;
-  if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-    options = { ...(initialElements.buildOptions() as Options), ...initializer };
-  } else {
-    options = { ...initializer };
-  }
-
-  delete options.initial;
+  const { options, initialElements } = extractOptions<MultiSetLike<E>>(initializer);
   const result = boundMultiSet(factory, options);
   if (initialElements instanceof MultiSet) {
     for (const [e, count] of initialElements.entries()) {

@@ -1,5 +1,6 @@
 import { ArrayGenerator } from 'ts-fluent-iterators';
 import { Collection } from './collection';
+import { ContainerInitializer } from '../utils';
 
 /**
  * Describes an object that can behave like a Collection.  It has a
@@ -11,9 +12,4 @@ export type CollectionLike<E> = Set<E> | Array<E> | Collection<E> | ArrayGenerat
 /**
  * Interface used to specify initial elements in a create method for a {@link Collection}.
  */
-export interface CollectionInitializer<E> {
-  /**
-   * Specifiy initial elements of the collection.
-   */
-  initial?: CollectionLike<E>;
-}
+export type CollectionInitializer<E> = ContainerInitializer<CollectionLike<E>>;

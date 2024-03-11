@@ -26,6 +26,10 @@ export interface Container {
   capacity(): number;
 }
 
+export interface ContainerInitializer<ContainerLike extends object> {
+  initial?: ContainerLike;
+}
+
 export type Constructor<T = object, A extends unknown[] = any[]> = new (...args: A) => T;
 export type AbstractConstructor<T = object, A extends unknown[] = any[]> = abstract new (...args: A) => T;
 export type ParameterTail<T extends readonly unknown[]> = T extends [unknown, ...infer U] ? U : never;

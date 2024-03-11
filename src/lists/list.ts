@@ -1,6 +1,13 @@
 import { Comparator, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
-import { equalsAny, hashIterableOrdered, OverflowException, shuffle, UnderflowException } from '../utils';
+import {
+  equalsAny,
+  equalsIterable,
+  hashIterableOrdered,
+  OverflowException,
+  shuffle,
+  UnderflowException,
+} from '../utils';
 
 export interface ListIterator<E> extends IterableIterator<E> {
   setValue(item: E): E;
@@ -153,8 +160,7 @@ export abstract class List<E> extends Collection<E> {
     }
   }
 
-  removeFirstMatchingItem(predicate: Predicate<E>): E | undefined {
-    const iter = this.listIterator();
+  private static removeFirstItem<E>(iter: ListIterator<E>, predicate: Predicate<E>): E | undefined {
     for (;;) {
       const item = iter.next();
       if (item.done) return undefined;
@@ -165,16 +171,12 @@ export abstract class List<E> extends Collection<E> {
     }
   }
 
+  removeFirstMatchingItem(predicate: Predicate<E>): E | undefined {
+    return List.removeFirstItem(this.listIterator(), predicate);
+  }
+
   removeLastMatchingItem(predicate: Predicate<E>): E | undefined {
-    const iter = this.reverseListIterator();
-    for (;;) {
-      const item = iter.next();
-      if (item.done) return undefined;
-      if (predicate(item.value)) {
-        iter.remove();
-        return item.value;
-      }
-    }
+    return List.removeFirstItem(this.reverseListIterator(), predicate);
   }
 
   removeMatchingItem(predicate: Predicate<E>): E | undefined {
@@ -199,13 +201,6 @@ export abstract class List<E> extends Collection<E> {
     if (this === other) return true;
     if (!(other instanceof List)) return false;
     if (other.size() !== this.size()) return false;
-    const iter1 = this[Symbol.iterator]();
-    const iter2 = other[Symbol.iterator]();
-    for (;;) {
-      const item1 = iter1.next();
-      const item2 = iter2.next();
-      if (item1.done || item2.done) return item1.done === item2.done;
-      if (!equalsAny(item1.value, item2.value)) return false;
-    }
+    return equalsIterable(this, other);
   }
 }

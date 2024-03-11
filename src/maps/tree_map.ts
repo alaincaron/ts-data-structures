@@ -184,34 +184,36 @@ export abstract class TreeMap<K, V> extends NavigableMap<K, V> {
     return e?.value;
   }
 
-  private *entryGenerator(): IterableIterator<MapEntry<K, V>> {
+  private *getEntryGenerator(
+    onPush: (node: BinaryNode<K, V>) => BinaryNode<K, V> | undefined,
+    onPop: (node: BinaryNode<K, V>) => BinaryNode<K, V> | undefined
+  ): IterableIterator<MapEntry<K, V>> {
     const stack = new ArrayStack<BinaryNode<K, V>>();
     let cursor = this.getRoot();
 
     while (cursor || !stack.isEmpty()) {
       while (cursor) {
         stack.push(cursor);
-        cursor = cursor.left;
+        cursor = onPush(cursor);
       }
       cursor = stack.pop()!;
       yield cursor;
-      cursor = cursor.right;
+      cursor = onPop(cursor);
     }
   }
 
-  private *reverseEntryGenerator(): IterableIterator<MapEntry<K, V>> {
-    const stack = new ArrayStack<BinaryNode<K, V>>();
-    let cursor = this.getRoot();
+  private entryGenerator(): IterableIterator<MapEntry<K, V>> {
+    return this.getEntryGenerator(
+      cursor => cursor.left,
+      cursor => cursor.right
+    );
+  }
 
-    while (cursor || !stack.isEmpty()) {
-      while (cursor) {
-        stack.push(cursor);
-        cursor = cursor.right;
-      }
-      cursor = stack.pop()!;
-      yield cursor;
-      cursor = cursor.left;
-    }
+  private reverseEntryGenerator(): IterableIterator<MapEntry<K, V>> {
+    return this.getEntryGenerator(
+      cursor => cursor.right,
+      cursor => cursor.left
+    );
   }
 
   entryIterator() {

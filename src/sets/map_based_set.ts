@@ -1,8 +1,8 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { ISet } from './set';
-import { CollectionInitializer } from '../collections';
+import { CollectionInitializer, CollectionLike } from '../collections';
 import { buildMap, IMap } from '../maps';
-import { Constructor, WithCapacity } from '../utils';
+import { Constructor, extractOptions, WithCapacity } from '../utils';
 
 export abstract class MapBasedSet<E> extends ISet<E> {
   constructor(private readonly _delegate: IMap<E, boolean>) {
@@ -72,25 +72,8 @@ export abstract class MapBasedSet<E> extends ISet<E> {
     mapFactory: (options?: Options) => M,
     initializer?: WithCapacity<Options & Initializer>
   ): S {
-    let delegate: M;
-    let initialElements;
-
-    if (!initializer?.initial) {
-      delegate = mapFactory(initializer as Options);
-      initialElements = undefined;
-    } else {
-      initialElements = initializer.initial;
-      let options: any = {
-        ...initializer,
-      };
-
-      if ('buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-        options = { ...options, ...initialElements.buildOptions() };
-      }
-      delete options.initial;
-
-      delegate = mapFactory(options);
-    }
+    const { options, initialElements } = extractOptions<CollectionLike<E>>(initializer);
+    const delegate = mapFactory(options);
     const result = new setFactory(delegate);
     if (initialElements) result.addFully(initialElements);
     return result;

@@ -6,6 +6,8 @@ interface ListEntry<E> {
   value: E;
 }
 
+type LinkedListEntry<E> = DoubleLinkedList.Entry & ListEntry<E>;
+
 export class LinkedList<E> extends List<E> {
   private readonly linkedList: DoubleLinkedList;
   private _size: number;
@@ -24,7 +26,7 @@ export class LinkedList<E> extends List<E> {
     return this._size;
   }
 
-  private getEntryAt(idx: number): DoubleLinkedList.Entry & ListEntry<E> {
+  private getEntryAt(idx: number): LinkedListEntry<E> {
     const x = this.size() - idx;
     let e = this.linkedList.header;
     if (idx < x) {
@@ -32,7 +34,7 @@ export class LinkedList<E> extends List<E> {
     } else {
       for (let i = 0; i < x; ++i) e = e.before!;
     }
-    return e as unknown as ListEntry<E> & DoubleLinkedList.Entry;
+    return e as LinkedListEntry<E>;
   }
 
   getAt(idx: number): E {
@@ -54,7 +56,7 @@ export class LinkedList<E> extends List<E> {
   offerAt(idx: number, item: E): boolean {
     if (this.isFull()) return false;
     if (idx < 0 || idx > this.size()) throw new IndexOutOfBoundsException();
-    const e = { value: item } as unknown as DoubleLinkedList.Entry;
+    const e = { value: item } as LinkedListEntry<E>;
     const existing = this.getEntryAt(idx);
     this.linkedList.addBefore(e, existing);
     ++this._size;
@@ -72,14 +74,14 @@ export class LinkedList<E> extends List<E> {
   removeAt(idx: number): E {
     if (idx < 0 || idx >= this.size()) throw new IndexOutOfBoundsException();
     const e = this.getEntryAt(idx);
-    this.linkedList.remove(e as unknown as DoubleLinkedList.Entry);
+    this.linkedList.remove(e as LinkedListEntry<E>);
     --this._size;
     return e.value;
   }
 
   offerLast(item: E): boolean {
     if (this.isFull()) return false;
-    const e = { value: item } as unknown as DoubleLinkedList.Entry;
+    const e = { value: item } as LinkedListEntry<E>;
     this.linkedList.addLast(e);
     ++this._size;
     return true;
@@ -96,13 +98,9 @@ export class LinkedList<E> extends List<E> {
     }
   }
 
-  listIterator(start?: number | 'head' | 'tail'): ListIterator<E> {
-    if (typeof start !== 'number') {
-      start = start === 'tail' ? this.size() - 1 : 0;
-    }
-    let cursor = this.getEntryAt(start);
-    let lastResult: (DoubleLinkedList.Entry & ListEntry<E>) | null = null;
-
+  private getListIterator(start: number, advance: (cursor: LinkedListEntry<E>) => LinkedListEntry<E>): ListIterator<E> {
+    let cursor: LinkedListEntry<E> = this.getEntryAt(start);
+    let lastResult: LinkedListEntry<E> | null = null;
     return {
       [Symbol.iterator]() {
         return this;
@@ -113,7 +111,7 @@ export class LinkedList<E> extends List<E> {
         }
         const value = cursor.value;
         lastResult = cursor;
-        cursor = cursor.after as unknown as DoubleLinkedList.Entry & ListEntry<E>;
+        cursor = advance(cursor);
         return { done: false, value };
       },
       remove: () => {
@@ -133,41 +131,18 @@ export class LinkedList<E> extends List<E> {
     };
   }
 
+  listIterator(start?: number | 'head' | 'tail'): ListIterator<E> {
+    if (typeof start !== 'number') {
+      start = start === 'tail' ? this.size() - 1 : 0;
+    }
+    return this.getListIterator(start, (cursor: LinkedListEntry<E>) => cursor.after as LinkedListEntry<E>);
+  }
+
   reverseListIterator(start?: number | 'head' | 'tail'): ListIterator<E> {
     if (typeof start !== 'number') {
       start = start === 'head' ? 0 : this.size() - 1;
     }
-    let cursor = this.getEntryAt(start);
-    let lastResult: (DoubleLinkedList.Entry & ListEntry<E>) | null = null;
-
-    return {
-      [Symbol.iterator]() {
-        return this;
-      },
-      next: () => {
-        if (cursor === this.linkedList.header) {
-          return { done: true, value: undefined };
-        }
-        const value = cursor.value;
-        lastResult = cursor;
-        cursor = cursor.before as unknown as DoubleLinkedList.Entry & ListEntry<E>;
-        return { done: false, value };
-      },
-      remove: () => {
-        if (lastResult === null) throw new Error('Invoking remove twice');
-        this.linkedList.remove(lastResult);
-        const value = lastResult.value;
-        lastResult = null;
-        --this._size;
-        return value;
-      },
-      setValue: (newValue: E) => {
-        if (lastResult === null) throw new Error('Invoking setValue after remove');
-        const value = lastResult.value;
-        lastResult.value = newValue;
-        return value;
-      },
-    };
+    return this.getListIterator(start, (cursor: LinkedListEntry<E>) => cursor.before as LinkedListEntry<E>);
   }
 
   clone(): LinkedList<E> {

@@ -116,18 +116,23 @@ export class ArrayList<E> extends List<E> {
     return shift;
   }
 
-  listIterator(start?: number | 'head' | 'tail'): ListIterator<E> {
-    let cursor = typeof start == 'number' ? start : start === 'tail' ? this.size() - 1 : 0;
+  getListIterator(
+    start: number,
+    done: (cursor: number) => boolean,
+    advance: (cursor: number) => number
+  ): ListIterator<E> {
     let lastReturn = -1;
+    let cursor = start;
     return {
       [Symbol.iterator]() {
         return this;
       },
       next: () => {
-        if (cursor >= this.size()) {
+        if (done(cursor)) {
           return { done: true, value: undefined };
         }
-        lastReturn = cursor++;
+        lastReturn = cursor;
+        cursor = advance(cursor);
         return { done: false, value: this.getAt(lastReturn) };
       },
       setValue: (item: E) => this.setAt(lastReturn, item),
@@ -140,26 +145,19 @@ export class ArrayList<E> extends List<E> {
     };
   }
 
+  listIterator(start?: number | 'head' | 'tail'): ListIterator<E> {
+    return this.getListIterator(
+      typeof start == 'number' ? start : start === 'tail' ? this.size() - 1 : 0,
+      cursor => cursor >= this.size(),
+      cursor => cursor + 1
+    );
+  }
+
   reverseListIterator(start?: number): ListIterator<E> {
-    let cursor = typeof start == 'number' ? start : start === 'head' ? 0 : this.size() - 1;
-    let lastReturn = -1;
-    return {
-      [Symbol.iterator]() {
-        return this;
-      },
-      next: () => {
-        if (cursor <= 0) {
-          return { done: true, value: undefined };
-        }
-        lastReturn = cursor--;
-        return { done: false, value: this.getAt(lastReturn) };
-      },
-      setValue: (item: E) => this.setAt(lastReturn, item),
-      remove: () => {
-        const value = this.removeAt(lastReturn);
-        lastReturn = -1;
-        return value;
-      },
-    };
+    return this.getListIterator(
+      typeof start == 'number' ? start : start === 'head' ? 0 : this.size() - 1,
+      cursor => cursor <= 0,
+      cursor => cursor - 1
+    );
   }
 }
