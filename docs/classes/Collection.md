@@ -15,7 +15,7 @@ not. Some are ordered and others unordered.
 ## Implements
 
 - `Iterable`\<`E`\>
-- [`OptionsBuilder`](../interfaces/OptionsBuilder.md)
+- [`Container`](../interfaces/Container.md)
 
 ## Table of contents
 
@@ -144,7 +144,7 @@ operation.
 
 #### Implementation of
 
-[OptionsBuilder](../interfaces/OptionsBuilder.md).[buildOptions](../interfaces/OptionsBuilder.md#buildoptions)
+[Container](../interfaces/Container.md).[buildOptions](../interfaces/Container.md#buildoptions)
 
 ___
 
@@ -160,6 +160,10 @@ number of elements it can contains.
 `number`
 
 The capacity of this `Collection`.
+
+#### Implementation of
+
+[Container](../interfaces/Container.md).[capacity](../interfaces/Container.md#capacity)
 
 ___
 

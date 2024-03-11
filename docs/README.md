@@ -11,16 +11,12 @@ ts-data-collections
 ### Interfaces
 
 - [CollectionInitializer](interfaces/CollectionInitializer.md)
+- [Container](interfaces/Container.md)
 - [ContainerOptions](interfaces/ContainerOptions.md)
-- [OptionsBuilder](interfaces/OptionsBuilder.md)
 
 ### Type Aliases
 
 - [CollectionLike](README.md#collectionlike)
-
-### Variables
-
-- [BoundedCollection](README.md#boundedcollection)
 
 ### Functions
 
@@ -42,14 +38,6 @@ elements.
 | :------ |
 | `E` |
 
-## Variables
-
-### BoundedCollection
-
-• `Const` **BoundedCollection**: (...`args`: `any`[]) => `Derived`\<typeof [`Collection`](classes/Collection.md)\> & typeof [`Collection`](classes/Collection.md)
-
-A Collection with a capacity.
-
 ## Functions
 
 ### buildCollection
@@ -64,15 +52,15 @@ Builds a `Collection`
 | :------ | :------ |
 | `E` | `E` |
 | `C` | extends [`Collection`](classes/Collection.md)\<`E`\> |
-| `Options` | extends [`ContainerOptions`](interfaces/ContainerOptions.md) = [`ContainerOptions`](interfaces/ContainerOptions.md) |
+| `Options` | extends `object` = `object` |
 | `Initializer` | extends [`CollectionInitializer`](interfaces/CollectionInitializer.md)\<`E`\> = [`CollectionInitializer`](interfaces/CollectionInitializer.md)\<`E`\> |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `factory` | `Object` |
-| `initializer?` | `number` \| `Options` & `Initializer` |
+| `factory` | `Constructor`\<`C`, [`undefined` \| `Options`]\> |
+| `initializer?` | `WithCapacity`\<`Options` & `Initializer`\> |
 
 #### Returns
 
