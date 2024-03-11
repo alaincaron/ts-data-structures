@@ -14,7 +14,7 @@ describe('OpenHashMultiSet', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const set = new OpenHashMultiSet(2);
+      const set = OpenHashMultiSet.create({ capacity: 2 });
       expect(set.capacity()).equal(2);
       expect(set.size()).equal(0);
       expect(set.remaining()).equal(2);
@@ -96,7 +96,7 @@ describe('OpenHashMultiSet', () => {
       expect(set.toArray().sort()).to.deep.equal([1, 1, 2, 2]);
     });
     it('should throw if full', () => {
-      const set = new OpenHashMultiSet(1);
+      const set = OpenHashMultiSet.create({ capacity: 1 });
       expect(set.add(1)).to.be.true;
       expect(set.isFull()).to.be.true;
       expect(() => set.add(1)).to.throw(OverflowException);
@@ -106,7 +106,7 @@ describe('OpenHashMultiSet', () => {
 
   describe('offer', () => {
     it('should refuse if full', () => {
-      const set = new OpenHashMultiSet(1);
+      const set = OpenHashMultiSet.create({ capacity: 1 });
       expect(set.offer(1)).to.be.true;
       expect(set.offer(2)).to.be.false;
       expect(set.isFull()).to.be.true;
@@ -224,7 +224,7 @@ describe('OpenHashMultiSet', () => {
 
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
-      const set = new OpenHashMultiSet(2);
+      const set = OpenHashMultiSet.create({ capacity: 2 });
       const data = [1, 2, 3];
       expect(set.offerFully(data)).equal(0);
       expect(set.isEmpty()).to.be.true;
@@ -232,7 +232,7 @@ describe('OpenHashMultiSet', () => {
       expect(set.isEmpty()).to.be.true;
     });
     it('should accept all items if enough capacity remaining', () => {
-      const set = new OpenHashMultiSet(6);
+      const set = OpenHashMultiSet.create({ capacity: 6 });
       const data = [1, 2, 3, 1, 3, 2];
       expect(set.offerFully(data)).equal(6);
       expect(set.size()).equal(6);
@@ -243,7 +243,7 @@ describe('OpenHashMultiSet', () => {
 
   describe('offerPartially', () => {
     it('should accept elements up to the remaining capacity', () => {
-      const set = new OpenHashMultiSet(2);
+      const set = OpenHashMultiSet.create({ capacity: 2 });
       const data = [1, 2, 3];
       expect(set.offerPartially(data)).equal(2);
       expect(set.toArray().sort()).to.deep.equal([1, 2]);
@@ -252,7 +252,7 @@ describe('OpenHashMultiSet', () => {
       expect(set.toArray().sort()).to.deep.equal([1, 2]);
     });
     it('should accept all items if enough capacity remaining', () => {
-      const set = new OpenHashMultiSet(6);
+      const set = OpenHashMultiSet.create({ capacity: 6 });
       const data = [1, 1, 2, 2, 3, 4, 5];
       expect(set.offerPartially(data)).equal(6);
       expect(set.count(5)).equal(0);
@@ -262,7 +262,7 @@ describe('OpenHashMultiSet', () => {
     });
     it('should accept all the items if there is enough capacity remaining for distinct elements', () => {
       const data = [1, 1, 1, 2, 1, 2, 3, 4];
-      const set = new OpenHashMultiSet(data.length);
+      const set = OpenHashMultiSet.create({ capacity: data.length });
       expect(set.offerPartially(data)).equal(data.length);
       expect(set.isEmpty()).to.be.false;
       expect(set.size()).equal(data.length);
@@ -316,7 +316,7 @@ describe('OpenHashMultiSet', () => {
     });
 
     it('should throw if not enough remaining capacity for new count', () => {
-      const ms = OpenHashMultiSet.create(5);
+      const ms = OpenHashMultiSet.create({ capacity: 5 });
       expect(ms.setCount('foo', 4)).equal(0);
       expect(ms.add('bar')).to.be.true;
       expect(() => ms.setCount('foo', 5)).to.throw(OverflowException);

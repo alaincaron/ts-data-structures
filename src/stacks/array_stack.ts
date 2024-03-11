@@ -2,18 +2,19 @@ import { Predicate } from 'ts-fluent-iterators';
 import { Stack } from './stack';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { ArrayDeque } from '../deques';
-import { ContainerOptions } from '../utils';
+import { QueueOptions } from '../queues';
+import { WithCapacity } from '../utils';
 
 export class ArrayStack<E> extends Stack<E> {
   private readonly buffer: ArrayDeque<E>;
 
-  constructor(options?: number | ContainerOptions) {
+  constructor(options?: QueueOptions) {
     super(options);
     this.buffer = ArrayDeque.create(options);
   }
 
-  static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)) {
-    return buildCollection<E, ArrayStack<E>>(ArrayStack, initializer);
+  static create<E>(initializer?: WithCapacity<QueueOptions & CollectionInitializer<E>>) {
+    return buildCollection<E, ArrayStack<E>, QueueOptions>(ArrayStack, initializer);
   }
 
   size() {
@@ -48,7 +49,7 @@ export class ArrayStack<E> extends Stack<E> {
     return this.buffer.peekLast();
   }
 
-  buildOptions() {
+  buildOptions(): WithCapacity<QueueOptions> {
     return this.buffer.buildOptions();
   }
 

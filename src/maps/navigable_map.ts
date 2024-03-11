@@ -1,9 +1,8 @@
 import { MapEntry } from './map';
 import { SortedMap, SortedMapOptions } from './sorted_map';
-import { CapacityMixin } from '../utils';
 
 export abstract class NavigableMap<K, V> extends SortedMap<K, V> {
-  constructor(options?: number | SortedMapOptions<K>) {
+  constructor(options?: SortedMapOptions<K>) {
     super(options);
   }
 
@@ -37,5 +36,3 @@ export abstract class NavigableMap<K, V> extends SortedMap<K, V> {
 
   abstract clone(): NavigableMap<K, V>;
 }
-
-export const BoundedNavigableMap = CapacityMixin(NavigableMap);

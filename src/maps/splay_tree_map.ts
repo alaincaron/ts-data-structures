@@ -1,6 +1,7 @@
 import { buildMap, MapInitializer } from './map';
 import { SortedMapOptions } from './sorted_map';
-import { BinaryNode, BoundedTreeMap } from './tree_map';
+import { BinaryNode, TreeMap } from './tree_map';
+import { WithCapacity } from '../utils';
 
 export interface SplayNode<K, V> extends BinaryNode<K, V> {
   left: SplayNode<K, V> | undefined;
@@ -25,15 +26,15 @@ function rotateWithRightChild<K, V>(node: SplayNode<K, V>) {
   return child;
 }
 
-export class SplayTreeMap<K, V> extends BoundedTreeMap<K, V> {
+export class SplayTreeMap<K, V> extends TreeMap<K, V> {
   private root: SplayNode<K, V> | undefined;
   private _size: number = 0;
 
-  constructor(options?: number | SortedMapOptions<K>) {
+  constructor(options?: SortedMapOptions<K>) {
     super(options);
   }
 
-  static create<K, V>(initializer?: number | SortedMapOptions<K> | MapInitializer<K, V>): SplayTreeMap<K, V> {
+  static create<K, V>(initializer?: WithCapacity<SortedMapOptions<K> & MapInitializer<K, V>>): SplayTreeMap<K, V> {
     return buildMap<K, V, SplayTreeMap<K, V>, SortedMapOptions<K>>(SplayTreeMap, initializer);
   }
 

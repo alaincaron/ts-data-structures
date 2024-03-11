@@ -1,24 +1,28 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { BoundedMultiSet } from './multi_set';
+import { SumCollector } from 'ts-fluent-iterators/dist/lib/collectors';
+import { MultiSet } from './multi_set';
 import { IMap } from '../maps';
-import { ContainerOptions, OverflowException } from '../utils';
+import { OverflowException } from '../utils';
 
 export interface Count {
   count: number;
 }
 
-export abstract class MapBasedMultiSet<E> extends BoundedMultiSet<E> {
+export abstract class MapBasedMultiSet<E> extends MultiSet<E> {
   protected readonly map: IMap<E, Count>;
   private _size: number;
 
-  constructor(mapFactory: IMap<E, Count> | (new () => IMap<E, Count>), options?: number | ContainerOptions) {
-    super(options);
-    this._size = 0;
+  constructor(mapFactory: IMap<E, Count> | (new () => IMap<E, Count>)) {
+    super();
     if (typeof mapFactory === 'function') {
       this.map = new mapFactory();
     } else {
       this.map = mapFactory;
     }
+    this._size = this.map
+      .valueIterator()
+      .map(c => c.count)
+      .collectTo(new SumCollector());
   }
 
   size() {

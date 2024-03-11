@@ -1,17 +1,16 @@
 import { Comparator, Comparators, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry } from './map';
-import { CapacityMixin, ContainerOptions } from '../utils';
 
-export interface SortedMapOptions<K> extends ContainerOptions {
+export interface SortedMapOptions<K> {
   comparator?: Comparator<K>;
 }
 
 export abstract class SortedMap<K, V> extends IMap<K, V> {
   public readonly comparator: Comparator<K>;
 
-  constructor(options?: number | SortedMapOptions<K>) {
-    super(options);
-    this.comparator = (options as any)?.comparator ?? Comparators.defaultComparator;
+  constructor(options?: SortedMapOptions<K>) {
+    super();
+    this.comparator = options?.comparator ?? Comparators.defaultComparator;
   }
 
   firstEntry(): MapEntry<K, V> | undefined {
@@ -47,7 +46,7 @@ export abstract class SortedMap<K, V> extends IMap<K, V> {
     }
   }
 
-  buildOptions(): SortedMapOptions<K> {
+  buildOptions() {
     return {
       ...super.buildOptions(),
       comparator: this.comparator,
@@ -70,5 +69,3 @@ export abstract class SortedMap<K, V> extends IMap<K, V> {
 
   abstract clone(): SortedMap<K, V>;
 }
-
-export const BoundedSortedMap = CapacityMixin(SortedMap);

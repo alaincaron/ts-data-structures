@@ -1,17 +1,17 @@
 import { Comparator, Predicate } from 'ts-fluent-iterators';
-import { BoundedList, ListIterator } from './list';
+import { List, ListIterator } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
-import { ContainerOptions, IndexOutOfBoundsException, shuffle, UnderflowException } from '../utils';
+import { IndexOutOfBoundsException, shuffle, UnderflowException, WithCapacity } from '../utils';
 
-export class ArrayList<E> extends BoundedList<E> {
+export class ArrayList<E> extends List<E> {
   private elements: Array<E>;
 
-  constructor(options?: number | ContainerOptions) {
-    super(options);
+  constructor() {
+    super();
     this.elements = [];
   }
 
-  static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)): ArrayList<E> {
+  static create<E>(initializer?: WithCapacity<CollectionInitializer<E>>): ArrayList<E> {
     return buildCollection<E, ArrayList<E>>(ArrayList, initializer);
   }
 

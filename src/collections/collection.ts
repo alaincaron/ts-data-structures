@@ -2,7 +2,16 @@ import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-it
 import { toIterator } from 'ts-fluent-iterators/dist/lib/sync';
 import { getSize } from './helpers';
 import { CollectionInitializer, CollectionLike } from './types';
-import { CapacityMixin, Container, ContainerOptions, equalsAny, iterableToJSON, OverflowException } from '../utils';
+import {
+  CapacityMixin,
+  Constructor,
+  Container,
+  ContainerOptions,
+  equalsAny,
+  iterableToJSON,
+  OverflowException,
+  WithCapacity,
+} from '../utils';
 
 /**
  * A `Collection` represents a group of objects, known as its
@@ -10,8 +19,6 @@ import { CapacityMixin, Container, ContainerOptions, equalsAny, iterableToJSON, 
  * not. Some are ordered and others unordered.
  */
 export abstract class Collection<E> implements Iterable<E>, Container {
-  public constructor(_options?: number | ContainerOptions) {}
-
   /**
    * Returns the number of elements in this `Collection`.
    * @returns the number of elements in this `Collection`
@@ -24,7 +31,9 @@ export abstract class Collection<E> implements Iterable<E>, Container {
    *
    * @returns The capacity of this `Collection`.
    */
-  abstract capacity(): number;
+  capacity(): number {
+    return Infinity;
+  }
 
   /**
    * Returns `true` if this `Collection` is empty, i.e. its `size` is `0`.
@@ -300,20 +309,16 @@ export abstract class Collection<E> implements Iterable<E>, Container {
 }
 
 /**
- * A Collection with a capacity.
- */
-export const BoundedCollection = CapacityMixin(Collection);
-
-/**
  * Builds a `Collection`
  */
 export function buildCollection<
   E,
   C extends Collection<E>,
-  Options extends ContainerOptions = ContainerOptions,
+  Options extends object = object,
   Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
->(factory: new (...args: any[]) => C, initializer?: number | (Options & Initializer)): C {
-  if (initializer == null || typeof initializer === 'number') return new factory(initializer);
+>(factory: Constructor<C, [Options | undefined]>, initializer?: WithCapacity<Options & Initializer>): C {
+  if (initializer?.capacity == null && initializer?.initial == null) return new factory(initializer);
+
   const initialElements = initializer.initial;
 
   let options: any = undefined;
@@ -326,7 +331,16 @@ export function buildCollection<
   }
   delete options.initial;
 
-  const result = new factory(options);
+  const result = boundCollection(factory, options);
   if (initialElements) result.addFully(initialElements);
   return result;
+}
+
+function boundCollection<E, C extends Collection<E>>(ctor: Constructor<C>, options?: ContainerOptions) {
+  if (options && 'capacity' in options) {
+    const boundedCtor: any = CapacityMixin(ctor);
+    const tmp = new boundedCtor(options);
+    return tmp as unknown as C;
+  }
+  return new ctor(options);
 }

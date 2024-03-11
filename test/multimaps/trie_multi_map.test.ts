@@ -15,7 +15,7 @@ describe('TrieMultiMap', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const map = new TrieMultiMap(2);
+      const map = TrieMultiMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
@@ -24,7 +24,7 @@ describe('TrieMultiMap', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const map = new TrieMultiMap({ capacity: 2 });
+      const map = TrieMultiMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
     });
@@ -60,7 +60,7 @@ describe('TrieMultiMap', () => {
       expect(map.get('b')?.equals(list(2, 4))).to.be.true;
     });
     it('should respect the passed comparator', () => {
-      const map = new TrieMultiMap<number>({ comparator: Comparators.reverseComparator });
+      const map = TrieMultiMap.create<number>({ comparator: Comparators.reverseComparator });
       map.put('bar', 1);
       map.put('foo', 2);
       map.put('bar', 3);
@@ -91,7 +91,7 @@ describe('TrieMultiMap', () => {
     });
 
     it('should throw if adding a new element and map is full', () => {
-      const map = new TrieMultiMap(1);
+      const map = TrieMultiMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.true;
       expect(() => map.put('bar', 1)).to.throw(OverflowException);
       expect(map.isFull()).to.be.true;
@@ -115,7 +115,7 @@ describe('TrieMultiMap', () => {
     });
 
     it('should return false if map is full', () => {
-      const map = new TrieMultiMap(1);
+      const map = TrieMultiMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.true;
       expect(map.offer('foo', 1)).to.be.false;
       expect(map.isFull()).to.be.true;
@@ -137,7 +137,7 @@ describe('TrieMultiMap', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const map = new TrieMultiMap({ capacity: 3 });
+      const map = TrieMultiMap.create({ capacity: 3 });
       map.put('a', 1);
       map.put('b', 2);
       expect(map.size()).to.equal(2);

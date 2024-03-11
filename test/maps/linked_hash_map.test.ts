@@ -17,7 +17,7 @@ describe('LinkedHashMap', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const map = new LinkedHashMap(2);
+      const map = LinkedHashMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
@@ -26,7 +26,7 @@ describe('LinkedHashMap', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const map = new LinkedHashMap({ capacity: 2 });
+      const map = LinkedHashMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
     });
@@ -82,7 +82,7 @@ describe('LinkedHashMap', () => {
     });
 
     it('should throw if adding a new element and map is full', () => {
-      const map = new LinkedHashMap(1);
+      const map = LinkedHashMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(() => map.put('bar', 1)).to.throw(OverflowException);
@@ -107,7 +107,7 @@ describe('LinkedHashMap', () => {
     });
 
     it('should return false if offering a new element and map is full', () => {
-      const map = new LinkedHashMap(1);
+      const map = LinkedHashMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(map.offer('bar', 1)).to.deep.equal({ accepted: false });
@@ -130,7 +130,7 @@ describe('LinkedHashMap', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const map = new LinkedHashMap({ capacity: 3 });
+      const map = LinkedHashMap.create({ capacity: 3 });
       map.put('a', 1);
       map.put('b', 2);
       expect(map.size()).to.equal(2);

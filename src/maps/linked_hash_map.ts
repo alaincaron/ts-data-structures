@@ -1,7 +1,7 @@
 import { AccessType, HashEntry, HashMap, HashMapOptions } from './hash_map';
 import { buildMap, MapInitializer } from './map';
 import { MapEntry } from './map';
-import { DoubleLinkedList, OverflowException } from '../utils';
+import { DoubleLinkedList, OverflowException, WithCapacity } from '../utils';
 
 export enum Ordering {
   INSERTION = 1,
@@ -26,14 +26,14 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   private readonly overflowStrategy: OverflowStrategy;
   private readonly linkedList: DoubleLinkedList<HashEntry<K, V>>;
 
-  constructor(options?: number | LinkedHashMapOptions) {
+  constructor(options?: LinkedHashMapOptions) {
     super(options);
-    this.ordering = (options as any)?.ordering ?? Ordering.INSERTION;
-    this.overflowStrategy = (options as any)?.overflowStrategy ?? OverflowStrategy.THROW;
+    this.ordering = options?.ordering ?? Ordering.INSERTION;
+    this.overflowStrategy = options?.overflowStrategy ?? OverflowStrategy.THROW;
     this.linkedList = new DoubleLinkedList();
   }
 
-  static create<K, V>(initializer?: number | (LinkedHashMapOptions & MapInitializer<K, V>)): LinkedHashMap<K, V> {
+  static create<K, V>(initializer?: WithCapacity<LinkedHashMapOptions & MapInitializer<K, V>>): LinkedHashMap<K, V> {
     return buildMap<K, V, LinkedHashMap<K, V>, LinkedHashMapOptions>(LinkedHashMap, initializer);
   }
 
@@ -106,7 +106,7 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
     for (const e of this.linkedList.entries()) yield e as unknown as MapEntry<K, V>;
   }
 
-  buildOptions(): LinkedHashMapOptions {
+  buildOptions() {
     return {
       ...super.buildOptions(),
       ordering: this.ordering,

@@ -14,7 +14,7 @@ describe('AdapterSet', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const set = new AdapterSet(2);
+      const set = AdapterSet.create({ capacity: 2 });
       expect(set.capacity()).equal(2);
       expect(set.size()).equal(0);
       expect(set.remaining()).equal(2);
@@ -93,7 +93,7 @@ describe('AdapterSet', () => {
       expect(set.toArray()).to.deep.equal([1, 2]);
     });
     it('should throw if full and element not present', () => {
-      const set = new AdapterSet(1);
+      const set = AdapterSet.create({ capacity: 1 });
       expect(set.add(1)).to.be.true;
       expect(set.isFull()).to.be.true;
       expect(set.add(1)).to.be.false;
@@ -104,7 +104,7 @@ describe('AdapterSet', () => {
 
   describe('offer', () => {
     it('should refuse if full and element not present', () => {
-      const set = new AdapterSet(1);
+      const set = AdapterSet.create({ capacity: 1 });
       expect(set.offer(1)).to.be.true;
       expect(set.offer(2)).to.be.false;
       expect(set.isFull()).to.be.true;
@@ -219,7 +219,7 @@ describe('AdapterSet', () => {
 
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
-      const set = new AdapterSet(2);
+      const set = AdapterSet.create({ capacity: 2 });
       const data = [1, 2, 3];
       expect(set.offerFully(data)).equal(0);
       expect(set.isEmpty()).to.be.true;
@@ -227,7 +227,7 @@ describe('AdapterSet', () => {
       expect(set.isEmpty()).to.be.true;
     });
     it('should accept all items if enough capacity remaining', () => {
-      const set = new AdapterSet(6);
+      const set = AdapterSet.create({ capacity: 6 });
       const data = [1, 2, 3, 1, 3, 2];
       expect(set.offerFully(data)).equal(3);
       expect(set.size()).equal(3);
@@ -235,7 +235,7 @@ describe('AdapterSet', () => {
       expect(set.size()).equal(6);
     });
     it('should accept all the items if there is enough capacity remaining for distinct elements', () => {
-      const set = new AdapterSet(2);
+      const set = AdapterSet.create({ capacity: 2 });
       const data = [1, 2, 1, 2];
       expect(set.offerFully(data)).equal(2);
       expect(set.isEmpty()).to.be.false;
@@ -245,7 +245,7 @@ describe('AdapterSet', () => {
 
   describe('offerPartially', () => {
     it('should accept elements up to the remaining capacity', () => {
-      const set = new AdapterSet(2);
+      const set = AdapterSet.create({ capacity: 2 });
       const data = [1, 2, 3];
       expect(set.offerPartially(data)).equal(2);
       expect(set.toArray()).to.deep.equal([1, 2]);
@@ -254,7 +254,7 @@ describe('AdapterSet', () => {
       expect(set.toArray()).to.deep.equal([1, 2]);
     });
     it('should accept all items if enough capacity remaining', () => {
-      const set = new AdapterSet(6);
+      const set = AdapterSet.create({ capacity: 6 });
       const data = [1, 1, 2, 2, 3, 4, 5];
       expect(set.offerPartially(data)).equal(5);
       expect(set.size()).equal(5);
@@ -262,7 +262,7 @@ describe('AdapterSet', () => {
       expect(set.size()).equal(5);
     });
     it('should accept all the items if there is enough capacity remaining for distinct elements', () => {
-      const set = new AdapterSet(2);
+      const set = AdapterSet.create({ capacity: 2 });
       const data = [1, 1, 1, 2, 1, 2, 3, 4];
       expect(set.offerPartially(data)).equal(2);
       expect(set.isEmpty()).to.be.false;

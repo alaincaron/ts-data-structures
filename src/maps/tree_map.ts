@@ -3,7 +3,6 @@ import { MapEntry } from './map';
 import { NavigableMap } from './navigable_map';
 import { SortedMapOptions } from './sorted_map';
 import { ArrayStack } from '../stacks';
-import { CapacityMixin } from '../utils';
 
 export interface BinaryNode<K, V> extends MapEntry<K, V> {
   get left(): BinaryNode<K, V> | undefined;
@@ -11,7 +10,7 @@ export interface BinaryNode<K, V> extends MapEntry<K, V> {
 }
 
 export abstract class TreeMap<K, V> extends NavigableMap<K, V> {
-  constructor(options?: number | SortedMapOptions<K>) {
+  constructor(options?: SortedMapOptions<K>) {
     super(options);
   }
 
@@ -225,5 +224,3 @@ export abstract class TreeMap<K, V> extends NavigableMap<K, V> {
 
   abstract clone(): TreeMap<K, V>;
 }
-
-export const BoundedTreeMap = CapacityMixin(TreeMap);

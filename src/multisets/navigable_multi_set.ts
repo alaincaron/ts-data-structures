@@ -1,13 +1,10 @@
 import { Count } from './map_based_multi_set';
 import { SortedMultiSet } from './sorted_multi_set';
-import { MapEntry, NavigableMap, SortedMapOptions } from '../maps';
+import { MapEntry, NavigableMap } from '../maps';
 
 export abstract class NavigableMultiSet<E> extends SortedMultiSet<E> {
-  constructor(
-    mapFactory: NavigableMap<E, Count> | (new () => NavigableMap<E, Count>),
-    options?: number | SortedMapOptions<E>
-  ) {
-    super(mapFactory, options);
+  constructor(mapFactory: NavigableMap<E, Count> | (new () => NavigableMap<E, Count>)) {
+    super(mapFactory);
   }
 
   protected delegate() {

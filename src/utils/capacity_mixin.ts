@@ -1,7 +1,9 @@
-import { AbstractConstructor, Container, ContainerOptions } from './types';
+import { AddCapacity, Constructor, ContainerOptions } from './types';
 
-export function CapacityMixin<TBase extends AbstractConstructor<Container, any[]>>(Base: TBase) {
-  abstract class Derived extends Base {
+export function CapacityMixin<TBase extends Constructor<any, any[]>>(
+  Base: TBase
+): Constructor<TBase, AddCapacity<ConstructorParameters<TBase>>> {
+  class Derived extends Base {
     readonly _capacity: number;
 
     constructor(...args: any[]) {
@@ -16,11 +18,14 @@ export function CapacityMixin<TBase extends AbstractConstructor<Container, any[]
     }
 
     buildOptions(): ContainerOptions {
-      return {
-        ...super.buildOptions(),
-        capacity: this._capacity,
-      };
+      const options = super.buildOptions();
+      const capacity = this._capacity;
+      if (Number.isFinite(capacity)) {
+        options.capacity = capacity;
+      }
+      return options;
     }
   }
+
   return Derived;
 }

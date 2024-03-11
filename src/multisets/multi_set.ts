@@ -1,5 +1,12 @@
 import { Collection, CollectionLike } from '../collections';
-import { CapacityMixin, ContainerOptions, hashIterableUnordered, OverflowException } from '../utils';
+import {
+  CapacityMixin,
+  Constructor,
+  ContainerOptions,
+  hashIterableUnordered,
+  OverflowException,
+  WithCapacity,
+} from '../utils';
 
 export type MultiSetLike<E> = CollectionLike<E> | MultiSet<E>;
 
@@ -8,10 +15,6 @@ export interface MultiSetInitializer<E> {
 }
 
 export abstract class MultiSet<E> extends Collection<E> {
-  constructor(options?: number | ContainerOptions) {
-    super(options);
-  }
-
   abstract count(item: E): number;
 
   addCount(item: E, count: number): number {
@@ -55,15 +58,13 @@ export abstract class MultiSet<E> extends Collection<E> {
   abstract clone(): MultiSet<E>;
 }
 
-export const BoundedMultiSet = CapacityMixin(MultiSet);
-
 export function buildMultiSet<
   E,
   MS extends MultiSet<E>,
-  Options extends ContainerOptions = ContainerOptions,
+  Options extends object,
   Initializer extends MultiSetInitializer<E> = MultiSetInitializer<E>,
->(factory: new (...args: any[]) => MS, initializer?: number | (Options & Initializer)): MS {
-  if (initializer == null || typeof initializer === 'number') return new factory(initializer);
+>(factory: Constructor<MS>, initializer?: WithCapacity<Options & Initializer>): MS {
+  if (initializer == null) return new factory();
   const initialElements = initializer.initial;
 
   let options: any = undefined;
@@ -74,7 +75,7 @@ export function buildMultiSet<
   }
 
   delete options.initial;
-  const result = new factory(options);
+  const result = boundMultiSet(factory, options);
   if (initialElements instanceof MultiSet) {
     for (const [e, count] of initialElements.entries()) {
       result.setCount(e, count);
@@ -84,4 +85,13 @@ export function buildMultiSet<
   }
 
   return result;
+}
+
+function boundMultiSet<E, MS extends MultiSet<E>>(ctor: Constructor<MS>, options?: ContainerOptions) {
+  if (typeof options === 'number' || (options && 'capacity' in options)) {
+    const boundedCtor: any = CapacityMixin(ctor);
+    const tmp = new boundedCtor(options);
+    return tmp as unknown as MS;
+  }
+  return new ctor(options);
 }

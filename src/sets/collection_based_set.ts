@@ -3,7 +3,7 @@ import { ISet } from './set';
 import { getItemsToAdd } from './utils';
 import { buildCollection, Collection, CollectionInitializer, CollectionLike } from '../collections';
 import { ArrayList } from '../lists';
-import { ContainerOptions, OverflowException } from '../utils';
+import { Constructor, ContainerOptions, OverflowException, WithCapacity } from '../utils';
 
 export abstract class CollectionBasedSet<E> extends ISet<E> {
   private _delegate: Collection<E>;
@@ -47,7 +47,7 @@ export abstract class CollectionBasedSet<E> extends ISet<E> {
     return this._delegate[Symbol.iterator]();
   }
 
-  buildOptions(): ContainerOptions {
+  buildOptions() {
     return this._delegate.buildOptions();
   }
 
@@ -76,18 +76,53 @@ export abstract class CollectionBasedSet<E> extends ISet<E> {
   }
 
   abstract clone(): CollectionBasedSet<E>;
+
+  protected static createSet<
+    E,
+    C extends Collection<E>,
+    S extends CollectionBasedSet<E>,
+    Options extends ContainerOptions = ContainerOptions,
+    Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
+  >(setFactory: Constructor<S>, colFactory: (options?: Options) => C, initializer?: Options & Initializer): S {
+    let delegate: C;
+    let initialElements;
+
+    if (!initializer?.initial) {
+      delegate = colFactory(initializer as Options);
+      initialElements = undefined;
+    } else {
+      initialElements = initializer.initial;
+      let options: any = {
+        ...initializer,
+      };
+
+      if ('buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
+        options = { ...options, ...initialElements.buildOptions() };
+      }
+      delete options.initial;
+
+      delegate = colFactory(options);
+    }
+    const result = new setFactory(delegate);
+    if (initialElements) result.addFully(initialElements);
+    return result;
+  }
+
+  protected cloneDelegate<C extends Collection<E>>(factory: Constructor<C>): C {
+    return buildCollection<E, C>(factory, { initial: this.delegate() });
+  }
 }
 
 export class ArraySet<E> extends CollectionBasedSet<E> {
-  constructor(options?: number | ContainerOptions) {
-    super(new ArrayList<E>(options));
+  constructor(delegate?: ArrayList<E>) {
+    super(delegate ?? new ArrayList<E>());
   }
 
-  static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)): ArraySet<E> {
-    return buildCollection<E, ArraySet<E>>(ArraySet, initializer);
+  static create<E>(initializer?: WithCapacity<CollectionInitializer<E>>): ArraySet<E> {
+    return CollectionBasedSet.createSet<E, ArrayList<E>, ArraySet<E>>(ArraySet, ArrayList.create, initializer);
   }
 
   clone(): ArraySet<E> {
-    return ArraySet.create({ initial: this.delegate() });
+    return new ArraySet(this.cloneDelegate<ArrayList<E>>(ArrayList));
   }
 }

@@ -29,7 +29,7 @@ function assertAvlProperty<K, V>(map: AvlTreeMap<K, V>) {
 describe('AvlTreeMap', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.capacity()).equal(Infinity);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(Infinity);
@@ -39,7 +39,7 @@ describe('AvlTreeMap', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const map = new AvlTreeMap(2);
+      const map = AvlTreeMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
@@ -49,7 +49,7 @@ describe('AvlTreeMap', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const map = new AvlTreeMap({ capacity: 2 });
+      const map = AvlTreeMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
       assertAvlProperty(map);
@@ -64,7 +64,7 @@ describe('AvlTreeMap', () => {
     });
 
     it('should initialize with the provided IMap', () => {
-      const map1 = new AvlTreeMap();
+      const map1 = AvlTreeMap.create();
       map1.put('a', 1);
       map1.put('b', 2);
       const map = AvlTreeMap.create({ initial: map1 });
@@ -90,14 +90,14 @@ describe('AvlTreeMap', () => {
 
   describe('put/get', () => {
     it('should return undefined if key is newly added', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
       assertAvlProperty(map);
     });
     it('should return the old value if key already present', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.put('foo', 2)).equal(4);
       expect(map.size()).equal(1);
@@ -106,7 +106,7 @@ describe('AvlTreeMap', () => {
     });
 
     it('should throw if adding a new element and map is full', () => {
-      const map = new AvlTreeMap(1);
+      const map = AvlTreeMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(() => map.put('bar', 1)).to.throw(OverflowException);
@@ -117,13 +117,13 @@ describe('AvlTreeMap', () => {
 
   describe('offer', () => {
     it('should return undefined if key is newly added', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.offer('foo', 4)).to.deep.equal({ accepted: true });
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
     });
     it('should return the old value if key already present', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.offer('foo', 2)).to.deep.equal({ accepted: true, previous: 4 });
       expect(map.size()).equal(1);
@@ -131,7 +131,7 @@ describe('AvlTreeMap', () => {
     });
 
     it('should return false if offering a new element and map is full', () => {
-      const map = new AvlTreeMap(1);
+      const map = AvlTreeMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(map.offer('bar', 1)).to.deep.equal({ accepted: false });
@@ -142,7 +142,7 @@ describe('AvlTreeMap', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = new AvlTreeMap();
+      const a = AvlTreeMap.create();
       a.put('foo', 1);
       const b = a.clone();
       expect(b).to.deep.equal(a);
@@ -154,7 +154,7 @@ describe('AvlTreeMap', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const map = new AvlTreeMap({ capacity: 3 });
+      const map = AvlTreeMap.create({ capacity: 3 });
       map.put('a', 1);
       map.put('b', 2);
       expect(map.size()).to.equal(2);
@@ -167,16 +167,16 @@ describe('AvlTreeMap', () => {
 
   describe('containsKey', () => {
     it('should return false on empty map', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.containsKey('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('foo', 1);
       expect(map.containsKey('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('foo', 1);
       expect(map.containsKey('foo')).to.be.true;
     });
@@ -184,16 +184,16 @@ describe('AvlTreeMap', () => {
 
   describe('containsValue', () => {
     it('should return false on empty map', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.containsValue('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('foo', 1);
       expect(map.containsValue('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('foo', 1);
       expect(map.containsValue(1)).to.be.true;
     });
@@ -201,13 +201,13 @@ describe('AvlTreeMap', () => {
 
   describe('remove', () => {
     it('should return undefined on empty map', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.remove('foo')).to.be.undefined;
       expect(map.isEmpty()).to.be.true;
       expect(map.size()).equal(0);
     });
     it('should return false if item is missing', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.remove('bar')).to.be.undefined;
       expect(map.isEmpty()).to.be.false;
@@ -218,7 +218,7 @@ describe('AvlTreeMap', () => {
 
   describe('filterKeys', () => {
     it('should remove keys not matching predicate', () => {
-      const map = new AvlTreeMap<string, number>();
+      const map = AvlTreeMap.create<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
@@ -233,7 +233,7 @@ describe('AvlTreeMap', () => {
 
   describe('filterValues', () => {
     it('should remove values not matching predicate', () => {
-      const map = new AvlTreeMap<string, number>();
+      const map = AvlTreeMap.create<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
@@ -247,7 +247,7 @@ describe('AvlTreeMap', () => {
 
   describe('entries', () => {
     it('should iterate over all entries', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('c', 3);
       map.put('a', 1);
       map.put('b', 2);
@@ -262,7 +262,7 @@ describe('AvlTreeMap', () => {
 
   describe('reverseEntryIterator', () => {
     it('should iterate over all entries in reverse order', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('c', 3);
       map.put('a', 1);
       map.put('b', 2);
@@ -277,7 +277,7 @@ describe('AvlTreeMap', () => {
 
   describe('reverseKeyIterator', () => {
     it('should iterate over all keys in reverse order', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('c', 3);
       map.put('a', 1);
       map.put('b', 2);
@@ -288,7 +288,7 @@ describe('AvlTreeMap', () => {
 
   describe('reverseValueIterator', () => {
     it('should iterate over all values in reverse order', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('c', 3);
       map.put('a', 1);
       map.put('b', 2);
@@ -299,7 +299,7 @@ describe('AvlTreeMap', () => {
 
   describe('pseudoRandomInsert', () => {
     it('should return elements in the right order', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       const num = 500;
       const gap = 307;
       for (let i = gap; i != 0; i = (i + gap) % num) {
@@ -317,7 +317,7 @@ describe('AvlTreeMap', () => {
 
   describe('lastEntry/pollLastEntry/lastKey', () => {
     it('should return undefined on empty map', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.lastEntry()).to.be.undefined;
       expect(map.pollLastEntry()).to.be.undefined;
     });
@@ -343,7 +343,7 @@ describe('AvlTreeMap', () => {
 
   describe('firstEntry/pollFirstEntry/firstKey', () => {
     it('should return undefined on empty map', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       expect(map.firstEntry()).to.be.undefined;
       expect(map.pollFirstEntry()).to.be.undefined;
     });
@@ -369,7 +369,7 @@ describe('AvlTreeMap', () => {
 
   describe('lowerEntry', () => {
     it('should resolve lowerEntry', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('a', 1);
       map.put('b', 2);
 
@@ -393,7 +393,7 @@ describe('AvlTreeMap', () => {
 
   describe('higherEntry', () => {
     it('should resolve lowerEntry', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('a', 1);
       map.put('b', 2);
 
@@ -417,7 +417,7 @@ describe('AvlTreeMap', () => {
 
   describe('floorEntry', () => {
     it('should resolve floorEntry', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('a', 1);
       map.put('b', 2);
 
@@ -443,7 +443,7 @@ describe('AvlTreeMap', () => {
 
   describe('ceilingEntry', () => {
     it('should resolve floorEntry', () => {
-      const map = new AvlTreeMap();
+      const map = AvlTreeMap.create();
       map.put('a', 1);
       map.put('b', 2);
 

@@ -14,7 +14,7 @@ describe('LinkedList', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const list = LinkedList.create(2);
+      const list = LinkedList.create({ capacity: 2 });
       expect(list.capacity()).equal(2);
       expect(list.size()).equal(0);
       expect(list.remaining()).equal(2);
@@ -161,7 +161,7 @@ describe('LinkedList', () => {
       expect(list.getLast()).equal('foo');
     });
     it('should return false if capacity is reached', () => {
-      const list = LinkedList.create(1);
+      const list = LinkedList.create({ capacity: 1 });
       expect(list.offerFirst('foo')).equal(true);
       expect(list.isFull()).equal(true);
       expect(list.offerFirst('bar')).equal(false);
@@ -326,7 +326,7 @@ describe('LinkedList', () => {
 
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
-      const list = LinkedList.create(2);
+      const list = LinkedList.create({ capacity: 2 });
       const data = [1, 2, 3];
       expect(list.offerFully(data)).equal(0);
       expect(list.isEmpty()).to.be.true;
@@ -334,7 +334,7 @@ describe('LinkedList', () => {
       expect(list.isEmpty()).to.be.true;
     });
     it('should accept all items if enough capacity remaining', () => {
-      const list = LinkedList.create(6);
+      const list = LinkedList.create({ capacity: 6 });
       const data = [1, 2, 3];
       expect(list.offerFully(data)).equal(3);
       expect(list.size()).equal(3);
@@ -345,7 +345,7 @@ describe('LinkedList', () => {
 
   describe('offerPartially', () => {
     it('should accept elements up to the remaining capacity', () => {
-      const list = LinkedList.create(2);
+      const list = LinkedList.create({ capacity: 2 });
       const data = [1, 2, 3];
       expect(list.offerPartially(data)).equal(2);
       expect(list.toArray()).to.deep.equal([1, 2]);
@@ -354,7 +354,7 @@ describe('LinkedList', () => {
       expect(list.toArray()).to.deep.equal([1, 2]);
     });
     it('should accept all items if enough capacity remaining', () => {
-      const list = LinkedList.create(6);
+      const list = LinkedList.create({ capacity: 6 });
       const data = [1, 2, 3];
       expect(list.offerPartially(data)).equal(3);
       expect(list.size()).equal(3);

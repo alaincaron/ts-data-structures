@@ -1,8 +1,8 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { BoundedDeque } from './deque';
+import { Deque } from './deque';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { QueueOptions } from '../queues';
-import { nextPowerOfTwo } from '../utils';
+import { nextPowerOfTwo, WithCapacity } from '../utils';
 
 /*
  * The minimum capacity that we'll use for a newly created deque.
@@ -10,24 +10,19 @@ import { nextPowerOfTwo } from '../utils';
  */
 const MIN_INITIAL_CAPACITY = 8;
 
-export class ArrayDeque<E> extends BoundedDeque<E> {
+export class ArrayDeque<E> extends Deque<E> {
   private elements: Array<E>;
   private head: number;
   private tail: number;
 
-  constructor(options?: number | QueueOptions) {
+  constructor(options?: QueueOptions) {
     super(options);
-
     this.head = this.tail = 0;
-    if (typeof options === 'number') {
-      this.elements = this.allocateElements(options);
-    } else {
-      this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
-    }
+    this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
   }
 
-  static create<E>(initializer?: number | (QueueOptions & CollectionInitializer<E>)): ArrayDeque<E> {
-    return buildCollection<E, ArrayDeque<E>>(ArrayDeque, initializer);
+  static create<E>(initializer?: WithCapacity<QueueOptions & CollectionInitializer<E>>): ArrayDeque<E> {
+    return buildCollection<E, ArrayDeque<E>, QueueOptions>(ArrayDeque, initializer);
   }
 
   private nextArraySize(numElements: number) {

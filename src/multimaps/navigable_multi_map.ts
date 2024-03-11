@@ -1,13 +1,11 @@
-import { SortedMultiMap, SortedMultiMapOptions } from './sorted_multi_map';
+import { SortedMultiMap } from './sorted_multi_map';
 import { Collection } from '../collections';
 import { MapEntry, NavigableMap } from '../maps';
+import { Constructor } from '../utils';
 
 export abstract class NavigableMultiMap<K, V> extends SortedMultiMap<K, V> {
-  constructor(
-    mapFactory: NavigableMap<K, Collection<V>> | (new () => NavigableMap<K, Collection<V>>),
-    options?: number | SortedMultiMapOptions<K, V>
-  ) {
-    super(mapFactory, options);
+  constructor(map: NavigableMap<K, Collection<V>>, collectionFactory?: Constructor<Collection<V>>) {
+    super(map, collectionFactory);
   }
 
   protected delegate() {

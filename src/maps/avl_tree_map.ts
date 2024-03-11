@@ -1,6 +1,7 @@
 import { buildMap, MapInitializer } from './map';
 import { SortedMapOptions } from './sorted_map';
-import { BinaryNode, BoundedTreeMap } from './tree_map';
+import { BinaryNode, TreeMap } from './tree_map';
+import { WithCapacity } from '../utils';
 
 enum Direction {
   LEFT,
@@ -116,15 +117,15 @@ function leftMost<K, V>(root: AvlNode<K, V>): AvlNode<K, V> {
   return leftMostNode;
 }
 
-export class AvlTreeMap<K, V> extends BoundedTreeMap<K, V> {
+export class AvlTreeMap<K, V> extends TreeMap<K, V> {
   private root: AvlNode<K, V> | undefined;
   private _size: number = 0;
 
-  constructor(options?: number | SortedMapOptions<K>) {
+  constructor(options?: SortedMapOptions<K>) {
     super(options);
   }
 
-  static create<K, V>(initializer?: number | SortedMapOptions<K> | MapInitializer<K, V>): AvlTreeMap<K, V> {
+  static create<K, V>(initializer?: WithCapacity<SortedMapOptions<K> & MapInitializer<K, V>>): AvlTreeMap<K, V> {
     return buildMap<K, V, AvlTreeMap<K, V>, SortedMapOptions<K>>(AvlTreeMap, initializer);
   }
 

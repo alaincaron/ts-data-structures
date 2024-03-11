@@ -3,11 +3,13 @@ import { Collection } from '../collections';
 import { MapLike } from '../maps';
 import {
   CapacityMixin,
+  Constructor,
   Container,
   ContainerOptions,
   equalsAny,
   hashIterableUnordered,
   OverflowException,
+  WithCapacity,
 } from '../utils';
 
 export type MultiMapLike<K, V> = MapLike<K, V> | MultiMap<K, V>;
@@ -17,10 +19,7 @@ export interface MultiMapInitializer<K, V> {
 }
 
 export abstract class MultiMap<K, V> implements Iterable<[K, V]>, Container {
-  constructor(_options?: number | ContainerOptions) {}
-
   abstract size(): number;
-
   abstract capacity(): number;
 
   isEmpty() {
@@ -150,7 +149,7 @@ export abstract class MultiMap<K, V> implements Iterable<[K, V]>, Container {
 
   abstract toJson(): string;
 
-  buildOptions(): ContainerOptions {
+  buildOptions() {
     return {};
   }
 
@@ -172,16 +171,14 @@ export abstract class MultiMap<K, V> implements Iterable<[K, V]>, Container {
   }
 }
 
-export const BoundedMultiMap = CapacityMixin(MultiMap);
-
 export function buildMultiMap<
   K,
   V,
   M extends MultiMap<K, V>,
   Options extends ContainerOptions = ContainerOptions,
   Initializer extends MultiMapInitializer<K, V> = MultiMapInitializer<K, V>,
->(factory: new (...args: any[]) => M, initializer?: number | (Options & Initializer)): M {
-  if (initializer == null || typeof initializer === 'number') return new factory(initializer);
+>(factory: Constructor<M>, initializer?: WithCapacity<Options & Initializer>): M {
+  if (initializer == null) return new factory();
   const initialElements = initializer.initial;
 
   let options: any = undefined;
@@ -192,8 +189,17 @@ export function buildMultiMap<
   }
 
   delete options.initial;
-  const result = new factory(options);
+  const result = boundMultiMap(factory, options);
 
   if (initialElements) result.putAll(initialElements);
   return result;
+}
+
+function boundMultiMap<K, V, M extends MultiMap<K, V>>(ctor: Constructor<M>, options?: number | ContainerOptions) {
+  if (typeof options === 'number' || (options && 'capacity' in options)) {
+    const boundedCtor: any = CapacityMixin(ctor);
+    const tmp = new boundedCtor(options);
+    return tmp as unknown as M;
+  }
+  return new ctor(options);
 }

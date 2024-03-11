@@ -26,7 +26,7 @@ describe('PriorityQueue', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const queue = new PriorityQueue(2);
+      const queue = PriorityQueue.create({ capacity: 2 });
       expect(queue.capacity()).equal(2);
       expect(queue.size()).equal(0);
       expect(queue.remaining()).equal(2);
@@ -35,7 +35,7 @@ describe('PriorityQueue', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const queue = new PriorityQueue({ capacity: 2 });
+      const queue = PriorityQueue.create({ capacity: 2 });
       expect(queue.capacity()).equal(2);
       expect(queue.isEmpty()).to.be.true;
     });
@@ -107,7 +107,7 @@ describe('PriorityQueue', () => {
 
   describe('ordering', () => {
     it('should remove object according to sort order', () => {
-      const queue = new PriorityQueue({ capacity: 2 });
+      const queue = PriorityQueue.create({ capacity: 2 });
       queue.add('foo');
       queue.add('bar');
       expect(queue.size()).equal(2);
@@ -217,7 +217,7 @@ describe('PriorityQueue', () => {
 
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
-      const queue = new PriorityQueue(2);
+      const queue = PriorityQueue.create({ capacity: 2 });
       const data = [1, 2, 3];
       expect(queue.offerFully(data)).equal(0);
       expect(queue.isEmpty()).to.be.true;
@@ -225,7 +225,7 @@ describe('PriorityQueue', () => {
       expect(queue.isEmpty()).to.be.true;
     });
     it('should accept all items if enough capacity remaining', () => {
-      const queue = new PriorityQueue(6);
+      const queue = PriorityQueue.create({ capacity: 6 });
       const data = [1, 2, 3];
       expect(queue.offerFully(data)).equal(3);
       expect(queue.size()).equal(3);
@@ -236,7 +236,7 @@ describe('PriorityQueue', () => {
 
   describe('offerPartially', () => {
     it('should accept elements up to the remaining capacity', () => {
-      const queue = new PriorityQueue(2);
+      const queue = PriorityQueue.create({ capacity: 2 });
       const data = [1, 2, 3];
       expect(queue.offerPartially(data)).equal(2);
       expect(queue.toArray()).to.deep.equal([1, 2]);
@@ -245,7 +245,7 @@ describe('PriorityQueue', () => {
       expect(queue.toArray()).to.deep.equal([1, 2]);
     });
     it('should accept all items if enough capacity remaining', () => {
-      const queue = new PriorityQueue(6);
+      const queue = PriorityQueue.create({ capacity: 6 });
       const data = [1, 2, 3];
       expect(queue.offerPartially(data)).equal(3);
       expect(queue.size()).equal(3);

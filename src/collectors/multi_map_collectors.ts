@@ -9,6 +9,7 @@ import {
   SkipListMultiMap,
   SplayTreeMultiMap,
 } from '../multimaps';
+import { WithCapacity } from '../utils';
 
 export class MultiMapCollector<K, V, M extends MultiMap<K, V>> implements Collectors.Collector<[K, V], M> {
   private readonly m: M;
@@ -26,37 +27,37 @@ export class MultiMapCollector<K, V, M extends MultiMap<K, V>> implements Collec
 }
 
 export function hashMultiMapCollector<K, V>(
-  arg?: HashMultiMap<K, V> | HashMapOptions | number
+  arg?: HashMultiMap<K, V> | WithCapacity<HashMapOptions>
 ): MultiMapCollector<K, V, HashMultiMap<K, V>> {
-  return new MultiMapCollector(arg instanceof HashMultiMap ? arg : new HashMultiMap(arg));
+  return new MultiMapCollector(arg instanceof HashMultiMap ? arg : HashMultiMap.create(arg));
 }
 
 export function linkedHashMultiMapCollector<K, V>(
-  arg?: LinkedHashMultiMap<K, V> | LinkedHashMapOptions | number
+  arg?: LinkedHashMultiMap<K, V> | WithCapacity<LinkedHashMapOptions>
 ): MultiMapCollector<K, V, LinkedHashMultiMap<K, V>> {
-  return new MultiMapCollector(arg instanceof LinkedHashMultiMap ? arg : new LinkedHashMultiMap(arg));
+  return new MultiMapCollector(arg instanceof LinkedHashMultiMap ? arg : LinkedHashMultiMap.create(arg));
 }
 
 export function openHashMultiMapCollector<K, V>(
-  arg?: OpenHashMultiMap<K, V> | HashMapOptions | number
+  arg?: OpenHashMultiMap<K, V> | WithCapacity<HashMapOptions>
 ): MultiMapCollector<K, V, OpenHashMultiMap<K, V>> {
-  return new MultiMapCollector(arg instanceof OpenHashMultiMap ? arg : new OpenHashMultiMap(arg));
+  return new MultiMapCollector(arg instanceof OpenHashMultiMap ? arg : OpenHashMultiMap.create(arg));
 }
 
 export function splayTreeMultiMapCollector<K, V>(
-  arg?: SplayTreeMultiMap<K, V> | SortedMapOptions<K> | number
+  arg?: SplayTreeMultiMap<K, V> | WithCapacity<SortedMapOptions<K>>
 ): MultiMapCollector<K, V, SplayTreeMultiMap<K, V>> {
-  return new MultiMapCollector(arg instanceof SplayTreeMultiMap ? arg : new SplayTreeMultiMap(arg));
+  return new MultiMapCollector(arg instanceof SplayTreeMultiMap ? arg : SplayTreeMultiMap.create(arg));
 }
 
 export function avlTreeMultiMapCollector<K, V>(
-  arg?: AvlTreeMultiMap<K, V> | SortedMapOptions<K> | number
+  arg?: AvlTreeMultiMap<K, V> | WithCapacity<SortedMapOptions<K>>
 ): MultiMapCollector<K, V, AvlTreeMultiMap<K, V>> {
-  return new MultiMapCollector(arg instanceof AvlTreeMultiMap ? arg : new AvlTreeMultiMap(arg));
+  return new MultiMapCollector(arg instanceof AvlTreeMultiMap ? arg : AvlTreeMultiMap.create(arg));
 }
 
 export function skipListMultiMapCollector<K, V>(
-  arg?: SkipListMultiMap<K, V> | SortedMapOptions<K> | number
+  arg?: SkipListMultiMap<K, V> | WithCapacity<SortedMapOptions<K>>
 ): MultiMapCollector<K, V, SkipListMultiMap<K, V>> {
   return new MultiMapCollector(arg instanceof SkipListMultiMap ? arg : new SkipListMultiMap(arg));
 }

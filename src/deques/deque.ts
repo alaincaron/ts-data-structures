@@ -1,9 +1,9 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { Queue, QueueOptions } from '../queues';
-import { CapacityMixin, equalsAny, OverflowException, UnderflowException } from '../utils';
+import { equalsAny, OverflowException, UnderflowException } from '../utils';
 
 export abstract class Deque<E> extends Queue<E> {
-  constructor(options?: number | QueueOptions) {
+  constructor(options?: QueueOptions) {
     super(options);
   }
 
@@ -79,5 +79,3 @@ export abstract class Deque<E> extends Queue<E> {
 
   abstract clone(): Deque<E>;
 }
-
-export const BoundedDeque = CapacityMixin(Deque);

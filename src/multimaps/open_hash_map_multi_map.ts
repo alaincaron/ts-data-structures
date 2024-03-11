@@ -1,14 +1,16 @@
-import { MapBasedMultiMap, MapBasedMultiMapOptions } from './map_based_multi_map';
+import { HashMultiMapOptions } from './hash_multi_map';
+import { MapBasedMultiMap } from './map_based_multi_map';
 import { buildMultiMap, MultiMapInitializer } from './multi_map';
-import { HashMapOptions, OpenHashMap } from '../maps';
+import { OpenHashMap } from '../maps';
+import { WithCapacity } from '../utils';
 
 export class OpenHashMultiMap<K, V> extends MapBasedMultiMap<K, V> {
-  constructor(options?: number | (HashMapOptions & MapBasedMultiMapOptions<V>)) {
-    super(new OpenHashMap(options), options);
+  constructor(options?: HashMultiMapOptions<V>) {
+    super(new OpenHashMap(options), options?.collectionFactory);
   }
 
   static create<K, V>(
-    initializer?: number | (HashMapOptions & MapBasedMultiMapOptions<V> & MultiMapInitializer<K, V>)
+    initializer?: WithCapacity<HashMultiMapOptions<V> & MultiMapInitializer<K, V>>
   ): OpenHashMultiMap<K, V> {
     return buildMultiMap<K, V, OpenHashMultiMap<K, V>>(OpenHashMultiMap, initializer);
   }

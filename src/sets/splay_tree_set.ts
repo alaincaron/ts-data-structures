@@ -1,20 +1,23 @@
+import { MapBasedSet } from './map_based_set';
 import { NavigableMapBasedSet } from './navigable_map_based_set';
-import { buildCollection, CollectionInitializer } from '../collections';
+import { CollectionInitializer } from '../collections';
 import { SortedMapOptions, SplayTreeMap } from '../maps';
+import { WithCapacity } from '../utils';
 
 export class SplayTreeSet<E> extends NavigableMapBasedSet<E> {
-  constructor(options?: number | SortedMapOptions<E>) {
-    super(new SplayTreeMap<E, boolean>(options));
+  constructor(delegate?: SplayTreeMap<E, boolean>) {
+    super(delegate ?? new SplayTreeMap());
   }
 
-  static create<E>(initializer?: number | (SortedMapOptions<E> & CollectionInitializer<E>)): SplayTreeSet<E> {
-    return buildCollection<E, SplayTreeSet<E>>(SplayTreeSet, initializer);
+  static create<E>(initializer?: WithCapacity<SortedMapOptions<E> & CollectionInitializer<E>>): SplayTreeSet<E> {
+    return MapBasedSet.createSet<E, SplayTreeMap<E, boolean>, SplayTreeSet<E>>(
+      SplayTreeSet,
+      SplayTreeMap.create,
+      initializer
+    );
   }
 
   clone(): SplayTreeSet<E> {
-    return SplayTreeSet.create({
-      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
-      ...this.buildOptions(),
-    });
+    return new SplayTreeSet(this.cloneDelegate<SplayTreeMap<E, boolean>>(SplayTreeMap));
   }
 }

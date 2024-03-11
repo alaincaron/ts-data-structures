@@ -1,12 +1,14 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import {
   CapacityMixin,
+  Constructor,
   Container,
   ContainerOptions,
   equalsAny,
   hashIterableUnordered,
   mapToJSON,
   OverflowException,
+  WithCapacity,
 } from '../utils';
 
 export interface MapEntry<K, V> {
@@ -27,11 +29,17 @@ export interface MapInitializer<K, V> {
 }
 
 export abstract class IMap<K, V> implements Iterable<[K, V]>, Container {
-  constructor(_options?: number | ContainerOptions) {}
-
   abstract size(): number;
 
-  abstract capacity(): number;
+  /**
+   * Returns the capacity of this `IMap`, i.e. the maximum
+   * number of elements it can contains.
+   *
+   * @returns The capacity of this `IMap`.
+   */
+  capacity(): number {
+    return Infinity;
+  }
 
   isEmpty() {
     return this.size() === 0;
@@ -145,7 +153,7 @@ export abstract class IMap<K, V> implements Iterable<[K, V]>, Container {
     return this.entries();
   }
 
-  buildOptions(): ContainerOptions {
+  buildOptions() {
     return {};
   }
 
@@ -169,16 +177,17 @@ export abstract class IMap<K, V> implements Iterable<[K, V]>, Container {
   }
 }
 
-export const BoundedMap = CapacityMixin(IMap);
-
 export function buildMap<
   K,
   V,
   M extends IMap<K, V>,
-  Options extends ContainerOptions = ContainerOptions,
+  Options extends object = object,
   Initializer extends MapInitializer<K, V> = MapInitializer<K, V>,
->(factory: new (...args: any[]) => M, initializer?: number | (Options & Initializer)): M {
-  if (initializer == null || typeof initializer === 'number') return new factory(initializer);
+>(factory: Constructor<M, [Options | undefined]>, initializer?: WithCapacity<Options & Initializer>): M {
+  if (initializer?.capacity == null && initializer?.initial == null) {
+    return new factory(initializer);
+  }
+
   const initialElements = initializer.initial;
 
   let options: any = undefined;
@@ -189,8 +198,20 @@ export function buildMap<
   }
 
   delete options.initial;
-  const result = new factory(options);
+  const result = boundMap(factory, options);
 
   if (initialElements) result.putAll(initialElements);
   return result;
+}
+
+function boundMap<K, V, M extends IMap<K, V>, Options extends ContainerOptions = ContainerOptions>(
+  ctor: Constructor<M>,
+  options?: Options
+) {
+  if (options && 'capacity' in options) {
+    const boundedCtor: any = CapacityMixin(ctor);
+    const tmp = new boundedCtor(options);
+    return tmp as unknown as M;
+  }
+  return new ctor(options);
 }

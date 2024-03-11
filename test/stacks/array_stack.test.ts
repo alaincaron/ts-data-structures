@@ -13,7 +13,7 @@ describe('ArrayStack', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const stack = new ArrayStack(2);
+      const stack = ArrayStack.create({ capacity: 2 });
       expect(stack.capacity()).equal(2);
       expect(stack.size()).equal(0);
       expect(stack.remaining()).equal(2);
@@ -22,7 +22,7 @@ describe('ArrayStack', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const stack = new ArrayStack({ capacity: 2 });
+      const stack = ArrayStack.create({ capacity: 2 });
       expect(stack.capacity()).equal(2);
       expect(stack.isEmpty()).to.be.true;
     });
@@ -84,7 +84,7 @@ describe('ArrayStack', () => {
 
   describe('LIFO', () => {
     it('respect LIFO semantics with add', () => {
-      const stack = new ArrayStack({ capacity: 2 });
+      const stack = ArrayStack.create({ capacity: 2 });
       stack.add('foo');
       stack.add('bar');
       expect(stack.size()).equal(2);
@@ -95,7 +95,7 @@ describe('ArrayStack', () => {
       expect(() => stack.pop()).to.throw(UnderflowException);
     });
     it('respect LIFO semantics witt push', () => {
-      const stack = new ArrayStack(2);
+      const stack = ArrayStack.create({ capacity: 2 });
       stack.push('foo');
       stack.push('bar');
       expect(stack.size()).equal(2);
@@ -109,13 +109,13 @@ describe('ArrayStack', () => {
 
   describe('tryPush', () => {
     it('returns false on full queue', () => {
-      const stack = new ArrayStack(1);
+      const stack = ArrayStack.create({ capacity: 1 });
       stack.push('a');
       expect(stack.tryPush('b')).to.be.false;
       expect(stack.peek()).equal('a');
     });
     it('returns true on non-full queue', () => {
-      const stack = new ArrayStack(1);
+      const stack = ArrayStack.create({ capacity: 1 });
       expect(stack.tryPush('a')).to.be.true;
       expect(stack.peek()).equal('a');
     });

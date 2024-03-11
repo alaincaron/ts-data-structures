@@ -1,20 +1,22 @@
 import { MapBasedSet } from './map_based_set';
-import { buildCollection, CollectionInitializer } from '../collections';
+import { CollectionInitializer } from '../collections';
 import { LinkedHashMap, LinkedHashMapOptions } from '../maps';
+import { WithCapacity } from '../utils';
 
 export class LinkedHashSet<E> extends MapBasedSet<E> {
-  constructor(options?: number | LinkedHashMapOptions) {
-    super(new LinkedHashMap<E, boolean>(options));
+  constructor(delegate?: LinkedHashMap<E, boolean>) {
+    super(delegate ?? new LinkedHashMap());
   }
 
-  static create<E>(initializer?: number | (LinkedHashMapOptions & CollectionInitializer<E>)): LinkedHashSet<E> {
-    return buildCollection<E, LinkedHashSet<E>>(LinkedHashSet, initializer);
+  static create<E>(initializer?: WithCapacity<LinkedHashMapOptions & CollectionInitializer<E>>): LinkedHashSet<E> {
+    return MapBasedSet.createSet<E, LinkedHashMap<E, boolean>, LinkedHashSet<E>>(
+      LinkedHashSet,
+      LinkedHashMap.create,
+      initializer
+    );
   }
 
   clone(): LinkedHashSet<E> {
-    return LinkedHashSet.create({
-      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
-      ...this.buildOptions(),
-    });
+    return new LinkedHashSet(this.cloneDelegate<LinkedHashMap<E, boolean>>(LinkedHashMap));
   }
 }

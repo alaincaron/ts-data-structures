@@ -1,21 +1,21 @@
-import { BoundedList, ListIterator } from './list';
+import { List, ListIterator } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
-import { ContainerOptions, DoubleLinkedList, IndexOutOfBoundsException, UnderflowException } from '../utils';
+import { DoubleLinkedList, IndexOutOfBoundsException, UnderflowException, WithCapacity } from '../utils';
 
 interface ListEntry<E> {
   value: E;
 }
 
-export class LinkedList<E> extends BoundedList<E> {
+export class LinkedList<E> extends List<E> {
   private readonly linkedList: DoubleLinkedList;
   private _size: number;
 
-  static create<E>(initializer?: number | (ContainerOptions & CollectionInitializer<E>)): LinkedList<E> {
+  static create<E>(initializer?: WithCapacity<CollectionInitializer<E>>): LinkedList<E> {
     return buildCollection<E, LinkedList<E>>(LinkedList, initializer);
   }
 
-  constructor(options?: number | ContainerOptions) {
-    super(options);
+  constructor() {
+    super();
     this._size = 0;
     this.linkedList = new DoubleLinkedList();
   }

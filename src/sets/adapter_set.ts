@@ -1,23 +1,21 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { BoundedSet } from './set';
+import { ISet } from './set';
 import { buildCollection, CollectionInitializer } from '../collections';
-import { ContainerOptions, OverflowException } from '../utils';
+import { OverflowException, WithCapacity } from '../utils';
 
-export interface AdapterSetOptions<E> extends ContainerOptions {
+export interface AdapterSetOptions<E> {
   delegate?: Set<E>;
 }
 
-export class AdapterSet<E> extends BoundedSet<E> {
+export class AdapterSet<E> extends ISet<E> {
   protected readonly _delegate: Set<E>;
 
-  constructor(options?: number | AdapterSetOptions<E>) {
-    super(options);
-    let delegate: Set<E> | undefined = undefined;
-    if (typeof options === 'object' && 'delegate' in options) delegate = options.delegate;
-    this._delegate = delegate ?? new Set<E>();
+  constructor(options?: AdapterSetOptions<E>) {
+    super();
+    this._delegate = options?.delegate ?? new Set();
   }
 
-  static create<E>(initializer?: number | AdapterSetOptions<E> | CollectionInitializer<E>): AdapterSet<E> {
+  static create<E>(initializer?: WithCapacity<AdapterSetOptions<E> | CollectionInitializer<E>>): AdapterSet<E> {
     return buildCollection<E, AdapterSet<E>, AdapterSetOptions<E>>(AdapterSet, initializer);
   }
 
@@ -75,6 +73,6 @@ export class AdapterSet<E> extends BoundedSet<E> {
   }
 
   clone(): AdapterSet<E> {
-    return AdapterSet.create<E>({ capacity: this.capacity(), initial: this });
+    return AdapterSet.create({ initial: this });
   }
 }

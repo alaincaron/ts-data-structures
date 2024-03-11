@@ -15,7 +15,7 @@ describe('SplayTreeMultiMap', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const map = new SplayTreeMultiMap(2);
+      const map = SplayTreeMultiMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
@@ -24,7 +24,7 @@ describe('SplayTreeMultiMap', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const map = new SplayTreeMultiMap({ capacity: 2 });
+      const map = SplayTreeMultiMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
     });
@@ -77,7 +77,7 @@ describe('SplayTreeMultiMap', () => {
     });
 
     it('should throw if adding a new element and map is full', () => {
-      const map = new SplayTreeMultiMap(1);
+      const map = SplayTreeMultiMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.true;
       expect(() => map.put('bar', 1)).to.throw(OverflowException);
       expect(map.isFull()).to.be.true;
@@ -101,7 +101,7 @@ describe('SplayTreeMultiMap', () => {
     });
 
     it('should return false if map is full', () => {
-      const map = new SplayTreeMultiMap(1);
+      const map = SplayTreeMultiMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.true;
       expect(map.offer('foo', 1)).to.be.false;
       expect(map.isFull()).to.be.true;
@@ -123,7 +123,7 @@ describe('SplayTreeMultiMap', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const map = new SplayTreeMultiMap({ capacity: 3 });
+      const map = SplayTreeMultiMap.create({ capacity: 3 });
       map.put('a', 1);
       map.put('b', 2);
       expect(map.size()).to.equal(2);

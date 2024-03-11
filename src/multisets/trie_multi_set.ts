@@ -2,10 +2,11 @@ import { Count } from './map_based_multi_set';
 import { buildMultiSet, MultiSetInitializer } from './multi_set';
 import { SortedMultiSet } from './sorted_multi_set';
 import { SortedMapOptions, TrieMap } from '../maps';
+import { WithCapacity } from '../utils';
 
 export class TrieMultiSet extends SortedMultiSet<string> {
-  constructor(options?: number | SortedMapOptions<string>) {
-    super(new TrieMap(options), options);
+  constructor(options?: SortedMapOptions<string>) {
+    super(new TrieMap(options));
   }
 
   protected delegate() {
@@ -40,8 +41,8 @@ export class TrieMultiSet extends SortedMultiSet<string> {
       .map(x => x.key);
   }
 
-  static create(initializer?: number | (SortedMapOptions<string> & MultiSetInitializer<string>)): TrieMultiSet {
-    return buildMultiSet<string, TrieMultiSet>(TrieMultiSet, initializer);
+  static create(initializer?: WithCapacity<SortedMapOptions<string> & MultiSetInitializer<string>>): TrieMultiSet {
+    return buildMultiSet<string, TrieMultiSet, SortedMapOptions<string>>(TrieMultiSet, initializer);
   }
 
   clone(): TrieMultiSet {

@@ -1,10 +1,11 @@
 import { SortedMapBasedSet } from './sorted_map_based_set';
-import { buildCollection, CollectionInitializer } from '../collections';
+import { CollectionInitializer } from '../collections';
 import { SortedMapOptions, TrieMap } from '../maps';
+import { WithCapacity } from '../utils';
 
 export class TrieSet extends SortedMapBasedSet<string> {
-  constructor(options?: number | SortedMapOptions<string>) {
-    super(new TrieMap(options));
+  constructor(delegate?: TrieMap<boolean>) {
+    super(delegate ?? new TrieMap());
   }
 
   protected delegate() {
@@ -39,14 +40,11 @@ export class TrieSet extends SortedMapBasedSet<string> {
       .map(x => x.key);
   }
 
-  static create(initializer?: number | (SortedMapOptions<string> & CollectionInitializer<string>)): TrieSet {
-    return buildCollection<string, TrieSet>(TrieSet, initializer);
+  static create(initializer?: WithCapacity<SortedMapOptions<string> & CollectionInitializer<string>>): TrieSet {
+    return SortedMapBasedSet.createSet<string, TrieMap<boolean>, TrieSet>(TrieSet, TrieMap.create, initializer);
   }
 
   clone(): TrieSet {
-    return TrieSet.create({
-      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
-      ...this.buildOptions(),
-    });
+    return new TrieSet(this.cloneDelegate<TrieMap<boolean>>(TrieMap));
   }
 }

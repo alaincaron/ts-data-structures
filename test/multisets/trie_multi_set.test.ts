@@ -14,7 +14,7 @@ describe('TrieMultiSet', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const set = new TrieMultiSet(2);
+      const set = TrieMultiSet.create({ capacity: 2 });
       expect(set.capacity()).equal(2);
       expect(set.size()).equal(0);
       expect(set.remaining()).equal(2);
@@ -85,7 +85,7 @@ describe('TrieMultiSet', () => {
       expect(set.toArray()).to.deep.equal(['bar', 'bar', 'foo', 'foo']);
     });
     it('should throw if full', () => {
-      const set = new TrieMultiSet(1);
+      const set = TrieMultiSet.create({ capacity: 1 });
       expect(set.add('foo')).to.be.true;
       expect(set.isFull()).to.be.true;
       expect(() => set.add('foo')).to.throw(OverflowException);
@@ -95,7 +95,7 @@ describe('TrieMultiSet', () => {
 
   describe('offer', () => {
     it('should refuse if full', () => {
-      const set = new TrieMultiSet(1);
+      const set = TrieMultiSet.create({ capacity: 1 });
       expect(set.offer('foo')).to.be.true;
       expect(set.offer('bar')).to.be.false;
       expect(set.isFull()).to.be.true;
@@ -213,7 +213,7 @@ describe('TrieMultiSet', () => {
 
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
-      const set = new TrieMultiSet(2);
+      const set = TrieMultiSet.create({ capacity: 2 });
       const data = ['foo', 'bar', 'foobar'];
       expect(set.offerFully(data)).equal(0);
       expect(set.isEmpty()).to.be.true;
@@ -221,7 +221,7 @@ describe('TrieMultiSet', () => {
       expect(set.isEmpty()).to.be.true;
     });
     it('should accept all items if enough capacity remaining', () => {
-      const set = new TrieMultiSet(6);
+      const set = TrieMultiSet.create({ capacity: 6 });
       const data = ['foo', 'bar', 'foobar', 'bar', 'foobar', 'foo'];
       expect(set.offerFully(data)).equal(6);
       expect(set.size()).equal(6);
@@ -232,7 +232,7 @@ describe('TrieMultiSet', () => {
 
   describe('offerPartially', () => {
     it('should accept elements up to the remaining capacity', () => {
-      const set = new TrieMultiSet(2);
+      const set = TrieMultiSet.create({ capacity: 2 });
       const data = ['foo', 'bar', 'foobar'];
       expect(set.offerPartially(data)).equal(2);
       expect(set.toArray()).to.deep.equal(['bar', 'foo']);
@@ -241,7 +241,7 @@ describe('TrieMultiSet', () => {
       expect(set.toArray()).to.deep.equal(['bar', 'foo']);
     });
     it('should accept all items if enough capacity remaining', () => {
-      const set = new TrieMultiSet(6);
+      const set = TrieMultiSet.create({ capacity: 6 });
       const data = ['bar', 'bar', 'foo', 'baz', 'foobar', 'foo'];
       expect(set.offerPartially(data)).equal(6);
       expect(set.count('not_present')).equal(0);
@@ -251,7 +251,7 @@ describe('TrieMultiSet', () => {
     });
     it('should accept all the items if there is enough capacity remaining for distinct elements', () => {
       const data = ['foo', 'foo', 'foo', 'bar', 'baz', 'foobar', 'bar', 'baz'];
-      const set = new TrieMultiSet(data.length);
+      const set = TrieMultiSet.create({ capacity: data.length });
       expect(set.offerPartially(data)).equal(data.length);
       expect(set.isEmpty()).to.be.false;
       expect(set.size()).equal(data.length);
@@ -305,7 +305,7 @@ describe('TrieMultiSet', () => {
     });
 
     it('should throw if not enough remaining capacity for new count', () => {
-      const ms = TrieMultiSet.create(5);
+      const ms = TrieMultiSet.create({ capacity: 5 });
       expect(ms.setCount('foo', 4)).equal(0);
       expect(ms.add('bar')).to.be.true;
       expect(() => ms.setCount('foo', 5)).to.throw(OverflowException);

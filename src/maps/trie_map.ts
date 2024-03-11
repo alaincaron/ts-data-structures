@@ -1,7 +1,8 @@
 import { FluentIterator } from 'ts-fluent-iterators';
 import { AvlTreeMap } from './avl_tree_map';
 import { buildMap, MapEntry, MapInitializer } from './map';
-import { BoundedSortedMap, SortedMap, SortedMapOptions } from './sorted_map';
+import { SortedMap, SortedMapOptions } from './sorted_map';
+import { WithCapacity } from '../utils';
 
 interface TrieMapNode<V> {
   key: string;
@@ -30,18 +31,18 @@ class TrieMapEntry<V> implements MapEntry<string, V> {
   }
 }
 
-export class TrieMap<V> extends BoundedSortedMap<string, V> {
+export class TrieMap<V> extends SortedMap<string, V> {
   private root: TrieMapNode<V>;
   private _size = 0;
   private caseSensitive: boolean;
 
-  constructor(options?: number | TrieMapOptions) {
+  constructor(options?: TrieMapOptions) {
     super(options);
     this.root = this.createNode('');
     this.caseSensitive = typeof options === 'object' && !!options.caseSensitive;
   }
 
-  static create<V>(initializer?: number | TrieMapOptions | MapInitializer<string, V>): TrieMap<V> {
+  static create<V>(initializer?: WithCapacity<TrieMapOptions & MapInitializer<string, V>>): TrieMap<V> {
     return buildMap<string, V, TrieMap<V>, TrieMapOptions>(TrieMap, initializer);
   }
 
@@ -119,7 +120,7 @@ export class TrieMap<V> extends BoundedSortedMap<string, V> {
     return oldValue;
   }
 
-  buildOptions(): TrieMapOptions {
+  buildOptions() {
     return {
       ...super.buildOptions(),
       caseSensitive: this.caseSensitive,

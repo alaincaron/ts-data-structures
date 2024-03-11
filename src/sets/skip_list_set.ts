@@ -1,24 +1,23 @@
+import { MapBasedSet } from './map_based_set';
 import { NavigableMapBasedSet } from './navigable_map_based_set';
-import { buildCollection, CollectionInitializer } from '../collections';
-import { SkipListMap, SkipListMapOptions } from '../maps';
+import { CollectionInitializer } from '../collections';
+import { SkipListMap, SortedMapOptions } from '../maps';
+import { WithCapacity } from '../utils';
 
 export class SkipListSet<E> extends NavigableMapBasedSet<E> {
-  constructor(options?: number | SkipListMapOptions<E>) {
-    super(new SkipListMap<E, boolean>(options));
+  constructor(delegate?: SkipListMap<E, boolean>) {
+    super(delegate ?? new SkipListMap());
   }
 
-  static create<E>(initializer?: number | (SkipListMapOptions<E> & CollectionInitializer<E>)): SkipListSet<E> {
-    return buildCollection<E, SkipListSet<E>>(SkipListSet, initializer);
-  }
-
-  layers() {
-    (this.delegate() as SkipListMap<E, boolean>).layers();
+  static create<E>(initializer?: WithCapacity<SortedMapOptions<E> & CollectionInitializer<E>>): SkipListSet<E> {
+    return MapBasedSet.createSet<E, SkipListMap<E, boolean>, SkipListSet<E>>(
+      SkipListSet,
+      SkipListMap.create,
+      initializer
+    );
   }
 
   clone(): SkipListSet<E> {
-    return SkipListSet.create({
-      initial: { length: this.delegate().size(), seed: this.delegate().keys() },
-      ...this.buildOptions(),
-    });
+    return new SkipListSet(this.cloneDelegate<SkipListMap<E, boolean>>(SkipListMap));
   }
 }

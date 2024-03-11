@@ -4,7 +4,7 @@ import { LinkedMap, OverflowException } from '../../src';
 describe('LinkedMap', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       expect(map.capacity()).equal(Infinity);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(Infinity);
@@ -13,7 +13,7 @@ describe('LinkedMap', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const map = new LinkedMap(2);
+      const map = LinkedMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
@@ -22,7 +22,7 @@ describe('LinkedMap', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const map = new LinkedMap({ capacity: 2 });
+      const map = LinkedMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
     });
@@ -35,7 +35,7 @@ describe('LinkedMap', () => {
     });
 
     it('should initialize with the provided IMap', () => {
-      const map1 = new LinkedMap();
+      const map1 = LinkedMap.create();
       map1.put('a', 1);
       map1.put('b', 2);
       const map = LinkedMap.create({ initial: map1 });
@@ -59,13 +59,13 @@ describe('LinkedMap', () => {
 
   describe('put/get', () => {
     it('should return undefined if key is newly added', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
     });
     it('should return the old value if key already present', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.put('foo', 2)).equal(4);
       expect(map.size()).equal(1);
@@ -73,7 +73,7 @@ describe('LinkedMap', () => {
     });
 
     it('should throw if adding a new element and map is full', () => {
-      const map = new LinkedMap(1);
+      const map = LinkedMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(() => map.put('bar', 1)).to.throw(OverflowException);
@@ -84,13 +84,13 @@ describe('LinkedMap', () => {
 
   describe('offer', () => {
     it('should return undefined if key is newly added', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       expect(map.offer('foo', 4)).to.deep.equal({ accepted: true });
       expect(map.size()).equal(1);
       expect(map.get('foo')).equal(4);
     });
     it('should return the old value if key already present', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       expect(map.put('foo', 4)).to.be.undefined;
       expect(map.offer('foo', 2)).to.deep.equal({ accepted: true, previous: 4 });
       expect(map.size()).equal(1);
@@ -98,7 +98,7 @@ describe('LinkedMap', () => {
     });
 
     it('should return false if offering a new element and map is full', () => {
-      const map = new LinkedMap(1);
+      const map = LinkedMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(map.offer('bar', 1)).to.deep.equal({ accepted: false });
@@ -109,7 +109,7 @@ describe('LinkedMap', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = new LinkedMap();
+      const a = LinkedMap.create();
       a.put('foo', 1);
       const b = a.clone();
       expect(b).to.deep.equal(a);
@@ -121,7 +121,7 @@ describe('LinkedMap', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const map = new LinkedMap({ capacity: 3 });
+      const map = LinkedMap.create({ capacity: 3 });
       map.put('a', 1);
       map.put('b', 2);
       expect(map.size()).to.equal(2);
@@ -134,16 +134,16 @@ describe('LinkedMap', () => {
 
   describe('containsKey', () => {
     it('should return false on empty map', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       expect(map.containsKey('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       map.put('foo', 1);
       expect(map.containsKey('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       map.put('foo', 1);
       expect(map.containsKey('foo')).to.be.true;
     });
@@ -151,16 +151,16 @@ describe('LinkedMap', () => {
 
   describe('containsValue', () => {
     it('should return false on empty map', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       expect(map.containsValue('foo')).to.be.false;
     });
     it('should return false if absent', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       map.put('foo', 1);
       expect(map.containsValue('bar')).to.be.false;
     });
     it('should return true if present', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       map.put('foo', 1);
       expect(map.containsValue(1)).to.be.true;
     });
@@ -168,13 +168,13 @@ describe('LinkedMap', () => {
 
   describe('remove', () => {
     it('should return undefined on empty map', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       expect(map.remove('foo')).to.be.undefined;
       expect(map.isEmpty()).to.be.true;
       expect(map.size()).equal(0);
     });
     it('should return false if item is missing', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.remove('bar')).to.be.undefined;
       expect(map.isEmpty()).to.be.false;
@@ -185,7 +185,7 @@ describe('LinkedMap', () => {
 
   describe('filterKeys', () => {
     it('should remove keys not matching predicate', () => {
-      const map = new LinkedMap<string, number>();
+      const map = LinkedMap.create<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
@@ -198,7 +198,7 @@ describe('LinkedMap', () => {
   });
   describe('filterValues', () => {
     it('should remove values not matching predicate', () => {
-      const map = new LinkedMap<string, number>();
+      const map = LinkedMap.create<string, number>();
       map.put('foo', 1);
       map.put('bar', 2);
       map.put('foobar', 3);
@@ -212,7 +212,7 @@ describe('LinkedMap', () => {
 
   describe('non-primitive-types', () => {
     it('should handle objects', () => {
-      const map = new LinkedMap();
+      const map = LinkedMap.create();
       map.put({ a: 5 }, 'foo');
       expect(map.get({ a: 5 })).equal('foo');
       expect(map.put({ a: 5 }, 'bar')).equal('foo');

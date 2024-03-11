@@ -1,19 +1,20 @@
 import { FluentIterator, IteratorLike, Iterators } from 'ts-fluent-iterators';
 import { Collection, CollectionLike } from '../collections';
 import { getSize } from '../collections/helpers';
-import { CapacityMixin, ContainerOptions, hashIterableOrdered, OverflowException, UnderflowException } from '../utils';
+import { hashIterableOrdered, OverflowException, UnderflowException, WithCapacity } from '../utils';
 
 export type OverflowQueueStrategy = 'throw' | 'overwrite' | 'discard';
 
-export interface QueueOptions extends ContainerOptions {
+export interface QueueOptions {
   overflowStrategy?: OverflowQueueStrategy;
 }
 
 export abstract class Queue<E> extends Collection<E> {
   private readonly _overflowStrategy: OverflowQueueStrategy;
-  constructor(options?: number | QueueOptions) {
-    super(options);
-    this._overflowStrategy = (options as QueueOptions)?.overflowStrategy ?? 'throw';
+  constructor(options?: QueueOptions) {
+    super();
+    const overflowStrategy = options != null && typeof options === 'object' ? options.overflowStrategy : undefined;
+    this._overflowStrategy = overflowStrategy ?? 'throw';
   }
 
   overflowStrategy() {
@@ -99,7 +100,7 @@ export abstract class Queue<E> extends Collection<E> {
     return new FluentIterator(this.drainIterator());
   }
 
-  buildOptions(): QueueOptions {
+  buildOptions(): WithCapacity<QueueOptions> {
     return {
       overflowStrategy: this._overflowStrategy,
     };
@@ -115,5 +116,3 @@ export abstract class Queue<E> extends Collection<E> {
     return this === other;
   }
 }
-
-export const BoundedQueue = CapacityMixin(Queue);

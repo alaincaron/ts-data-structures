@@ -1,13 +1,10 @@
 import { FluentIterator } from 'ts-fluent-iterators';
 import { Count, MapBasedMultiSet } from './map_based_multi_set';
-import { MapEntry, SortedMap, SortedMapOptions } from '../maps';
+import { MapEntry, SortedMap } from '../maps';
 
 export abstract class SortedMultiSet<E> extends MapBasedMultiSet<E> {
-  constructor(
-    mapFactory: SortedMap<E, Count> | (new () => SortedMap<E, Count>),
-    options?: number | SortedMapOptions<E>
-  ) {
-    super(mapFactory, options);
+  constructor(mapFactory: SortedMap<E, Count> | (new () => SortedMap<E, Count>)) {
+    super(mapFactory);
   }
 
   protected delegate() {

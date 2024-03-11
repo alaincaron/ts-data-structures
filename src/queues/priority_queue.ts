@@ -1,7 +1,7 @@
 import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
-import { BoundedQueue, QueueOptions } from './queue';
+import { Queue, QueueOptions } from './queue';
 import { buildCollection, CollectionInitializer } from '../collections';
-import { nextPowerOfTwo } from '../utils';
+import { nextPowerOfTwo, WithCapacity } from '../utils';
 
 export interface PriorityQueueOptions<E> extends QueueOptions {
   comparator?: Comparator<E>;
@@ -9,12 +9,12 @@ export interface PriorityQueueOptions<E> extends QueueOptions {
 
 export type PriorityQueueInitializer<E> = PriorityQueueOptions<E> & CollectionInitializer<E>;
 
-export class PriorityQueue<E> extends BoundedQueue<E> {
+export class PriorityQueue<E> extends Queue<E> {
   private buffer: Array<E>;
   private _size: number;
   private readonly comparator: Comparator<E>;
 
-  constructor(options?: number | PriorityQueueOptions<E>) {
+  constructor(options?: PriorityQueueOptions<E>) {
     super(options);
 
     this._size = 0;
@@ -29,7 +29,7 @@ export class PriorityQueue<E> extends BoundedQueue<E> {
     this.comparator ??= Comparators.defaultComparator;
   }
 
-  static create<E>(initializer?: number | (PriorityQueueOptions<E> & CollectionInitializer<E>)): PriorityQueue<E> {
+  static create<E>(initializer?: WithCapacity<PriorityQueueOptions<E> & CollectionInitializer<E>>): PriorityQueue<E> {
     return buildCollection<E, PriorityQueue<E>, PriorityQueueOptions<E>>(PriorityQueue, initializer);
   }
 
@@ -156,7 +156,7 @@ export class PriorityQueue<E> extends BoundedQueue<E> {
     return PriorityQueue.create({ initial: this });
   }
 
-  buildOptions(): PriorityQueueOptions<E> {
+  buildOptions(): WithCapacity<PriorityQueueOptions<E>> {
     return {
       ...super.buildOptions(),
       comparator: this.comparator,

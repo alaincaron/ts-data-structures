@@ -5,7 +5,7 @@ import { ArrayList, IndexOutOfBoundsException, OverflowException, UnderflowExcep
 describe('ArrayList', () => {
   describe('constructor', () => {
     it('should have infinite capacity as per default ctor', () => {
-      const list = new ArrayList();
+      const list = ArrayList.create();
       expect(list.capacity()).equal(Infinity);
       expect(list.size()).equal(0);
       expect(list.remaining()).equal(Infinity);
@@ -14,7 +14,7 @@ describe('ArrayList', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const list = new ArrayList(2);
+      const list = ArrayList.create({ capacity: 2 });
       expect(list.capacity()).equal(2);
       expect(list.size()).equal(0);
       expect(list.remaining()).equal(2);
@@ -84,7 +84,7 @@ describe('ArrayList', () => {
 
   describe('clone', () => {
     it('should create a deep equal copy', () => {
-      const a = new ArrayList();
+      const a = ArrayList.create();
       const b = a.clone();
       expect(b).to.deep.equal(a);
       b.add('foo');
@@ -95,7 +95,7 @@ describe('ArrayList', () => {
 
   describe('FIFO', () => {
     it('should behave as a FIFO', () => {
-      const list = new ArrayList({ capacity: 2 });
+      const list = ArrayList.create({ capacity: 2 });
       list.add('foo');
       list.add('bar');
       expect(list.size()).equal(2);
@@ -106,7 +106,7 @@ describe('ArrayList', () => {
       expect(() => list.removeFirst()).to.throw(UnderflowException);
     });
     it('should behave as a FIFO with addFirst/removeLast', () => {
-      const list = new ArrayList({ capacity: 2 });
+      const list = ArrayList.create({ capacity: 2 });
       list.addFirst('foo');
       list.addFirst('bar');
       expect(list.size()).equal(2);
@@ -117,7 +117,7 @@ describe('ArrayList', () => {
       expect(() => list.removeLast()).to.throw(UnderflowException);
     });
     it('should behave as a FIFO with addLast/removeFirst', () => {
-      const list = new ArrayList({ capacity: 2 });
+      const list = ArrayList.create({ capacity: 2 });
       list.addLast('foo');
       list.addLast('bar');
       expect(list.size()).equal(2);
@@ -131,7 +131,7 @@ describe('ArrayList', () => {
 
   describe('LIFO', () => {
     it('can be used as a Stack with addLast/removeLast', () => {
-      const list = new ArrayList({ capacity: 2 });
+      const list = ArrayList.create({ capacity: 2 });
       list.addLast('foo');
       list.addLast('bar');
       expect(list.size()).equal(2);
@@ -141,7 +141,7 @@ describe('ArrayList', () => {
       expect(() => list.removeLast()).to.throw(UnderflowException);
     });
     it('can be used as a Stack with addFirst/removeFirst', () => {
-      const list = new ArrayList({ capacity: 2 });
+      const list = ArrayList.create({ capacity: 2 });
       list.addFirst('foo');
       list.addFirst('bar');
       expect(list.size()).equal(2);
@@ -154,7 +154,7 @@ describe('ArrayList', () => {
 
   describe('getAt', () => {
     it('should throw IndexOutOfBoundException', () => {
-      const list = new ArrayList();
+      const list = ArrayList.create();
       expect(() => list.getAt(-1)).to.throw(IndexOutOfBoundsException);
       expect(() => list.getAt(0)).to.throw(IndexOutOfBoundsException);
       expect(() => list.getAt(1)).to.throw(IndexOutOfBoundsException);
@@ -218,14 +218,14 @@ describe('ArrayList', () => {
 
   describe('offerFirst', () => {
     it('should add item on an empty list', () => {
-      const list = new ArrayList();
+      const list = ArrayList.create();
       expect(list.offerFirst('foo')).equal(true);
       expect(list.size()).equal(1);
       expect(list.getFirst()).equal('foo');
       expect(list.getLast()).equal('foo');
     });
     it('should return false if capacity is reached', () => {
-      const list = new ArrayList(1);
+      const list = ArrayList.create({ capacity: 1 });
       expect(list.offerFirst('foo')).equal(true);
       expect(list.isFull()).equal(true);
       expect(list.offerFirst('bar')).equal(false);
@@ -247,7 +247,7 @@ describe('ArrayList', () => {
 
   describe('contains', () => {
     it('should return false on empty list', () => {
-      const list = new ArrayList();
+      const list = ArrayList.create();
       expect(list.contains('foo')).to.be.false;
     });
     it('should return false if absent', () => {
@@ -262,7 +262,7 @@ describe('ArrayList', () => {
 
   describe('find', () => {
     it('should return undefined on empty list', () => {
-      const list = new ArrayList();
+      const list = ArrayList.create();
       expect(list.find(x => x === 'foo')).to.be.undefined;
     });
     it('should return undefined if no match', () => {
@@ -277,7 +277,7 @@ describe('ArrayList', () => {
 
   describe('removeItem', () => {
     it('should return false on empty list', () => {
-      const list = new ArrayList();
+      const list = ArrayList.create();
       expect(list.removeItem(1)).to.be.false;
       expect(list.isEmpty()).to.be.true;
       expect(list.size()).equal(0);
@@ -301,7 +301,7 @@ describe('ArrayList', () => {
 
   describe('filter', () => {
     it('should return 0 on empty list', () => {
-      const list = new ArrayList();
+      const list = ArrayList.create();
       expect(list.filter(i => i === 0)).equal(0);
       expect(list.isEmpty()).to.be.true;
       expect(list.size()).equal(0);
@@ -326,7 +326,7 @@ describe('ArrayList', () => {
 
   describe('offerFully', () => {
     it('should refuse all the items if not enough capacity remaining', () => {
-      const list = new ArrayList(2);
+      const list = ArrayList.create({ capacity: 2 });
       const data = [1, 2, 3];
       expect(list.offerFully(data)).equal(0);
       expect(list.isEmpty()).to.be.true;
@@ -334,7 +334,7 @@ describe('ArrayList', () => {
       expect(list.isEmpty()).to.be.true;
     });
     it('should accept all items if enough capacity remaining', () => {
-      const list = new ArrayList(6);
+      const list = ArrayList.create({ capacity: 6 });
       const data = [1, 2, 3];
       expect(list.offerFully(data)).equal(3);
       expect(list.size()).equal(3);
@@ -345,7 +345,7 @@ describe('ArrayList', () => {
 
   describe('offerPartially', () => {
     it('should accept elements up to the remaining capacity', () => {
-      const list = new ArrayList(2);
+      const list = ArrayList.create({ capacity: 2 });
       const data = [1, 2, 3];
       expect(list.offerPartially(data)).equal(2);
       expect(list.toArray()).to.deep.equal([1, 2]);
@@ -354,7 +354,7 @@ describe('ArrayList', () => {
       expect(list.toArray()).to.deep.equal([1, 2]);
     });
     it('should accept all items if enough capacity remaining', () => {
-      const list = new ArrayList(6);
+      const list = ArrayList.create({ capacity: 6 });
       const data = [1, 2, 3];
       expect(list.offerPartially(data)).equal(3);
       expect(list.size()).equal(3);
@@ -419,7 +419,7 @@ describe('ArrayList', () => {
 
   describe('sort', () => {
     it('should sort empty array', () => {
-      const list = new ArrayList();
+      const list = ArrayList.create();
       list.sort();
       expect(list.size()).equal(0);
     });
@@ -441,7 +441,7 @@ describe('ArrayList', () => {
 
   describe('reverse', () => {
     it('should left unmodified list with less than 2 elements', () => {
-      const list = new ArrayList();
+      const list = ArrayList.create();
       list.reverse();
       expect(list.isEmpty()).to.be.true;
       list.add(1);

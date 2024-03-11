@@ -1,7 +1,7 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { BoundedMap, buildMap, MapInitializer } from './map';
+import { buildMap, IMap, MapInitializer } from './map';
 import { MapEntry } from './map';
-import { ContainerOptions, equalsAny, hashAny, LARGEST_PRIME, nextPrime } from '../utils';
+import { equalsAny, hashAny, LARGEST_PRIME, nextPrime, WithCapacity } from '../utils';
 
 export interface HashEntry<K, V> extends MapEntry<K, V> {
   next: HashEntry<K, V> | undefined;
@@ -15,39 +15,30 @@ export enum AccessType {
   REMOVE,
 }
 
-export interface HashMapOptions extends ContainerOptions {
+export interface HashMapOptions {
   loadFactor?: number;
 }
 
 const MIN_INITIAL_CAPACITY = nextPrime(5);
 const DEFAULT_LOAD_FACTOR = 0.75;
 
-export class HashMap<K, V> extends BoundedMap<K, V> {
+export class HashMap<K, V> extends IMap<K, V> {
   private _size: number;
   private slots: Array<HashEntry<K, V> | undefined>;
   public readonly loadFactor: number;
 
   protected recordAccess(_e: HashEntry<K, V>, _accessType: AccessType) {}
 
-  constructor(options?: number | HashMapOptions) {
-    super(options);
+  constructor(options?: HashMapOptions) {
+    super();
     this._size = 0;
-    this.loadFactor = DEFAULT_LOAD_FACTOR;
+    this.slots = new Array(MIN_INITIAL_CAPACITY);
 
-    if (typeof options === 'number') {
-      this.slots = new Array(nextPrime(Math.max(options, MIN_INITIAL_CAPACITY)));
-    } else if (options == null) {
-      this.slots = new Array(MIN_INITIAL_CAPACITY);
-    } else {
-      this.slots = new Array(MIN_INITIAL_CAPACITY);
-      if (options.loadFactor != null) {
-        if (options.loadFactor <= 0.0) throw new Error(`Invalid load factor: ${options.loadFactor}`);
-        this.loadFactor = options.loadFactor;
-      }
-    }
+    this.loadFactor = options?.loadFactor ?? DEFAULT_LOAD_FACTOR;
+    if (this.loadFactor <= 0.0) throw new Error(`Invalid load factor: ${this.loadFactor}`);
   }
 
-  static create<K, V>(initializer?: number | (HashMapOptions & MapInitializer<K, V>)): HashMap<K, V> {
+  static create<K, V>(initializer?: WithCapacity<HashMapOptions & MapInitializer<K, V>>): HashMap<K, V> {
     return buildMap<K, V, HashMap<K, V>, HashMapOptions>(HashMap, initializer);
   }
 
@@ -193,7 +184,7 @@ export class HashMap<K, V> extends BoundedMap<K, V> {
     return HashMap.create({ initial: this });
   }
 
-  buildOptions(): HashMapOptions {
+  buildOptions() {
     return {
       ...super.buildOptions(),
       loadFactor: this.loadFactor,

@@ -1,14 +1,6 @@
 import { Comparator, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
-import {
-  CapacityMixin,
-  ContainerOptions,
-  equalsAny,
-  hashIterableOrdered,
-  OverflowException,
-  shuffle,
-  UnderflowException,
-} from '../utils';
+import { equalsAny, hashIterableOrdered, OverflowException, shuffle, UnderflowException } from '../utils';
 
 export interface ListIterator<E> extends IterableIterator<E> {
   setValue(item: E): E;
@@ -16,10 +8,6 @@ export interface ListIterator<E> extends IterableIterator<E> {
 }
 
 export abstract class List<E> extends Collection<E> {
-  constructor(options?: number | ContainerOptions) {
-    super(options);
-  }
-
   abstract getAt(idx: number): E;
 
   getFirst() {
@@ -221,5 +209,3 @@ export abstract class List<E> extends Collection<E> {
     }
   }
 }
-
-export const BoundedList = CapacityMixin(List);

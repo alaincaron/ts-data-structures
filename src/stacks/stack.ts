@@ -1,8 +1,8 @@
-import { Queue } from '../queues';
-import { CapacityMixin, ContainerOptions, UnderflowException } from '../utils';
+import { Queue, QueueOptions } from '../queues';
+import { UnderflowException } from '../utils';
 
 export abstract class Stack<E> extends Queue<E> {
-  constructor(options?: number | ContainerOptions) {
+  constructor(options?: QueueOptions) {
     super(options);
   }
 
@@ -35,5 +35,3 @@ export abstract class Stack<E> extends Queue<E> {
 
   abstract clone(): Stack<E>;
 }
-
-export const BoundedStack = CapacityMixin(Stack);

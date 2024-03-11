@@ -3,10 +3,11 @@ import { SortedMultiMap } from './sorted_multi_map';
 import { SortedMultiMapOptions } from './sorted_multi_map';
 import { Collection } from '../collections';
 import { MapEntry, TrieMap } from '../maps';
+import { WithCapacity } from '../utils';
 
 export class TrieMultiMap<V> extends SortedMultiMap<string, V> {
-  constructor(options?: number | SortedMultiMapOptions<string, V>) {
-    super(new TrieMap(options), options);
+  constructor(options?: SortedMultiMapOptions<string, V>) {
+    super(new TrieMap(options), options?.collectionFactory);
   }
 
   protected delegate() {
@@ -60,7 +61,7 @@ export class TrieMultiMap<V> extends SortedMultiMap<string, V> {
   }
 
   static create<V>(
-    initializer?: number | (SortedMultiMapOptions<string, V> & MultiMapInitializer<string, V>)
+    initializer?: WithCapacity<SortedMultiMapOptions<string, V> & MultiMapInitializer<string, V>>
   ): TrieMultiMap<V> {
     return buildMultiMap<string, V, TrieMultiMap<V>>(TrieMultiMap, initializer);
   }

@@ -1,14 +1,15 @@
 import { buildMultiSet, MultiSetInitializer } from './multi_set';
 import { NavigableMultiSet } from './navigable_multi_set';
 import { SkipListMap, SkipListMapOptions } from '../maps';
+import { WithCapacity } from '../utils';
 
 export class SkipListMultiSet<E> extends NavigableMultiSet<E> {
-  constructor(options?: number | SkipListMapOptions<E>) {
-    super(new SkipListMap(options), options);
+  constructor(options?: SkipListMapOptions<E>) {
+    super(new SkipListMap(options));
   }
 
-  static create<E>(initializer?: number | (SkipListMapOptions<E> & MultiSetInitializer<E>)): SkipListMultiSet<E> {
-    return buildMultiSet<E, SkipListMultiSet<E>>(SkipListMultiSet, initializer);
+  static create<E>(initializer?: WithCapacity<SkipListMapOptions<E> & MultiSetInitializer<E>>): SkipListMultiSet<E> {
+    return buildMultiSet<E, SkipListMultiSet<E>, SkipListMapOptions<E>>(SkipListMultiSet, initializer);
   }
 
   clone(): SkipListMultiSet<E> {

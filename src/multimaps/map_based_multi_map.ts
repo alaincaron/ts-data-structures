@@ -1,37 +1,30 @@
 import { Collectors, Predicate } from 'ts-fluent-iterators';
-import { BoundedMultiMap } from './multi_map';
+import { MultiMap } from './multi_map';
 import { Collection } from '../collections';
 import { ArrayList } from '../lists';
-import { IMap } from '../maps';
-import { ContainerOptions, OverflowException } from '../utils';
+import { buildMap, IMap } from '../maps';
+import { Constructor, OverflowException } from '../utils';
 
-const SumCollector = Collectors.SumCollector;
+export type WithCollectionFactory<Type, V> = Type & { collectionFactory?: Constructor<Collection<V>> };
 
-export interface MapBasedMultiMapOptions<V> extends ContainerOptions {
-  collectionFactory?: new () => Collection<V>;
-}
-
-export abstract class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
-  protected readonly map: IMap<K, Collection<V>>;
+export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
   private _size: number;
-  private readonly collectionFactory: new () => Collection<V>;
+  private readonly collectionFactory: Constructor<Collection<V>>;
 
   constructor(
-    mapFactory: IMap<K, Collection<V>> | (new () => IMap<K, Collection<V>>),
-    options?: number | MapBasedMultiMapOptions<V>
+    protected readonly map: IMap<K, Collection<V>>,
+    collectionFactory?: Constructor<Collection<V>>
   ) {
-    super(options);
-    this._size = 0;
-    if (typeof mapFactory === 'function') {
-      this.map = new mapFactory();
-    } else {
-      this.map = mapFactory;
-    }
-    if (typeof options === 'object') {
-      this.collectionFactory = options.collectionFactory ?? ArrayList;
-    } else {
-      this.collectionFactory = ArrayList;
-    }
+    super();
+    this.collectionFactory = collectionFactory ?? (ArrayList as unknown as Constructor<Collection<V>>);
+    this._size = this.map
+      .valueIterator()
+      .map(c => c.size())
+      .collectTo(new Collectors.SumCollector());
+  }
+
+  capacity(): number {
+    return Infinity;
   }
 
   size() {
@@ -92,7 +85,7 @@ export abstract class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
     this._size = this.map
       .valueIterator()
       .map(c => c.size())
-      .collectTo(new SumCollector());
+      .collectTo(new Collectors.SumCollector());
     return initial_size - this._size;
   }
 
@@ -100,7 +93,7 @@ export abstract class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
     const nbRemoved = this.map
       .entryIterator()
       .map(e => e.value.filter(v => predicate([e.key, v])))
-      .collectTo(new SumCollector());
+      .collectTo(new Collectors.SumCollector());
     if (nbRemoved) {
       this.map.filterEntries(([_, c]) => !c.isEmpty());
       this._size -= nbRemoved;
@@ -116,12 +109,17 @@ export abstract class MapBasedMultiMap<K, V> extends BoundedMultiMap<K, V> {
     return this.map.toJson();
   }
 
-  buildOptions(): MapBasedMultiMapOptions<V> {
+  buildOptions() {
     return {
       ...super.buildOptions(),
       collectionFactory: this.collectionFactory,
+      delegate: { ...this.map.buildOptions(), factory: this.map.constructor as Constructor<IMap<K, Collection<V>>> },
     };
   }
 
   abstract clone(): MapBasedMultiMap<K, V>;
+
+  protected cloneDelegate<M extends IMap<K, Collection<V>>>(factory: Constructor<M>): M {
+    return buildMap<K, Collection<V>, M>(factory, { initial: this.map });
+  }
 }

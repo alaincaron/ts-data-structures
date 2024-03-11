@@ -2,10 +2,7 @@ import { Collectors } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
 
 export class CollectionCollector<A, C extends Collection<A>> implements Collectors.Collector<A, C> {
-  private readonly c: C;
-  constructor(factory: C | (new () => C)) {
-    this.c = typeof factory === 'function' ? new factory() : factory;
-  }
+  constructor(private readonly c: C) {}
 
   collect(a: A) {
     this.c.add(a);

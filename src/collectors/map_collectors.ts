@@ -11,15 +11,13 @@ import {
   SortedMapOptions,
   SplayTreeMap,
 } from '../maps';
+import { WithCapacity } from '../utils';
 
 export class IMapCollector<K, V, M extends IMap<K, V>> implements Collectors.Collector<[K, V], M> {
-  private readonly m: M;
   constructor(
-    arg: M | (new () => M),
+    private readonly m: M,
     private readonly collisionHandler?: CollisionHandler<K, V>
-  ) {
-    this.m = typeof arg === 'function' ? new arg() : arg;
-  }
+  ) {}
 
   collect([k, v]: [K, V]) {
     const oldValue = this.m.put(k, v);
@@ -42,52 +40,49 @@ export class IMapCollector<K, V, M extends IMap<K, V>> implements Collectors.Col
 }
 
 export function hashMapCollector<K, V>(options?: {
-  arg?: HashMap<K, V> | HashMapOptions;
+  arg?: HashMap<K, V> | WithCapacity<HashMapOptions>;
   collisionHandler?: CollisionHandler<K, V>;
 }): IMapCollector<K, V, HashMap<K, V>> {
   const arg = options?.arg;
-  return new IMapCollector(arg instanceof HashMap ? arg : new HashMap<K, V>(arg), options?.collisionHandler);
+  return new IMapCollector(arg instanceof HashMap ? arg : HashMap.create(arg), options?.collisionHandler);
 }
 
 export function linkedHashMapCollector<K, V>(options?: {
-  arg?: LinkedHashMap<K, V> | LinkedHashMapOptions;
+  arg?: LinkedHashMap<K, V> | WithCapacity<LinkedHashMapOptions>;
   collisionHandler?: CollisionHandler<K, V>;
 }): IMapCollector<K, V, HashMap<K, V>> {
   const arg = options?.arg;
-  return new IMapCollector(
-    arg instanceof LinkedHashMap ? arg : new LinkedHashMap<K, V>(arg),
-    options?.collisionHandler
-  );
+  return new IMapCollector(arg instanceof LinkedHashMap ? arg : LinkedHashMap.create(arg), options?.collisionHandler);
 }
 
 export function openHashMapCollector<K, V>(options?: {
-  arg?: OpenHashMap<K, V> | HashMapOptions;
+  arg?: OpenHashMap<K, V> | WithCapacity<HashMapOptions>;
   collisionHandler?: CollisionHandler<K, V>;
 }): IMapCollector<K, V, OpenHashMap<K, V>> {
   const arg = options?.arg;
-  return new IMapCollector(arg instanceof OpenHashMap ? arg : new OpenHashMap<K, V>(arg), options?.collisionHandler);
+  return new IMapCollector(arg instanceof OpenHashMap ? arg : OpenHashMap.create(arg), options?.collisionHandler);
 }
 
 export function splayTreeMapCollector<K, V>(options?: {
-  arg?: SplayTreeMap<K, V> | SortedMapOptions<K>;
+  arg?: SplayTreeMap<K, V> | WithCapacity<SortedMapOptions<K>>;
   collisionHandler?: CollisionHandler<K, V>;
 }): IMapCollector<K, V, SplayTreeMap<K, V>> {
   const arg = options?.arg;
-  return new IMapCollector(arg instanceof SplayTreeMap ? arg : new SplayTreeMap<K, V>(arg), options?.collisionHandler);
+  return new IMapCollector(arg instanceof SplayTreeMap ? arg : SplayTreeMap.create(arg), options?.collisionHandler);
 }
 
 export function avlTreeMapCollector<K, V>(options?: {
-  arg?: AvlTreeMap<K, V> | SortedMapOptions<K> | number;
+  arg?: AvlTreeMap<K, V> | WithCapacity<SortedMapOptions<K>>;
   collisionHandler?: CollisionHandler<K, V>;
 }): IMapCollector<K, V, AvlTreeMap<K, V>> {
   const arg = options?.arg;
-  return new IMapCollector(arg instanceof AvlTreeMap ? arg : new AvlTreeMap<K, V>(arg), options?.collisionHandler);
+  return new IMapCollector(arg instanceof AvlTreeMap ? arg : AvlTreeMap.create(arg), options?.collisionHandler);
 }
 
 export function SkipListMapCollector<K, V>(options?: {
-  arg?: SkipListMap<K, V> | SortedMapOptions<K> | number;
+  arg?: SkipListMap<K, V> | WithCapacity<SortedMapOptions<K>>;
   collisionHandler?: CollisionHandler<K, V>;
 }): IMapCollector<K, V, SkipListMap<K, V>> {
   const arg = options?.arg;
-  return new IMapCollector(arg instanceof SkipListMap ? arg : new SkipListMap<K, V>(arg), options?.collisionHandler);
+  return new IMapCollector(arg instanceof SkipListMap ? arg : SkipListMap.create(arg), options?.collisionHandler);
 }

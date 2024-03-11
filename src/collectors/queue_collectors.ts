@@ -1,15 +1,16 @@
 import { CollectionCollector } from './collection_collectors';
 import { ArrayDeque } from '../deques';
 import { PriorityQueue, QueueOptions } from '../queues';
+import { WithCapacity } from '../utils';
 
 export function arrayDequeCollector<A>(
-  arg?: ArrayDeque<A> | QueueOptions | number
+  arg?: ArrayDeque<A> | WithCapacity<QueueOptions>
 ): CollectionCollector<A, ArrayDeque<A>> {
-  return new CollectionCollector(arg instanceof ArrayDeque ? arg : new ArrayDeque<A>(arg));
+  return new CollectionCollector(arg instanceof ArrayDeque ? arg : ArrayDeque.create(arg));
 }
 
 export function priorityQueueCollector<A>(
-  arg?: PriorityQueue<A> | QueueOptions | number
+  arg?: PriorityQueue<A> | WithCapacity<QueueOptions>
 ): CollectionCollector<A, PriorityQueue<A>> {
-  return new CollectionCollector(arg instanceof PriorityQueue ? arg : new PriorityQueue<A>(arg));
+  return new CollectionCollector(arg instanceof PriorityQueue ? arg : PriorityQueue.create(arg));
 }

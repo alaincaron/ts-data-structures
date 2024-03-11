@@ -1,7 +1,7 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { HashMapOptions } from './hash_map';
-import { BoundedMap, buildMap, MapEntry, MapInitializer } from './map';
-import { equalsAny, hashAny, hashNumber, MAX_ARRAY_SIZE, nextPrime } from '../utils';
+import { buildMap, IMap, MapEntry, MapInitializer } from './map';
+import { equalsAny, hashAny, hashNumber, MAX_ARRAY_SIZE, nextPrime, WithCapacity } from '../utils';
 
 const DEFAULT_INITIAL_SIZE = 5; // should be prime.
 const DEFAULT_LOAD_FACTOR = 0.7;
@@ -13,14 +13,14 @@ interface HashEntry<K, V> extends MapEntry<K, V> {
 
 type Entry<K, V> = HashEntry<K, V> | 'DELETED' | undefined;
 
-export class OpenHashMap<K, V> extends BoundedMap<K, V> {
+export class OpenHashMap<K, V> extends IMap<K, V> {
   private _size: number;
   public readonly loadFactor: number;
   private slots: Array<Entry<K, V>>;
   private _occupancy: number;
 
-  constructor(options?: number | HashMapOptions) {
-    super(options);
+  constructor(options?: HashMapOptions) {
+    super();
     this._size = this._occupancy = 0;
     this.loadFactor = DEFAULT_LOAD_FACTOR;
 
@@ -37,7 +37,7 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
     }
   }
 
-  static create<K, V>(initializer?: number | HashMapOptions | MapInitializer<K, V>): OpenHashMap<K, V> {
+  static create<K, V>(initializer?: WithCapacity<HashMapOptions | MapInitializer<K, V>>): OpenHashMap<K, V> {
     return buildMap<K, V, OpenHashMap<K, V>, HashMapOptions>(OpenHashMap, initializer);
   }
 
@@ -80,7 +80,7 @@ export class OpenHashMap<K, V> extends BoundedMap<K, V> {
     return OpenHashMap.create({ initial: this });
   }
 
-  buildOptions(): HashMapOptions {
+  buildOptions() {
     return {
       ...super.buildOptions(),
       loadFactor: this.loadFactor,

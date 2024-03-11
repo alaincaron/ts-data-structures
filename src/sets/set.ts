@@ -1,12 +1,8 @@
 import { getItemsToAdd } from './utils';
 import { Collection, CollectionLike } from '../collections';
-import { CapacityMixin, ContainerOptions, hashIterableUnordered, OverflowException } from '../utils';
+import { hashIterableUnordered, OverflowException } from '../utils';
 
 export abstract class ISet<E> extends Collection<E> {
-  constructor(options?: number | ContainerOptions) {
-    super(options);
-  }
-
   // TODO try to get these in a Mixin... hwoever generics and mixin don't always work together
   toSet() {
     return this.iterator().collectToSet();
@@ -51,5 +47,3 @@ export abstract class ISet<E> extends Collection<E> {
     return this.containsAll(other);
   }
 }
-
-export const BoundedSet = CapacityMixin(ISet);

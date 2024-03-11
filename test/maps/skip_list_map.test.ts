@@ -13,7 +13,7 @@ describe('SkipListMap', () => {
     });
 
     it('should have specified capacity as unique argument', () => {
-      const map = new SkipListMap(2);
+      const map = SkipListMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
@@ -22,7 +22,7 @@ describe('SkipListMap', () => {
     });
 
     it('should use the specified capacity as per options', () => {
-      const map = new SkipListMap({ capacity: 2 });
+      const map = SkipListMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.isEmpty()).to.be.true;
     });
@@ -73,7 +73,7 @@ describe('SkipListMap', () => {
     });
 
     it('should throw if adding a new element and map is full', () => {
-      const map = new SkipListMap(1);
+      const map = SkipListMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(() => map.put('bar', 1)).to.throw(OverflowException);
@@ -98,7 +98,7 @@ describe('SkipListMap', () => {
     });
 
     it('should return false if offering a new element and map is full', () => {
-      const map = new SkipListMap(1);
+      const map = SkipListMap.create({ capacity: 1 });
       expect(map.put('foo', 1)).to.be.undefined;
       expect(map.put('foo', 2)).equal(1);
       expect(map.offer('bar', 1)).to.deep.equal({ accepted: false });
@@ -121,7 +121,7 @@ describe('SkipListMap', () => {
 
   describe('clear', () => {
     it('should clear the content', () => {
-      const map = new SkipListMap({ capacity: 3 });
+      const map = SkipListMap.create({ capacity: 3 });
       map.put('a', 1);
       map.put('b', 2);
       expect(map.size()).to.equal(2);
