@@ -1,6 +1,6 @@
 {
   "name": "ts-data-collections",
-  "version": "3.2.2",
+  "version": "4.0.0",
   "description": "Misc TS data structures such as Sets, Maps and Collections",
   "main": "./dist/index.js",
   "engines": {
@@ -12,7 +12,6 @@
     "pristine": "rimraf ./dist ./node_modules",
     "build": "rimraf ./dist && tsc",
     "repl": "npm run build && env NODE_PATH=./dist ts-node -i",
-    "htmldoc": "./scripts/htmldoc",
     "htmldoc": "typedoc --plugin typedoc-material-theme src/index.ts --out htmldoc",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "coverage": "nyc npm run test",
