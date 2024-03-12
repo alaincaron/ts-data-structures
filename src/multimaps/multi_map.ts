@@ -19,22 +19,7 @@ export interface MultiMapInitializer<K, V> {
   initial?: MultiMapLike<K, V>;
 }
 
-export abstract class MultiMap<K, V> implements Iterable<[K, V]>, Container {
-  abstract size(): number;
-  abstract capacity(): number;
-
-  isEmpty() {
-    return this.size() === 0;
-  }
-
-  isFull() {
-    return this.size() >= this.capacity();
-  }
-
-  remaining() {
-    return this.capacity() - this.size();
-  }
-
+export abstract class MultiMap<K, V> extends Container implements Iterable<[K, V]> {
   get(k: K): Collection<V> | undefined {
     const values = this.getValues(k);
     return values && values.clone();

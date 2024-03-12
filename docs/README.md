@@ -10,12 +10,12 @@ ts-data-collections
 
 ### Interfaces
 
-- [CollectionInitializer](interfaces/CollectionInitializer.md)
 - [Container](interfaces/Container.md)
 - [ContainerOptions](interfaces/ContainerOptions.md)
 
 ### Type Aliases
 
+- [CollectionInitializer](README.md#collectioninitializer)
 - [CollectionLike](README.md#collectionlike)
 
 ### Functions
@@ -24,19 +24,33 @@ ts-data-collections
 
 ## Type Aliases
 
+### CollectionInitializer
+
+Ƭ **CollectionInitializer**\<`E`\>: `ContainerInitializer`\<[`CollectionLike`](README.md#collectionlike)\<`E`\>\>
+
+Interface used to specify initial elements in a create method for a [Collection](classes/Collection.md).
+
+#### Type parameters
+
+| Name |
+| :--- |
+| `E`  |
+
+---
+
 ### CollectionLike
 
 Ƭ **CollectionLike**\<`E`\>: `Set`\<`E`\> \| `E`[] \| [`Collection`](classes/Collection.md)\<`E`\> \| `ArrayGenerator`\<`E`\>
 
-Describes an object that can behave like a Collection.  It has a
+Describes an object that can behave like a Collection. It has a
 `size` or `length` and it is possible to iterate through its
 elements.
 
 #### Type parameters
 
 | Name |
-| :------ |
-| `E` |
+| :--- |
+| `E`  |
 
 ## Functions
 
@@ -48,19 +62,19 @@ Builds a `Collection`
 
 #### Type parameters
 
-| Name | Type |
-| :------ | :------ |
-| `E` | `E` |
-| `C` | extends [`Collection`](classes/Collection.md)\<`E`\> |
-| `Options` | extends `object` = `object` |
-| `Initializer` | extends [`CollectionInitializer`](interfaces/CollectionInitializer.md)\<`E`\> = [`CollectionInitializer`](interfaces/CollectionInitializer.md)\<`E`\> |
+| Name          | Type                                                                                                                                          |
+| :------------ | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `E`           | `E`                                                                                                                                           |
+| `C`           | extends [`Collection`](classes/Collection.md)\<`E`\>                                                                                          |
+| `Options`     | extends `object` = `object`                                                                                                                   |
+| `Initializer` | extends [`CollectionInitializer`](README.md#collectioninitializer)\<`E`\> = [`CollectionInitializer`](README.md#collectioninitializer)\<`E`\> |
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `factory` | `Constructor`\<`C`, [`undefined` \| `Options`]\> |
-| `initializer?` | `WithCapacity`\<`Options` & `Initializer`\> |
+| Name           | Type                                             |
+| :------------- | :----------------------------------------------- |
+| `factory`      | `Constructor`\<`C`, [`undefined` \| `Options`]\> |
+| `initializer?` | `WithCapacity`\<`Options` & `Initializer`\>      |
 
 #### Returns
 

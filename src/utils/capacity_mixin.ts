@@ -1,4 +1,5 @@
-import { AddCapacity, Constructor, ContainerOptions } from './types';
+import { Constructor } from './constructor';
+import { AddCapacity, ContainerOptions } from './container';
 
 export function CapacityMixin<TBase extends Constructor<any, any[]>>(
   Base: TBase
@@ -9,8 +10,8 @@ export function CapacityMixin<TBase extends Constructor<any, any[]>>(
     constructor(...args: any[]) {
       super(...args);
       const arg0 = args[0];
-      if (typeof arg0 === 'number') this._capacity = arg0;
-      else this._capacity = arg0?.capacity ?? Infinity;
+      if (typeof arg0 === 'number') this._capacity = Math.floor(arg0);
+      else this._capacity = Math.floor(arg0?.capacity ?? Infinity);
     }
 
     capacity() {

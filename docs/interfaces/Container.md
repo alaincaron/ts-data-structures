@@ -27,7 +27,7 @@ Build the options to create a `Container` with the same options as this `Contain
 
 `object`
 
-___
+---
 
 ### capacity
 

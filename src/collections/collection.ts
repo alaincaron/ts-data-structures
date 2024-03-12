@@ -18,51 +18,7 @@ import {
  * elements. Some collections allow duplicate elements and others do
  * not. Some are ordered and others unordered.
  */
-export abstract class Collection<E> implements Iterable<E>, Container {
-  /**
-   * Returns the number of elements in this `Collection`.
-   * @returns the number of elements in this `Collection`
-   */
-  abstract size(): number;
-
-  /**
-   * Returns the capacity of this `Collection`, i.e. the maximum
-   * number of elements it can contains.
-   *
-   * @returns The capacity of this `Collection`.
-   */
-  capacity(): number {
-    return Infinity;
-  }
-
-  /**
-   * Returns `true` if this `Collection` is empty, i.e. its `size` is `0`.
-   * @returns `true` if this `Collection` is empty, `false` otherwise`.
-   */
-  isEmpty(): boolean {
-    return this.size() === 0;
-  }
-
-  /**
-   * Returns `true` if this `Collection` is full, i.e. its `size` is
-   * equal to its `capacity`.
-   *
-   * @returns `true` if this `Collection` is full, `false` otherwise.
-   */
-  isFull(): boolean {
-    return this.size() >= this.capacity();
-  }
-
-  /**
-   * Returns the number of elements that can be added to this
-   * `Collection` without exceeding its `capacity`.
-   *
-   * @returns the number of elements that can be added to this `Collection` without exceeding its `capacity`.
-   */
-  remaining(): number {
-    return this.capacity() - this.size();
-  }
-
+export abstract class Collection<E> extends Container implements Iterable<E> {
   /**
    * Returns `true` if this `Collection` contains the specified
    * `item`.  The comparison is done using {@link equalsAny}.

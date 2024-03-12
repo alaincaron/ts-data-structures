@@ -9,8 +9,8 @@ not. Some are ordered and others unordered.
 ## Type parameters
 
 | Name |
-| :------ |
-| `E` |
+| :--- |
+| `E`  |
 
 ## Implements
 
@@ -66,7 +66,7 @@ Used to make this [Collection](Collection.md) being seen as an
 
 Iterable.[iterator]
 
-___
+---
 
 ### add
 
@@ -74,14 +74,14 @@ ___
 
 Ensures that this `Collection` contains the specified element.
 Returns `true` if this `Collection` changed as a result of the
-call.  Returns false if this `Collection` does not allow
+call. Returns false if this `Collection` does not allow
 duplicates and already contains the specified element.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `item` | `E` | the item whose presence in the `Collection` is to be ensured |
+| Name   | Type | Description                                                  |
+| :----- | :--- | :----------------------------------------------------------- |
+| `item` | `E`  | the item whose presence in the `Collection` is to be ensured |
 
 #### Returns
 
@@ -94,7 +94,7 @@ true if this collection changed as a result of the call.
 Overflowexception if the capacity of the `Collection`
 would be exceeded by adding this element.
 
-___
+---
 
 ### addFully
 
@@ -106,13 +106,13 @@ there is enough remaining capaacity.
 #### Type parameters
 
 | Name |
-| :------ |
+| :--- |
 | `E1` |
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name        | Type                                                    | Description                    |
+| :---------- | :------------------------------------------------------ | :----------------------------- |
 | `container` | [`CollectionLike`](../README.md#collectionlike)\<`E1`\> | The container of items to add. |
 
 #### Returns
@@ -127,13 +127,13 @@ in the container.
 Overflowexception if there remaining capacity of this
 `Collection` is less than the number of items in the `container`.
 
-___
+---
 
 ### buildOptions
 
 ▸ **buildOptions**(): [`ContainerOptions`](../interfaces/ContainerOptions.md)
 
-Returns the options used to build this `Collection`.  This is
+Returns the options used to build this `Collection`. This is
 used buildCollection to initialize the built `Collection` with
 the same options as the source `Collection`, e.g. in clone
 operation.
@@ -146,7 +146,7 @@ operation.
 
 [Container](../interfaces/Container.md).[buildOptions](../interfaces/Container.md#buildoptions)
 
-___
+---
 
 ### capacity
 
@@ -165,7 +165,7 @@ The capacity of this `Collection`.
 
 [Container](../interfaces/Container.md).[capacity](../interfaces/Container.md#capacity)
 
-___
+---
 
 ### clear
 
@@ -177,7 +177,7 @@ Removes all elements from this `Collection`
 
 `void`
 
-___
+---
 
 ### clone
 
@@ -192,20 +192,20 @@ as the original one and also all other settings returned by `[Collection.buildOp
 
 [`Collection`](Collection.md)\<`E`\>
 
-___
+---
 
 ### contains
 
 ▸ **contains**(`item`): `boolean`
 
 Returns `true` if this `Collection` contains the specified
-`item`.  The comparison is done using equalsAny.
+`item`. The comparison is done using equalsAny.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `item` | `E` | The item whose presence is tested. |
+| Name   | Type | Description                        |
+| :----- | :--- | :--------------------------------- |
+| `item` | `E`  | The item whose presence is tested. |
 
 #### Returns
 
@@ -214,7 +214,7 @@ Returns `true` if this `Collection` contains the specified
 `true` if this `Collections contains the specified
 `item`, `false` otherwise.
 
-___
+---
 
 ### containsAll
 
@@ -225,13 +225,13 @@ Returns true if this `Collection` contains all of the elements in the specified 
 #### Type parameters
 
 | Name |
-| :------ |
+| :--- |
 | `E1` |
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name           | Type                   | Description                                                   |
+| :------------- | :--------------------- | :------------------------------------------------------------ |
 | `iteratorLike` | `IteratorLike`\<`E1`\> | The items to be checked for containment in this `Collection`. |
 
 #### Returns
@@ -240,7 +240,7 @@ Returns true if this `Collection` contains all of the elements in the specified 
 
 true if this collection contains all of the elements in the specified `IteratorLike`
 
-___
+---
 
 ### equals
 
@@ -250,15 +250,15 @@ Returns true if this collection is equal to the specified argument `other`.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type      |
+| :------ | :-------- |
 | `other` | `unknown` |
 
 #### Returns
 
 `boolean`
 
-___
+---
 
 ### filter
 
@@ -269,8 +269,8 @@ Removes items from this `Collection` for which the argument
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name        | Type               | Description                                                 |
+| :---------- | :----------------- | :---------------------------------------------------------- |
 | `predicate` | `Predicate`\<`E`\> | the predicate used for filtering item of this `Collection`. |
 
 #### Returns
@@ -279,7 +279,7 @@ Removes items from this `Collection` for which the argument
 
 the number of elements removed from this `Collection`
 
-___
+---
 
 ### find
 
@@ -289,8 +289,8 @@ Finds an item for which the argument `predicate` evaluates to `true`.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name        | Type               | Description                          |
+| :---------- | :----------------- | :----------------------------------- |
 | `predicate` | `Predicate`\<`E`\> | the predicate used to select an item |
 
 #### Returns
@@ -300,7 +300,7 @@ Finds an item for which the argument `predicate` evaluates to `true`.
 An item for which the `predicate` evaluates to `true` or
 `undefined`
 
-___
+---
 
 ### hashCode
 
@@ -312,7 +312,7 @@ Returns a hashCode for this `Collection`
 
 `number`
 
-___
+---
 
 ### isEmpty
 
@@ -326,7 +326,7 @@ Returns `true` if this `Collection` is empty, i.e. its `size` is `0`.
 
 `true` if this `Collection` is empty, `false` otherwise`.
 
-___
+---
 
 ### isFull
 
@@ -341,7 +341,7 @@ equal to its `capacity`.
 
 `true` if this `Collection` is full, `false` otherwise.
 
-___
+---
 
 ### iterator
 
@@ -357,20 +357,20 @@ yielding all elements of this `Collection`.
 
 a `FluentIterator` yielding all elements of this `Collection`.
 
-___
+---
 
 ### offer
 
 ▸ **offer**(`item`): `boolean`
 
 Inserts an element if possible, without exceeding the `capacity`
-of this `Collection`.  Otherwise returning false.
+of this `Collection`. Otherwise returning false.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `item` | `E` | the item to add to the `Collection` |
+| Name   | Type | Description                         |
+| :----- | :--- | :---------------------------------- |
+| `item` | `E`  | the item to add to the `Collection` |
 
 #### Returns
 
@@ -378,27 +378,27 @@ of this `Collection`.  Otherwise returning false.
 
 `true` if the element can be added without exceeding the `capacity`, `false` otherwise.
 
-___
+---
 
 ### offerPartially
 
 ▸ **offerPartially**\<`E1`\>(`container`): `number`
 
 Adds as many items as possible of the `container` to this
-`Collection` as long there is remaining capaacity.  Items are
+`Collection` as long there is remaining capaacity. Items are
 added one by one until all items are added or the `Collection` is
 [full](Collection.md#isfull).
 
 #### Type parameters
 
 | Name |
-| :------ |
+| :--- |
 | `E1` |
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name        | Type                                                                              | Description                    |
+| :---------- | :-------------------------------------------------------------------------------- | :----------------------------- |
 | `container` | `IteratorLike`\<`E1`\> \| [`CollectionLike`](../README.md#collectionlike)\<`E1`\> | The container of items to add. |
 
 #### Returns
@@ -407,7 +407,7 @@ added one by one until all items are added or the `Collection` is
 
 The number of items added
 
-___
+---
 
 ### remaining
 
@@ -422,7 +422,7 @@ Returns the number of elements that can be added to this
 
 the number of elements that can be added to this `Collection` without exceeding its `capacity`.
 
-___
+---
 
 ### removeAll
 
@@ -435,9 +435,9 @@ specified `Collection`.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `c` | [`Collection`](Collection.md)\<`E`\> | `Collection` containing elements to be removed from this `Collection`. |
+| Name | Type                                 | Description                                                            |
+| :--- | :----------------------------------- | :--------------------------------------------------------------------- |
+| `c`  | [`Collection`](Collection.md)\<`E`\> | `Collection` containing elements to be removed from this `Collection`. |
 
 #### Returns
 
@@ -445,7 +445,7 @@ specified `Collection`.
 
 The number of elements that were removed as a result of this call.
 
-___
+---
 
 ### removeItem
 
@@ -455,9 +455,9 @@ Removes an instance of item from the `Collection`
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `item` | `E` | The `item` to remove from the `Collection` |
+| Name   | Type | Description                                |
+| :----- | :--- | :----------------------------------------- |
+| `item` | `E`  | The `item` to remove from the `Collection` |
 
 #### Returns
 
@@ -469,7 +469,7 @@ Removes an instance of item from the `Collection`
 
 The comparison for equality is made using the function equalsAny.
 
-___
+---
 
 ### removeMatchingItem
 
@@ -479,8 +479,8 @@ Removes an item for which the `predicate` returns `true`.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name        | Type               | Description                                              |
+| :---------- | :----------------- | :------------------------------------------------------- |
 | `predicate` | `Predicate`\<`E`\> | The predicate that is being evaluated for each elements. |
 
 #### Returns
@@ -491,7 +491,7 @@ the element removed from the `Collection` or `undefined`
 if there are no items for which the `predicate` evaluated to
 `true`.
 
-___
+---
 
 ### retainAll
 
@@ -506,9 +506,9 @@ specified `Collection`.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `c` | [`Collection`](Collection.md)\<`E`\> |
+| Name | Type                                 |
+| :--- | :----------------------------------- |
+| `c`  | [`Collection`](Collection.md)\<`E`\> |
 
 #### Returns
 
@@ -516,7 +516,7 @@ specified `Collection`.
 
 The number of elements that were removed as a result of this call.
 
-___
+---
 
 ### size
 
@@ -530,7 +530,7 @@ Returns the number of elements in this `Collection`.
 
 the number of elements in this `Collection`
 
-___
+---
 
 ### toArray
 
@@ -544,7 +544,7 @@ Returns an array containing all elements of this `Collection`
 
 an array containing all elements of this `Collection`
 
-___
+---
 
 ### toJson
 

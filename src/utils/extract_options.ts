@@ -1,4 +1,4 @@
-import { ContainerInitializer } from './types';
+import { ContainerInitializer } from './container';
 
 export function extractOptions<
   ContainerType extends object,

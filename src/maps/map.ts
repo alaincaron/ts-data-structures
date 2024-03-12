@@ -28,31 +28,7 @@ export interface MapInitializer<K, V> {
   initial?: MapLike<K, V>;
 }
 
-export abstract class IMap<K, V> implements Iterable<[K, V]>, Container {
-  abstract size(): number;
-
-  /**
-   * Returns the capacity of this `IMap`, i.e. the maximum
-   * number of elements it can contains.
-   *
-   * @returns The capacity of this `IMap`.
-   */
-  capacity(): number {
-    return Infinity;
-  }
-
-  isEmpty() {
-    return this.size() === 0;
-  }
-
-  isFull() {
-    return this.size() >= this.capacity();
-  }
-
-  remaining() {
-    return this.capacity() - this.size();
-  }
-
+export abstract class IMap<K, V> extends Container implements Iterable<[K, V]> {
   protected abstract getEntry(key: K): MapEntry<K, V> | undefined;
 
   get(key: K): V | undefined {
