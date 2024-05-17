@@ -219,7 +219,7 @@ describe('LinkedHashMap', () => {
     });
   });
 
-  describe('toJson', () => {
+  describe('toJSON', () => {
     it('should return the JSON string', () => {
       const map = LinkedHashMap.create({
         initial: [
@@ -227,7 +227,7 @@ describe('LinkedHashMap', () => {
           ['b', 2],
         ] as Array<[string, number]>,
       });
-      expect(map.toJson()).equal('{"a":1,"b":2}');
+      expect(map.toJSON()).equal('{"a":1,"b":2}');
     });
   });
 });

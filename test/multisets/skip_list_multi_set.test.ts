@@ -270,10 +270,10 @@ describe('SkipListMultiSet', () => {
     });
   });
 
-  describe('toJson', () => {
+  describe('toJSON', () => {
     it('should return the JSON string', () => {
       const set = SkipListMultiSet.create({ initial: [1, 2, 3, 4, { x: true }, 'alain'] });
-      const set2 = SkipListMultiSet.create({ initial: JSON.parse(set.toJson()) });
+      const set2 = SkipListMultiSet.create({ initial: JSON.parse(set.toJSON()) });
       expect(set.equals(set2)).to.be.true;
     });
   });

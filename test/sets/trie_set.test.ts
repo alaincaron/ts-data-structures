@@ -244,10 +244,10 @@ describe('TrieSet', () => {
     });
   });
 
-  describe('toJson', () => {
+  describe('toJSON', () => {
     it('should return the JSON string', () => {
       const set = TrieSet.create({ initial: ['foo', 'foobar', 'foo', 'baz', 'bar'] });
-      expect(set.toJson()).equals('["bar","baz","foo","foobar"]');
+      expect(set.toJSON()).equals('["bar","baz","foo","foobar"]');
     });
   });
 

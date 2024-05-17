@@ -463,10 +463,10 @@ describe('ArrayList', () => {
     });
   });
 
-  describe('toJson', () => {
+  describe('toJSON', () => {
     it('should return the JSON string', () => {
       const list = ArrayList.create({ initial: [1, 2, 3] });
-      expect(list.toJson()).equal('[1,2,3]');
+      expect(list.toJSON()).equal('[1,2,3]');
     });
   });
 });

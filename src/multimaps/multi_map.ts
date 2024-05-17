@@ -133,7 +133,7 @@ export abstract class MultiMap<K, V> extends Container implements Iterable<[K, V
     return this.entries();
   }
 
-  abstract toJson(): string;
+  abstract toJSON(): string;
 
   buildOptions() {
     return {};

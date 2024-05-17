@@ -133,7 +133,7 @@ export abstract class IMap<K, V> extends Container implements Iterable<[K, V]> {
     return {};
   }
 
-  toJson() {
+  toJSON() {
     return mapToJSON(this);
   }
 

@@ -280,10 +280,10 @@ describe('LinkedHashSet', () => {
     });
   });
 
-  describe('toJson', () => {
+  describe('toJSON', () => {
     it('should return the JSON string', () => {
       const set = LinkedHashSet.create({ initial: [1, 2, 3] });
-      expect(set.toJson()).equal('[1,2,3]');
+      expect(set.toJSON()).equal('[1,2,3]');
     });
   });
 });

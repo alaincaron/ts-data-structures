@@ -526,9 +526,9 @@ an array containing all elements of this `Collection`
 
 ---
 
-### toJson()
+### toJSON()
 
-> **toJson**(): `string`
+> **toJSON**(): `string`
 
 Returns a JSON string representation of this `Collection`.
 

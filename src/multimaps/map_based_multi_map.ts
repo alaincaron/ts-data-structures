@@ -105,8 +105,8 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
     return this.map.entries();
   }
 
-  toJson() {
-    return this.map.toJson();
+  toJSON() {
+    return this.map.toJSON();
   }
 
   buildOptions() {

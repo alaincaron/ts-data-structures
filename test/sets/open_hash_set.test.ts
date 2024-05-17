@@ -268,10 +268,10 @@ describe('OpenHashSet', () => {
     });
   });
 
-  describe('toJson', () => {
+  describe('toJSON', () => {
     it('should return the JSON string', () => {
       const set = OpenHashSet.create({ initial: [1, 2, 3, 4, { x: true }, 'alain'] });
-      const set2 = OpenHashSet.create({ initial: JSON.parse(set.toJson()) });
+      const set2 = OpenHashSet.create({ initial: JSON.parse(set.toJSON()) });
       expect(set.equals(set2)).to.be.true;
     });
   });

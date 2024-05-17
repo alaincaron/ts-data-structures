@@ -1,7 +1,6 @@
 import { IteratorGenerator, Iterators } from 'ts-fluent-iterators';
 export function toJSON(x: any) {
   if (x == null) return JSON.stringify(x);
-  if (typeof x.toJson === 'function') return x.toJson();
   if (typeof x.toJSON === 'function') return x.toJSON();
   switch (typeof x) {
     case 'string':

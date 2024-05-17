@@ -259,7 +259,7 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
   /**
    * Returns a JSON string representation of this `Collection`.
    */
-  toJson() {
+  toJSON() {
     return iterableToJSON(this);
   }
 }

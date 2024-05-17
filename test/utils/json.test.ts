@@ -26,9 +26,9 @@ describe('toJSON', () => {
     expect(toJSON(true)).equals('true');
   });
 
-  it('should serialize according to toJson method', () => {
+  it('should serialize according to toJSON method', () => {
     class Foo {
-      toJson() {
+      toJSON() {
         return '"foo"';
       }
     }

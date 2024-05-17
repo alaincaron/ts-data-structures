@@ -259,10 +259,10 @@ describe('TrieMultiSet', () => {
     });
   });
 
-  describe('toJson', () => {
+  describe('toJSON', () => {
     it('should return the JSON string', () => {
       const set = TrieMultiSet.create({ initial: ['foo', 'bar', 'foobar'] });
-      const set2 = TrieMultiSet.create({ initial: JSON.parse(set.toJson()) });
+      const set2 = TrieMultiSet.create({ initial: JSON.parse(set.toJSON()) });
       expect(set.equals(set2)).to.be.true;
     });
   });

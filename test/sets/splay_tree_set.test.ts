@@ -270,10 +270,10 @@ describe('SplayTreeSet', () => {
     });
   });
 
-  describe('toJson', () => {
+  describe('toJSON', () => {
     it('should return the JSON string', () => {
       const set = SplayTreeSet.create({ initial: [4, 2, 1, 3, 2, 3, 4] });
-      expect(set.toJson()).equals('[1,2,3,4]');
+      expect(set.toJSON()).equals('[1,2,3,4]');
     });
   });
 });
