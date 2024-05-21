@@ -27,7 +27,7 @@ module.exports = {
         caughtErrorsIgnorePattern: '^_',
       },
     ],
-    '@typescript-eslint/no-namespace': 'warn',
+    '@typescript-eslint/no-namespace': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/interface-name-prefix': 0,
