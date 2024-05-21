@@ -1,4 +1,4 @@
-import { Collectors, Mapper } from 'ts-fluent-iterators';
+import { Collectors, iterator, Mapper } from 'ts-fluent-iterators';
 
 export interface WindowCollector<A, B = A> {
   enterWindow(item: A): B;
@@ -48,7 +48,47 @@ export class MovingAverageCollector implements WindowCollector<number> {
   }
 }
 
-export function* windowIterator<A, B = A>(
+function* windowIteratorFromFactory<A, B>(
+  iter: Iterator<A>,
+  factory: Mapper<void, Collectors.Collector<A, B>>,
+  windowSize: number,
+  flag = true
+) {
+  const buffer: A[] = [];
+  for (;;) {
+    const item = iter.next();
+    if (item.done) break;
+    buffer.push(item.value);
+    if (buffer.length > windowSize) {
+      buffer.shift();
+    }
+    if (flag || buffer.length >= windowSize) {
+      yield iterator(buffer).collectTo(factory!());
+    }
+  }
+}
+
+function* windowIteratorFromWindowCollector<A, B>(
+  iter: Iterator<A>,
+  collector: WindowCollector<A, B>,
+  windowSize: number,
+  flag = true
+) {
+  const buffer: A[] = [];
+  for (;;) {
+    const item = iter.next();
+    if (item.done) break;
+    buffer.push(item.value);
+    if (buffer.length > windowSize) {
+      const removedItem = buffer.shift();
+      collector.leaveWindow(removedItem!);
+    }
+    const result = collector.enterWindow(item.value);
+    if (flag || buffer.length >= windowSize) yield result;
+  }
+}
+
+export function windowIterator<A, B = A>(
   iter: Iterator<A>,
   collector: WindowCollector<A, B> | Mapper<void, Collectors.Collector<A, B>>,
   windowSize: number,
@@ -57,27 +97,10 @@ export function* windowIterator<A, B = A>(
   if (!Number.isSafeInteger(windowSize) && windowSize < 1) {
     throw new Error(`Invalid window size: ${windowSize}`);
   }
-  const factory = typeof collector === 'function' ? (collector as Mapper<void, Collectors.Collector<A, B>>) : undefined;
-  const cw = factory ? undefined : (collector as WindowCollector<A, B>);
-
-  const buffer: A[] = [];
-  for (;;) {
-    const item = iter.next();
-    if (item.done) break;
-    buffer.push(item.value);
-    if (buffer.length > windowSize) {
-      const removedItem = buffer.shift();
-      if (cw) cw.leaveWindow(removedItem!);
-    }
-    if (cw) {
-      const result = cw.enterWindow(item.value);
-      if (flag || buffer.length >= windowSize) yield result;
-    } else if (flag || buffer.length >= windowSize) {
-      const c = factory!();
-      buffer.forEach(x => c.collect(x));
-      yield c.result;
-    }
+  if (typeof collector === 'function') {
+    return windowIteratorFromFactory(iter, collector as Mapper<void, Collectors.Collector<A, B>>, windowSize, flag);
   }
+  return windowIteratorFromWindowCollector(iter, collector as WindowCollector<A, B>, windowSize, flag);
 }
 
 export function windowIteratorMapper<A, B = A>(
