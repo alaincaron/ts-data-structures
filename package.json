@@ -17,7 +17,7 @@
     "coverage": "nyc npm run test",
     "format": "prettier --write .",
     "precommit": "lint-staged",
-    "prepare": "husky install .husky",
+    "prepare": "husky",
     "benchmark": "npm run build && ./scripts/benchmarks",
     "typedoc": "typedoc --plugin typedoc-plugin-markdown src/index.ts --out docs"
   },
@@ -58,7 +58,7 @@
     "eslint": "8.57.0",
     "eslint-plugin-import": "2.29.1",
     "husky": "9.0.11",
-    "lint-staged": "15.2.2",
+    "lint-staged": "15.2.4",
     "mocha": "10.4.0",
     "nyc": "15.1.0",
     "prettier": "3.2.5",
