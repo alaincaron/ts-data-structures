@@ -1,5 +1,5 @@
 import { Comparator, Predicate } from 'ts-fluent-iterators';
-import { List, ListIterator } from './list';
+import { List, ListIterator, ListPosition } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { IndexOutOfBoundsException, shuffle, UnderflowException, WithCapacity } from '../utils';
 
@@ -117,12 +117,12 @@ export class ArrayList<E> extends List<E> {
   }
 
   private getListIterator(
-    start: number,
+    start: ListPosition,
     done: (cursor: number) => boolean,
     advance: (cursor: number) => number
   ): ListIterator<E> {
     let lastReturn = -1;
-    let cursor = start;
+    let cursor = typeof start === 'number' ? start : start === 'head' ? 0 : this.size() - 1;
     return {
       [Symbol.iterator]() {
         return this;
@@ -145,23 +145,17 @@ export class ArrayList<E> extends List<E> {
     };
   }
 
-  listIterator(start?: number | 'head' | 'tail'): ListIterator<E> {
-    if (typeof start !== 'number') {
-      start = start === 'tail' ? this.size() - 1 : 0;
-    }
+  listIterator(start?: ListPosition): ListIterator<E> {
     return this.getListIterator(
-      start,
+      start ?? 0,
       cursor => cursor >= this.size(),
       cursor => cursor + 1
     );
   }
 
-  reverseListIterator(start?: number): ListIterator<E> {
-    if (typeof start !== 'number') {
-      start = start === 'head' ? 0 : this.size() - 1;
-    }
+  reverseListIterator(start?: ListPosition): ListIterator<E> {
     return this.getListIterator(
-      start,
+      start ?? this.size() - 1,
       cursor => cursor <= 0,
       cursor => cursor - 1
     );

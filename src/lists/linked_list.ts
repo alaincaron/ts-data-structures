@@ -1,4 +1,4 @@
-import { List, ListIterator } from './list';
+import { List, ListIterator, ListPosition } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { DoubleLinkedList, IndexOutOfBoundsException, UnderflowException, WithCapacity } from '../utils';
 
@@ -98,8 +98,13 @@ export class LinkedList<E> extends List<E> {
     }
   }
 
-  private getListIterator(start: number, advance: (cursor: LinkedListEntry<E>) => LinkedListEntry<E>): ListIterator<E> {
-    let cursor: LinkedListEntry<E> = this.getEntryAt(start);
+  private getListIterator(
+    start: ListPosition,
+    advance: (cursor: LinkedListEntry<E>) => LinkedListEntry<E>
+  ): ListIterator<E> {
+    let cursor: LinkedListEntry<E> = this.getEntryAt(
+      typeof start === 'number' ? start : start === 'head' ? 0 : this.size() - 1
+    );
     let lastResult: LinkedListEntry<E> | null = null;
     return {
       [Symbol.iterator]() {
@@ -131,18 +136,15 @@ export class LinkedList<E> extends List<E> {
     };
   }
 
-  listIterator(start?: number | 'head' | 'tail'): ListIterator<E> {
-    if (typeof start !== 'number') {
-      start = start === 'tail' ? this.size() - 1 : 0;
-    }
-    return this.getListIterator(start, (cursor: LinkedListEntry<E>) => cursor.after as LinkedListEntry<E>);
+  listIterator(start?: ListPosition): ListIterator<E> {
+    return this.getListIterator(start ?? 0, (cursor: LinkedListEntry<E>) => cursor.after as LinkedListEntry<E>);
   }
 
-  reverseListIterator(start?: number | 'head' | 'tail'): ListIterator<E> {
-    if (typeof start !== 'number') {
-      start = start === 'head' ? 0 : this.size() - 1;
-    }
-    return this.getListIterator(start, (cursor: LinkedListEntry<E>) => cursor.before as LinkedListEntry<E>);
+  reverseListIterator(start?: ListPosition): ListIterator<E> {
+    return this.getListIterator(
+      start ?? this.size() - 1,
+      (cursor: LinkedListEntry<E>) => cursor.before as LinkedListEntry<E>
+    );
   }
 
   clone(): LinkedList<E> {

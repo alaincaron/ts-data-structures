@@ -9,6 +9,8 @@ import {
   UnderflowException,
 } from '../utils';
 
+export type ListPosition = number | 'head' | 'tail';
+
 export interface ListIterator<E> extends IterableIterator<E> {
   setValue(item: E): E;
   remove(): E;
@@ -85,8 +87,8 @@ export abstract class List<E> extends Collection<E> {
     return new FluentIterator(this.reverseListIterator('tail'));
   }
 
-  abstract listIterator(start?: number | 'head' | 'tail'): ListIterator<E>;
-  abstract reverseListIterator(start?: number | 'head' | 'tail'): ListIterator<E>;
+  abstract listIterator(start?: ListPosition): ListIterator<E>;
+  abstract reverseListIterator(start?: ListPosition): ListIterator<E>;
 
   replaceAll(f: (e: E) => E) {
     const iter = this.listIterator();
