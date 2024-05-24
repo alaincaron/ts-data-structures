@@ -116,7 +116,7 @@ export class ArrayList<E> extends List<E> {
     return shift;
   }
 
-  getListIterator(
+  private getListIterator(
     start: number,
     done: (cursor: number) => boolean,
     advance: (cursor: number) => number
@@ -146,16 +146,22 @@ export class ArrayList<E> extends List<E> {
   }
 
   listIterator(start?: number | 'head' | 'tail'): ListIterator<E> {
+    if (typeof start !== 'number') {
+      start = start === 'tail' ? this.size() - 1 : 0;
+    }
     return this.getListIterator(
-      typeof start == 'number' ? start : start === 'tail' ? this.size() - 1 : 0,
+      start,
       cursor => cursor >= this.size(),
       cursor => cursor + 1
     );
   }
 
   reverseListIterator(start?: number): ListIterator<E> {
+    if (typeof start !== 'number') {
+      start = start === 'head' ? 0 : this.size() - 1;
+    }
     return this.getListIterator(
-      typeof start == 'number' ? start : start === 'head' ? 0 : this.size() - 1,
+      start,
       cursor => cursor <= 0,
       cursor => cursor - 1
     );
