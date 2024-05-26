@@ -292,11 +292,16 @@ export function buildCollection<
   return result;
 }
 
-function boundCollection<E, C extends Collection<E>>(ctor: Constructor<C>, options?: ContainerOptions) {
+const constructorMap = new Map();
+
+function boundCollection<E, C extends Collection<E>>(ctor: Constructor<C>, options?: ContainerOptions): C {
   if (options && 'capacity' in options) {
-    const boundedCtor: any = CapacityMixin(ctor);
-    const tmp = new boundedCtor(options);
-    return tmp as unknown as C;
+    let boundedCtor = constructorMap.get(ctor);
+    if (!boundedCtor) {
+      boundedCtor = CapacityMixin(ctor);
+      constructorMap.set(ctor, boundedCtor);
+    }
+    return new boundedCtor(options);
   }
   return new ctor(options);
 }
