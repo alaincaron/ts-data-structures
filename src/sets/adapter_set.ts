@@ -76,3 +76,20 @@ export class AdapterSet<E> extends ISet<E> {
     return AdapterSet.create({ initial: this });
   }
 }
+
+declare global {
+  // eslint-disable-next-line
+  interface Set<T> {
+    equals(other: unknown): boolean;
+  }
+}
+
+Set.prototype.equals = function (other: unknown) {
+  if (other instanceof Set) {
+    return AdapterSet.create({ delegate: this }).equals(AdapterSet.create({ delegate: other }));
+  }
+  if (other instanceof ISet) {
+    return AdapterSet.create({ delegate: this }).equals(other);
+  }
+  return false;
+};

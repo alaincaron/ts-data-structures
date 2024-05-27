@@ -91,3 +91,20 @@ export class AdapterMap<K, V> extends IMap<K, V> {
     return AdapterMap.create({ initial: this });
   }
 }
+
+declare global {
+  // eslint-disable-next-line
+  interface Map<K, V> {
+    equals(other: unknown): boolean;
+  }
+}
+
+Map.prototype.equals = function (other: unknown) {
+  if (other instanceof Map) {
+    return AdapterMap.create({ delegate: this }).equals(AdapterMap.create({ delegate: other }));
+  }
+  if (other instanceof IMap) {
+    return AdapterMap.create({ delegate: this }).equals(other);
+  }
+  return false;
+};
