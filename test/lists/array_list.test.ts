@@ -258,6 +258,34 @@ describe('ArrayList', () => {
       const list = ArrayList.create({ initial: { length: 10, seed: (i: number) => i } });
       expect(list.contains(9)).to.be.true;
     });
+    it('should return true on equal objects', () => {
+      const list = ArrayList.create({ initial: [{ a: 5 }] });
+      expect(list.contains({ a: 5 })).to.be.true;
+    });
+  });
+
+  describe('includes', () => {
+    it('should return false on empty list', () => {
+      const list = ArrayList.create();
+      expect(list.includes('foo')).to.be.false;
+    });
+    it('should return false if absent', () => {
+      const list = ArrayList.create({ initial: { length: 10, seed: (i: number) => i } });
+      expect(list.includes(10)).to.be.false;
+    });
+    it('should return true if present', () => {
+      const list = ArrayList.create({ initial: { length: 10, seed: (i: number) => i } });
+      expect(list.includes(9)).to.be.true;
+    });
+    it('should return false on identical but distinct objects', () => {
+      const list = ArrayList.create({ initial: [{ a: 5 }] });
+      expect(list.contains({ a: 5 })).to.be.true;
+    });
+    it('should return true based on identity', () => {
+      const obj = { a: 5 };
+      const list = ArrayList.create({ initial: [obj] });
+      expect(list.includes(obj)).to.be.true;
+    });
   });
 
   describe('find', () => {
@@ -467,6 +495,48 @@ describe('ArrayList', () => {
     it('should return the JSON string', () => {
       const list = ArrayList.create({ initial: [1, 2, 3] });
       expect(list.toJSON()).equal('[1,2,3]');
+    });
+  });
+
+  describe('disjoint', () => {
+    it('should return false if empty', () => {
+      const list1 = ArrayList.create();
+      expect(list1.disjoint(list1)).to.be.true;
+      const list2 = ArrayList.create();
+      expect(list1.disjoint(list2)).to.be.true;
+      list1.add(1);
+      expect(list1.disjoint(list2)).to.be.true;
+      expect(list2.disjoint(list1)).to.be.true;
+    });
+    it('should return true if collections have no element in common', () => {
+      const list1 = ArrayList.create({ initial: [1] });
+      const list2 = ArrayList.create({ initial: [2] });
+      expect(list1.disjoint(list2)).to.be.true;
+      expect(list2.disjoint(list1)).to.be.true;
+    });
+    it('should return falseif collections have at least one element in common', () => {
+      const list1 = ArrayList.create({ initial: [1, 2] });
+      const list2 = ArrayList.create({ initial: [2] });
+      expect(list1.disjoint(list2)).to.be.false;
+      expect(list2.disjoint(list1)).to.be.false;
+    });
+  });
+
+  describe('removeAll', () => {
+    it('should return the number of elements removed', () => {
+      const list1 = ArrayList.create({ initial: ['a', 'b', 'c'] });
+      const list2 = ArrayList.create({ initial: ['a', 'c'] });
+      expect(list1.removeAll(list2)).to.equal(2);
+      expect(list1.toArray()).to.deep.equal(['b']);
+    });
+  });
+
+  describe('retainAll', () => {
+    it('should return the number of elements removed', () => {
+      const list1 = ArrayList.create({ initial: ['a', 'b', 'c'] });
+      const list2 = ArrayList.create({ initial: ['a', 'c'] });
+      expect(list1.retainAll(list2)).to.equal(1);
+      expect(list1.toArray()).to.deep.equal(['a', 'c']);
     });
   });
 });

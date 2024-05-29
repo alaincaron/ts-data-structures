@@ -33,6 +33,19 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
   }
 
   /**
+   * Returns `true` if this `Collection` contains the specified
+   * `item`.  The comparison is done using identify operator (`===`)/
+   *
+   * @param item The item whose presence is tested.
+   *
+   * @returns `true` if this `Collections contains the specified
+   * `item`, `false` otherwise.
+   */
+  includes(item: E): boolean {
+    return this.iterator().includes(item);
+  }
+
+  /**
    * Returns an array containing all elements of this `Collection`
    *
    * @returns an array containing all elements of this `Collection`
@@ -180,6 +193,15 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
       const item = iter.next();
       if (item.done) return true;
       if (!this.contains(item.value)) return false;
+    }
+  }
+
+  disjoint<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
+    const iter = toIterator(iteratorLike);
+    for (;;) {
+      const item = iter.next();
+      if (item.done) return true;
+      if (this.contains(item.value)) return false;
     }
   }
 

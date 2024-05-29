@@ -1,4 +1,4 @@
-import { Comparator, FluentIterator, Predicate } from 'ts-fluent-iterators';
+import { Comparator, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
 import {
   equalsAny,
@@ -90,13 +90,18 @@ export abstract class List<E> extends Collection<E> {
   abstract listIterator(start?: ListPosition): ListIterator<E>;
   abstract reverseListIterator(start?: ListPosition): ListIterator<E>;
 
-  replaceAll(f: (e: E) => E) {
+  replaceIf(predicate: Predicate<E>, f: Mapper<E, E>) {
     const iter = this.listIterator();
     for (;;) {
       const item = iter.next();
       if (item.done) break;
-      iter.setValue(f(item.value));
+      const oldValue = item.value;
+      if (predicate(oldValue)) iter.setValue(f(oldValue));
     }
+  }
+
+  replaceAll(f: (e: E) => E) {
+    this.replaceIf(() => true, f);
   }
 
   indexOfFirstOccurence(predicate: Predicate<E>): number {
