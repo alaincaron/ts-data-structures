@@ -283,6 +283,28 @@ Returns a hashCode for this `Collection`
 
 ---
 
+### includes()
+
+> **includes**(`item`): `boolean`
+
+Returns `true` if this `Collection` contains the specified
+`item`. The comparison is done using identify operator (`===`)/
+
+#### Parameters
+
+• **item**: `E`
+
+The item whose presence is tested.
+
+#### Returns
+
+`boolean`
+
+`true` if this `Collections contains the specified
+`item`, `false` otherwise.
+
+---
+
 ### isEmpty()
 
 > **isEmpty**(): `boolean`
