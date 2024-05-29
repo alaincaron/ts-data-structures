@@ -24,9 +24,9 @@ export function insertionSort<T>(
   compare: Comparator<T> = Comparators.defaultComparator
 ): T[] {
   let j: number;
-  for (let p = left; p < right; ++p) {
+  for (let p = left + 1; p < right; ++p) {
     const tmp = arr[p];
-    for (j = p; j > 0 && compare(tmp, arr[j - 1]) < 0; --j) {
+    for (j = p; j > left && compare(tmp, arr[j - 1]) < 0; --j) {
       arr[j] = arr[j - 1];
     }
     arr[j] = tmp;
