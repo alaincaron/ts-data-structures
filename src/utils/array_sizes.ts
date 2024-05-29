@@ -1,3 +1,4 @@
+import { Comparators } from 'ts-fluent-iterators';
 import { bsearch } from './bsearch';
 
 export const MAX_ARRAY_SIZE = 2 ** 31;
@@ -92,7 +93,7 @@ const primeCapacities = [
 
   // final chunk: do not remove
   LARGEST_PRIME,
-].sort((a,b) => a < b ? -1 : a > b ? 1 : 0);
+].sort(Comparators.defaultComparator);
 
 export function nextPrime(desiredCapacity: number): number {
   if (desiredCapacity > LARGEST_PRIME) throw new Error('Array too large');
