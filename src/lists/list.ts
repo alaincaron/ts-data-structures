@@ -157,7 +157,7 @@ export abstract class List<E> extends Collection<E> {
     }
   }
 
-  shuffle(random?: (n: number) => number) {
+  shuffle(random?: () => number) {
     if (this.size() <= 1) return;
     const arr = shuffle(this.toArray(), random);
     const iter = this.listIterator();

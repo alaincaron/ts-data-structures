@@ -63,7 +63,7 @@ export class ArrayList<E> extends List<E> {
     this.elements.sort(comparator);
   }
 
-  shuffle(random?: (n: number) => number) {
+  shuffle(random?: () => number) {
     shuffle(this.elements, random);
   }
 

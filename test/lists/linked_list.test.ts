@@ -405,16 +405,9 @@ describe('LinkedList', () => {
     it('should not modify the list', () => {
       const data = [1, 2, 3];
       const list = LinkedList.create({ initial: data });
-      list.shuffle(_x => 0);
+      list.shuffle(() => 0);
       expect(list.toArray()).deep.equal(data);
     });
-  });
-  it('should send the first time at the end', () => {
-    const data = [1, 2, 3];
-    const list = LinkedList.create({ initial: data });
-    list.shuffle(_x => 1);
-    data.push(data.shift()!);
-    expect(list.toArray()).deep.equal(data);
   });
 
   describe('sort', () => {
