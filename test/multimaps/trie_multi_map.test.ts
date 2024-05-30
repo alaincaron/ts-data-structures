@@ -60,7 +60,7 @@ describe('TrieMultiMap', () => {
       expect(map.get('b')?.equals(list(2, 4))).to.be.true;
     });
     it('should respect the passed comparator', () => {
-      const map = TrieMultiMap.create<number>({ comparator: Comparators.reverseComparator });
+      const map = TrieMultiMap.create<number>({ comparator: Comparators.reversed });
       map.put('bar', 1);
       map.put('foo', 2);
       map.put('bar', 3);

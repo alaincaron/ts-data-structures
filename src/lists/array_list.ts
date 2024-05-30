@@ -1,4 +1,4 @@
-import { Comparator, Predicate } from 'ts-fluent-iterators';
+import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
 import { List, ListIterator, ListPosition } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { IndexOutOfBoundsException, shuffle, UnderflowException, WithCapacity } from '../utils';
@@ -59,7 +59,7 @@ export class ArrayList<E> extends List<E> {
     return x;
   }
 
-  sort(comparator?: Comparator<E>) {
+  sort(comparator: Comparator<E> = Comparators.natural) {
     this.elements.sort(comparator);
   }
 

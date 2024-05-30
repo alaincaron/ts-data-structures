@@ -386,7 +386,7 @@ describe('SkipListMultiSet', () => {
   });
 
   it('should respect the passed comparator', () => {
-    const ms = new SkipListMultiSet<string>({ comparator: Comparators.reverseComparator });
+    const ms = new SkipListMultiSet<string>({ comparator: Comparators.reversed });
     const barValue = 4;
     const fooValue = 5;
     ms.setCount('bar', barValue);

@@ -1,4 +1,4 @@
-import { Comparator, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
+import { Comparator, Comparators, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
 import {
   equalsAny,
@@ -130,7 +130,7 @@ export abstract class List<E> extends Collection<E> {
     return this.indexOfLastOccurence(x => equalsAny(e, x));
   }
 
-  sort(comparator?: Comparator<E>) {
+  sort(comparator: Comparator<E> = Comparators.natural) {
     if (this.size() <= 1) return;
     const arr = this.toArray().sort(comparator);
     const iter = this.listIterator();

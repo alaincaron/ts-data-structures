@@ -8,7 +8,7 @@ interface MergeItem<A> {
 
 export function* mergeIterators<A>(
   iterators: IteratorGenerator<IteratorGenerator<A>>,
-  comparator: Comparator<A> = Comparators.defaultComparator
+  comparator: Comparator<A> = Comparators.natural
 ): IterableIterator<A> {
   const q = new PriorityQueue<MergeItem<A>>({ comparator: (item1, item2) => comparator(item1.data, item2.data) });
   FluentIterator.from(iterators)
@@ -29,7 +29,7 @@ export function* mergeIterators<A>(
 
 export function mergeIteratorWith<A>(
   iterators: IteratorGenerator<IteratorGenerator<A>>,
-  comparator: Comparator<A> = Comparators.defaultComparator
+  comparator: Comparator<A> = Comparators.natural
 ): Mapper<Iterator<A>, IterableIterator<A>> {
   return (iterator: Iterator<A>) => mergeIterators(FluentIterator.from(iterators).append([iterator]), comparator);
 }

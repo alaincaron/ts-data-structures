@@ -10,7 +10,7 @@ export abstract class SortedMap<K, V> extends IMap<K, V> {
 
   constructor(options?: SortedMapOptions<K>) {
     super();
-    this.comparator = options?.comparator ?? Comparators.defaultComparator;
+    this.comparator = options?.comparator ?? Comparators.natural;
   }
 
   firstEntry(): MapEntry<K, V> | undefined {

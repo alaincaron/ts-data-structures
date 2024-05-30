@@ -52,7 +52,7 @@
   "devDependencies": {
     "@types/chai": "4.3.16",
     "@types/mocha": "10.0.6",
-    "@typescript-eslint/eslint-plugin": "7.10.0",
+    "@typescript-eslint/eslint-plugin": "7.11.0",
     "benny": "3.7.1",
     "chai": "4.3.10",
     "eslint": "8.57.0",
@@ -79,6 +79,6 @@
     "dist"
   ],
   "dependencies": {
-    "ts-fluent-iterators": "^10.0.3"
+    "ts-fluent-iterators": "^11.0.1"
   }
 }

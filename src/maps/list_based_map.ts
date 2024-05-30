@@ -56,7 +56,7 @@ export abstract class ListBasedMap<K, V> extends IMap<K, V> {
     return this._delegate.buildOptions();
   }
 
-  sort(comparator: Comparator<K> = Comparators.defaultComparator) {
+  sort(comparator: Comparator<K> = Comparators.natural) {
     this._delegate.sort((e1, e2) => comparator(e1.key, e2.key));
   }
 

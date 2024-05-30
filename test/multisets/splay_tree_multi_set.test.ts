@@ -386,7 +386,7 @@ describe('SplayTreeMultiSet', () => {
   });
 
   it('should respect the passed comparator', () => {
-    const ms = new SplayTreeMultiSet<string>({ comparator: Comparators.reverseComparator });
+    const ms = new SplayTreeMultiSet<string>({ comparator: Comparators.reversed });
     const barValue = 4;
     const fooValue = 5;
     ms.setCount('bar', barValue);

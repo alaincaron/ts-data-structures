@@ -371,7 +371,7 @@ describe('AvlTreeMultiMap', () => {
     });
 
     it('should respect the passed comparator', () => {
-      const map = new AvlTreeMultiMap<string, number>({ comparator: Comparators.reverseComparator });
+      const map = new AvlTreeMultiMap<string, number>({ comparator: Comparators.reversed });
       map.put('bar', 1);
       map.put('foo', 2);
       map.put('bar', 3);

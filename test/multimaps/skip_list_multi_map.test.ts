@@ -338,7 +338,7 @@ describe('SkipListMultiMap', () => {
   });
 
   it('should respect the passed comparator', () => {
-    const map = new SkipListMultiMap<string, number>({ comparator: Comparators.reverseComparator });
+    const map = new SkipListMultiMap<string, number>({ comparator: Comparators.reversed });
     map.put('bar', 1);
     map.put('foo', 2);
     map.put('bar', 3);

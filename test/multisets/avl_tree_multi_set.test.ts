@@ -407,7 +407,7 @@ describe('AvlTreeMultiSet', () => {
     });
 
     it('should respect the passed comparator', () => {
-      const ms = new AvlTreeMultiSet<string>({ comparator: Comparators.reverseComparator });
+      const ms = new AvlTreeMultiSet<string>({ comparator: Comparators.reversed });
       const barValue = 4;
       const fooValue = 5;
       ms.setCount('bar', barValue);

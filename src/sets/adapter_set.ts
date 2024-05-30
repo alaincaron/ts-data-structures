@@ -40,7 +40,7 @@ export class AdapterSet<E> extends ISet<E> {
   }
 
   removeMatchingItem(predicate: Predicate<E>): E | undefined {
-    for (const value of this) {
+    for (const value of this._delegate) {
       if (predicate(value)) {
         this._delegate.delete(value);
         return value;
@@ -51,7 +51,7 @@ export class AdapterSet<E> extends ISet<E> {
 
   filter(predicate: Predicate<E>): number {
     let count = 0;
-    for (const value of this) {
+    for (const value of this._delegate) {
       if (!predicate(value)) {
         this._delegate.delete(value);
         ++count;

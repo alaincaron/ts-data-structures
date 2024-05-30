@@ -93,7 +93,7 @@ const primeCapacities = [
 
   // final chunk: do not remove
   LARGEST_PRIME,
-].sort(Comparators.defaultComparator);
+].sort(Comparators.natural);
 
 export function nextPrime(desiredCapacity: number): number {
   if (desiredCapacity > LARGEST_PRIME) throw new Error('Array too large');

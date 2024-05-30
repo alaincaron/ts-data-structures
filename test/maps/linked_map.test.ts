@@ -246,7 +246,7 @@ describe('LinkedMap', () => {
         { key: 'a', value: 5 },
         { key: 'b', value: 3 },
       ]);
-      map.sort(Comparators.reverseComparator);
+      map.sort(Comparators.reversed);
       expect(map.entryIterator().collect()).to.deep.equal([
         { key: 'b', value: 3 },
         { key: 'a', value: 5 },

@@ -1,6 +1,6 @@
 import { Comparator, Comparators } from 'ts-fluent-iterators';
 
-export function bsearch<T>(arr: T[], e: T, compare: Comparator<T> = Comparators.defaultComparator): number {
+export function bsearch<T>(arr: T[], e: T, compare: Comparator<T> = Comparators.natural): number {
   let m = 0;
   let n = arr.length - 1;
   while (m <= n) {
@@ -21,7 +21,7 @@ export function insertionSort<T>(
   arr: T[],
   left: number,
   right: number,
-  compare: Comparator<T> = Comparators.defaultComparator
+  compare: Comparator<T> = Comparators.natural
 ): T[] {
   let j: number;
   for (let p = left + 1; p < right; ++p) {
@@ -34,19 +34,14 @@ export function insertionSort<T>(
   return arr;
 }
 
-export function insertSorted<T>(arr: T[], e: T, compare: Comparator<T> = Comparators.defaultComparator): T[] {
+export function insertSorted<T>(arr: T[], e: T, compare: Comparator<T> = Comparators.natural): T[] {
   const idx = bsearch(arr, e, compare);
   if (idx >= 0) arr.splice(idx, 0, e);
   else arr.splice(~idx, 0, e);
   return arr;
 }
 
-export function shellSort<T>(
-  arr: T[],
-  left: number,
-  right: number,
-  compare: Comparator<T> = Comparators.defaultComparator
-): T[] {
+export function shellSort<T>(arr: T[], left: number, right: number, compare: Comparator<T> = Comparators.natural): T[] {
   let gap = (right - left) >> 1;
 
   while (gap > 0) {
@@ -64,12 +59,7 @@ export function shellSort<T>(
   return arr;
 }
 
-export function mergeSort<T>(
-  arr: T[],
-  left: number,
-  right: number,
-  compare: Comparator<T> = Comparators.defaultComparator
-): T[] {
+export function mergeSort<T>(arr: T[], left: number, right: number, compare: Comparator<T> = Comparators.natural): T[] {
   const n = right - left;
   if (n <= 5) return insertionSort(arr, left, right, compare);
   const tmp = mergeSort0(arr, left, right, compare);

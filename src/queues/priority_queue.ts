@@ -26,7 +26,7 @@ export class PriorityQueue<E> extends Queue<E> {
       if (options.comparator) this.comparator = options.comparator;
       this.buffer = [];
     }
-    this.comparator ??= Comparators.defaultComparator;
+    this.comparator ??= Comparators.natural;
   }
 
   static create<E>(initializer?: WithCapacity<PriorityQueueOptions<E> & CollectionInitializer<E>>): PriorityQueue<E> {
