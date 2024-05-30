@@ -1,5 +1,5 @@
 export * from './array_sizes';
-export * from './bsearch';
+export * from './arrays';
 export * from './double_linked_list';
 export * from './exceptions';
 export * from './hash';
