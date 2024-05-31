@@ -1,5 +1,5 @@
 export * from './array_sizes';
-export * from './arrays';
+export * from './bsearch';
 export * from './double_linked_list';
 export * from './exceptions';
 export * from './hash';
@@ -10,3 +10,6 @@ export * from './constructor';
 export * from './json';
 export * from './capacity_mixin';
 export * from './extract_options';
+export * from './insertion_sort';
+export * from './shell_sort';
+export * from './merge_sort';

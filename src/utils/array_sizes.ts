@@ -1,5 +1,5 @@
 import { Comparators } from 'ts-fluent-iterators';
-import { bsearch } from './arrays';
+import { bsearch } from './bsearch';
 
 export const MAX_ARRAY_SIZE = 2 ** 31;
 export const LARGEST_PRIME = MAX_ARRAY_SIZE - 1;
