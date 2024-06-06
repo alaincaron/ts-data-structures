@@ -12,19 +12,13 @@ describe('ArrayStack', () => {
       expect(stack.isFull()).to.be.false;
     });
 
-    it('should have specified capacity as unique argument', () => {
+    it('should have specified capacity', () => {
       const stack = ArrayStack.create({ capacity: 2 });
       expect(stack.capacity()).equal(2);
       expect(stack.size()).equal(0);
       expect(stack.remaining()).equal(2);
       expect(stack.isEmpty()).to.be.true;
       expect(stack.isFull()).to.be.false;
-    });
-
-    it('should use the specified capacity as per options', () => {
-      const stack = ArrayStack.create({ capacity: 2 });
-      expect(stack.capacity()).equal(2);
-      expect(stack.isEmpty()).to.be.true;
     });
 
     it('should have the same elements as the array argument in revers order', () => {

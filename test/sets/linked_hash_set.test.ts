@@ -13,19 +13,13 @@ describe('LinkedHashSet', () => {
       expect(set.isFull()).to.be.false;
     });
 
-    it('should have specified capacity as unique argument', () => {
+    it('should have specified capacity', () => {
       const set = LinkedHashSet.create({ capacity: 2 });
       expect(set.capacity()).equal(2);
       expect(set.size()).equal(0);
       expect(set.remaining()).equal(2);
       expect(set.isEmpty()).to.be.true;
       expect(set.isFull()).to.be.false;
-    });
-
-    it('should use the specified capacity as per options', () => {
-      const set = LinkedHashSet.create({ capacity: 2 });
-      expect(set.capacity()).equal(2);
-      expect(set.isEmpty()).to.be.true;
     });
 
     it('should initialize with the provided Map and respect ordering', () => {

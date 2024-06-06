@@ -38,20 +38,13 @@ describe('AvlTreeMap', () => {
       assertAvlProperty(map);
     });
 
-    it('should have specified capacity as unique argument', () => {
+    it('should have specified capacity', () => {
       const map = AvlTreeMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
       expect(map.isEmpty()).to.be.true;
       expect(map.isFull()).to.be.false;
-      assertAvlProperty(map);
-    });
-
-    it('should use the specified capacity as per options', () => {
-      const map = AvlTreeMap.create({ capacity: 2 });
-      expect(map.capacity()).equal(2);
-      expect(map.isEmpty()).to.be.true;
       assertAvlProperty(map);
     });
 

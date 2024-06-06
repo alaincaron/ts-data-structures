@@ -13,19 +13,13 @@ describe('ArrayList', () => {
       expect(list.isFull()).to.be.false;
     });
 
-    it('should have specified capacity as unique argument', () => {
+    it('should have specified capacity', () => {
       const list = ArrayList.create({ capacity: 2 });
       expect(list.capacity()).equal(2);
       expect(list.size()).equal(0);
       expect(list.remaining()).equal(2);
       expect(list.isEmpty()).to.be.true;
       expect(list.isFull()).to.be.false;
-    });
-
-    it('should use the specified capacity as per options', () => {
-      const list = ArrayList.create({ capacity: 2 });
-      expect(list.capacity()).equal(2);
-      expect(list.isEmpty()).to.be.true;
     });
 
     it('should have the same elements as the array argument', () => {

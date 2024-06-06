@@ -18,20 +18,13 @@ describe('SplayTreeMap', () => {
       expect(getRoot(map)).to.be.undefined;
     });
 
-    it('should have specified capacity as unique argument', () => {
+    it('should have specified capacity', () => {
       const map = SplayTreeMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
       expect(map.isEmpty()).to.be.true;
       expect(map.isFull()).to.be.false;
-      expect(getRoot(map)).to.be.undefined;
-    });
-
-    it('should use the specified capacity as per options', () => {
-      const map = SplayTreeMap.create({ capacity: 2 });
-      expect(map.capacity()).equal(2);
-      expect(map.isEmpty()).to.be.true;
       expect(getRoot(map)).to.be.undefined;
     });
 

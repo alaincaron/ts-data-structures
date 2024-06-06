@@ -13,20 +13,13 @@ describe('TrieMap', () => {
       expect(map.getHeight()).to.equal(0);
     });
 
-    it('should have specified capacity as unique argument', () => {
+    it('should have specified capacity', () => {
       const map = TrieMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
       expect(map.isEmpty()).to.be.true;
       expect(map.isFull()).to.be.false;
-      expect(map.getHeight()).to.equal(0);
-    });
-
-    it('should use the specified capacity as per options', () => {
-      const map = TrieMap.create({ capacity: 2 });
-      expect(map.capacity()).equal(2);
-      expect(map.isEmpty()).to.be.true;
       expect(map.getHeight()).to.equal(0);
     });
 

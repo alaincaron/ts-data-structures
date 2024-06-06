@@ -16,19 +16,13 @@ describe('LinkedHashMap', () => {
       expect(map.isFull()).to.be.false;
     });
 
-    it('should have specified capacity as unique argument', () => {
+    it('should have specified capacity', () => {
       const map = LinkedHashMap.create({ capacity: 2 });
       expect(map.capacity()).equal(2);
       expect(map.size()).equal(0);
       expect(map.remaining()).equal(2);
       expect(map.isEmpty()).to.be.true;
       expect(map.isFull()).to.be.false;
-    });
-
-    it('should use the specified capacity as per options', () => {
-      const map = LinkedHashMap.create({ capacity: 2 });
-      expect(map.capacity()).equal(2);
-      expect(map.isEmpty()).to.be.true;
     });
 
     it('should initialize with the provided Map and respect ordering', () => {
