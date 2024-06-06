@@ -455,4 +455,25 @@ describe('LinkedList', () => {
     expect(list.toArray()).deep.equal([4, 3, 2, 1]);
     expect(list.size()).equal(4);
   });
+
+  describe('removeRange', () => {
+    it('should left list unmodified', () => {
+      const list = LinkedList.create({ initial: [1, 2, 3] });
+      list.removeRange(2, 2);
+      expect(list.size()).equal(3);
+      expect(list.toArray()).to.deep.equal([1, 2, 3]);
+    });
+    it('should clear the list', () => {
+      const list = LinkedList.create({ initial: [1, 2, 3] });
+      list.removeRange(0);
+      expect(list.isEmpty()).to.be.true;
+      expect(list.toArray()).to.deep.equal([]);
+    });
+    it('should remove in the middle of the list', () => {
+      const list = LinkedList.create({ initial: [3, 2, 1] });
+      list.removeRange(1);
+      expect(list.size()).equal(1);
+      expect(list.toArray()).to.deep.equal([3]);
+    });
+  });
 });

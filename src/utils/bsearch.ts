@@ -16,10 +16,3 @@ export function bsearch<T>(arr: T[], e: T, compare: Comparator<T> = Comparators.
   }
   return ~m;
 }
-
-export function insertSorted<T>(arr: T[], e: T, compare: Comparator<T> = Comparators.natural): T[] {
-  const idx = bsearch(arr, e, compare);
-  if (idx >= 0) arr.splice(idx, 0, e);
-  else arr.splice(~idx, 0, e);
-  return arr;
-}

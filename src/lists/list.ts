@@ -4,12 +4,12 @@ import {
   equalsAny,
   equalsIterable,
   hashIterableOrdered,
+  IllegalArgumentException,
+  IndexOutOfBoundsException,
   OverflowException,
   shuffle,
   UnderflowException,
 } from '../utils';
-
-export type ListPosition = number | 'head' | 'tail';
 
 export interface ListIterator<E> extends IterableIterator<E> {
   setValue(item: E): E;
@@ -35,6 +35,14 @@ export abstract class List<E> extends Collection<E> {
 
   abstract offerAt(idx: number, item: E): boolean;
 
+  protected checkBound(idx: number) {
+    if (idx < 0 || idx >= this.size()) throw new IndexOutOfBoundsException();
+  }
+
+  protected checkBoundForAdd(idx: number) {
+    if (idx < 0 || idx > this.size()) throw new IndexOutOfBoundsException();
+  }
+
   addAt(idx: number, item: E): void {
     if (!this.offerAt(idx, item)) throw new OverflowException();
   }
@@ -58,6 +66,27 @@ export abstract class List<E> extends Collection<E> {
   abstract setAt(idx: number, item: E): E;
 
   abstract removeAt(idx: number): E;
+
+  protected checkRemoveRangeBounds(fromIdx: number, toIdx?: number) {
+    toIdx ??= this.size();
+    if (fromIdx < 0 || toIdx > this.size()) throw new IndexOutOfBoundsException();
+    if (fromIdx > toIdx) throw new IllegalArgumentException();
+    return toIdx;
+  }
+
+  removeRange(fromIdx: number, toIdx?: number) {
+    toIdx = this.checkRemoveRangeBounds(fromIdx, toIdx);
+    const iter = this.listIterator(fromIdx);
+    for (let i = fromIdx; i < toIdx; ++i) {
+      const item = iter.next();
+      if (item.done) break;
+      iter.remove();
+    }
+  }
+
+  clear() {
+    this.removeRange(0, this.size());
+  }
 
   removeFirst(): E {
     if (this.isEmpty()) throw new UnderflowException();
@@ -84,11 +113,65 @@ export abstract class List<E> extends Collection<E> {
   }
 
   reverseIterator() {
-    return new FluentIterator(this.reverseListIterator('tail'));
+    return new FluentIterator(this.reverseListIterator());
   }
 
-  abstract listIterator(start?: ListPosition): ListIterator<E>;
-  abstract reverseListIterator(start?: ListPosition): ListIterator<E>;
+  private getListIterator(start: number, count: number, advance: (cursor: number) => number): ListIterator<E> {
+    let lastReturn = -1;
+    let cursor = start;
+    return {
+      [Symbol.iterator]() {
+        return this;
+      },
+      next: () => {
+        if (count <= 0 || cursor < 0 || cursor >= this.size()) {
+          return { done: true, value: undefined };
+        }
+        --count;
+        lastReturn = cursor;
+        cursor = advance(cursor);
+        return { done: false, value: this.getAt(lastReturn) };
+      },
+      setValue: (item: E) => this.setAt(lastReturn, item),
+      remove: () => {
+        const value = this.removeAt(lastReturn);
+        cursor = lastReturn;
+        lastReturn = -1;
+        return value;
+      },
+    };
+  }
+
+  protected computeIteratorBounds(skip?: number, count?: number) {
+    skip ??= 0;
+    this.checkBoundForAdd(skip);
+    count ??= this.size() - skip;
+    if (count < 0 || count + skip > this.size())
+      throw new IndexOutOfBoundsException(`Invalid skip = ${skip}, count = ${count}, size = ${this.size}`);
+    return { start: skip, count };
+  }
+
+  listIterator(skip?: number, count?: number): ListIterator<E> {
+    const bounds = this.computeIteratorBounds(skip, count);
+    return this.getListIterator(bounds.start, bounds.count, cursor => cursor + 1);
+  }
+
+  protected computeReverseIteratorBounds(skip?: number, count?: number) {
+    skip ??= 0;
+    this.checkBoundForAdd(skip);
+    const start = this.size() - 1 - skip;
+    count ??= start + 1;
+    if (count < 0 || count > start + 1)
+      throw new IndexOutOfBoundsException(
+        `Reverse iterator invalid skip = ${skip}, count = ${count}, size= ${this.size()}`
+      );
+    return { start, count };
+  }
+
+  reverseListIterator(skip?: number, count?: number): ListIterator<E> {
+    const bounds = this.computeReverseIteratorBounds(skip, count);
+    return this.getListIterator(bounds.start, bounds.count, cursor => cursor - 1);
+  }
 
   replaceIf(predicate: Predicate<E>, f: Mapper<E, E>) {
     const iter = this.listIterator();

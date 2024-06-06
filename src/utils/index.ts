@@ -13,3 +13,4 @@ export * from './extract_options';
 export * from './insertion_sort';
 export * from './shell_sort';
 export * from './merge_sort';
+export * from './qsort';

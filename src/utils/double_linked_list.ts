@@ -6,7 +6,7 @@ export namespace DoubleLinkedList {
 }
 
 type Entry = DoubleLinkedList.Entry;
-export class DoubleLinkedList<K = Entry> {
+export class DoubleLinkedList<K> {
   public readonly header: Entry;
   constructor() {
     this.header = {} as Entry;

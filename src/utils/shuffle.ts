@@ -30,9 +30,9 @@ function shuffle0<E>(arr: E[], left: number, right: number, random: Mapper<void,
 }
 
 export function toShuffled<E>(arr: E[]): E[];
-export function toShuffled<E>(arr: E[], arg2: number | Mapper<void, number>): E[];
-export function toShuffled<E>(arr: E[], left: number, arg3: number | Mapper<void, number>): E[];
-export function toShuffled<E>(arr: E[], left: number, right: number, random: Mapper<void, number>): E[];
+export function toShuffled<E>(arr: E[], arg2: number | Mapper<void, number> | undefined): E[];
+export function toShuffled<E>(arr: E[], left: number, arg3: number | Mapper<void, number> | undefined): E[];
+export function toShuffled<E>(arr: E[], left: number, right: number, random: Mapper<void, number> | undefined): E[];
 
 export function toShuffled<E>(
   arr: E[],
