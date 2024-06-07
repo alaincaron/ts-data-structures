@@ -192,14 +192,16 @@ export function buildMap<
   return result;
 }
 
-function boundMap<K, V, M extends IMap<K, V>, Options extends ContainerOptions = ContainerOptions>(
-  ctor: Constructor<M>,
-  options?: Options
-) {
+const constructorMap = new Map();
+
+function boundMap<K, V, M extends IMap<K, V>>(ctor: Constructor<M>, options?: ContainerOptions) {
   if (options && 'capacity' in options) {
-    const boundedCtor: any = CapacityMixin(ctor);
-    const tmp = new boundedCtor(options);
-    return tmp as unknown as M;
+    let boundedCtor = constructorMap.get(ctor);
+    if (!boundedCtor) {
+      boundedCtor = CapacityMixin(ctor);
+      constructorMap.set(ctor, boundedCtor);
+    }
+    return new boundedCtor(options);
   }
   return new ctor(options);
 }
