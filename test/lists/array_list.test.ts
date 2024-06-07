@@ -389,9 +389,20 @@ describe('ArrayList', () => {
     it('should double all elements', () => {
       const data = [1, 2, 3];
       const list = ArrayList.create({ initial: data });
-      const transform = (x: number) => 2 * x;
-      list.replaceAll(transform);
-      expect(list.toArray()).to.deep.equal(data.map(transform));
+      list.replaceAll(x => 2 * x);
+      expect(list.toArray()).to.deep.equal([2, 4, 6]);
+    });
+  });
+
+  describe('replaceIf', () => {
+    it('should double all odd elements', () => {
+      const data = [1, 2, 3];
+      const list = ArrayList.create({ initial: data });
+      list.replaceIf(
+        x => x % 2 === 1,
+        x => 2 * x
+      );
+      expect(list.toArray()).to.deep.equal([2, 2, 6]);
     });
   });
 

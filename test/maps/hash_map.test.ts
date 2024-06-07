@@ -204,6 +204,37 @@ describe('HashMap', () => {
     });
   });
 
+  describe('transformValues', () => {
+    it('should double all values', () => {
+      const map = new HashMap<string, number>();
+      map.put('foo', 1);
+      map.put('bar', 2);
+      map.put('foobar', 3);
+      map.transformValues(v => v * 2);
+      expect(map.size()).to.equal(3);
+      expect(map.get('foo')).equal(2);
+      expect(map.get('bar')).equal(4);
+      expect(map.get('foobar')).equal(6);
+    });
+  });
+
+  describe('replaceValueIf', () => {
+    it('should double all values associated with a key longer than 3', () => {
+      const map = new HashMap<string, number>();
+      map.put('foo', 1);
+      map.put('bar', 2);
+      map.put('foobar', 3);
+      map.replaceValueIf(
+        ([k, _]) => k.length > 3,
+        v => v * 2
+      );
+      expect(map.size()).to.equal(3);
+      expect(map.get('foo')).equal(1);
+      expect(map.get('bar')).equal(2);
+      expect(map.get('foobar')).equal(6);
+    });
+  });
+
   describe('non-primitive-types', () => {
     it('should handle objects', () => {
       const map = new HashMap();

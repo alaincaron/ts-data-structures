@@ -1,4 +1,4 @@
-import { FluentIterator, Predicate } from 'ts-fluent-iterators';
+import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
 import {
   CapacityMixin,
   Constructor,
@@ -117,6 +117,18 @@ export abstract class IMap<K, V> extends Container implements Iterable<[K, V]> {
     for (const entry of this.entryIterator()) {
       yield [entry.key, entry.value];
     }
+  }
+
+  replaceValueIf(predicate: Predicate<[K, V]>, mapper: Mapper<V, V>) {
+    this.entryIterator()
+      .filter(e => predicate([e.key, e.value]))
+      .forEach(e => (e.value = mapper(e.value)));
+    return this;
+  }
+
+  transformValues(mapper: Mapper<V, V>) {
+    this.entryIterator().forEach(e => (e.value = mapper(e.value)));
+    return this;
   }
 
   toMap() {

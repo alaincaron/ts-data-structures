@@ -8,7 +8,7 @@ export interface AdapterSetOptions<E> {
 }
 
 export class AdapterSet<E> extends ISet<E> {
-  protected readonly _delegate: Set<E>;
+  private readonly _delegate: Set<E>;
 
   constructor(options?: AdapterSetOptions<E>) {
     super();
@@ -19,7 +19,7 @@ export class AdapterSet<E> extends ISet<E> {
     return buildCollection<E, AdapterSet<E>, AdapterSetOptions<E>>(AdapterSet, initializer);
   }
 
-  protected delegate() {
+  delegate() {
     return this._delegate;
   }
 
@@ -66,10 +66,6 @@ export class AdapterSet<E> extends ISet<E> {
 
   [Symbol.iterator]() {
     return this._delegate[Symbol.iterator]();
-  }
-
-  toSet() {
-    return this._delegate;
   }
 
   clone(): AdapterSet<E> {

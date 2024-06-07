@@ -7,7 +7,7 @@ export interface AdapterMapOptions<K, V> {
   delegate?: Map<K, V>;
 }
 export class AdapterMap<K, V> extends IMap<K, V> {
-  protected readonly _delegate: Map<K, V>;
+  private readonly _delegate: Map<K, V>;
 
   constructor(options?: AdapterMapOptions<K, V>) {
     super();
@@ -19,7 +19,7 @@ export class AdapterMap<K, V> extends IMap<K, V> {
     return buildMap<K, V, AdapterMap<K, V>, AdapterMapOptions<K, V>>(AdapterMap, initializer);
   }
 
-  protected delegate() {
+  delegate() {
     return this._delegate;
   }
 
@@ -81,10 +81,6 @@ export class AdapterMap<K, V> extends IMap<K, V> {
     return this._delegate.iterator().map(([key, value]) => {
       return { key, value };
     });
-  }
-
-  toMap() {
-    return this._delegate;
   }
 
   clone(): AdapterMap<K, V> {

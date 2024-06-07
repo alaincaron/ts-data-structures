@@ -156,6 +156,10 @@ export abstract class List<E> extends Collection<E> {
     return this.getListIterator(bounds.start, bounds.count, cursor => cursor + 1);
   }
 
+  transform(mapper: Mapper<E, E>): List<E> {
+    return this.replaceIf(_ => true, mapper);
+  }
+
   protected computeReverseIteratorBounds(skip?: number, count?: number) {
     skip ??= 0;
     this.checkBoundForAdd(skip);
@@ -173,7 +177,7 @@ export abstract class List<E> extends Collection<E> {
     return this.getListIterator(bounds.start, bounds.count, cursor => cursor - 1);
   }
 
-  replaceIf(predicate: Predicate<E>, f: Mapper<E, E>) {
+  replaceIf(predicate: Predicate<E>, f: Mapper<E, E>): List<E> {
     const iter = this.listIterator();
     for (;;) {
       const item = iter.next();
@@ -181,9 +185,10 @@ export abstract class List<E> extends Collection<E> {
       const oldValue = item.value;
       if (predicate(oldValue)) iter.setValue(f(oldValue));
     }
+    return this;
   }
 
-  replaceAll(f: (e: E) => E) {
+  replaceAll(f: Mapper<E, E>) {
     this.replaceIf(() => true, f);
   }
 

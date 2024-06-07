@@ -25,7 +25,7 @@ export class AdapterArrayList<E> extends BaseArrayList<E> {
     super(options?.delegate ?? []);
   }
 
-  toArray() {
+  delegate() {
     return this.elements;
   }
 
