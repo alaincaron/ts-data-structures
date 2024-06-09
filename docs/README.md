@@ -21,3 +21,5 @@
 ## Functions
 
 - [buildCollection](functions/buildCollection.md)
+- [qsort](functions/qsort.md)
+- [select](functions/select.md)
