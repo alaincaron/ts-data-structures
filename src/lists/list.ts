@@ -7,9 +7,11 @@ import {
   IllegalArgumentException,
   IndexOutOfBoundsException,
   OverflowException,
+  qsort,
   shuffle,
   UnderflowException,
 } from '../utils';
+import { parseArgs } from '../utils/parse_args';
 
 export interface ListIterator<E> extends IterableIterator<E> {
   setValue(item: E): E;
@@ -34,6 +36,14 @@ export abstract class List<E> extends Collection<E> {
   }
 
   abstract offerAt(idx: number, item: E): boolean;
+
+  protected checkBounds(start: number, end: number) {
+    this.checkBoundForAdd(start);
+    this.checkBoundForAdd(end);
+    if (start > end) {
+      throw new IllegalArgumentException(`Argument start ${start} must be at least as argument end ${end}`);
+    }
+  }
 
   protected checkBound(idx: number) {
     if (idx < 0 || idx >= this.size()) throw new IndexOutOfBoundsException();
@@ -67,17 +77,11 @@ export abstract class List<E> extends Collection<E> {
 
   abstract removeAt(idx: number): E;
 
-  protected checkRemoveRangeBounds(fromIdx: number, toIdx?: number) {
-    toIdx ??= this.size();
-    if (fromIdx < 0 || toIdx > this.size()) throw new IndexOutOfBoundsException();
-    if (fromIdx > toIdx) throw new IllegalArgumentException();
-    return toIdx;
-  }
-
-  removeRange(fromIdx: number, toIdx?: number) {
-    toIdx = this.checkRemoveRangeBounds(fromIdx, toIdx);
-    const iter = this.listIterator(fromIdx);
-    for (let i = fromIdx; i < toIdx; ++i) {
+  removeRange(start: number, end?: number) {
+    end ??= this.size();
+    this.checkBounds(start, end);
+    const iter = this.listIterator(start);
+    for (let i = start; i < end; ++i) {
       const item = iter.next();
       if (item.done) break;
       iter.remove();
@@ -218,23 +222,33 @@ export abstract class List<E> extends Collection<E> {
     return this.indexOfLastOccurence(x => equalsAny(e, x));
   }
 
-  sort(comparator: Comparator<E> = Comparators.natural) {
-    if (this.size() <= 1) return;
-    const arr = this.toArray().sort(comparator);
-    const iter = this.listIterator();
+  sort(): List<E>;
+  sort(arg1: number | Comparator<E> | undefined): List<E>;
+  sort(arg1: number, arg2: number | Comparator<E> | undefined): List<E>;
+  sort(arg1: number, arg2: number, arg3: Comparator<E> | undefined): List<E>;
+
+  sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): List<E> {
+    const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
+    this.checkBounds(left, right);
+    if (left >= right) return this;
+    const arr = qsort(this.toArray(left, right), comparator);
+    const iter = this.listIterator(left, right - left);
     for (const e of arr) {
       iter.next();
       iter.setValue(e);
     }
+    return this;
   }
 
-  reverse() {
-    const n = this.size();
-    if (n <= 1) return;
+  reverse(start?: number, end?: number): List<E> {
+    start ??= 0;
+    end ??= this.size();
+    this.checkBounds(start, end);
+    if (end - start <= 1) return this;
+    const iter1 = this.listIterator(start);
+    const iter2 = this.reverseListIterator(this.size() - end);
     let i = 0;
-    let j = n - 1;
-    const iter1 = this.listIterator();
-    const iter2 = this.reverseListIterator();
+    let j = end - 1;
     while (i < j) {
       const item1 = iter1.next();
       const item2 = iter2.next();
@@ -243,16 +257,35 @@ export abstract class List<E> extends Collection<E> {
       ++i;
       --j;
     }
+    return this;
   }
 
-  shuffle(random?: () => number) {
-    if (this.size() <= 1) return;
-    const arr = shuffle(this.toArray(), random);
-    const iter = this.listIterator();
+  shuffle(): List<E>;
+  shuffle(arg1: number | Mapper<void, number> | undefined): List<E>;
+  shuffle(arg1: number, arg2: number | Mapper<void, number> | undefined): List<E>;
+  shuffle(arg1: number, arg2: number, arg3: Mapper<void, number> | undefined): List<E>;
+  shuffle(
+    arg1?: number | Mapper<void, number>,
+    arg2?: number | Mapper<void, number>,
+    arg3?: Mapper<void, number> | undefined
+  ): List<E> {
+    const { left, right, f: random } = parseArgs(this.size(), arg1, arg2, arg3, Math.random);
+    this.checkBounds(left, right);
+    if (left >= right) return this;
+    const arr = shuffle(this.toArray(left, right), random);
+    const iter = this.listIterator(left);
     for (const e of arr) {
       iter.next();
       iter.setValue(e);
     }
+    return this;
+  }
+
+  toArray(start?: number, end?: number): E[] {
+    start ??= 0;
+    end ??= this.size();
+    this.checkBounds(start, end);
+    return new FluentIterator(this.listIterator(start, end - start)).collect();
   }
 
   private static removeFirstItem<E>(iter: ListIterator<E>, predicate: Predicate<E>): E | undefined {

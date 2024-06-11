@@ -16,7 +16,7 @@ const INSERTION_THRESH = 15; // threshold for insertion sort.
 export function qsort<E>(arr: E[]): E[];
 export function qsort<E>(arr: E[], arg2: number | Comparator<E> | undefined): E[];
 export function qsort<E>(arr: E[], left: number, arg3: number | Comparator<E> | undefined): E[];
-export function qsort<E>(arr: E[], left: number, right: number, random: Comparator<E> | undefined): E[];
+export function qsort<E>(arr: E[], left: number, right: number, comparator: Comparator<E> | undefined): E[];
 
 export function qsort<E>(
   arr: E[],
@@ -24,16 +24,19 @@ export function qsort<E>(
   arg3?: number | Comparator<E>,
   arg4?: Comparator<E>
 ): E[] {
-  const { left, right, f: compare } = parseArgs(arr, arg2, arg3, arg4, Comparators.natural);
+  const { left, right, f: comparator } = parseArgs(arr.length, arg2, arg3, arg4, Comparators.natural);
 
-  qsort0(arr, compare, left, right - 1);
-  return insertionSort(arr, left, right, compare);
+  qsort1(arr, comparator, left, right - 1);
+  return arr;
 }
 
-function qsort0<E>(arr: E[], comparator: Comparator<E>, low: number, high: number) {
+function qsort1<E>(arr: E[], comparator: Comparator<E>, low: number, high: number) {
   for (;;) {
     const n = high - low + 1;
-    if (n < INSERTION_THRESH) break;
+    if (n < INSERTION_THRESH) {
+      insertionSort(arr, low, high + 1, comparator);
+      return;
+    }
     const pivot = pseudoMedian0(arr, comparator, low, high);
 
     // Semi-standard quicksort partitioning/swapping
@@ -52,22 +55,16 @@ function qsort0<E>(arr: E[], comparator: Comparator<E>, low: number, high: numbe
 
     // Look at sizes of the two partitions, do the smaller one first by
     // recursion, then do the larger one by iteration.
-    // But only repeat (recursively or by branching) if the partition is
-    // of at least size INSERTION_THRESH.
 
     if (j - low > high - i) {
-      // the left part should be done iteratively if necessary
-      if (high - i + 1 >= INSERTION_THRESH) {
-        qsort0(arr, comparator, i, high);
-      }
+      // the left part should be done iteratively
+      qsort1(arr, comparator, i, high);
 
       // set the high bound for the next iteration
       high = j;
     } else {
-      // the right part should be done iteratively if necessary.
-      if (j - low + 1 >= INSERTION_THRESH) {
-        qsort0(arr, comparator, low, j);
-      }
+      // the right part should be done iteratively.
+      qsort1(arr, comparator, low, j);
 
       // set the low bound for the next iteration
       low = i;
@@ -78,7 +75,7 @@ function qsort0<E>(arr: E[], comparator: Comparator<E>, low: number, high: numbe
 export function toQSorted<E>(arr: E[]): E[];
 export function toQSorted<E>(arr: E[], arg2: number | Comparator<E> | undefined): E[];
 export function toQSorted<E>(arr: E[], left: number, arg3: number | Comparator<E> | undefined): E[];
-export function toQSorted<E>(arr: E[], left: number, right: number, random: Comparator<E> | undefined): E[];
+export function toQSorted<E>(arr: E[], left: number, right: number, comparator: Comparator<E> | undefined): E[];
 
 export function toQSorted<E>(
   arr: E[],
@@ -86,12 +83,11 @@ export function toQSorted<E>(
   arg3?: number | Comparator<E>,
   arg4?: Comparator<E>
 ): E[] {
-  const { left, right, f: compare } = parseArgs(arr, arg2, arg3, arg4, Comparators.natural);
+  const { left, right, f: comparator } = parseArgs(arr.length, arg2, arg3, arg4, Comparators.natural);
 
   const tmp = arr.slice(left, right);
-
-  qsort0(tmp, compare, 0, tmp.length - 1);
-  return insertionSort(tmp, compare);
+  qsort1(tmp, comparator, 0, tmp.length - 1);
+  return tmp;
 }
 
 export function median<E>(arr: E[], comparator?: Comparator<E>) {

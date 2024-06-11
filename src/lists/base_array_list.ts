@@ -1,10 +1,16 @@
-import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
+import { Comparator, Mapper, Predicate } from 'ts-fluent-iterators';
 import { List } from './list';
-import { shuffle, UnderflowException } from '../utils';
+import { qsort, shuffle, UnderflowException } from '../utils';
 
 export abstract class BaseArrayList<E> extends List<E> {
   constructor(protected readonly elements: Array<E>) {
     super();
+  }
+
+  toArray(start?: number, end?: number): E[] {
+    start ??= 0;
+    end ??= this.size();
+    return this.elements.slice(start, end);
   }
 
   offerAt(idx: number, item: E): boolean {
@@ -49,21 +55,28 @@ export abstract class BaseArrayList<E> extends List<E> {
     return x;
   }
 
-  sort(comparator: Comparator<E> = Comparators.natural) {
-    this.elements.sort(comparator);
+  sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): List<E> {
+    qsort(this.elements, arg1 as number, arg2 as number, arg3 as Comparator<E>);
+    return this;
   }
 
-  shuffle(random?: () => number) {
-    shuffle(this.elements, random);
+  shuffle(
+    arg1?: number | Mapper<void, number>,
+    arg2?: number | Mapper<void, number>,
+    arg3?: Mapper<void, number> | undefined
+  ): List<E> {
+    shuffle(this.elements, arg1 as number, arg2 as number, arg3 as Mapper<void, number>);
+    return this;
   }
 
   size(): number {
     return this.elements.length;
   }
 
-  removeRange(fromIdx: number, toIdx?: number) {
-    toIdx = this.checkRemoveRangeBounds(fromIdx, toIdx);
-    this.elements.splice(fromIdx, toIdx - fromIdx);
+  removeRange(start: number, end?: number) {
+    end ??= this.size();
+    this.checkBounds(start, end);
+    this.elements.splice(start, end - start);
   }
 
   clear() {

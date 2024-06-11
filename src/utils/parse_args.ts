@@ -1,5 +1,5 @@
-export function parseArgs<E, F>(
-  arr: E[],
+export function parseArgs<F>(
+  len: number,
   arg2: number | F | undefined,
   arg3: number | F | undefined,
   arg4: F | undefined,
@@ -7,7 +7,7 @@ export function parseArgs<E, F>(
 ) {
   const result = {
     left: 0,
-    right: arr.length,
+    right: len,
     f: defaultFunction,
   };
 

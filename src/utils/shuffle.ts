@@ -12,7 +12,7 @@ export function shuffle<E>(
   arg3?: number | Mapper<void, number>,
   arg4?: Mapper<void, number>
 ): E[] {
-  const { left, right, f: random } = parseArgs(arr, arg2, arg3, arg4, Math.random);
+  const { left, right, f: random } = parseArgs(arr.length, arg2, arg3, arg4, Math.random);
   return shuffle0(arr, left, right, random);
 }
 
@@ -40,7 +40,7 @@ export function toShuffled<E>(
   arg3?: number | Mapper<void, number>,
   arg4?: Mapper<void, number>
 ): E[] {
-  const { left, right, f: random } = parseArgs(arr, arg2, arg3, arg4, Math.random);
+  const { left, right, f: random } = parseArgs(arr.length, arg2, arg3, arg4, Math.random);
   const result = arr.slice(left, right);
   return shuffle0(result, 0, result.length, random);
 }
