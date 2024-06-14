@@ -3,5 +3,5 @@
 DIR="$(realpath "$(dirname "$0")/..")"
 
 
-env NODE_PATH=$DIR/dist:$DIR/node_modules node $DIR/benchmark $*
+env NODE_PATH=$DIR/dist:$DIR/node_modules node $DIR/benchmark/$*
 
