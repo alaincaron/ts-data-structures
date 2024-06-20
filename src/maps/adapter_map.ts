@@ -92,15 +92,21 @@ declare global {
   // eslint-disable-next-line
   interface Map<K, V> {
     equals(other: unknown): boolean;
+    asIMap(): AdapterMap<K, V>;
   }
 }
 
+Map.prototype.asIMap = function () {
+  return AdapterMap.create({ delegate: this });
+};
+
 Map.prototype.equals = function (other: unknown) {
+  if (this === other) return true;
   if (other instanceof Map) {
-    return AdapterMap.create({ delegate: this }).equals(AdapterMap.create({ delegate: other }));
+    return this.asIMap().equals(other.asIMap());
   }
   if (other instanceof IMap) {
-    return AdapterMap.create({ delegate: this }).equals(other);
+    return this.asIMap().equals(other);
   }
   return false;
 };

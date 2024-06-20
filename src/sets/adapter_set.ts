@@ -77,15 +77,21 @@ declare global {
   // eslint-disable-next-line
   interface Set<T> {
     equals(other: unknown): boolean;
+    asISet(): AdapterSet<T>;
   }
 }
 
+Set.prototype.asISet = function () {
+  return AdapterSet.create({ delegate: this });
+};
+
 Set.prototype.equals = function (other: unknown) {
+  if (this === other) return true;
   if (other instanceof Set) {
-    return AdapterSet.create({ delegate: this }).equals(AdapterSet.create({ delegate: other }));
+    return this.asISet().equals(other.asISet());
   }
   if (other instanceof ISet) {
-    return AdapterSet.create({ delegate: this }).equals(other);
+    return this.asISet().equals(other);
   }
   return false;
 };

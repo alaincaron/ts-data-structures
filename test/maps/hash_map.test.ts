@@ -218,6 +218,22 @@ describe('HashMap', () => {
     });
   });
 
+  describe('mapValues', () => {
+    it('should create a Map with a double of the values', () => {
+      const m = new HashMap<string, number>();
+      m.put('foo', 1);
+      m.put('bar', 2);
+      m.put('foobar', 3);
+      const m2 = m.mapValues(v => v * 2);
+      expect(m2.size()).to.equal(3);
+      expect(m2.get('foo')).equal(2);
+      expect(m2.get('bar')).equal(4);
+      expect(m2.get('foobar')).equal(6);
+      expect(m2.equals(m)).to.be.false;
+      expect(m2.constructor).equals(m.constructor);
+    });
+  });
+
   describe('replaceValueIf', () => {
     it('should double all values associated with a key longer than 3', () => {
       const map = new HashMap<string, number>();

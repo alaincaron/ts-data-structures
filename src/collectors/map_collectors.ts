@@ -1,5 +1,7 @@
 import { Collectors, CollisionHandler } from 'ts-fluent-iterators';
 import {
+  AdapterMap,
+  AdapterMapOptions,
   AvlTreeMap,
   HashMap,
   HashMapOptions,
@@ -79,10 +81,18 @@ export function avlTreeMapCollector<K, V>(options?: {
   return new IMapCollector(arg instanceof AvlTreeMap ? arg : AvlTreeMap.create(arg), options?.collisionHandler);
 }
 
-export function SkipListMapCollector<K, V>(options?: {
+export function skipListMapCollector<K, V>(options?: {
   arg?: SkipListMap<K, V> | WithCapacity<SortedMapOptions<K>>;
   collisionHandler?: CollisionHandler<K, V>;
 }): IMapCollector<K, V, SkipListMap<K, V>> {
   const arg = options?.arg;
   return new IMapCollector(arg instanceof SkipListMap ? arg : SkipListMap.create(arg), options?.collisionHandler);
+}
+
+export function adapterMapCollector<K, V>(options?: {
+  arg?: AdapterMap<K, V> | WithCapacity<AdapterMapOptions<K, V>>;
+  collisionHandler?: CollisionHandler<K, V>;
+}): IMapCollector<K, V, AdapterMap<K, V>> {
+  const arg = options?.arg;
+  return new IMapCollector(arg instanceof AdapterMap ? arg : AdapterMap.create(arg), options?.collisionHandler);
 }

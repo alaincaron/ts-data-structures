@@ -131,6 +131,12 @@ export abstract class IMap<K, V> extends Container implements Iterable<[K, V]> {
     return this;
   }
 
+  mapValues<V2>(mapper: Mapper<V, V2>): IMap<K, V2> {
+    const result = this.clone() as IMap<K, unknown>;
+    result.entryIterator().forEach(e => (e.value = mapper(e.value as V)));
+    return result as IMap<K, V2>;
+  }
+
   toMap() {
     return new Map(this);
   }
