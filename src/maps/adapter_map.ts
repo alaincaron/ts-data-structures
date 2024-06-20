@@ -105,8 +105,5 @@ Map.prototype.equals = function (other: unknown) {
   if (other instanceof Map) {
     return this.asIMap().equals(other.asIMap());
   }
-  if (other instanceof IMap) {
-    return this.asIMap().equals(other);
-  }
   return false;
 };

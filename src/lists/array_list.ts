@@ -1,7 +1,6 @@
 import { BaseArrayList } from './base_array_list';
-import { List } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
-import { WithCapacity } from '../utils';
+import { equalsIterable, WithCapacity } from '../utils';
 
 export class ArrayList<E> extends BaseArrayList<E> {
   constructor() {
@@ -55,11 +54,6 @@ Array.prototype.asList = function () {
 
 Array.prototype.equals = function (other: unknown) {
   if (this === other) return true;
-  if (other instanceof List) {
-    return this.asList().equals(other);
-  }
-  if (other instanceof Array) {
-    return this.asList().equals(other.asList());
-  }
+  if (other instanceof Array) return equalsIterable(this, other);
   return false;
 };

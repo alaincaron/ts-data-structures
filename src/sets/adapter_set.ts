@@ -90,8 +90,5 @@ Set.prototype.equals = function (other: unknown) {
   if (other instanceof Set) {
     return this.asISet().equals(other.asISet());
   }
-  if (other instanceof ISet) {
-    return this.asISet().equals(other);
-  }
   return false;
 };
