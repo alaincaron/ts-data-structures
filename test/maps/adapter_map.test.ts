@@ -203,4 +203,51 @@ describe('AdapterMap', () => {
       expect(map.containsKey('bar')).to.be.true;
     });
   });
+
+  describe('transformValues', () => {
+    it('should double all values', () => {
+      const map = new AdapterMap<string, number>();
+      map.put('foo', 1);
+      map.put('bar', 2);
+      map.put('foobar', 3);
+      map.transformValues(v => v * 2);
+      expect(map.size()).to.equal(3);
+      expect(map.get('foo')).equal(2);
+      expect(map.get('bar')).equal(4);
+      expect(map.get('foobar')).equal(6);
+    });
+  });
+
+  describe('mapValues', () => {
+    it('should create a new Map with a double of the values', () => {
+      const m = new AdapterMap<string, number>();
+      m.put('foo', 1);
+      m.put('bar', 2);
+      m.put('foobar', 3);
+      const m2 = m.mapValues(v => v * 2);
+      expect(m2.size()).to.equal(3);
+      expect(m2.get('foo')).equal(2);
+      expect(m2.get('bar')).equal(4);
+      expect(m2.get('foobar')).equal(6);
+      expect(m2.equals(m)).to.be.false;
+      expect(m2.constructor).equals(m.constructor);
+    });
+  });
+
+  describe('replaceValueIf', () => {
+    it('should double all values associated with a key longer than 3', () => {
+      const map = new AdapterMap<string, number>();
+      map.put('foo', 1);
+      map.put('bar', 2);
+      map.put('foobar', 3);
+      map.replaceValueIf(
+        ([k, _]) => k.length > 3,
+        v => v * 2
+      );
+      expect(map.size()).to.equal(3);
+      expect(map.get('foo')).equal(1);
+      expect(map.get('bar')).equal(2);
+      expect(map.get('foobar')).equal(6);
+    });
+  });
 });

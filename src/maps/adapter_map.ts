@@ -96,10 +96,12 @@ export class AdapterMap<K, V> extends IMap<K, V> {
     return this._delegate.valueIterator();
   }
 
+  entries() {
+    return this._delegate.entries();
+  }
+
   entryIterator() {
-    return this._delegate.iterator().map(([key, value]) => {
-      return new AdapterMapEntry(this._delegate, key, value);
-    });
+    return this._delegate.iterator().map(([key, value]) => new AdapterMapEntry(this._delegate, key, value));
   }
 
   clone(): AdapterMap<K, V> {

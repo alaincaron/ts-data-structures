@@ -164,6 +164,28 @@ describe('ArrayList', () => {
     });
   });
 
+  describe('getFirst', () => {
+    it('should throw UnderflowException', () => {
+      const list = ArrayList.create();
+      expect(() => list.getFirst()).to.throw(UnderflowException);
+    });
+    it('should return the first element', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      expect(list.getFirst()).equal(1);
+    });
+  });
+
+  describe('getLast', () => {
+    it('should throw UnderflowException', () => {
+      const list = ArrayList.create();
+      expect(() => list.getLast()).to.throw(UnderflowException);
+    });
+    it('should return the first element', () => {
+      const list = ArrayList.create({ initial: [1, 2, 3] });
+      expect(list.getLast()).equal(3);
+    });
+  });
+
   describe('addAt', () => {
     it('should insert the beginning of a list', () => {
       const list = ArrayList.create({ initial: [1, 2, 3] });
@@ -215,8 +237,6 @@ describe('ArrayList', () => {
       const list = ArrayList.create();
       expect(list.offerFirst('foo')).equal(true);
       expect(list.size()).equal(1);
-      expect(list.getFirst()).equal('foo');
-      expect(list.getLast()).equal('foo');
     });
     it('should return false if capacity is reached', () => {
       const list = ArrayList.create({ capacity: 1 });
@@ -445,23 +465,30 @@ describe('ArrayList', () => {
 
   describe('sort', () => {
     it('should sort empty array', () => {
-      const list = ArrayList.create();
+      const list = new ArrayList();
       list.sort();
       expect(list.size()).equal(0);
+      expect(list.isOrdered()).to.be.true;
+      expect(list.isStrictlyOrdered()).to.be.true;
     });
     it('should sort according to the default comparator', () => {
-      const list = ArrayList.create({ initial: { length: 10, seed: i => i } });
+      const list = ArrayList.create({ initial: { length: 100, seed: i => i } });
       const copy = list.clone();
       list.shuffle();
       list.sort();
       expect(list.toArray()).deep.equal(copy.toArray());
+      expect(list.isOrdered()).to.be.true;
+      expect(list.isStrictlyOrdered()).to.be.true;
     });
     it('should sort according to the length of the strings', () => {
-      const data = ['foobar', 'foo', 'bar', 'ba', 'a'];
+      const data = ['a', 'foobar', 'foo', 'bar', 'ba', 'bcdef'];
       const list = ArrayList.create({ initial: data });
       const comparator = (s1: string, s2: string) => s1.length - s2.length;
+      expect(list.isOrdered(comparator)).to.be.false;
+      expect(list.isStrictlyOrdered(comparator)).to.be.false;
       list.sort(comparator);
-      expect(list.toArray()).deep.equal(data.sort(comparator));
+      expect(list.isOrdered(comparator)).to.be.true;
+      expect(list.isStrictlyOrdered(comparator)).to.be.false;
     });
   });
 

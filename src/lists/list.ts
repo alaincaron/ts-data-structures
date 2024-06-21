@@ -250,14 +250,13 @@ export abstract class List<E> extends Collection<E> {
     this.checkBounds(left, right);
 
     const iter = this.listIterator(left, right - left);
-    const firstItem = iter.next();
-    if (firstItem.done) return true;
-    const prev = firstItem.value;
+    let prev = iter.next();
+    if (prev.done) return true;
     for (;;) {
       const item = iter.next();
       if (item.done) return true;
-      const value = item.value;
-      if (comparator(prev, value) > 0) return false;
+      if (comparator(prev.value, item.value) > 0) return false;
+      prev = item;
     }
   }
 
@@ -271,14 +270,13 @@ export abstract class List<E> extends Collection<E> {
     this.checkBounds(left, right);
 
     const iter = this.listIterator(left, right - left);
-    const firstItem = iter.next();
-    if (firstItem.done) return true;
-    const prev = firstItem.value;
+    let prev = iter.next();
+    if (prev.done) return true;
     for (;;) {
       const item = iter.next();
       if (item.done) return true;
-      const value = item.value;
-      if (comparator(prev, value) >= 0) return false;
+      if (comparator(prev.value, item.value) >= 0) return false;
+      prev = item;
     }
   }
 
