@@ -1,22 +1,6 @@
 import { Comparator, Comparators } from 'ts-fluent-iterators';
 import { parseArgs } from './parse_args';
 
-export function toInsertionSorted<T>(arr: T[]): T[];
-export function toInsertionSorted<T>(arr: T[], arg2: number | Comparator<T> | undefined): T[];
-export function toInsertionSorted<T>(arr: T[], left: number, arg3: number | Comparator<T> | undefined): T[];
-export function toInsertionSorted<T>(arr: T[], left: number, right: number, comparator: Comparator<T> | undefined): T[];
-
-export function toInsertionSorted<T>(
-  arr: T[],
-  arg2?: number | Comparator<T>,
-  arg3?: number | Comparator<T>,
-  arg4?: Comparator<T>
-): T[] {
-  const { left, right, f: comparator } = parseArgs(arr.length, arg2, arg3, arg4, Comparators.natural);
-  const result = arr.slice(left, right);
-  return insertionSort(result, 0, result.length, comparator);
-}
-
 export function insertionSort<T>(arr: T[]): T[];
 export function insertionSort<T>(arr: T[], arg2: number | Comparator<T> | undefined): T[];
 export function insertionSort<T>(arr: T[], left: number, arg3: number | Comparator<T> | undefined): T[];

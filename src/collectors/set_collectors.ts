@@ -21,7 +21,7 @@ export function avlTreeSetCollector<A>(
   return new CollectionCollector(arg instanceof AvlTreeSet ? arg : AvlTreeSet.create(arg));
 }
 
-export function SplayTreeSetCollector<A>(
+export function splayTreeSetCollector<A>(
   arg?: SplayTreeSet<A> | WithCapacity<SortedMapOptions<A>>
 ): CollectionCollector<A, SplayTreeSet<A>> {
   return new CollectionCollector(arg instanceof SplayTreeSet ? arg : SplayTreeSet.create(arg));

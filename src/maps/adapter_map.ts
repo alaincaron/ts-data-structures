@@ -6,6 +6,25 @@ import { OverflowException, WithCapacity } from '../utils';
 export interface AdapterMapOptions<K, V> {
   delegate?: Map<K, V>;
 }
+
+class AdapterMapEntry<K, V> implements MapEntry<K, V> {
+  constructor(
+    private readonly map: Map<K, V>,
+    private readonly _key: K,
+    private _value: V
+  ) {}
+  get key() {
+    return this._key;
+  }
+  get value() {
+    return this._value;
+  }
+  set value(v: V) {
+    this.map.set(this._key, v);
+    this._value = v;
+  }
+}
+
 export class AdapterMap<K, V> extends IMap<K, V> {
   private readonly _delegate: Map<K, V>;
 
@@ -34,7 +53,7 @@ export class AdapterMap<K, V> extends IMap<K, V> {
   protected getEntry(key: K): MapEntry<K, V> | undefined {
     const value = this._delegate.get(key);
     if (value == null) return undefined;
-    return { key, value };
+    return new AdapterMapEntry(this._delegate, key, value);
   }
 
   put(key: K, value: V): V | undefined {
@@ -79,7 +98,7 @@ export class AdapterMap<K, V> extends IMap<K, V> {
 
   entryIterator() {
     return this._delegate.iterator().map(([key, value]) => {
-      return { key, value };
+      return new AdapterMapEntry(this._delegate, key, value);
     });
   }
 

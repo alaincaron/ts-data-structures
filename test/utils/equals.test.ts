@@ -23,7 +23,7 @@ describe('equalsAny', () => {
       const b = new Map().set('b', 2).set('a', 1);
       expect(equalsAny(a, b)).to.be.true;
     });
-    it('should return false if Set have different elements', () => {
+    it('should return false if Maps have different elements', () => {
       const a = new Map().set('a', 1).set('b', 2);
       const b = new Map().set('a', 1).set('b', 3);
       expect(equalsAny(a, b)).to.be.false;

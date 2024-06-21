@@ -240,6 +240,48 @@ export abstract class List<E> extends Collection<E> {
     return this;
   }
 
+  isOrdered(): boolean;
+  isOrdered(arg1: number | Comparator<E> | undefined): boolean;
+  isOrdered(arg1: number, arg2: number | Comparator<E> | undefined): boolean;
+  isOrdered(arg1: number, arg2: number, arg3: Comparator<E> | undefined): boolean;
+
+  isOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean {
+    const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
+    this.checkBounds(left, right);
+
+    const iter = this.listIterator(left, right - left);
+    const firstItem = iter.next();
+    if (firstItem.done) return true;
+    const prev = firstItem.value;
+    for (;;) {
+      const item = iter.next();
+      if (item.done) return true;
+      const value = item.value;
+      if (comparator(prev, value) > 0) return false;
+    }
+  }
+
+  isStrictlyOrdered(): boolean;
+  isStrictlyOrdered(arg1: number | Comparator<E> | undefined): boolean;
+  isStrictlyOrdered(arg1: number, arg2: number | Comparator<E> | undefined): boolean;
+  isStrictlyOrdered(arg1: number, arg2: number, arg3: Comparator<E> | undefined): boolean;
+
+  isStrictlyOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean {
+    const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
+    this.checkBounds(left, right);
+
+    const iter = this.listIterator(left, right - left);
+    const firstItem = iter.next();
+    if (firstItem.done) return true;
+    const prev = firstItem.value;
+    for (;;) {
+      const item = iter.next();
+      if (item.done) return true;
+      const value = item.value;
+      if (comparator(prev, value) >= 0) return false;
+    }
+  }
+
   reverse(start?: number, end?: number): List<E> {
     start ??= 0;
     end ??= this.size();

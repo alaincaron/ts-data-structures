@@ -13,10 +13,6 @@ export function shuffle<E>(
   arg4?: Mapper<void, number>
 ): E[] {
   const { left, right, f: random } = parseArgs(arr.length, arg2, arg3, arg4, Math.random);
-  return shuffle0(arr, left, right, random);
-}
-
-function shuffle0<E>(arr: E[], left: number, right: number, random: Mapper<void, number>) {
   let n = right - left;
   while (n >= 1) {
     const i = right - n;
@@ -29,18 +25,21 @@ function shuffle0<E>(arr: E[], left: number, right: number, random: Mapper<void,
   return arr;
 }
 
-export function toShuffled<E>(arr: E[]): E[];
-export function toShuffled<E>(arr: E[], arg2: number | Mapper<void, number> | undefined): E[];
-export function toShuffled<E>(arr: E[], left: number, arg3: number | Mapper<void, number> | undefined): E[];
-export function toShuffled<E>(arr: E[], left: number, right: number, random: Mapper<void, number> | undefined): E[];
+declare global {
+  // eslint-disable-next-line
+  interface Array<T> {
+    shuffle(
+      arg2?: number | Mapper<void, number>,
+      arg3?: number | Mapper<void, number>,
+      mapper?: Mapper<void, number>
+    ): T[];
+  }
+}
 
-export function toShuffled<E>(
-  arr: E[],
+Array.prototype.shuffle = function (
   arg2?: number | Mapper<void, number>,
   arg3?: number | Mapper<void, number>,
   arg4?: Mapper<void, number>
-): E[] {
-  const { left, right, f: random } = parseArgs(arr.length, arg2, arg3, arg4, Math.random);
-  const result = arr.slice(left, right);
-  return shuffle0(result, 0, result.length, random);
-}
+) {
+  return shuffle(this, arg2 as number, arg3 as number, arg4 as Mapper<void, number>);
+};

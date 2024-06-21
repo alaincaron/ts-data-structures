@@ -1,6 +1,7 @@
-import { Comparator, Mapper, Predicate } from 'ts-fluent-iterators';
+import { Comparator, Comparators, Mapper, Predicate } from 'ts-fluent-iterators';
 import { List } from './list';
-import { qsort, shuffle, UnderflowException } from '../utils';
+import { isOrdered, isStrictlyOrdered, qsort, shuffle, UnderflowException } from '../utils';
+import { parseArgs } from '../utils/parse_args';
 
 export abstract class BaseArrayList<E> extends List<E> {
   constructor(protected readonly elements: Array<E>) {
@@ -56,7 +57,9 @@ export abstract class BaseArrayList<E> extends List<E> {
   }
 
   sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): List<E> {
-    qsort(this.elements, arg1 as number, arg2 as number, arg3 as Comparator<E>);
+    const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
+    this.checkBounds(left, right);
+    qsort(this.elements, left, right, comparator);
     return this;
   }
 
@@ -65,8 +68,22 @@ export abstract class BaseArrayList<E> extends List<E> {
     arg2?: number | Mapper<void, number>,
     arg3?: Mapper<void, number> | undefined
   ): List<E> {
-    shuffle(this.elements, arg1 as number, arg2 as number, arg3 as Mapper<void, number>);
+    const { left, right, f: mapper } = parseArgs(this.size(), arg1, arg2, arg3, Math.random);
+    this.checkBounds(left, right);
+    shuffle(this.elements, left, right, mapper);
     return this;
+  }
+
+  isOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean {
+    const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
+    this.checkBounds(left, right);
+    return isOrdered(this.elements, left, right, comparator);
+  }
+
+  isStrictlyOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean {
+    const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
+    this.checkBounds(left, right);
+    return isStrictlyOrdered(this.elements, left, right, comparator);
   }
 
   size(): number {

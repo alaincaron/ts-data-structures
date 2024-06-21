@@ -72,24 +72,6 @@ function qsort1<E>(arr: E[], comparator: Comparator<E>, low: number, high: numbe
   }
 }
 
-export function toQSorted<E>(arr: E[]): E[];
-export function toQSorted<E>(arr: E[], arg2: number | Comparator<E> | undefined): E[];
-export function toQSorted<E>(arr: E[], left: number, arg3: number | Comparator<E> | undefined): E[];
-export function toQSorted<E>(arr: E[], left: number, right: number, comparator: Comparator<E> | undefined): E[];
-
-export function toQSorted<E>(
-  arr: E[],
-  arg2?: number | Comparator<E>,
-  arg3?: number | Comparator<E>,
-  arg4?: Comparator<E>
-): E[] {
-  const { left, right, f: comparator } = parseArgs(arr.length, arg2, arg3, arg4, Comparators.natural);
-
-  const tmp = arr.slice(left, right);
-  qsort1(tmp, comparator, 0, tmp.length - 1);
-  return tmp;
-}
-
 export function median<E>(arr: E[], comparator?: Comparator<E>) {
   return select(arr, Math.floor(arr.length / 2), comparator);
 }
