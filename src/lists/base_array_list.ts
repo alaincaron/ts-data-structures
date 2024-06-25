@@ -1,6 +1,6 @@
 import { Comparator, Comparators, Mapper, Predicate } from 'ts-fluent-iterators';
 import { List } from './list';
-import { isOrdered, isStrictlyOrdered, qsort, shuffle, UnderflowException } from '../utils';
+import { bsearch, insertSorted, isOrdered, isStrictlyOrdered, qsort, shuffle, UnderflowException } from '../utils';
 import { parseArgs } from '../utils/parse_args';
 
 export abstract class BaseArrayList<E> extends List<E> {
@@ -60,6 +60,15 @@ export abstract class BaseArrayList<E> extends List<E> {
     const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
     this.checkBounds(left, right);
     qsort(this.elements, left, right, comparator);
+    return this;
+  }
+
+  bsearch(e: E, comparator: Comparator<E> = Comparators.natural): number {
+    return bsearch(this.elements, e, comparator);
+  }
+
+  insertSorted(e: E, comparator: Comparator<E> = Comparators.natural): BaseArrayList<E> {
+    insertSorted(this.elements, e, comparator);
     return this;
   }
 

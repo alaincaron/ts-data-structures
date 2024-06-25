@@ -585,4 +585,30 @@ describe('ArrayList', () => {
       expect(list.toArray()).to.deep.equal([3]);
     });
   });
+
+  describe('bsearch', () => {
+    it('should return the index for a match', () => {
+      const list = ArrayList.create({ initial: { length: 100, seed: i => i } });
+      for (const v of list) {
+        expect(list.bsearch(v)).equal(v);
+      }
+    });
+    it('should return insert position for no match', () => {
+      const list = ArrayList.create({ initial: { length: 100, seed: i => i } });
+      expect(~list.bsearch(-1)).equal(0);
+      for (const v of list) {
+        expect(~list.bsearch(v + 0.5)).equal(v + 1);
+      }
+    });
+  });
+
+  describe('insertSorted', () => {
+    it('should insert elements at the right position', () => {
+      const list = ArrayList.create({ initial: { length: 100, seed: i => i } });
+      expect(list.insertSorted(-1).isStrictlyOrdered()).to.be.true;
+      expect(list.insertSorted(101).isStrictlyOrdered()).to.be.true;
+      expect(list.insertSorted(55.4).isStrictlyOrdered()).to.be.true;
+      expect(list.size()).equal(103);
+    });
+  });
 });
