@@ -40,27 +40,17 @@ export function cyrb53(s: string | ArrayBuffer, seed = 0): number {
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 }
 
-// function hashInteger(h: number): number {
-//   h ^= (h >>> 20) ^ (h >>> 12);
-//   return h ^ (h >>> 7) ^ (h >>> 4);
-// }
-
-// export function hashNumber(h: number): number {
-//   if (Number.isSafeInteger(h)) return hashInteger(h);
-//   const buf = new ArrayBuffer(4);
-//   new Float32Array(buf)[0] = h;
-//   return hashInteger(new Uint32Array(buf)[0]);
-// }
-
-const MAX_SAFE_INT = 2 ** 32 - 1;
-const MIN_SAFE_INT = -MAX_SAFE_INT - 1;
+const MIN_SAFE_INT = 1 << 31;
+const MAX_SAFE_INT = ~MIN_SAFE_INT;
 
 export function hashNumber(h: number): number {
-  const buf = new ArrayBuffer(4);
+  let buf: ArrayBuffer;
   if (Number.isSafeInteger(h) && h <= MAX_SAFE_INT && h >= MIN_SAFE_INT) {
-    new Uint32Array(buf)[0] = h;
+    buf = new ArrayBuffer(4);
+    new Int32Array(buf)[0] = h;
   } else {
-    new Float32Array(buf)[0] = h;
+    buf = new ArrayBuffer(8);
+    new Float64Array(buf)[0] = h;
   }
   return fnv1a(buf);
 }
