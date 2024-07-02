@@ -64,7 +64,7 @@ export function hashBoolean(h: boolean): number {
 export function hashIterableOrdered<X>(iter: Iterable<X>): number {
   let hash = 31;
   for (const item of iter) {
-    hash = ((hash << 5) - hash + hashNumber(hashAny(item))) | 0;
+    hash = ((hash << 5) - hash + hashAny(item)) | 0;
   }
   return hash;
 }
@@ -72,7 +72,7 @@ export function hashIterableOrdered<X>(iter: Iterable<X>): number {
 export function hashIterableUnordered<X>(iter: Iterable<X>): number {
   let hash = 31;
   for (const item of iter) {
-    hash = (hash + hashNumber(hashAny(item))) | 0;
+    hash = (hash + hashAny(item)) | 0;
   }
   return hash;
 }
