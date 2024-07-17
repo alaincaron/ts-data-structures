@@ -54,7 +54,7 @@ export abstract class MultiMap<K, V> extends Container implements Iterable<[K, V
     }
   }
 
-  abstract clear(): void;
+  abstract clear(): MultiMap<K, V>;
 
   containsKey(key: K) {
     const col = this.getValues(key);

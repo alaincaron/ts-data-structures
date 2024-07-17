@@ -141,13 +141,17 @@ The capacity of this [Container](Container.md)
 
 ### clear()
 
-> `abstract` **clear**(): `void`
+> `abstract` **clear**(): [`Collection`](Collection.md)\<`E`\>
 
 Removes all elements from this `Collection`
 
+@
+
 #### Returns
 
-`void`
+[`Collection`](Collection.md)\<`E`\>
+
+This collection.
 
 ---
 

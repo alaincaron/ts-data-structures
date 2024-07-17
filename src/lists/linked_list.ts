@@ -87,9 +87,10 @@ export class LinkedList<E> extends List<E> {
     return true;
   }
 
-  clear(): void {
+  clear() {
     this._size = 0;
     this.linkedList.clear();
+    return this;
   }
 
   *[Symbol.iterator]() {

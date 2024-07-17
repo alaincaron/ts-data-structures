@@ -152,9 +152,7 @@ describe('ArrayDeque', () => {
     });
     it('should behave as a FIFO with addFirst/removeLast', () => {
       const deque = ArrayDeque.create({ capacity: 2 });
-      deque.addFirst('foo');
-      deque.addFirst('bar');
-      expect(deque.size()).equal(2);
+      expect(deque.addFirst('foo').addFirst('bar').size()).equal(2);
       expect(() => deque.addFirst('foobar')).to.throw(OverflowException);
       expect(deque.removeLast()).equal('foo');
       expect(deque.removeLast()).equal('bar');
@@ -164,9 +162,7 @@ describe('ArrayDeque', () => {
     });
     it('should behave as a FIFO with addLast/removeFirst', () => {
       const deque = ArrayDeque.create({ capacity: 2 });
-      deque.addLast('foo');
-      deque.addLast('bar');
-      expect(deque.size()).equal(2);
+      expect(deque.addLast('foo').addLast('bar').size()).equal(2);
       expect(() => deque.addLast('foobar')).to.throw(OverflowException);
       expect(deque.removeFirst()).equal('foo');
       expect(deque.removeFirst()).equal('bar');
@@ -178,8 +174,8 @@ describe('ArrayDeque', () => {
     it('should overwrite if overflow', () => {
       const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
       expect(deque.overflowStrategy()).equal('overwrite');
-      deque.add('foo');
-      deque.add('bar');
+      expect(deque.add('foo')).equal(true);
+      expect(deque.add('bar')).equal(true);
       expect(deque.size()).equal(2);
       deque.add('foobar');
       expect(deque.size()).equal(2);
@@ -194,9 +190,7 @@ describe('ArrayDeque', () => {
   describe('LIFO', () => {
     it('can be used as a Stack with addLast/removeLast', () => {
       const deque = ArrayDeque.create({ capacity: 2 });
-      deque.addLast('foo');
-      deque.addLast('bar');
-      expect(deque.size()).equal(2);
+      expect(deque.addLast('foo').addLast('bar').size()).equal(2);
       expect(() => deque.addLast('foobar')).to.throw(OverflowException);
       expect(deque.removeLast()).equal('bar');
       expect(deque.removeLast()).equal('foo');
@@ -205,9 +199,7 @@ describe('ArrayDeque', () => {
     });
     it('can be used as a Stack with addFirst/removeFirst', () => {
       const deque = ArrayDeque.create({ capacity: 2 });
-      deque.addFirst('foo');
-      deque.addFirst('bar');
-      expect(deque.size()).equal(2);
+      expect(deque.addFirst('foo').addFirst('bar').size()).equal(2);
       expect(() => deque.addFirst('foobar')).to.throw(OverflowException);
       expect(deque.removeFirst()).equal('bar');
       expect(deque.removeFirst()).equal('foo');
@@ -218,11 +210,10 @@ describe('ArrayDeque', () => {
     it('should overwrite first if overflow', () => {
       const deque = ArrayDeque.create({ capacity: 2, overflowStrategy: 'overwrite' });
       expect(deque.overflowStrategy()).equal('overwrite');
-      deque.add('foo');
-      deque.add('bar');
+      expect(deque.add('foo')).equal(true);
+      expect(deque.add('bar')).equal(true);
       expect(deque.size()).equal(2);
-      deque.addFirst('foobar');
-      expect(deque.size()).equal(2);
+      expect(deque.addFirst('foobar').size()).equal(2);
       expect(deque.remove()).equal('foobar');
       expect(deque.remove()).equal('bar');
       expect(deque.poll()).to.be.undefined;

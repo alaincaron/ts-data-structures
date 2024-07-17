@@ -93,7 +93,7 @@ export abstract class IMap<K, V> extends Container implements Iterable<[K, V]> {
     }
   }
 
-  abstract clear(): void;
+  abstract clear(): IMap<K, V>;
 
   *keys(): IterableIterator<K> {
     for (const e of this.entryIterator()) yield e.key;

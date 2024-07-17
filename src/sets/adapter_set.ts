@@ -62,6 +62,7 @@ export class AdapterSet<E> extends ISet<E> {
 
   clear() {
     this._delegate.clear();
+    return this;
   }
 
   [Symbol.iterator]() {

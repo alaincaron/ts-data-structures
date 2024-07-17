@@ -101,9 +101,7 @@ describe('ArrayList', () => {
     });
     it('should behave as a FIFO with addFirst/removeLast', () => {
       const list = ArrayList.create({ capacity: 2 });
-      list.addFirst('foo');
-      list.addFirst('bar');
-      expect(list.size()).equal(2);
+      expect(list.addFirst('foo').addFirst('bar').size()).equal(2);
       expect(() => list.addFirst('foobar')).to.throw(OverflowException);
       expect(list.removeLast()).equal('foo');
       expect(list.removeLast()).equal('bar');
@@ -112,9 +110,7 @@ describe('ArrayList', () => {
     });
     it('should behave as a FIFO with addLast/removeFirst', () => {
       const list = ArrayList.create({ capacity: 2 });
-      list.addLast('foo');
-      list.addLast('bar');
-      expect(list.size()).equal(2);
+      expect(list.addLast('foo').addLast('bar').size()).equal(2);
       expect(() => list.addLast('foobar')).to.throw(OverflowException);
       expect(list.removeFirst()).equal('foo');
       expect(list.removeFirst()).equal('bar');
@@ -126,9 +122,7 @@ describe('ArrayList', () => {
   describe('LIFO', () => {
     it('can be used as a Stack with addLast/removeLast', () => {
       const list = ArrayList.create({ capacity: 2 });
-      list.addLast('foo');
-      list.addLast('bar');
-      expect(list.size()).equal(2);
+      expect(list.addLast('foo').addLast('bar').size()).equal(2);
       expect(() => list.addLast('foobar')).to.throw(OverflowException);
       expect(list.removeLast()).equal('bar');
       expect(list.removeLast()).equal('foo');
@@ -136,9 +130,7 @@ describe('ArrayList', () => {
     });
     it('can be used as a Stack with addFirst/removeFirst', () => {
       const list = ArrayList.create({ capacity: 2 });
-      list.addFirst('foo');
-      list.addFirst('bar');
-      expect(list.size()).equal(2);
+      expect(list.addFirst('foo').addFirst('bar').size()).equal(2);
       expect(() => list.addFirst('foobar')).to.throw(OverflowException);
       expect(list.removeFirst()).equal('bar');
       expect(list.removeFirst()).equal('foo');

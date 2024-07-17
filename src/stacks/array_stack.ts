@@ -27,6 +27,7 @@ export class ArrayStack<E> extends Stack<E> {
 
   clear() {
     this.buffer.clear();
+    return this;
   }
 
   isFull() {

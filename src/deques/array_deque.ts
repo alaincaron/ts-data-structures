@@ -121,11 +121,12 @@ export class ArrayDeque<E> extends Deque<E> {
    * Removes all of the elements from this deque.
    * The deque will be empty after this call returns.
    */
-  clear() {
+  clear(resize = false) {
     if (this.head != this.tail) {
-      this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
+      if (resize) this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
       this.head = this.tail = 0;
     }
+    return this;
   }
 
   clone(): ArrayDeque<E> {
@@ -210,5 +211,18 @@ export class ArrayDeque<E> extends Deque<E> {
     }
     this.tail = this.slot(cursor - shift);
     return shift;
+  }
+
+  resize(newSize?: number) {
+    const originalSize = this.size();
+    if (!newSize || newSize < originalSize) newSize = originalSize;
+    newSize = this.nextArraySize(newSize);
+
+    if (newSize == this.elements.length && this.head === 0) return;
+    const tmp = this.toArray();
+    this.tail = this.size();
+    this.head = 0;
+    tmp.length = newSize;
+    this.elements = tmp;
   }
 }

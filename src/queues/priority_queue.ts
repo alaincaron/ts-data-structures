@@ -147,9 +147,10 @@ export class PriorityQueue<E> extends Queue<E> {
     return count;
   }
 
-  clear(): void {
+  clear() {
     this.buffer = [];
     this._size = 0;
+    return this;
   }
 
   clone(): PriorityQueue<E> {

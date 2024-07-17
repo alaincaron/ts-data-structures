@@ -97,9 +97,10 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
     return super.remove(e.key);
   }
 
-  clear() {
+  clear(): LinkedHashMap<K, V> {
     super.clear();
     this.linkedList.clear();
+    return this;
   }
 
   protected *entryGenerator() {

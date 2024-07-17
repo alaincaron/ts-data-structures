@@ -38,8 +38,9 @@ export abstract class CollectionBasedSet<E> extends ISet<E> {
     return this._delegate.filter(predicate);
   }
 
-  clear(): void {
+  clear() {
     this._delegate.clear();
+    return this;
   }
 
   [Symbol.iterator](): IterableIterator<E> {

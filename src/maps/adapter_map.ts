@@ -46,8 +46,9 @@ export class AdapterMap<K, V> extends IMap<K, V> {
     return this._delegate.size;
   }
 
-  clear() {
+  clear(): AdapterMap<K, V> {
     this._delegate.clear();
+    return this;
   }
 
   protected getEntry(key: K): MapEntry<K, V> | undefined {

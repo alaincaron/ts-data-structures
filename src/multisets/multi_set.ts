@@ -17,6 +17,7 @@ export interface MultiSetInitializer<E> {
 
 export abstract class MultiSet<E> extends Collection<E> {
   abstract count(item: E): number;
+  abstract clear(): MultiSet<E>;
 
   addCount(item: E, count: number): number {
     if (this.remaining() < count) throw new OverflowException();

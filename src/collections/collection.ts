@@ -177,8 +177,10 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
 
   /**
    * Removes all elements from this `Collection`
+   *
+   @ @returns This collection.
    */
-  abstract clear(): void;
+  abstract clear(): Collection<E>;
 
   /**
    * Returns true if this `Collection` contains all of the elements in the specified `IteratorLike`.

@@ -23,6 +23,7 @@ export abstract class MapBasedSet<E> extends ISet<E> {
 
   clear() {
     this._delegate.clear();
+    return this;
   }
 
   offer(item: E) {

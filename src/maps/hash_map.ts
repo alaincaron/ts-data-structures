@@ -161,9 +161,10 @@ export class HashMap<K, V> extends IMap<K, V> {
     return count;
   }
 
-  clear() {
+  clear(): HashMap<K, V> {
     for (let i = 0; i < this.slots.length; ++i) this.slots[i] = undefined;
     this._size = 0;
+    return this;
   }
 
   protected *entryGenerator(): IterableIterator<MapEntry<K, V>> {

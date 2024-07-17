@@ -6,8 +6,9 @@ export abstract class Stack<E> extends Queue<E> {
     super(options);
   }
 
-  push(item: E) {
+  push(item: E): Stack<E> {
     this.add(item);
+    return this;
   }
 
   tryPush(item: E): boolean {
@@ -29,8 +30,9 @@ export abstract class Stack<E> extends Queue<E> {
     return false;
   }
 
-  swap() {
+  swap(): Stack<E> {
     if (!this.trySwap()) throw new UnderflowException('Need at least two elements for a swap');
+    return this;
   }
 
   abstract clone(): Stack<E>;

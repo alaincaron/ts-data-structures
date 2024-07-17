@@ -103,10 +103,12 @@ export abstract class BaseArrayList<E> extends List<E> {
     end ??= this.size();
     this.checkBounds(start, end);
     this.elements.splice(start, end - start);
+    return this;
   }
 
   clear() {
     this.elements.length = 0;
+    return this;
   }
 
   *[Symbol.iterator]() {

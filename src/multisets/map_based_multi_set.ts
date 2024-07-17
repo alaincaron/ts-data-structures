@@ -32,6 +32,7 @@ export abstract class MapBasedMultiSet<E> extends MultiSet<E> {
   clear() {
     this._size = 0;
     this.map.clear();
+    return this;
   }
 
   count(item: E): number {

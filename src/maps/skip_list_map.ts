@@ -33,9 +33,10 @@ export class SkipListMap<K, V> extends NavigableMap<K, V> {
     return { key, value, up: undefined, down: undefined, level };
   }
 
-  clear() {
+  clear(): SkipListMap<K, V> {
     this._layers = [new DoubleLinkedList()];
     this._size = 0;
+    return this;
   }
 
   size() {

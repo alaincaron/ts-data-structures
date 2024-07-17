@@ -53,31 +53,34 @@ export abstract class List<E> extends Collection<E> {
     if (idx < 0 || idx > this.size()) throw new IndexOutOfBoundsException();
   }
 
-  addAt(idx: number, item: E): void {
+  addAt(idx: number, item: E): List<E> {
     if (!this.offerAt(idx, item)) throw new OverflowException();
+    return this;
   }
 
   offerFirst(item: E) {
     return this.offerAt(0, item);
   }
 
-  addFirst(item: E) {
+  addFirst(item: E): List<E> {
     if (!this.offerFirst(item)) throw new OverflowException();
+    return this;
   }
 
   offerLast(item: E) {
     return this.offerAt(this.size(), item);
   }
 
-  addLast(item: E) {
+  addLast(item: E): List<E> {
     if (!this.offerLast(item)) throw new OverflowException();
+    return this;
   }
 
   abstract setAt(idx: number, item: E): E;
 
   abstract removeAt(idx: number): E;
 
-  removeRange(start: number, end?: number) {
+  removeRange(start: number, end?: number): List<E> {
     end ??= this.size();
     this.checkBounds(start, end);
     const iter = this.listIterator(start);
@@ -86,10 +89,11 @@ export abstract class List<E> extends Collection<E> {
       if (item.done) break;
       iter.remove();
     }
+    return this;
   }
 
   clear() {
-    this.removeRange(0, this.size());
+    return this.removeRange(0, this.size());
   }
 
   removeFirst(): E {
@@ -193,7 +197,7 @@ export abstract class List<E> extends Collection<E> {
   }
 
   replaceAll(f: Mapper<E, E>) {
-    this.replaceIf(() => true, f);
+    this.replaceIf(_ => true, f);
   }
 
   indexOfFirstOccurence(predicate: Predicate<E>): number {

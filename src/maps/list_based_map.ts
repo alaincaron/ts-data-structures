@@ -21,8 +21,9 @@ export abstract class ListBasedMap<K, V> extends IMap<K, V> {
     return this._delegate.capacity();
   }
 
-  clear() {
+  clear(): ListBasedMap<K, V> {
     this._delegate.clear();
+    return this;
   }
 
   protected getEntry(key: K) {

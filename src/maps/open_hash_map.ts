@@ -45,12 +45,13 @@ export class OpenHashMap<K, V> extends IMap<K, V> {
     return this._size;
   }
 
-  clear() {
+  clear(): OpenHashMap<K, V> {
     const tmp: Entry<K, V>[] = this.slots;
     for (let i = 0; i < tmp.length; ++i) {
       tmp[i] = undefined;
     }
     this._size = this._occupancy = 0;
+    return this;
   }
 
   filterEntries(predicate: Predicate<[K, V]>) {
@@ -153,17 +154,18 @@ export class OpenHashMap<K, V> extends IMap<K, V> {
     const nbRemoved = this._occupancy - this._size;
     this._occupancy = this._size;
     if ((this._size >= threshold || nbRemoved > this._size / 2) && this.slots.length < MAX_ARRAY_SIZE) {
-      const newCap = this.slots.length * 2;
-      if (newCap < 0 || newCap > MAX_ARRAY_SIZE) {
-        throw new Error(`Array is too big`);
-      }
-      this.resize(newCap);
+      this.resize();
     } else {
       this.rehash();
     }
   }
 
-  resize(newCap: number) {
+  resize(newCap?: number) {
+    newCap ??= this.slots.length * 2;
+    if (newCap < 0 || newCap > MAX_ARRAY_SIZE) {
+      throw new Error(`Array is too big`);
+    }
+
     newCap = nextPrime(newCap);
 
     const tmp: Entry<K, V>[] = new Array(newCap);

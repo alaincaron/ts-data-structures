@@ -13,6 +13,8 @@ export abstract class ISet<E> extends Collection<E> {
     return this.iterator().collectToSet();
   }
 
+  abstract clear(): ISet<E>;
+
   add(item: E) {
     if (this.contains(item)) return false;
     return super.add(item);

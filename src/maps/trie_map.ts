@@ -46,9 +46,10 @@ export class TrieMap<V> extends SortedMap<string, V> {
     return buildMap<string, V, TrieMap<V>, TrieMapOptions>(TrieMap, initializer);
   }
 
-  clear() {
+  clear(): TrieMap<V> {
     this.root = this.createNode('');
     this._size = 0;
+    return this;
   }
 
   size() {

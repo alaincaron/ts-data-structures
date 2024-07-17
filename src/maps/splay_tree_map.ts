@@ -42,9 +42,10 @@ export class SplayTreeMap<K, V> extends TreeMap<K, V> {
     return this.root;
   }
 
-  clear() {
+  clear(): SplayTreeMap<K, V> {
     this.root = undefined;
     this._size = 0;
+    return this;
   }
 
   size() {

@@ -70,8 +70,7 @@ describe('ArrayStack', () => {
       const stack2 = stack1.clone();
       expect(stack2).to.deep.equal(stack1);
       expect(stack2.capacity()).equal(3);
-      stack1.push(3);
-      expect(stack1.size()).equal(3);
+      expect(stack1.push(3).size()).equal(3);
       expect(stack2.size()).equal(2);
     });
   });
@@ -79,8 +78,8 @@ describe('ArrayStack', () => {
   describe('LIFO', () => {
     it('respect LIFO semantics with add', () => {
       const stack = ArrayStack.create({ capacity: 2 });
-      stack.add('foo');
-      stack.add('bar');
+      expect(stack.add('foo')).equal(true);
+      expect(stack.add('bar')).equal(true);
       expect(stack.size()).equal(2);
       expect(() => stack.add('foobar')).to.throw(OverflowException);
       expect(stack.pop()).equal('bar');
@@ -90,9 +89,7 @@ describe('ArrayStack', () => {
     });
     it('respect LIFO semantics witt push', () => {
       const stack = ArrayStack.create({ capacity: 2 });
-      stack.push('foo');
-      stack.push('bar');
-      expect(stack.size()).equal(2);
+      expect(stack.push('foo').push('bar').size()).equal(2);
       expect(() => stack.add('foobar')).to.throw(OverflowException);
       expect(stack.pop()).equal('bar');
       expect(stack.pop()).equal('foo');
@@ -124,7 +121,7 @@ describe('ArrayStack', () => {
     });
     it('should swap top 2 elemeents', () => {
       const stack = ArrayStack.create<number>({ initial: { length: 3, seed: i => i } });
-      stack.swap();
+      expect(stack.swap()).equal(stack);
       expect(stack.pop()).equal(1);
       expect(stack.pop()).equal(2);
       expect(stack.pop()).equal(0);
@@ -137,7 +134,7 @@ describe('ArrayStack', () => {
       const stack = ArrayStack.create({ capacity: 3, initial: { length: 2, seed: (i: number) => i } });
       expect(stack.size()).to.equal(2);
       expect(stack.remaining()).to.equal(1);
-      stack.clear();
+      expect(stack.clear()).equal(stack);
       expect(stack.size()).to.equal(0);
       expect(stack.remaining()).to.equal(3);
       expect(stack.toArray()).to.deep.equal([]);

@@ -136,6 +136,7 @@ export class AvlTreeMap<K, V> extends TreeMap<K, V> {
   clear() {
     this.root = undefined;
     this._size = 0;
+    return this;
   }
 
   size() {

@@ -76,6 +76,7 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
   clear() {
     this.map.clear();
     this._size = 0;
+    return this;
   }
 
   filterKeys(predicate: Predicate<K>): number {
