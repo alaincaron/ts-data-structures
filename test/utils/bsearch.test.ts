@@ -15,6 +15,12 @@ describe('bsearch', () => {
       expect(~a.bsearch(v + 0.5)).equal(v + 1);
     }
   });
+
+  it('should use the provided mapper', () => {
+    const a = Array.from({ length: 100 }, (_, i) => ({ value: i, data: i.toString() }));
+    expect(a.bsearch(10, { mapper: x => x.value })).equal(10);
+    expect(~a.bsearch(10.5, { mapper: x => x.value })).equal(11);
+  });
 });
 
 describe('insertSorted', () => {

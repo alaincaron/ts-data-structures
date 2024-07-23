@@ -1,6 +1,15 @@
 import { Comparator, Comparators, Mapper, Predicate } from 'ts-fluent-iterators';
 import { List } from './list';
-import { bsearch, insertSorted, isOrdered, isStrictlyOrdered, qsort, shuffle, UnderflowException } from '../utils';
+import {
+  bsearch,
+  insertSorted,
+  isOrdered,
+  isStrictlyOrdered,
+  qsort,
+  SearchOptions,
+  shuffle,
+  UnderflowException,
+} from '../utils';
 import { parseArgs } from '../utils/parse_args';
 
 export abstract class BaseArrayList<E> extends List<E> {
@@ -63,8 +72,8 @@ export abstract class BaseArrayList<E> extends List<E> {
     return this;
   }
 
-  bsearch(e: E, comparator: Comparator<E> = Comparators.natural): number {
-    return bsearch(this.elements, e, comparator);
+  bsearch<K = E>(e: K, options?: SearchOptions<E, K>): number {
+    return bsearch(this.elements, e, options);
   }
 
   insertSorted(e: E, comparator: Comparator<E> = Comparators.natural): BaseArrayList<E> {

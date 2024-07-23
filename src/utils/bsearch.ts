@@ -1,12 +1,19 @@
-import { Comparator, Comparators } from 'ts-fluent-iterators';
+import { Comparator, Comparators, Functions, Mapper } from 'ts-fluent-iterators';
 import { parseArgs } from './parse_args';
 
-export function bsearch<T>(arr: T[], e: T, compare: Comparator<T> = Comparators.natural): number {
+export interface SearchOptions<T, K = T> {
+  mapper?: Mapper<T, K>;
+  comparator?: Comparator<K>;
+}
+
+export function bsearch<T, K = T>(arr: T[], e: K, { mapper, comparator }: SearchOptions<T, K> = {}): number {
+  mapper ??= Functions.identity() as unknown as Mapper<T, K>;
+  comparator ??= Comparators.natural;
   let m = 0;
   let n = arr.length - 1;
   while (m <= n) {
     const k = (n + m) >> 1;
-    const cmp = compare(e, arr[k]);
+    const cmp = comparator(e, mapper(arr[k]));
     if (cmp > 0) {
       m = k + 1;
     } else if (cmp < 0) {
@@ -18,8 +25,8 @@ export function bsearch<T>(arr: T[], e: T, compare: Comparator<T> = Comparators.
   return ~m;
 }
 
-export function insertSorted<T>(arr: T[], e: T, compare: Comparator<T> = Comparators.natural): T[] {
-  let idx = bsearch(arr, e, compare);
+export function insertSorted<T>(arr: T[], e: T, comparator?: Comparator<T>): T[] {
+  let idx = bsearch(arr, e, { comparator });
   if (idx < 0) idx = ~idx;
   arr.splice(idx, 0, e);
   return arr;
@@ -66,7 +73,7 @@ export function isStrictlyOrdered<T>(
 declare global {
   // eslint-disable-next-line
   interface Array<T> {
-    bsearch(e: T, comparator?: Comparator<T>): number;
+    bsearch<K = T>(e: K, options?: SearchOptions<T, K>): number;
     insertSorted(e: T): T[];
     isOrdered(): boolean;
     isOrdered<T>(arg2: number | Comparator<T> | undefined): boolean;
@@ -81,26 +88,26 @@ declare global {
   }
 }
 
-Array.prototype.bsearch = function (e: unknown, comparator: Comparator<unknown>) {
-  return bsearch(this, e, comparator);
+Array.prototype.bsearch = function <T, K = T>(e: K, options?: SearchOptions<T, K>) {
+  return bsearch(this, e, options);
 };
 
-Array.prototype.isOrdered = function (
-  arg2?: number | Comparator<unknown>,
-  arg3?: number | Comparator<unknown>,
-  arg4?: Comparator<unknown>
+Array.prototype.isOrdered = function <T>(
+  arg2?: number | Comparator<T>,
+  arg3?: number | Comparator<T>,
+  arg4?: Comparator<T>
 ) {
-  return isOrdered(this, arg2 as number, arg3 as number, arg4 as Comparator<unknown>);
+  return isOrdered(this, arg2 as number, arg3 as number, arg4 as Comparator<T>);
 };
 
-Array.prototype.isStrictlyOrdered = function (
-  arg2?: number | Comparator<unknown>,
-  arg3?: number | Comparator<unknown>,
-  arg4?: Comparator<unknown>
+Array.prototype.isStrictlyOrdered = function <T>(
+  arg2?: number | Comparator<T>,
+  arg3?: number | Comparator<T>,
+  arg4?: Comparator<T>
 ) {
-  return isStrictlyOrdered(this, arg2 as number, arg3 as number, arg4 as Comparator<unknown>);
+  return isStrictlyOrdered(this, arg2 as number, arg3 as number, arg4 as Comparator<T>);
 };
 
-Array.prototype.insertSorted = function (e: unknown) {
-  return insertSorted(this, e);
+Array.prototype.insertSorted = function <T>(e: T, comparator?: Comparator<T>) {
+  return insertSorted(this, e, comparator);
 };
