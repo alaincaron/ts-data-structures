@@ -1,5 +1,4 @@
 import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
-import { toIterator } from 'ts-fluent-iterators/dist/lib/sync';
 import { getSize } from './helpers';
 import { CollectionInitializer, CollectionLike } from './types';
 import {
@@ -190,7 +189,7 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
    * @returns true if this collection contains all of the elements in the specified `IteratorLike`
    */
   containsAll<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
-    const iter = toIterator(iteratorLike);
+    const iter = Iterators.toIterator(iteratorLike);
     for (;;) {
       const item = iter.next();
       if (item.done) return true;
@@ -199,7 +198,7 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
   }
 
   disjoint<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
-    const iter = toIterator(iteratorLike);
+    const iter = Iterators.toIterator(iteratorLike);
     for (;;) {
       const item = iter.next();
       if (item.done) return true;
