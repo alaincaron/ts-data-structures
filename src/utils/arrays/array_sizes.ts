@@ -1,5 +1,5 @@
-import { Comparators } from 'ts-fluent-iterators';
 import { bsearch } from './bsearch';
+import { qsort } from './qsort';
 
 export const MAX_ARRAY_SIZE = 2 ** 31;
 export const LARGEST_PRIME = MAX_ARRAY_SIZE - 1;
@@ -42,7 +42,7 @@ export const LARGEST_PRIME = MAX_ARRAY_SIZE - 1;
  */
 
 // prettier-ignore
-const primeCapacities = [
+const primeCapacities = qsort([
   //chunk #1
   5,11,23,47,97,197,397,797,1597,3203,6421,12853,25717,51437,102877,205759,
   411527,823117,1646237,3292489,6584983,13169977,26339969,52679969,105359939,
@@ -93,7 +93,7 @@ const primeCapacities = [
 
   // final chunk: do not remove
   LARGEST_PRIME,
-].sort(Comparators.natural);
+]);
 
 export function nextPrime(desiredCapacity: number): number {
   if (desiredCapacity > LARGEST_PRIME) throw new Error('Array too large');

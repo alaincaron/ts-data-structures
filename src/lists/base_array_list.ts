@@ -5,12 +5,12 @@ import {
   insertSorted,
   isOrdered,
   isStrictlyOrdered,
+  parseArgs,
   qsort,
   SearchOptions,
   shuffle,
   UnderflowException,
 } from '../utils';
-import { parseArgs } from '../utils/parse_args';
 
 export abstract class BaseArrayList<E> extends List<E> {
   constructor(protected readonly elements: Array<E>) {

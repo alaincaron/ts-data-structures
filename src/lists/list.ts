@@ -7,11 +7,11 @@ import {
   IllegalArgumentException,
   IndexOutOfBoundsException,
   OverflowException,
+  parseArgs,
   qsort,
   shuffle,
   UnderflowException,
 } from '../utils';
-import { parseArgs } from '../utils/parse_args';
 
 export interface ListIterator<E> extends IterableIterator<E> {
   setValue(item: E): E;

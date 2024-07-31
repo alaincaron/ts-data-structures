@@ -1,7 +1,7 @@
 import { Comparator, Comparators } from 'ts-fluent-iterators';
-import { IndexOutOfBoundsException } from './exceptions';
 import { insertionSort } from './insertion_sort';
 import { parseArgs } from './parse_args';
+import { IndexOutOfBoundsException } from '../exceptions';
 
 const PSEUDO_MED_THRESH_3 = 15; // threshold for pseudo-median 3.
 const PSEUDO_MED_THRESH_9 = 45; // threshold for pseudo-median 9 .
