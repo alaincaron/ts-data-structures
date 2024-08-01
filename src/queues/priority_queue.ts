@@ -124,7 +124,7 @@ export class PriorityQueue<E> extends Queue<E> {
     this.buffer[i] = undefined!;
     if (i < this._size) {
       this.swap(i, this._size);
-      this.heapifyUp(i) || this.heapifyDown(i);
+      if (!this.heapifyUp(i)) this.heapifyDown(i);
     }
     return item;
   }

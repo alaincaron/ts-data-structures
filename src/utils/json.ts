@@ -37,7 +37,7 @@ export function mapToJSON<K, V>(entries: Map<K, V> | IteratorGenerator<[K, V]>) 
 
     let jsonk = toJSON(k);
     if (jsonk === undefined) jsonk = '"undefined"';
-    else if (jsonk === 'null') jsonk == '"null"';
+    else if (jsonk === 'null') jsonk = '"null"';
 
     if (s.length > 1) s += ',';
     s += '';
