@@ -10,7 +10,7 @@
 
 Locates the k-th element in the list according to specified comparator
 
-## Type parameters
+## Type Parameters
 
 • **E**
 
@@ -24,7 +24,7 @@ The array on which the k-th element is to be found. The array is modified by thi
 
 The position of the element to locate.
 
-• **comparator**: `Comparator`\<`E`\>= `Comparators.natural`
+• **comparator**: `Comparator`\<`E`\> = `Comparators.natural`
 
 ## Returns
 

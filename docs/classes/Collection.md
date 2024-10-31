@@ -14,7 +14,7 @@ not. Some are ordered and others unordered.
 
 - [`Container`](Container.md)
 
-## Type parameters
+## Type Parameters
 
 • **E**
 
@@ -24,9 +24,9 @@ not. Some are ordered and others unordered.
 
 ## Methods
 
-### `[iterator]`()
+### \[iterator\]()
 
-> `abstract` **\[iterator\]**(): `IterableIterator`\<`E`\>
+> `abstract` **\[iterator\]**(): `IterableIterator`\<`E`, `any`, `any`\>
 
 Used to make this [Collection](Collection.md) being seen as an
 `Iterable<A>`. This allows them to be used in APIs expecting an
@@ -34,7 +34,7 @@ Used to make this [Collection](Collection.md) being seen as an
 
 #### Returns
 
-`IterableIterator`\<`E`\>
+`IterableIterator`\<`E`, `any`, `any`\>
 
 #### Implementation of
 
@@ -77,7 +77,7 @@ would be exceeded by adding this element.
 Adds all the items of the `container` to this `Collection` if
 there is enough remaining capaacity.
 
-#### Type parameters
+#### Type Parameters
 
 • **E1**
 
@@ -198,7 +198,7 @@ The item whose presence is tested.
 
 Returns true if this `Collection` contains all of the elements in the specified `IteratorLike`.
 
-#### Type parameters
+#### Type Parameters
 
 • **E1**
 
@@ -391,7 +391,7 @@ Adds as many items as possible of the `container` to this
 added one by one until all items are added or the `Collection` is
 [full](Container.md#isfull).
 
-#### Type parameters
+#### Type Parameters
 
 • **E1**
 

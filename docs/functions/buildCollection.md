@@ -10,7 +10,7 @@
 
 Builds a `Collection`
 
-## Type parameters
+## Type Parameters
 
 • **E**
 

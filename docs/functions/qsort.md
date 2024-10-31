@@ -10,7 +10,7 @@
 
 Sorts (using quicksort) an array according to the comparator.
 
-## Type parameters
+## Type Parameters
 
 • **E**
 

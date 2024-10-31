@@ -50,25 +50,25 @@
     "*.md": "prettier --write"
   },
   "devDependencies": {
-    "@types/chai": "4.3.19",
-    "@types/mocha": "10.0.8",
-    "@typescript-eslint/eslint-plugin": "8.6.0",
+    "@types/chai": "5.0.1",
+    "@types/mocha": "10.0.9",
+    "@typescript-eslint/eslint-plugin": "8.12.2",
     "benny": "3.7.1",
     "chai": "4.3.10",
     "eslint": "8.57.0",
-    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-import": "2.31.0",
     "husky": "9.1.6",
     "lint-staged": "15.2.10",
-    "mocha": "10.7.3",
-    "nyc": "17.0.0",
+    "mocha": "10.8.2",
+    "nyc": "17.1.0",
     "prettier": "3.3.3",
     "pretty-quick": "4.0.0",
     "rimraf": "6.0.1",
     "ts-node": "10.9.2",
-    "typedoc": "^0.25.13",
-    "typedoc-material-theme": "1.0.3",
-    "typedoc-plugin-markdown": "4.0.3",
-    "typescript": "5.4.5"
+    "typedoc": "^0.26.10",
+    "typedoc-material-theme": "1.1.0",
+    "typedoc-plugin-markdown": "4.2.9",
+    "typescript": "5.6.3"
   },
   "types": "./dist/index.d.ts",
   "directories": {
@@ -79,6 +79,6 @@
     "dist"
   ],
   "dependencies": {
-    "ts-fluent-iterators": "^12.0.0"
+    "ts-fluent-iterators": "^13.0.1"
   }
 }

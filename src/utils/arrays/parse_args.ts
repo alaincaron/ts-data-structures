@@ -1,4 +1,4 @@
-export function parseArgs<F>(
+export function parseArgs<F extends object>(
   len: number,
   arg2: number | F | undefined,
   arg3: number | F | undefined,
@@ -15,10 +15,10 @@ export function parseArgs<F>(
     case 'number':
       result.left = arg2;
       break;
-    case 'function':
-      result.f = arg2 as F;
+    case 'undefined':
       return result;
     default:
+      result.f = arg2 as F;
       return result;
   }
 
@@ -26,14 +26,14 @@ export function parseArgs<F>(
     case 'number':
       result.right = arg3;
       break;
-    case 'function':
-      result.f = arg3 as F;
+    case 'undefined':
       return result;
     default:
+      result.f = arg3 as F;
       return result;
   }
 
-  if (typeof arg4 === 'function') {
+  if (arg4) {
     result.f = arg4 as F;
   }
 
