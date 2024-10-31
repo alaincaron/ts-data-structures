@@ -8,3 +8,4 @@ export * from './constructor';
 export * from './json';
 export * from './capacity_mixin';
 export * from './extract_options';
+export * from './objects';
