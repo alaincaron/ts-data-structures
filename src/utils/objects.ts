@@ -10,16 +10,16 @@ export function pick<T extends object, K extends keyof T>(obj: T, ...keys: K[]):
   );
 }
 
-export function removeNull<V>(obj: Record<string, V>) {
+export function removeNull<V, T extends Record<string, V>>(obj: T): Partial<T> {
   return filter(obj, ([_, v]) => v != null);
 }
 
-export function removeEmpty<V>(obj: Record<string, V>) {
+export function removeEmpty<V, T extends Record<string, V>>(obj: T): Partial<T> {
   return filter(obj, ([_, v]) => v != null && (typeof v != 'string' || !!v));
 }
 
-export function filter<V>(obj: Record<string, V>, predicate: Predicate<[string, V]>) {
-  return Object.fromEntries(Object.entries(obj).filter(predicate));
+export function filter<V, T extends Record<string, V>>(obj: T, predicate: Predicate<[string, V]>): Partial<T> {
+  return Object.fromEntries(Object.entries(obj).filter(predicate)) as Partial<T>;
 }
 
 export function deepFilter(
@@ -47,11 +47,14 @@ function extractKey(e: [string, unknown]) {
   return e[0];
 }
 
-export function sortKeys<V>(obj: Record<string, V>, comparator: Comparator<string> = Comparators.natural) {
-  return Object.fromEntries(Object.entries(obj).sort(Comparators.onResultOf(comparator, extractKey)));
+export function sortKeys<V, T extends Record<string, V>>(
+  obj: T,
+  comparator: Comparator<string> = Comparators.natural
+): T {
+  return Object.fromEntries(Object.entries(obj).sort(Comparators.onResultOf(comparator, extractKey))) as T;
 }
 
-export function deepSortKeys(obj: object, comparator: Comparator<string> = Comparators.natural): unknown {
+export function deepSortKeys(obj: unknown, comparator: Comparator<string> = Comparators.natural): unknown {
   if (!obj) return obj;
   if (Array.isArray(obj)) return obj.map(e => deepSortKeys(e, comparator));
   if (typeof obj !== 'object') return obj;
