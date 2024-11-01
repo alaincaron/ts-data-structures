@@ -1,6 +1,6 @@
 {
   "name": "ts-data-collections",
-  "version": "6.3.1",
+  "version": "6.3.2",
   "description": "Misc TS data structures such as Sets, Maps and Collections",
   "main": "./dist/index.js",
   "engines": {
