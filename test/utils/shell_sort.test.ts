@@ -1,22 +1,22 @@
 import { expect } from 'chai';
-import { isOrdered, shellSort } from '../../src';
+import { shellSort } from '../../src';
 
 describe('shellSort', () => {
   it('should sorted array', () => {
     const a = Array.from({ length: 250 }, (_, i) => i);
     a.shuffle();
-    expect(isOrdered(a)).to.be.false;
+    expect(a.isOrdered()).to.be.false;
     shellSort(a);
-    expect(isOrdered(a)).to.be.true;
+    expect(a.isStrictlyOrdered()).to.be.true;
   });
   it('should sorted array range', () => {
     const a = Array.from({ length: 250 }, (_, i) => i);
     a.shuffle();
-    expect(isOrdered(a, 0, 100)).to.be.false;
+    expect(a.isOrdered(0, 100)).to.be.false;
     shellSort(a, 0, 100);
-    expect(isOrdered(a, 0, 100)).to.be.true;
+    expect(a.isStrictlyOrdered(0, 100)).to.be.true;
     a.shuffle();
     shellSort(a, 20, 30);
-    expect(isOrdered(a, 20, 30)).to.be.true;
+    expect(a.isStrictlyOrdered(20, 30)).to.be.true;
   });
 });

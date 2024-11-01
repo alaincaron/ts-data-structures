@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { bsearch, insertSorted, isStrictlyOrdered } from '../../src';
+import { bsearch } from '../../src';
 
 describe('bsearch', () => {
   it('should return the index for a match', () => {
@@ -26,8 +26,8 @@ describe('bsearch', () => {
 describe('insertSorted', () => {
   it('should insert elements at the right position', () => {
     const a = Array.from({ length: 100 }, (_, i) => i);
-    expect(isStrictlyOrdered(insertSorted(a, -1))).to.be.true;
-    expect(isStrictlyOrdered(insertSorted(a, 101))).to.be.true;
+    expect(a.insertSorted(-1).isStrictlyOrdered()).to.be.true;
+    expect(a.insertSorted(101).isStrictlyOrdered()).to.be.true;
     expect(a.insertSorted(55.4).isStrictlyOrdered()).to.be.true;
     expect(a.length).equal(103);
   });
