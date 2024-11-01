@@ -252,16 +252,7 @@ export abstract class List<E> extends Collection<E> {
   isOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean {
     const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
     this.checkBounds(left, right);
-
-    const iter = this.listIterator(left, right - left);
-    let prev = iter.next();
-    if (prev.done) return true;
-    for (;;) {
-      const item = iter.next();
-      if (item.done) return true;
-      if (comparator(prev.value, item.value) > 0) return false;
-      prev = item;
-    }
+    return Comparators.isOrdered(comparator, this.listIterator(left, right - left));
   }
 
   isStrictlyOrdered(): boolean;
@@ -273,15 +264,7 @@ export abstract class List<E> extends Collection<E> {
     const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
     this.checkBounds(left, right);
 
-    const iter = this.listIterator(left, right - left);
-    let prev = iter.next();
-    if (prev.done) return true;
-    for (;;) {
-      const item = iter.next();
-      if (item.done) return true;
-      if (comparator(prev.value, item.value) >= 0) return false;
-      prev = item;
-    }
+    return Comparators.isStrictlyOrdered(comparator, this.listIterator(left, right - left));
   }
 
   reverse(start?: number, end?: number): List<E> {
