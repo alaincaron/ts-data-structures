@@ -1,10 +1,10 @@
-import { Collectors, Comparator, Comparators, FluentIterator } from 'ts-fluent-iterators';
+import { Collector, Comparator, Comparators, FluentIterator } from 'ts-fluent-iterators';
 import { CollectionCollector } from './collection_collectors';
 import { arrayDequeCollector } from './queue_collectors';
 import { ArrayDeque } from '../deques';
 import { PriorityQueue } from '../queues';
 
-export class LastNCollector<E> implements Collectors.Collector<E, FluentIterator<E>> {
+export class LastNCollector<E> implements Collector<E, FluentIterator<E>> {
   private readonly collector: CollectionCollector<E, ArrayDeque<E>>;
   constructor(n: number) {
     if (n < 1) throw new Error(`Invalid value: ${n}`);
@@ -20,11 +20,11 @@ export class LastNCollector<E> implements Collectors.Collector<E, FluentIterator
   }
 }
 
-export function lastNCollector<E>(n: number): Collectors.Collector<E, FluentIterator<E>> {
+export function lastNCollector<E>(n: number): Collector<E, FluentIterator<E>> {
   return new LastNCollector(n);
 }
 
-export class TopKCollector<E> implements Collectors.Collector<E, FluentIterator<E>> {
+export class TopKCollector<E> implements Collector<E, FluentIterator<E>> {
   private readonly queue = new PriorityQueue<E>();
   private readonly k: number;
 

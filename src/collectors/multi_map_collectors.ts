@@ -1,4 +1,4 @@
-import { Collectors } from 'ts-fluent-iterators';
+import { Collector } from 'ts-fluent-iterators';
 import { HashMapOptions, LinkedHashMapOptions, SortedMapOptions } from '../maps';
 import {
   AvlTreeMultiMap,
@@ -11,7 +11,7 @@ import {
 } from '../multimaps';
 import { WithCapacity } from '../utils';
 
-export class MultiMapCollector<K, V, M extends MultiMap<K, V>> implements Collectors.Collector<[K, V], M> {
+export class MultiMapCollector<K, V, M extends MultiMap<K, V>> implements Collector<[K, V], M> {
   private readonly m: M;
   constructor(factory: M | (new () => M)) {
     this.m = typeof factory === 'function' ? new factory() : factory;

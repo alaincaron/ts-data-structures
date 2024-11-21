@@ -1,4 +1,4 @@
-import { Collectors, FluentIterator, Generators, iterator, Predicate } from 'ts-fluent-iterators';
+import { FlattenCollector, FluentIterator, Generators, iterator, Predicate } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
 import { MapLike } from '../maps';
 import {
@@ -114,9 +114,7 @@ export abstract class MultiMap<K, V> extends Container implements Iterable<[K, V
   }
 
   valueIterator(): FluentIterator<V> {
-    return new FluentIterator(this.rawIterator())
-      .map(([_, values]) => values)
-      .collectTo(new Collectors.FlattenCollector());
+    return new FluentIterator(this.rawIterator()).map(([_, values]) => values).collectTo(new FlattenCollector());
   }
 
   partitionIterator(): FluentIterator<[K, Collection<V>]> {
@@ -126,7 +124,7 @@ export abstract class MultiMap<K, V> extends Container implements Iterable<[K, V
   entryIterator(): FluentIterator<[K, V]> {
     return new FluentIterator(this.rawIterator())
       .map(([k, values]) => iterator(Generators.repeat(_ => k)).zip(values))
-      .collectTo(new Collectors.FlattenCollector());
+      .collectTo(new FlattenCollector());
   }
 
   [Symbol.iterator](): IterableIterator<[K, V]> {

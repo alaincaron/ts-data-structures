@@ -1,4 +1,4 @@
-import { Collectors } from 'ts-fluent-iterators';
+import { Collector } from 'ts-fluent-iterators';
 import { HashMapOptions, LinkedHashMapOptions, SortedMapOptions } from '../maps';
 import {
   AvlTreeMultiSet,
@@ -11,7 +11,7 @@ import {
 } from '../multisets';
 import { WithCapacity } from '../utils';
 
-export class MultiSetCollector<E, MS extends MultiSet<E>> implements Collectors.Collector<E, MS> {
+export class MultiSetCollector<E, MS extends MultiSet<E>> implements Collector<E, MS> {
   constructor(private readonly ms: MS) {}
 
   collect(e: E) {

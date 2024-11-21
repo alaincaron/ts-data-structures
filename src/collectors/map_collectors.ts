@@ -1,4 +1,4 @@
-import { Collectors, CollisionHandler } from 'ts-fluent-iterators';
+import { Collector, CollisionHandler } from 'ts-fluent-iterators';
 import {
   AdapterMap,
   AdapterMapOptions,
@@ -15,7 +15,7 @@ import {
 } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class IMapCollector<K, V, M extends IMap<K, V>> implements Collectors.Collector<[K, V], M> {
+export class IMapCollector<K, V, M extends IMap<K, V>> implements Collector<[K, V], M> {
   constructor(
     private readonly m: M,
     private readonly collisionHandler?: CollisionHandler<K, V>
