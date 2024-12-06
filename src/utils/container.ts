@@ -31,11 +31,6 @@ export abstract class Container {
   }
 
   /**
-   * Build the options to create a `Container` with the same options as this `Container`
-   */
-  abstract buildOptions(): object;
-
-  /**
    * Returns `true` if this {@link Container} is empty, i.e., its size is `0`.
    * @returns `true` if this {@link Container} is empty, `false` otherwise.
    */
