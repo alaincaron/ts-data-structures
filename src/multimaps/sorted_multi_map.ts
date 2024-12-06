@@ -1,4 +1,4 @@
-import { Collectors, FluentIterator } from 'ts-fluent-iterators';
+import { FlattenCollector, FluentIterator } from 'ts-fluent-iterators';
 import { MapBasedMultiMap } from './map_based_multi_map';
 import { WithCollectionFactory } from './map_based_multi_map';
 import { Collection } from '../collections';
@@ -45,7 +45,7 @@ export abstract class SortedMultiMap<K, V> extends MapBasedMultiMap<K, V> {
   }
 
   reverseValueIterator(): FluentIterator<V> {
-    return this.delegate().reverseValueIterator().collectTo(new Collectors.FlattenCollector());
+    return this.delegate().reverseValueIterator().collectTo(new FlattenCollector());
   }
 
   abstract clone(): SortedMultiMap<K, V>;

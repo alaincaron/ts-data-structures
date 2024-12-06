@@ -1,4 +1,4 @@
-import { Collectors, iterator, Mapper } from 'ts-fluent-iterators';
+import { Collector, iterator, Mapper } from 'ts-fluent-iterators';
 
 export interface WindowCollector<A, B = A> {
   enterWindow(item: A): B;
@@ -50,7 +50,7 @@ export class MovingAverageCollector implements WindowCollector<number> {
 
 function* windowIteratorFromFactory<A, B>(
   iter: Iterator<A>,
-  factory: Mapper<void, Collectors.Collector<A, B>>,
+  factory: Mapper<void, Collector<A, B>>,
   windowSize: number,
   flag = true
 ) {
@@ -90,7 +90,7 @@ function* windowIteratorFromWindowCollector<A, B>(
 
 export function windowIterator<A, B = A>(
   iter: Iterator<A>,
-  collector: WindowCollector<A, B> | Mapper<void, Collectors.Collector<A, B>>,
+  collector: WindowCollector<A, B> | Mapper<void, Collector<A, B>>,
   windowSize: number,
   flag = true
 ): IterableIterator<B> {
@@ -98,13 +98,13 @@ export function windowIterator<A, B = A>(
     throw new Error(`Invalid window size: ${windowSize}`);
   }
   if (typeof collector === 'function') {
-    return windowIteratorFromFactory(iter, collector as Mapper<void, Collectors.Collector<A, B>>, windowSize, flag);
+    return windowIteratorFromFactory(iter, collector as Mapper<void, Collector<A, B>>, windowSize, flag);
   }
   return windowIteratorFromWindowCollector(iter, collector as WindowCollector<A, B>, windowSize, flag);
 }
 
 export function windowIteratorMapper<A, B = A>(
-  collector: WindowCollector<A, B> | Mapper<void, Collectors.Collector<A, B>>,
+  collector: WindowCollector<A, B> | Mapper<void, Collector<A, B>>,
   windowSize: number,
   flag = true
 ): Mapper<Iterator<A>, Iterator<B>> {

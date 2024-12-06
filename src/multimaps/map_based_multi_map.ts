@@ -1,4 +1,4 @@
-import { Collectors, Predicate } from 'ts-fluent-iterators';
+import { Predicate, SumCollector } from 'ts-fluent-iterators';
 import { MultiMap } from './multi_map';
 import { Collection } from '../collections';
 import { ArrayList } from '../lists';
@@ -20,7 +20,7 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
     this._size = this.map
       .valueIterator()
       .map(c => c.size())
-      .collectTo(new Collectors.SumCollector());
+      .collectTo(new SumCollector());
   }
 
   capacity(): number {
@@ -86,7 +86,7 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
     this._size = this.map
       .valueIterator()
       .map(c => c.size())
-      .collectTo(new Collectors.SumCollector());
+      .collectTo(new SumCollector());
     return initial_size - this._size;
   }
 
@@ -94,7 +94,7 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
     const nbRemoved = this.map
       .entryIterator()
       .map(e => e.value.filter(v => predicate([e.key, v])))
-      .collectTo(new Collectors.SumCollector());
+      .collectTo(new SumCollector());
     if (nbRemoved) {
       this.map.filterEntries(([_, c]) => !c.isEmpty());
       this._size -= nbRemoved;
