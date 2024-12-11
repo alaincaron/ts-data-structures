@@ -103,3 +103,20 @@ export function isHeap<E>(arr: E[], arg3?: number | Comparator<E>, arg4?: Compar
   }
   return true;
 }
+
+export function remove<E>(arr: E[]): void;
+export function remove<E>(arr: E[], size: number): void;
+export function remove<E>(arr: E[], comparator: Comparator<E>): void;
+export function remove<E>(arr: E[], size: number, comparator: Comparator<E>): void;
+
+export function remove<E>(arr: E[], arg3?: number | Comparator<E>, arg4?: Comparator<E>): E | undefined {
+  const { size, comparator } = parseArgs(arr, arg3, arg4);
+
+  if (size <= 0) return undefined;
+  const item = arr[0];
+  const tmp = arr[size - 1];
+  arr[0] = tmp;
+  arr.splice(size - 1, 1);
+  heapifyDown(arr, 0, size - 1, comparator);
+  return item;
+}
