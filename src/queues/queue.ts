@@ -9,6 +9,10 @@ export interface QueueOptions {
   overflowStrategy?: OverflowQueueStrategy;
 }
 
+export interface QueueIterator<E> extends IterableIterator<E> {
+  remove(): E;
+}
+
 export abstract class Queue<E> extends Collection<E> {
   private readonly _overflowStrategy: OverflowQueueStrategy;
   constructor(options?: QueueOptions) {
@@ -99,6 +103,8 @@ export abstract class Queue<E> extends Collection<E> {
   drain() {
     return new FluentIterator(this.drainIterator());
   }
+
+  abstract queueIterator(): QueueIterator<E>;
 
   buildOptions(): WithCapacity<QueueOptions> {
     return {

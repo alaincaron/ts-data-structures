@@ -1,14 +1,15 @@
 import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
-import { Queue, QueueOptions } from './queue';
+import { Queue, QueueIterator, QueueOptions } from './queue';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { nextPowerOfTwo, qsort, WithCapacity } from '../utils';
-import { Heap } from '../utils/arrays';
 
 export interface PriorityQueueOptions<E> extends QueueOptions {
   comparator?: Comparator<E>;
 }
 
 export type PriorityQueueInitializer<E> = PriorityQueueOptions<E> & CollectionInitializer<E>;
+
+const MIN_SIZE = 8;
 
 export class PriorityQueue<E> extends Queue<E> {
   private buffer: Array<E>;
@@ -19,15 +20,8 @@ export class PriorityQueue<E> extends Queue<E> {
     super(options);
 
     this._size = 0;
-    if (options == null) {
-      this.buffer = [];
-    } else if (typeof options === 'number') {
-      this.buffer = new Array(nextPowerOfTwo(options));
-    } else {
-      if (options.comparator) this.comparator = options.comparator;
-      this.buffer = [];
-    }
-    this.comparator ??= Comparators.natural;
+    this.buffer = new Array(MIN_SIZE);
+    this.comparator = options?.comparator ?? Comparators.natural;
   }
 
   static create<E>(initializer?: WithCapacity<PriorityQueueOptions<E> & CollectionInitializer<E>>): PriorityQueue<E> {
@@ -42,9 +36,63 @@ export class PriorityQueue<E> extends Queue<E> {
     if (this.isFull()) return false;
     if (this.buffer.length === this._size) this.buffer.length = nextPowerOfTwo(this._size + 1);
     this.buffer[this._size] = item;
-    Heap.heapifyUp(this.buffer, this._size, this.comparator);
+    this.heapifyUp(this._size);
     ++this._size;
     return true;
+  }
+
+  private parent(index: number): number {
+    return (index - 1) >> 1;
+  }
+
+  private leftChild(index: number): number {
+    return (index << 1) + 1;
+  }
+
+  private swap(i: number, j: number) {
+    const tmp = this.buffer[i];
+    this.buffer[i] = this.buffer[j];
+    this.buffer[j] = tmp;
+  }
+
+  private heapifyUp(child: number): boolean {
+    let modified = false;
+    while (child > 0) {
+      const parent = this.parent(child);
+      if (this.comparator(this.buffer[child], this.buffer[parent]) >= 0) {
+        break;
+      }
+      this.swap(child, parent);
+      modified = true;
+      child = parent;
+    }
+    return modified;
+  }
+
+  private heapifyDown(parent: number): boolean {
+    let modified = false;
+    while (true) {
+      const leftChild = this.leftChild(parent);
+      const rightChild = leftChild + 1;
+      let smallest = parent;
+
+      if (leftChild < this._size && this.comparator(this.buffer[leftChild], this.buffer[smallest]) < 0) {
+        smallest = leftChild;
+      }
+
+      if (rightChild < this._size && this.comparator(this.buffer[rightChild], this.buffer[smallest]) < 0) {
+        smallest = rightChild;
+      }
+
+      if (smallest === parent) {
+        break;
+      }
+
+      this.swap(parent, smallest);
+      modified = true;
+      parent = smallest;
+    }
+    return modified;
   }
 
   peek(): E | undefined {
@@ -58,7 +106,7 @@ export class PriorityQueue<E> extends Queue<E> {
     --this._size;
     this.buffer[0] = this.buffer[this._size];
     this.buffer[this._size] = undefined!;
-    Heap.heapifyDown(this.buffer, 0, this._size, this.comparator);
+    this.heapifyDown(0);
     return result;
   }
 
@@ -70,9 +118,8 @@ export class PriorityQueue<E> extends Queue<E> {
     --this._size;
     this.buffer[i] = undefined!;
     if (i < this._size) {
-      Heap.swap(this.buffer, i, this._size);
-      if (!Heap.heapifyUp(this.buffer, i, this.comparator))
-        Heap.heapifyDown(this.buffer, i, this._size, this.comparator);
+      this.swap(i, this._size);
+      if (!this.heapifyUp(i)) this.heapifyDown(i);
     }
     return item;
   }
@@ -88,15 +135,15 @@ export class PriorityQueue<E> extends Queue<E> {
         ++count;
         --this._size;
         this.buffer[i] = undefined!;
-        if (i < this._size) Heap.swap(this.buffer, i, this._size);
+        if (i < this._size) this.swap(i, this._size);
       }
     }
-    if (count) Heap.heapify(this.buffer, this._size, this.comparator);
+    if (count) this.heapify();
     return count;
   }
 
   clear() {
-    this.buffer = [];
+    this.buffer = new Array(MIN_SIZE);
     this._size = 0;
     return this;
   }
@@ -113,8 +160,54 @@ export class PriorityQueue<E> extends Queue<E> {
   }
 
   *[Symbol.iterator](): IterableIterator<E> {
-    qsort(this.buffer, 0, this._size, this.comparator);
     let cursor = 0;
     while (cursor < this._size) yield this.buffer[cursor++];
+  }
+
+  sort() {
+    qsort(this.buffer, 0, this._size, this.comparator);
+    return this;
+  }
+
+  private getQueueIterator(step: -1 | 1): QueueIterator<E> {
+    let lastReturn = -1;
+    let cursor = step === 1 ? 0 : this._size;
+    this.sort();
+    return {
+      [Symbol.iterator]() {
+        return this;
+      },
+      next: () => {
+        const done = step === 1 ? cursor >= this._size : cursor <= 0;
+        if (done) return { done, value: undefined };
+        if (step === 1) {
+          lastReturn = cursor++;
+        } else {
+          lastReturn = --cursor;
+        }
+        return { done: false, value: this.buffer[lastReturn] };
+      },
+      remove: () => {
+        if (lastReturn === -1) throw new Error('Error invoking remove: Can only be done once per iteration');
+        const value = this.buffer[lastReturn];
+        this.buffer.copyWithin(lastReturn, lastReturn + 1, this._size);
+        this.buffer[--this._size] = undefined!;
+
+        cursor = lastReturn;
+        lastReturn = -1;
+        return value;
+      },
+    };
+  }
+  queueIterator(): QueueIterator<E> {
+    return this.getQueueIterator(1);
+  }
+
+  reverseQueueIterator(): QueueIterator<E> {
+    return this.getQueueIterator(-1);
+  }
+
+  private heapify() {
+    for (let i = (this._size >> 1) - 1; i >= 0; --i) this.heapifyDown(i);
   }
 }

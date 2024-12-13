@@ -6,4 +6,4 @@ export * from './qsort';
 export * from './shell_sort';
 export * from './shuffle';
 export * from './parse_args';
-export * as Heap from './heap';
+export * from './heap';

@@ -69,4 +69,12 @@ export class ArrayStack<E> extends Stack<E> {
   [Symbol.iterator](): IterableIterator<E> {
     return this.buffer.reverseIterator();
   }
+
+  queueIterator() {
+    return this.buffer.reverseQueueIterator();
+  }
+
+  reverseQueueIterator() {
+    return this.buffer.queueIterator();
+  }
 }

@@ -1,6 +1,45 @@
 import { Comparator, Comparators } from 'ts-fluent-iterators';
 
-export function heapifyUp<E>(arr: E[], child: number, comparator: Comparator<E>): boolean {
+export class Heap<E> {
+  readonly data: E[];
+  readonly comparator: Comparator<E>;
+
+  constructor();
+  constructor(arg1: E[] | Comparator<E>);
+  constructor(arg1: E[], arg2: Comparator<E>);
+  constructor(arg1?: E[] | Comparator<E>, arg2?: Comparator<E>) {
+    if (Array.isArray(arg1)) {
+      this.data = arg1;
+    } else {
+      this.data = [];
+      if (typeof arg1 === 'function') this.comparator = arg1;
+    }
+    if (arg2) {
+      this.comparator = arg2;
+    } else {
+      this.comparator = Comparators.natural;
+    }
+    this.heapify();
+  }
+
+  insert(item: E) {
+    insert(this.data, item, this.comparator);
+  }
+
+  remove(): E | undefined {
+    return remove(this.data, this.comparator);
+  }
+
+  heapify() {
+    heapify(this.data, this.comparator);
+  }
+
+  isHeap() {
+    return isHeap(this.data, this.comparator);
+  }
+}
+
+function heapifyUp<E>(arr: E[], child: number, comparator: Comparator<E>): boolean {
   let modified = false;
   while (child > 0) {
     const parent = (child - 1) >> 1;
@@ -14,41 +53,18 @@ export function heapifyUp<E>(arr: E[], child: number, comparator: Comparator<E>)
   return modified;
 }
 
-function parseArgs<E>(arr: E[], arg3?: number | Comparator<E>, arg4?: Comparator<E>) {
-  let comparator: Comparator<E> = Comparators.natural;
-  let size: number = arr.length;
-  switch (typeof arg3) {
-    case 'function':
-      comparator = arg3;
-      break;
-    case 'number':
-      size = arg3;
-      break;
-  }
-  if (arg4) {
-    comparator = arg4;
-  }
-  return { size, comparator };
-}
-
-export function heapifyDown<E>(arr: E[], parent: number): boolean;
-export function heapifyDown<E>(arr: E[], parent: number, size: number): boolean;
-export function heapifyDown<E>(arr: E[], parent: number, comparator: Comparator<E>): boolean;
-export function heapifyDown<E>(arr: E[], parent: number, size: number, comparator: Comparator<E>): boolean;
-
-export function heapifyDown<E>(arr: E[], parent: number, arg3?: number | Comparator<E>, arg4?: Comparator<E>): boolean {
-  const { comparator, size } = parseArgs(arr, arg3, arg4);
+function heapifyDown<E>(arr: E[], parent: number, comparator: Comparator<E>): boolean {
   let modified = false;
   while (true) {
     const leftChild = (parent << 1) + 1;
     const rightChild = leftChild + 1;
     let smallest = parent;
 
-    if (leftChild < size && comparator(arr[leftChild], arr[smallest]) < 0) {
+    if (leftChild < arr.length && comparator(arr[leftChild], arr[smallest]) < 0) {
       smallest = leftChild;
     }
 
-    if (rightChild < size && comparator(arr[rightChild], arr[smallest]) < 0) {
+    if (rightChild < arr.length && comparator(arr[rightChild], arr[smallest]) < 0) {
       smallest = rightChild;
     }
 
@@ -63,60 +79,39 @@ export function heapifyDown<E>(arr: E[], parent: number, arg3?: number | Compara
   return modified;
 }
 
-export function heapify<E>(arr: E[]): void;
-export function heapify<E>(arr: E[], size: number): void;
-export function heapify<E>(arr: E[], comparator: Comparator<E>): void;
-export function heapify<E>(arr: E[], size: number, comparator: Comparator<E>): void;
-
-export function heapify<E>(arr: E[], arg3?: number | Comparator<E>, arg4?: Comparator<E>): void {
-  const { size, comparator } = parseArgs(arr, arg3, arg4);
-  for (let i = (size >> 1) - 1; i >= 0; --i) heapifyDown(arr, i, size, comparator);
+export function heapify<E>(arr: E[], comparator: Comparator<E> = Comparators.natural): void {
+  for (let i = (arr.length >> 1) - 1; i >= 0; --i) heapifyDown(arr, i, comparator);
 }
 
-export function swap<E>(arr: E[], i: number, j: number) {
+function swap<E>(arr: E[], i: number, j: number) {
   const tmp = arr[i];
   arr[i] = arr[j];
   arr[j] = tmp;
 }
 
-export function isHeap<E>(arr: E[]): boolean;
-export function isHeap<E>(arr: E[], size: number): boolean;
-export function isHeap<E>(arr: E[], comparator: Comparator<E>): boolean;
-export function isHeap<E>(arr: E[], size: number, comparator: Comparator<E>): boolean;
-
-export function isHeap<E>(arr: E[], arg3?: number | Comparator<E>, arg4?: Comparator<E>): boolean {
-  const { size, comparator } = parseArgs(arr, arg3, arg4);
-
+export function isHeap<E>(arr: E[], comparator: Comparator<E> = Comparators.natural): boolean {
   let parent = 0;
-  let leftChild;
-  while ((leftChild = (parent << 1) + 1) < size) {
-    const rightChild = leftChild + 1;
-
-    if (comparator(arr[leftChild], arr[parent]) < 0) {
-      return false;
-    }
-
-    if (rightChild < size && comparator(arr[rightChild], arr[parent]) < 0) {
-      return false;
-    }
+  for (;;) {
+    const left = (parent << 1) + 1;
+    if (left >= arr.length) return true;
+    if (comparator(arr[parent], arr[left]) > 0) return false;
+    const right = left + 1;
+    if (right < arr.length && comparator(arr[parent], arr[right]) > 0) return false;
     ++parent;
   }
-  return true;
 }
 
-export function remove<E>(arr: E[]): void;
-export function remove<E>(arr: E[], size: number): void;
-export function remove<E>(arr: E[], comparator: Comparator<E>): void;
-export function remove<E>(arr: E[], size: number, comparator: Comparator<E>): void;
-
-export function remove<E>(arr: E[], arg3?: number | Comparator<E>, arg4?: Comparator<E>): E | undefined {
-  const { size, comparator } = parseArgs(arr, arg3, arg4);
-
-  if (size <= 0) return undefined;
+function remove<E>(arr: E[], comparator: Comparator<E>): E | undefined {
+  if (arr.length <= 0) return undefined;
   const item = arr[0];
-  const tmp = arr[size - 1];
+  const tmp = arr[arr.length - 1];
   arr[0] = tmp;
-  arr.splice(size - 1, 1);
-  heapifyDown(arr, 0, size - 1, comparator);
+  arr.splice(arr.length - 1, 1);
+  heapifyDown(arr, 0, comparator);
   return item;
+}
+
+function insert<E>(arr: E[], item: E, comparator: Comparator<E>): void {
+  arr.splice(arr.length, 0, item);
+  heapifyUp(arr, arr.length - 1, comparator);
 }

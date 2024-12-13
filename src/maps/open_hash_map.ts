@@ -23,17 +23,11 @@ export class OpenHashMap<K, V> extends IMap<K, V> {
     super();
     this._size = this._occupancy = 0;
     this.loadFactor = DEFAULT_LOAD_FACTOR;
+    this.slots = new Array(DEFAULT_INITIAL_SIZE);
 
-    if (typeof options === 'number') {
-      this.slots = new Array(nextPrime(Math.max(options, DEFAULT_INITIAL_SIZE)));
-    } else if (!options) {
-      this.slots = new Array(DEFAULT_INITIAL_SIZE);
-    } else {
-      this.slots = new Array(DEFAULT_INITIAL_SIZE);
-      if (options.loadFactor != null) {
-        if (options.loadFactor <= 0.0) throw new Error(`Invalid load factor: ${options.loadFactor}`);
-        this.loadFactor = options.loadFactor;
-      }
+    if (options?.loadFactor != null) {
+      if (options.loadFactor <= 0.0) throw new Error(`Invalid load factor: ${options.loadFactor}`);
+      this.loadFactor = options.loadFactor;
     }
   }
 

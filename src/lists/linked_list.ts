@@ -121,7 +121,7 @@ export class LinkedList<E> extends List<E> {
         return { done: false, value };
       },
       remove: () => {
-        if (lastResult === null) throw new Error('Error invoking remove: lastResult is null');
+        if (lastResult === null) throw new Error('Error invoking remove: Can only be done once per iteration');
         this.linkedList.remove(lastResult);
         const value = lastResult.value;
         lastResult = null;
@@ -129,7 +129,7 @@ export class LinkedList<E> extends List<E> {
         return value;
       },
       setValue: (newValue: E) => {
-        if (lastResult === null) throw new Error('Error Invoking setValue: lastResult is null');
+        if (lastResult === null) throw new Error("Error invoking setValue: can't be invoked after remove");
         const value = lastResult.value;
         lastResult.value = newValue;
         return value;

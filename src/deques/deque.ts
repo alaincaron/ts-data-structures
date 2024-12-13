@@ -1,6 +1,10 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { Queue, QueueOptions } from '../queues';
+import { Queue, QueueIterator, QueueOptions } from '../queues';
 import { equalsAny, OverflowException, UnderflowException } from '../utils';
+
+export interface DequeIterator<E> extends QueueIterator<E> {
+  setValue(item: E): E;
+}
 
 export abstract class Deque<E> extends Queue<E> {
   constructor(options?: QueueOptions) {
@@ -78,6 +82,9 @@ export abstract class Deque<E> extends Queue<E> {
   }
 
   abstract reverseIterator(): IterableIterator<E>;
+
+  abstract queueIterator(): DequeIterator<E>;
+  abstract reverseQueueIterator(): DequeIterator<E>;
 
   abstract clone(): Deque<E>;
 }

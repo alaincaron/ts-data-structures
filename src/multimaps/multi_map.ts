@@ -169,8 +169,8 @@ export function buildMultiMap<
   return result;
 }
 
-function boundMultiMap<K, V, M extends MultiMap<K, V>>(ctor: Constructor<M>, options?: number | ContainerOptions) {
-  if (typeof options === 'number' || (options && 'capacity' in options)) {
+function boundMultiMap<K, V, M extends MultiMap<K, V>>(ctor: Constructor<M>, options?: ContainerOptions) {
+  if (options && 'capacity' in options) {
     const boundedCtor: any = CapacityMixin(ctor);
     const tmp = new boundedCtor(options);
     return tmp as unknown as M;

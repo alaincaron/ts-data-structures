@@ -487,4 +487,131 @@ describe('ArrayDeque', () => {
       expect(deque.toArray()).to.deep.equal([1, 2, 3]);
     });
   });
+
+  describe('resize', () => {
+    function getInternalSize<E>(deque: ArrayDeque<E>) {
+      const buffer = (deque as any).elements;
+      return buffer.length;
+    }
+    it('should not modify the length of internal array is newSize not greater  than current size', () => {
+      const deque = ArrayDeque.create({ initial: [1, 2, 3, 2] });
+      const initialLen = getInternalSize(deque);
+      deque.resize(deque.size() - 1);
+      expect(getInternalSize(deque)).equal(initialLen);
+      expect(deque.toArray()).deep.equal([1, 2, 3, 2]);
+    });
+    it('should modify the length of internal array is newSize is greater than current size', () => {
+      const deque = ArrayDeque.create({ initial: [1, 2, 3, 2] });
+      const initialLen = getInternalSize(deque);
+      deque.resize(initialLen + 1);
+      expect(getInternalSize(deque)).to.be.greaterThan(initialLen);
+      expect(deque.toArray()).deep.equal([1, 2, 3, 2]);
+    });
+  });
+
+  describe('queueIterator', () => {
+    it('should remove elements in the right order', () => {
+      const a = [1, 2, 3, 2];
+      const deque = ArrayDeque.create({ initial: a });
+      const iterator = deque.queueIterator();
+      let i = 0;
+      for (;;) {
+        const item = iterator.next();
+        expect(item.done).equal(i === a.length);
+        if (item.done) break;
+        expect(item.value).equal(a[i]);
+        expect(iterator.remove()).equal(a[i]);
+        ++i;
+      }
+      expect(i).equal(a.length);
+      expect(deque.size()).equal(0);
+    });
+    it('should set value of elements in the right order', () => {
+      const a = [1, 2, 3, 2];
+      const deque = ArrayDeque.create({ initial: a });
+      const iterator = deque.queueIterator();
+      let i = 0;
+      for (;;) {
+        const item = iterator.next();
+        expect(item.done).equal(i === a.length);
+        if (item.done) break;
+        expect(item.value).equal(a[i]);
+        expect(iterator.setValue(item.value + 1)).equal(item.value);
+        ++i;
+      }
+      expect(i).equal(a.length);
+      expect(deque.toArray()).deep.equal(a.map(x => x + 1));
+    });
+    it('should be iterable', () => {
+      const deque = new ArrayDeque();
+      const iterator = deque.queueIterator();
+      expect(iterator[Symbol.iterator]()).equal(iterator);
+    });
+    it('should not allow remove/setValue after remove', () => {
+      const a = [1, 2, 3, 2];
+      const deque = ArrayDeque.create({ initial: a });
+      const iterator = deque.queueIterator();
+      const item = iterator.next();
+      expect(item.done).to.be.false;
+      expect(item.value).equal(1);
+      expect(iterator.remove()).equal(1);
+      expect(() => iterator.remove()).to.throw(Error);
+      expect(() => iterator.setValue(2)).to.throw(Error);
+      a.shift();
+      expect(deque.toArray()).deep.equal(a);
+    });
+  });
+  describe('reverseQueueIterator', () => {
+    it('should remove elements in the right order', () => {
+      const a = [2, 3, 2, 1];
+      const deque = ArrayDeque.create({ initial: a });
+      const iterator = deque.reverseQueueIterator();
+      let i = 0;
+      for (;;) {
+        const item = iterator.next();
+        expect(item.done).equal(i === a.length);
+        if (item.done) break;
+        const v = a[a.length - i - 1];
+        expect(item.value).equal(v);
+        expect(iterator.remove()).equal(v);
+        ++i;
+      }
+      expect(i).equal(a.length);
+      expect(deque.size()).equal(0);
+    });
+    it('should set value of elements in the right order', () => {
+      const a = [2, 3, 2, 1];
+      const deque = ArrayDeque.create({ initial: a });
+      const iterator = deque.reverseQueueIterator();
+      let i = 0;
+      for (;;) {
+        const item = iterator.next();
+        expect(item.done).equal(i === a.length);
+        if (item.done) break;
+        expect(item.value).equal(a[a.length - i - 1]);
+        expect(iterator.setValue(item.value + 1)).equal(item.value);
+        ++i;
+      }
+      expect(i).equal(a.length);
+      expect(deque.toArray()).deep.equal(a.map(x => x + 1));
+    });
+    it('should be iterable', () => {
+      const deque = new ArrayDeque();
+      const iterator = deque.reverseQueueIterator();
+      expect(iterator[Symbol.iterator]()).equal(iterator);
+    });
+    it('should not allow remove/setValue after remove', () => {
+      const a = [2, 3, 2, 1];
+      const deque = ArrayDeque.create({ initial: a });
+      const iterator = deque.reverseQueueIterator();
+      const item = iterator.next();
+      expect(item.done).to.be.false;
+      expect(item.value).equal(1);
+      expect(iterator.remove()).equal(1);
+      expect(() => iterator.remove()).to.throw(Error);
+      expect(() => iterator.setValue(2)).to.throw(Error);
+      a.pop();
+      expect(deque.toArray()).deep.equal(a);
+    });
+  });
 });

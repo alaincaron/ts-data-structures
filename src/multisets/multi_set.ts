@@ -80,7 +80,7 @@ export function buildMultiSet<
 }
 
 function boundMultiSet<E, MS extends MultiSet<E>>(ctor: Constructor<MS>, options?: ContainerOptions) {
-  if (typeof options === 'number' || (options && 'capacity' in options)) {
+  if (options && 'capacity' in options) {
     const boundedCtor: any = CapacityMixin(ctor);
     const tmp = new boundedCtor(options);
     return tmp as unknown as MS;

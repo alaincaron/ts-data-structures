@@ -1,18 +1,6 @@
 import { expect } from 'chai';
 import { Generators } from 'ts-fluent-iterators';
-import { OverflowException, PriorityQueue, UnderflowException } from '../../src';
-
-function isHeap<E>(items: E[]): boolean {
-  let parent = 0;
-  for (;;) {
-    const left = (parent << 1) + 1;
-    if (left >= items.length) return true;
-    if (items[parent] > items[left]) return false;
-    const right = left + 1;
-    if (right < items.length && items[parent] > items[right]) return false;
-    ++parent;
-  }
-}
+import { isHeap, OverflowException, PriorityQueue, qsort, UnderflowException } from '../../src';
 
 describe('PriorityQueue', () => {
   describe('constructor', () => {
@@ -255,6 +243,81 @@ describe('PriorityQueue', () => {
       const cl = queue.clone();
       expect(queue.equals(cl)).to.be.false;
       expect(queue.hashCode() === cl.hashCode());
+    });
+  });
+
+  describe('queueIterator', () => {
+    it('should remove elements in the right order', () => {
+      const a = Array.from({ length: 200 }, (_, i) => i);
+      const b = a.slice(0).shuffle();
+      const queue = PriorityQueue.create({ initial: b });
+      const iterator = queue.queueIterator();
+      let i = 0;
+      for (;;) {
+        const item = iterator.next();
+        expect(item.done).equal(i === a.length);
+        if (item.done) break;
+        expect(item.value).equal(a[i]);
+        expect(iterator.remove()).equal(a[i]);
+        ++i;
+      }
+      expect(i).equal(a.length);
+      expect(queue.size()).equal(0);
+    });
+    it('should be iterable', () => {
+      const queue = new PriorityQueue();
+      const iterator = queue.queueIterator();
+      expect(iterator[Symbol.iterator]()).equal(iterator);
+    });
+    it('should not allow 2nd remove after next', () => {
+      const a = [3, 2, 1, 2];
+      const queue = PriorityQueue.create({ initial: a });
+      const iterator = queue.queueIterator();
+      const item = iterator.next();
+      expect(item.done).to.be.false;
+      expect(item.value).equal(1);
+      expect(iterator.remove()).equal(1);
+      expect(() => iterator.remove()).to.throw(Error);
+      qsort(a).shift();
+      expect(queue.toArray()).deep.equal(a);
+    });
+  });
+
+  describe('reverseQueueIterator', () => {
+    it('should remove elements in the right order', () => {
+      const a = Array.from({ length: 200 }, (_, i) => i);
+      const b = a.slice(0).shuffle();
+      const queue = PriorityQueue.create({ initial: b });
+      const iterator = queue.reverseQueueIterator();
+      let i = 0;
+      for (;;) {
+        const item = iterator.next();
+        expect(item.done).equal(i === a.length);
+        if (item.done) break;
+        const v = a[a.length - i - 1];
+        expect(item.value).equal(v);
+        expect(iterator.remove()).equal(v);
+        ++i;
+      }
+      expect(i).equal(a.length);
+      expect(queue.size()).equal(0);
+    });
+    it('should be iterable', () => {
+      const queue = new PriorityQueue();
+      const iterator = queue.reverseQueueIterator();
+      expect(iterator[Symbol.iterator]()).equal(iterator);
+    });
+    it('should not allow 2nd remove after next', () => {
+      const a = [2, 3, 2, 1];
+      const queue = PriorityQueue.create({ initial: a });
+      const iterator = queue.reverseQueueIterator();
+      const item = iterator.next();
+      expect(item.done).to.be.false;
+      expect(item.value).equal(3);
+      expect(iterator.remove()).equal(3);
+      expect(() => iterator.remove()).to.throw(Error);
+      qsort(a).pop();
+      expect(queue.toArray()).deep.equal(a);
     });
   });
 });

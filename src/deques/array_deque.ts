@@ -1,5 +1,5 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { Deque } from './deque';
+import { Deque, DequeIterator } from './deque';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { QueueOptions } from '../queues';
 import { nextPowerOfTwo, WithCapacity } from '../utils';
@@ -121,11 +121,9 @@ export class ArrayDeque<E> extends Deque<E> {
    * Removes all of the elements from this deque.
    * The deque will be empty after this call returns.
    */
-  clear(resize = false) {
-    if (this.head != this.tail) {
-      if (resize) this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
-      this.head = this.tail = 0;
-    }
+  clear() {
+    this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
+    this.head = this.tail = 0;
     return this;
   }
 
@@ -213,16 +211,63 @@ export class ArrayDeque<E> extends Deque<E> {
     return shift;
   }
 
-  resize(newSize?: number) {
+  resize(newSize = 0) {
     const originalSize = this.size();
-    if (!newSize || newSize < originalSize) newSize = originalSize;
+    if (newSize < originalSize) newSize = originalSize;
     newSize = this.nextArraySize(newSize);
 
     if (newSize == this.elements.length && this.head === 0) return;
     const tmp = this.toArray();
-    this.tail = this.size();
+    this.tail = tmp.length;
     this.head = 0;
     tmp.length = newSize;
     this.elements = tmp;
+  }
+
+  private getQueueIterator(step: -1 | 1): DequeIterator<E> {
+    let lastReturn = -1;
+    let cursor = step === 1 ? this.head : this.tail;
+    return {
+      [Symbol.iterator]() {
+        return this;
+      },
+      next: () => {
+        const stop = step === 1 ? this.tail : this.head;
+        if (cursor === stop) {
+          return { done: true, value: undefined };
+        }
+        if (step === 1) {
+          lastReturn = cursor;
+          cursor = this.slot(cursor + step);
+        } else {
+          cursor = this.slot(cursor + step);
+          lastReturn = cursor;
+        }
+        return { done: false, value: this.elements[lastReturn] };
+      },
+      setValue: (item: E) => {
+        if (lastReturn === -1) throw new Error("Error invoking setValue: can't be invoked after remove");
+        const oldValue = this.elements[lastReturn];
+        this.elements[lastReturn] = item;
+        return oldValue;
+      },
+      remove: () => {
+        if (lastReturn === -1) throw new Error('Error invoking remove: Can only be done once per iteration');
+        const value = this.elements[lastReturn];
+        this.elements[lastReturn] = undefined!;
+        this.compact(lastReturn);
+        cursor = lastReturn;
+        lastReturn = -1;
+        return value;
+      },
+    };
+  }
+
+  queueIterator() {
+    return this.getQueueIterator(1);
+  }
+
+  reverseQueueIterator() {
+    return this.getQueueIterator(-1);
   }
 }

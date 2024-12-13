@@ -140,8 +140,12 @@ export abstract class List<E> extends Collection<E> {
         cursor = advance(cursor);
         return { done: false, value: this.getAt(lastReturn) };
       },
-      setValue: (item: E) => this.setAt(lastReturn, item),
+      setValue: (item: E) => {
+        if (lastReturn === -1) throw new Error("Error invoking setValue: can't be invoked after remove");
+        return this.setAt(lastReturn, item);
+      },
       remove: () => {
+        if (lastReturn === -1) throw new Error('Error invoking remove: Can only be done once per iteration');
         const value = this.removeAt(lastReturn);
         cursor = lastReturn;
         lastReturn = -1;
