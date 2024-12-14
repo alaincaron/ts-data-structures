@@ -255,8 +255,13 @@ export class ArrayDeque<E> extends Deque<E> {
         if (lastReturn === -1) throw new Error('Error invoking remove: Can only be done once per iteration');
         const value = this.elements[lastReturn];
         this.elements[lastReturn] = undefined!;
-        this.compact(lastReturn);
-        cursor = lastReturn;
+        if (lastReturn === this.head) {
+          this.head = this.slot(lastReturn + 1);
+          cursor = this.head;
+        } else {
+          this.compact(lastReturn);
+          cursor = lastReturn;
+        }
         lastReturn = -1;
         return value;
       },
