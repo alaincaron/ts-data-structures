@@ -1,5 +1,7 @@
 import { Comparator, Comparators, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
+import { ListInterface, ListIterator } from './list_interface';
 import { Collection } from '../collections';
+import { objectHasFunction } from '../collections/helpers';
 import {
   equalsAny,
   equalsIterable,
@@ -13,12 +15,7 @@ import {
   UnderflowException,
 } from '../utils';
 
-export interface ListIterator<E> extends IterableIterator<E> {
-  setValue(item: E): E;
-  remove(): E;
-}
-
-export abstract class List<E> extends Collection<E> {
+export abstract class List<E> extends Collection<E> implements ListInterface<E> {
   abstract getAt(idx: number): E;
 
   getFirst() {
@@ -37,7 +34,7 @@ export abstract class List<E> extends Collection<E> {
 
   abstract offerAt(idx: number, item: E): boolean;
 
-  protected checkBounds(start: number, end: number) {
+  checkBounds(start: number, end: number) {
     this.checkBoundForAdd(start);
     this.checkBoundForAdd(end);
     if (start > end) {
@@ -45,11 +42,11 @@ export abstract class List<E> extends Collection<E> {
     }
   }
 
-  protected checkBound(idx: number) {
+  checkBound(idx: number) {
     if (idx < 0 || idx >= this.size()) throw new IndexOutOfBoundsException();
   }
 
-  protected checkBoundForAdd(idx: number) {
+  checkBoundForAdd(idx: number) {
     if (idx < 0 || idx > this.size()) throw new IndexOutOfBoundsException();
   }
 
@@ -154,7 +151,7 @@ export abstract class List<E> extends Collection<E> {
     };
   }
 
-  protected computeIteratorBounds(skip?: number, count?: number) {
+  computeIteratorBounds(skip?: number, count?: number) {
     skip ??= 0;
     this.checkBoundForAdd(skip);
     count ??= this.size() - skip;
@@ -172,7 +169,7 @@ export abstract class List<E> extends Collection<E> {
     return this.replaceIf(_ => true, mapper);
   }
 
-  protected computeReverseIteratorBounds(skip?: number, count?: number) {
+  computeReverseIteratorBounds(skip?: number, count?: number) {
     skip ??= 0;
     this.checkBoundForAdd(skip);
     const start = this.size() - 1 - skip;
@@ -204,7 +201,7 @@ export abstract class List<E> extends Collection<E> {
     this.replaceIf(_ => true, f);
   }
 
-  indexOfFirstOccurence(predicate: Predicate<E>): number {
+  indexOfFirstOccurrence(predicate: Predicate<E>): number {
     let idx = -1;
     for (const e of this) {
       ++idx;
@@ -214,10 +211,10 @@ export abstract class List<E> extends Collection<E> {
   }
 
   indexOf(e: E): number {
-    return this.indexOfFirstOccurence(x => equalsAny(e, x));
+    return this.indexOfFirstOccurrence(x => equalsAny(e, x));
   }
 
-  indexOfLastOccurence(predicate: Predicate<E>): number {
+  indexOfLastOccurrence(predicate: Predicate<E>): number {
     let idx = this.size();
     for (const e of this.reverseIterator()) {
       --idx;
@@ -227,7 +224,7 @@ export abstract class List<E> extends Collection<E> {
   }
 
   lastIndexOf(e: E): number {
-    return this.indexOfLastOccurence(x => equalsAny(e, x));
+    return this.indexOfLastOccurrence(x => equalsAny(e, x));
   }
 
   sort(): List<E>;
@@ -342,11 +339,11 @@ export abstract class List<E> extends Collection<E> {
     return this.removeFirstMatchingItem(predicate);
   }
 
-  removeFirstOccurence(item: E) {
+  removeFirstOccurrence(item: E) {
     return this.removeFirstMatchingItem(x => equalsAny(item, x)) != null;
   }
 
-  removeLastOccurence(item: E) {
+  removeLastOccurrence(item: E) {
     return this.removeLastMatchingItem(x => equalsAny(item, x)) != null;
   }
 
@@ -358,8 +355,15 @@ export abstract class List<E> extends Collection<E> {
 
   equals(other: unknown) {
     if (this === other) return true;
-    if (!(other instanceof List)) return false;
+    if (!isList(other)) return false;
     if (other.size() !== this.size()) return false;
-    return equalsIterable(this, other);
+    return equalsIterable(this.listIterator(), other.listIterator());
   }
+}
+
+function isList(obj: unknown): obj is ListInterface<unknown> {
+  if (!obj || typeof obj !== 'object') return false;
+  if (!objectHasFunction(obj, 'size')) return false;
+  if (!objectHasFunction(obj, 'listIterator')) return false;
+  return true;
 }

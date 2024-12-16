@@ -11,3 +11,6 @@ export * from './sorted_map';
 export * from './splay_tree_map';
 export * from './tree_map';
 export * from './trie_map';
+export * from './map_interface';
+export * from './sortedMapInterface';
+export * from './navigableMapInterface';

@@ -513,7 +513,7 @@ describe('LinkedList', () => {
   describe('removeFirstOccurence', () => {
     it('should remove the first occurence of 1', () => {
       const list = LinkedList.create({ initial: [1, 2, 1] });
-      expect(list.removeFirstOccurence(1)).to.be.true;
+      expect(list.removeFirstOccurrence(1)).to.be.true;
       expect(list.toArray()).to.deep.equal([2, 1]);
     });
   });
@@ -521,7 +521,7 @@ describe('LinkedList', () => {
   describe('removeLastOccurence', () => {
     it('should remove the last occurence of 1', () => {
       const list = LinkedList.create({ initial: [1, 2, 1] });
-      expect(list.removeLastOccurence(1)).to.be.true;
+      expect(list.removeLastOccurrence(1)).to.be.true;
       expect(list.toArray()).to.deep.equal([1, 2]);
     });
   });

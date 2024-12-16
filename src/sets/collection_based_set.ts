@@ -5,8 +5,8 @@ import { ArrayList } from '../lists';
 import { Constructor, extractOptions, WithCapacity } from '../utils';
 
 export abstract class CollectionBasedSet<E> extends ISet<E> {
-  private _delegate: Collection<E>;
-  constructor(delegate: Collection<E>) {
+  private readonly _delegate: Collection<E>;
+  protected constructor(delegate: Collection<E>) {
     super();
     this._delegate = delegate;
   }
@@ -38,7 +38,7 @@ export abstract class CollectionBasedSet<E> extends ISet<E> {
     return this._delegate.filter(predicate);
   }
 
-  clear() {
+  clear(): CollectionBasedSet<E> {
     this._delegate.clear();
     return this;
   }

@@ -1,6 +1,7 @@
 import { FluentIterator } from 'ts-fluent-iterators';
 import { AvlTreeMap } from './avl_tree_map';
-import { buildMap, MapEntry, MapInitializer } from './map';
+import { buildMap, MapInitializer } from './map';
+import { MapEntry } from './map_interface';
 import { SortedMap, SortedMapOptions } from './sorted_map';
 import { WithCapacity } from '../utils';
 
@@ -34,7 +35,7 @@ class TrieMapEntry<V> implements MapEntry<string, V> {
 export class TrieMap<V> extends SortedMap<string, V> {
   private root: TrieMapNode<V>;
   private _size = 0;
-  private caseSensitive: boolean;
+  private readonly caseSensitive: boolean;
 
   constructor(options?: TrieMapOptions) {
     super(options);
@@ -231,7 +232,7 @@ export class TrieMap<V> extends SortedMap<string, V> {
    *
    * Check if a given input string has a prefix in the Trie,
    * @param input The input string to check.
-   * @param pure if true check for an absloute prefix, meaning it's not a complete word. If false, it checks for absolute prefix and the word itself.
+   * @param pure if true check for an absolute prefix, meaning it's not a complete word. If false, it checks for absolute prefix and the word itself.
    * @returns {boolean} True if it's an absolute prefix in the Trie.
    */
   hasPrefix(input: string, pure: boolean = true): boolean {

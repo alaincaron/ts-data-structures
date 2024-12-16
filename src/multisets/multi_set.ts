@@ -1,4 +1,6 @@
-import { Collection, CollectionLike } from '../collections';
+import { MultiSetInterface, MultiSetLike } from './multi_set_interface';
+import { Collection } from '../collections';
+import { objectHasFunction } from '../collections/helpers';
 import {
   CapacityMixin,
   Constructor,
@@ -9,14 +11,13 @@ import {
   WithCapacity,
 } from '../utils';
 
-export type MultiSetLike<E> = CollectionLike<E> | MultiSet<E>;
-
 export interface MultiSetInitializer<E> {
   initial?: MultiSetLike<E>;
 }
 
-export abstract class MultiSet<E> extends Collection<E> {
+export abstract class MultiSet<E> extends Collection<E> implements MultiSetInterface<E> {
   abstract count(item: E): number;
+
   abstract clear(): MultiSet<E>;
 
   addCount(item: E, count: number): number {
@@ -49,7 +50,7 @@ export abstract class MultiSet<E> extends Collection<E> {
 
   equals(other: unknown) {
     if (this === other) return true;
-    if (!(other instanceof MultiSet)) return false;
+    if (!isMultiSet<E>(other)) return false;
     if (this.size() != other.size()) return false;
     for (const [e, count] of this.entries()) {
       if (other.count(e) !== count) return false;
@@ -58,6 +59,14 @@ export abstract class MultiSet<E> extends Collection<E> {
   }
 
   abstract clone(): MultiSet<E>;
+}
+
+function isMultiSet<E>(obj: unknown): obj is MultiSetInterface<E> {
+  if (!obj || typeof obj !== 'object') return false;
+  if (!objectHasFunction(obj, 'size')) return false;
+  if (!objectHasFunction(obj, 'entries')) return false;
+  if (!objectHasFunction(obj, 'count')) return false;
+  return true;
 }
 
 export function buildMultiSet<

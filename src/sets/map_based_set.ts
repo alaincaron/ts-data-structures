@@ -21,7 +21,7 @@ export abstract class MapBasedSet<E> extends ISet<E> {
     return this._delegate.capacity();
   }
 
-  clear() {
+  clear(): MapBasedSet<E> {
     this._delegate.clear();
     return this;
   }

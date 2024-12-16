@@ -1,5 +1,6 @@
 import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
-import { Queue, QueueIterator, QueueOptions } from './queue';
+import { Queue, QueueOptions } from './queue';
+import { QueueIterator } from './queue_interface';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { nextPowerOfTwo, qsort, WithCapacity } from '../utils';
 
@@ -24,7 +25,7 @@ export class PriorityQueue<E> extends Queue<E> {
     this.comparator = options?.comparator ?? Comparators.natural;
   }
 
-  static create<E>(initializer?: WithCapacity<PriorityQueueOptions<E> & CollectionInitializer<E>>): PriorityQueue<E> {
+  static create<E>(initializer?: WithCapacity<PriorityQueueInitializer<E>>): PriorityQueue<E> {
     return buildCollection<E, PriorityQueue<E>, PriorityQueueOptions<E>>(PriorityQueue, initializer);
   }
 
@@ -199,6 +200,7 @@ export class PriorityQueue<E> extends Queue<E> {
       },
     };
   }
+
   queueIterator(): QueueIterator<E> {
     return this.getQueueIterator(1);
   }

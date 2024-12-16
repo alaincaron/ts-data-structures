@@ -1,6 +1,6 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { buildMap, IMap } from './map';
-import { MapEntry, MapInitializer } from './map';
+import { buildMap, IMap, MapInitializer } from './map';
+import { MapEntry } from './map_interface';
 import { OverflowException, WithCapacity } from '../utils';
 
 export interface AdapterMapOptions<K, V> {

@@ -9,3 +9,6 @@ export * from './skip_list_map_multi_map';
 export * from './sorted_multi_map';
 export * from './splay_tree_multi_map';
 export * from './trie_multi_map';
+export * from './multi_map_interface';
+export * from './sorted_multi_map_interface';
+export * from './navigable_multi_map_interface';

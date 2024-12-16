@@ -6,7 +6,7 @@ interface MergeItem<A> {
   iterator: Iterator<A>;
 }
 
-export function* mergeIterators<A>(
+export function* merge_iterators<A>(
   iterators: IteratorGenerator<IteratorGenerator<A>>,
   comparator: Comparator<A> = Comparators.natural
 ): IterableIterator<A> {
@@ -31,5 +31,5 @@ export function mergeIteratorWith<A>(
   iterators: IteratorGenerator<IteratorGenerator<A>>,
   comparator: Comparator<A> = Comparators.natural
 ): Mapper<Iterator<A>, IterableIterator<A>> {
-  return (iterator: Iterator<A>) => mergeIterators(FluentIterator.from(iterators).append([iterator]), comparator);
+  return (iterator: Iterator<A>) => merge_iterators(FluentIterator.from(iterators).append([iterator]), comparator);
 }

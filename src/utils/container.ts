@@ -10,10 +10,42 @@ export interface ContainerOptions {
   capacity?: number;
 }
 
+export interface ContainerInterface {
+  size(): number;
+
+  /**
+   * Returns the capacity of this {@link Container}, i.e. the maximum
+   * number of elements it can contain.
+   *
+   * @returns The capacity of this {@link Container}
+   */
+  capacity(): number;
+
+  /**
+   * Returns `true` if this {@link Container} is empty, i.e., its size is `0`.
+   * @returns `true` if this {@link Container} is empty, `false` otherwise.
+   */
+  isEmpty(): boolean;
+
+  /**
+   * Returns `true` if this {@link Container} is full, i.e. its size is greater than or equal to is capacity.*
+   * @returns `true` if this {@link Container} is full, false otherwise.
+   */
+  isFull(): boolean;
+
+  /**
+   * Returns the number of elements that can be added to this
+   * {@link Container} without exceeding its `capacity`.
+   *
+   * @returns the number of elements that can be added to this {@link Container} without exceeding its `capacity`.
+   */
+  remaining(): number;
+}
+
 /**
  * A `Container` is an object that can contain objects.
  */
-export abstract class Container {
+export abstract class Container implements ContainerInterface {
   /**
    * Returns the number of items in this {@link Container}.
    * @returns the number of items in this {@link Container}.
@@ -22,7 +54,7 @@ export abstract class Container {
 
   /**
    * Returns the capacity of this {@link Container}, i.e. the maximum
-   * number of elements it can contains.
+   * number of elements it can contain.
    *
    * @returns The capacity of this {@link Container}
    */

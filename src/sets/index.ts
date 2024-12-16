@@ -13,3 +13,4 @@ export * from './sorted_map_based_set';
 export * from './sorted_set';
 export * from './splay_tree_set';
 export * from './trie_set';
+export * from './set_interface';

@@ -1,2 +1,2 @@
-export * from './mergeIterators';
+export * from './merge_iterators';
 export * from './windows';

@@ -1,4 +1,6 @@
 import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
+import { MapEntry, MapLike, OfferResult } from './map_interface';
+import { objectHasFunction } from '../collections/helpers';
 import {
   CapacityMixin,
   Constructor,
@@ -10,19 +12,6 @@ import {
   OverflowException,
   WithCapacity,
 } from '../utils';
-
-export interface MapEntry<K, V> {
-  get key(): K;
-  set value(v: V);
-  get value(): V;
-}
-
-export interface OfferResult<V> {
-  accepted: boolean;
-  previous?: V;
-}
-
-export type MapLike<K, V> = Map<K, V> | IMap<K, V> | Iterable<[K, V]>;
 
 export interface MapInitializer<K, V> {
   initial?: MapLike<K, V>;
@@ -161,14 +150,21 @@ export abstract class IMap<K, V> extends Container implements Iterable<[K, V]> {
 
   equals(other: unknown) {
     if (this === other) return true;
-    if (!(other instanceof IMap)) return false;
+    if (!isMap<K, V>(other)) return false;
     if (other.size() !== this.size()) return false;
-
     for (const [k, v] of this) {
       if (!equalsAny(v, other.get(k))) return false;
     }
     return true;
   }
+}
+
+function isMap<K, V>(obj: unknown): obj is IMap<K, V> {
+  if (!obj || typeof obj !== 'object') return false;
+  if (!objectHasFunction(obj, 'size')) return false;
+  if (!objectHasFunction(obj, 'toMap')) return false;
+  if (!objectHasFunction(obj, 'get')) return false;
+  return true;
 }
 
 export function buildMap<
@@ -184,7 +180,7 @@ export function buildMap<
 
   const initialElements = initializer.initial;
 
-  let options: any = undefined;
+  let options: any;
   if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
     options = { ...(initialElements.buildOptions() as Options), ...initializer };
   } else {

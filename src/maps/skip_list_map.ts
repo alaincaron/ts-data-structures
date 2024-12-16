@@ -1,5 +1,6 @@
 import { FluentIterator, iterator, Predicate } from 'ts-fluent-iterators';
-import { buildMap, MapEntry, MapInitializer } from './map';
+import { buildMap, MapInitializer } from './map';
+import { MapEntry } from './map_interface';
 import { NavigableMap } from './navigable_map';
 import { SortedMapOptions } from './sorted_map';
 import { DoubleLinkedList, WithCapacity } from '../utils';
@@ -17,7 +18,7 @@ export interface SkipListMapOptions<K> extends SortedMapOptions<K> {
 export class SkipListMap<K, V> extends NavigableMap<K, V> {
   private _layers: DoubleLinkedList<SkipListNode<K, V>>[];
   private _size: number = 0;
-  private probability: number;
+  private readonly probability: number;
 
   constructor(options?: SkipListMapOptions<K>) {
     super(options);

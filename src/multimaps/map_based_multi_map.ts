@@ -8,19 +8,14 @@ import { Constructor, OverflowException } from '../utils';
 export type WithCollectionFactory<Type, V> = Type & { collectionFactory?: Constructor<Collection<V>> };
 
 export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
-  private _size: number;
   private readonly collectionFactory: Constructor<Collection<V>>;
 
-  constructor(
+  protected constructor(
     protected readonly map: IMap<K, Collection<V>>,
     collectionFactory?: Constructor<Collection<V>>
   ) {
     super();
     this.collectionFactory = collectionFactory ?? (ArrayList as unknown as Constructor<Collection<V>>);
-    this._size = this.map
-      .valueIterator()
-      .map(c => c.size())
-      .collectTo(new SumCollector());
   }
 
   capacity(): number {
@@ -28,17 +23,19 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
   }
 
   size() {
-    return this._size;
+    return this.map
+      .valueIterator()
+      .map(c => c.size())
+      .collectTo(new SumCollector());
   }
 
-  protected getValues(k: K): Collection<V> | undefined {
+  getValues(k: K): Collection<V> | undefined {
     return this.map.get(k);
   }
 
   removeEntry(key: K, value: V): boolean {
     const values = this.getValues(key);
     if (values?.removeItem(value)) {
-      --this._size;
       if (values.isEmpty()) this.map.remove(key);
       return true;
     }
@@ -46,9 +43,7 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
   }
 
   removeKey(key: K): Collection<V> | undefined {
-    const e = this.map.remove(key);
-    if (e) this._size -= e.size();
-    return e;
+    return this.map.remove(key);
   }
 
   put(key: K, value: V): boolean {
@@ -62,7 +57,6 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
     if (!this.isFull()) {
       const result = values.add(value);
       if (values.isEmpty()) this.map.remove(key);
-      if (result) ++this._size;
       return result;
     }
 
@@ -75,7 +69,6 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
 
   clear() {
     this.map.clear();
-    this._size = 0;
     return this;
   }
 
@@ -83,11 +76,7 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
     const initial_size = this.size();
     const nbRemovedKeys = this.map.filterKeys(predicate);
     if (!nbRemovedKeys) return 0;
-    this._size = this.map
-      .valueIterator()
-      .map(c => c.size())
-      .collectTo(new SumCollector());
-    return initial_size - this._size;
+    return initial_size - this.size();
   }
 
   filterEntries(predicate: Predicate<[K, V]>): number {
@@ -97,12 +86,11 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
       .collectTo(new SumCollector());
     if (nbRemoved) {
       this.map.filterEntries(([_, c]) => !c.isEmpty());
-      this._size -= nbRemoved;
     }
     return nbRemoved;
   }
 
-  protected rawIterator(): IterableIterator<[K, Collection<V>]> {
+  partitions(): IterableIterator<[K, Collection<V>]> {
     return this.map.entries();
   }
 

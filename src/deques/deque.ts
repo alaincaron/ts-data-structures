@@ -1,13 +1,10 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { Queue, QueueIterator, QueueOptions } from '../queues';
+import { DequeInterface, DequeIterator } from './deque_interface';
+import { Queue, QueueOptions } from '../queues';
 import { equalsAny, OverflowException, UnderflowException } from '../utils';
 
-export interface DequeIterator<E> extends QueueIterator<E> {
-  setValue(item: E): E;
-}
-
-export abstract class Deque<E> extends Queue<E> {
-  constructor(options?: QueueOptions) {
+export abstract class Deque<E> extends Queue<E> implements DequeInterface<E> {
+  protected constructor(options?: QueueOptions) {
     super(options);
   }
 
@@ -26,7 +23,9 @@ export abstract class Deque<E> extends Queue<E> {
   }
 
   abstract offerFirst(item: E): boolean;
+
   abstract offerLast(item: E): boolean;
+
   offer(item: E): boolean {
     return this.offerLast(item);
   }
@@ -36,13 +35,14 @@ export abstract class Deque<E> extends Queue<E> {
   }
 
   abstract removeFirstMatchingItem(predicate: Predicate<E>): E | undefined;
+
   abstract removeLastMatchingItem(predicate: Predicate<E>): E | undefined;
 
-  removeFirstOccurence(item: E) {
+  removeFirstOccurrence(item: E) {
     return this.removeFirstMatchingItem(x => equalsAny(item, x)) != null;
   }
 
-  removeLastOccurence(item: E) {
+  removeLastOccurrence(item: E) {
     return this.removeLastMatchingItem(x => equalsAny(item, x)) != null;
   }
 
@@ -61,7 +61,9 @@ export abstract class Deque<E> extends Queue<E> {
   }
 
   abstract pollFirst(): E | undefined;
+
   abstract pollLast(): E | undefined;
+
   poll(): E | undefined {
     return this.pollFirst();
   }
@@ -76,7 +78,9 @@ export abstract class Deque<E> extends Queue<E> {
   }
 
   abstract peekFirst(): E | undefined;
+
   abstract peekLast(): E | undefined;
+
   peek(): E | undefined {
     return this.peekFirst();
   }
@@ -84,6 +88,7 @@ export abstract class Deque<E> extends Queue<E> {
   abstract reverseIterator(): IterableIterator<E>;
 
   abstract queueIterator(): DequeIterator<E>;
+
   abstract reverseQueueIterator(): DequeIterator<E>;
 
   abstract clone(): Deque<E>;

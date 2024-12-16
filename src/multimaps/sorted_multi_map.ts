@@ -1,14 +1,15 @@
 import { FlattenCollector, FluentIterator } from 'ts-fluent-iterators';
 import { MapBasedMultiMap } from './map_based_multi_map';
 import { WithCollectionFactory } from './map_based_multi_map';
+import { SortedMultiMapInterface } from './sorted_multi_map_interface';
 import { Collection } from '../collections';
 import { MapEntry, SortedMap, SortedMapOptions } from '../maps';
 import { Constructor } from '../utils';
 
 export type SortedMultiMapOptions<K, V> = WithCollectionFactory<SortedMapOptions<K>, V>;
 
-export abstract class SortedMultiMap<K, V> extends MapBasedMultiMap<K, V> {
-  constructor(map: SortedMap<K, Collection<V>>, collectionFactory?: Constructor<Collection<V>>) {
+export abstract class SortedMultiMap<K, V> extends MapBasedMultiMap<K, V> implements SortedMultiMapInterface<K, V> {
+  protected constructor(map: SortedMap<K, Collection<V>>, collectionFactory?: Constructor<Collection<V>>) {
     super(map, collectionFactory);
   }
 

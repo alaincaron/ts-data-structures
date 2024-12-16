@@ -1,4 +1,5 @@
 import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
+import { CollectionInterface } from './collection_interface';
 import { getSize } from './helpers';
 import { CollectionInitializer, CollectionLike } from './types';
 import {
@@ -17,7 +18,7 @@ import {
  * elements. Some collections allow duplicate elements and others do
  * not. Some are ordered and others unordered.
  */
-export abstract class Collection<E> extends Container implements Iterable<E> {
+export abstract class Collection<E> extends Container implements CollectionInterface<E> {
   /**
    * Returns `true` if this `Collection` contains the specified
    * `item`.  The comparison is done using {@link equalsAny}.
@@ -74,7 +75,7 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
 
   /**
    * Inserts an element if possible, without exceeding the `capacity`
-   * of this `Collection`.  Otherwise returning false.
+   * of this `Collection`, otherwise returning false.
    *
    * @param item the item to add to the `Collection`
    *
@@ -86,7 +87,7 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
   /**
    * Removes an item for which the `predicate` returns `true`.
    *
-   * @param predicate The predicate that is being evaluated for each elements.
+   * @param predicate The predicate that is being evaluated for each element.
    *
    * @returns the element removed from the `Collection` or `undefined`
    * if there are no items for which the `predicate` evaluated to
@@ -132,7 +133,7 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
 
   /**
    * Adds all the items of the `container` to this `Collection` if
-   * there is enough remaining capaacity.
+   * there is enough remaining capacity.
    *
    * @param container The container of items to add.
    *
@@ -154,7 +155,7 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
 
   /**
    * Adds as many items as possible of the `container` to this
-   * `Collection` as long there is remaining capaacity.  Items are
+   * `Collection` as long there is remaining capacity.  Items are
    * added one by one until all items are added or the `Collection` is
    * {@link Collection.isFull | full}.
    *
@@ -182,11 +183,11 @@ export abstract class Collection<E> extends Container implements Iterable<E> {
   abstract clear(): Collection<E>;
 
   /**
-   * Returns true if this `Collection` contains all of the elements in the specified `IteratorLike`.
+   * Returns true if this `Collection` contains all the elements in the specified `IteratorLike`.
    *
    * @param iteratorLike The items to be checked for containment in this `Collection`.
    *
-   * @returns true if this collection contains all of the elements in the specified `IteratorLike`
+   * @returns true if this collection contains all the elements in the specified `IteratorLike`
    */
   containsAll<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
     const iter = Iterators.toIterator(iteratorLike);

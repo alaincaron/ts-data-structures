@@ -1,8 +1,9 @@
-import { MapEntry } from './map';
+import { MapEntry } from './map_interface';
+import { NavigableMapInterface } from './navigableMapInterface';
 import { SortedMap, SortedMapOptions } from './sorted_map';
 
-export abstract class NavigableMap<K, V> extends SortedMap<K, V> {
-  constructor(options?: SortedMapOptions<K>) {
+export abstract class NavigableMap<K, V> extends SortedMap<K, V> implements NavigableMapInterface<K, V> {
+  protected constructor(options?: SortedMapOptions<K>) {
     super(options);
   }
 
@@ -35,4 +36,5 @@ export abstract class NavigableMap<K, V> extends SortedMap<K, V> {
   abstract pollLastEntry(): MapEntry<K, V> | undefined;
 
   abstract clone(): NavigableMap<K, V>;
+  abstract clear(): NavigableMap<K, V>;
 }

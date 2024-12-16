@@ -1,21 +1,16 @@
 import { FluentIterator, IteratorLike, Iterators } from 'ts-fluent-iterators';
+import { OverflowQueueStrategy, QueueInterface, QueueIterator } from './queue_interface';
 import { Collection, CollectionLike } from '../collections';
 import { getSize } from '../collections/helpers';
 import { hashIterableOrdered, OverflowException, UnderflowException, WithCapacity } from '../utils';
-
-export type OverflowQueueStrategy = 'throw' | 'overwrite' | 'discard';
 
 export interface QueueOptions {
   overflowStrategy?: OverflowQueueStrategy;
 }
 
-export interface QueueIterator<E> extends IterableIterator<E> {
-  remove(): E;
-}
-
-export abstract class Queue<E> extends Collection<E> {
+export abstract class Queue<E> extends Collection<E> implements QueueInterface<E> {
   private readonly _overflowStrategy: OverflowQueueStrategy;
-  constructor(options?: QueueOptions) {
+  protected constructor(options?: QueueOptions) {
     super();
     const overflowStrategy = options != null && typeof options === 'object' ? options.overflowStrategy : undefined;
     this._overflowStrategy = overflowStrategy ?? 'throw';
@@ -56,6 +51,7 @@ export abstract class Queue<E> extends Collection<E> {
 
   // removal
   abstract poll(): E | undefined;
+
   remove(): E {
     if (this.isEmpty()) throw new UnderflowException();
     return this.poll()!;

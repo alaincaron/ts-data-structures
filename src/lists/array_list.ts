@@ -1,6 +1,6 @@
 import { Comparator } from 'ts-fluent-iterators';
 import { BaseArrayList } from './base_array_list';
-import { ListIterator } from './list';
+import { ListIterator } from './list_interface';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { equalsIterable, WithCapacity } from '../utils';
 

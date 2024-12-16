@@ -12,7 +12,7 @@ export abstract class MapBasedMultiSet<E> extends MultiSet<E> {
   protected readonly map: IMap<E, Count>;
   private _size: number;
 
-  constructor(mapFactory: IMap<E, Count> | (new () => IMap<E, Count>)) {
+  protected constructor(mapFactory: IMap<E, Count> | (new () => IMap<E, Count>)) {
     super();
     if (typeof mapFactory === 'function') {
       this.map = new mapFactory();

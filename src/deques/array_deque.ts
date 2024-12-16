@@ -1,5 +1,6 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { Deque, DequeIterator } from './deque';
+import { Deque } from './deque';
+import { DequeIterator } from './deque_interface';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { QueueOptions } from '../queues';
 import { nextPowerOfTwo, WithCapacity } from '../utils';
@@ -11,14 +12,14 @@ import { nextPowerOfTwo, WithCapacity } from '../utils';
 const MIN_INITIAL_CAPACITY = 8;
 
 export class ArrayDeque<E> extends Deque<E> {
-  private elements: Array<E>;
+  private buffer: Array<E>;
   private head: number;
   private tail: number;
 
   constructor(options?: QueueOptions) {
     super(options);
     this.head = this.tail = 0;
-    this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
+    this.buffer = this.allocateBuffer(MIN_INITIAL_CAPACITY);
   }
 
   static create<E>(initializer?: WithCapacity<QueueOptions & CollectionInitializer<E>>): ArrayDeque<E> {
@@ -30,7 +31,7 @@ export class ArrayDeque<E> extends Deque<E> {
     return nextPowerOfTwo(numElements);
   }
 
-  private allocateElements(numElements: number) {
+  private allocateBuffer(numElements: number) {
     return new Array(this.nextArraySize(numElements));
   }
 
@@ -41,21 +42,21 @@ export class ArrayDeque<E> extends Deque<E> {
   private doubleBufferSize() {
     if (this.head !== this.tail) throw new Error('Assertion failed');
     const h = this.head;
-    const n = this.elements.length;
-    const r = this.elements.length - h;
+    const n = this.buffer.length;
+    const r = this.buffer.length - h;
     const newSize = n << 1;
     if (newSize <= 0) throw new Error('Sorry, deque too big');
     const a = new Array<E>(newSize);
-    for (let i = h; i < n; ++i) a[i - h] = this.elements[i];
-    for (let i = 0; i < h; ++i) a[i + r] = this.elements[i];
-    this.elements = a;
+    for (let i = h; i < n; ++i) a[i - h] = this.buffer[i];
+    for (let i = 0; i < h; ++i) a[i + r] = this.buffer[i];
+    this.buffer = a;
     this.head = 0;
     this.tail = n;
   }
 
   offerFirst(item: E): boolean {
     if (!this.isFull()) {
-      this.elements[(this.head = this.slot(this.head - 1))] = item;
+      this.buffer[(this.head = this.slot(this.head - 1))] = item;
       if (this.head === this.tail) this.doubleBufferSize();
       return true;
     }
@@ -64,7 +65,7 @@ export class ArrayDeque<E> extends Deque<E> {
 
   offerLast(item: E): boolean {
     if (!this.isFull()) {
-      this.elements[this.tail] = item;
+      this.buffer[this.tail] = item;
       if ((this.tail = this.slot(this.tail + 1)) === this.head) this.doubleBufferSize();
       return true;
     }
@@ -73,56 +74,56 @@ export class ArrayDeque<E> extends Deque<E> {
 
   pollFirst(): E | undefined {
     const h = this.head;
-    const result = this.elements[h];
+    const result = this.buffer[h];
     if (result == null) return undefined;
-    this.elements[h] = undefined!; // Must null out slot
+    this.buffer[h] = undefined!; // Must null out slot
     this.head = this.slot(h + 1);
     return result;
   }
 
   pollLast(): E | undefined {
     const t = this.slot(this.tail - 1);
-    const result = this.elements[t];
+    const result = this.buffer[t];
     if (result == null) return undefined;
-    this.elements[t] = undefined!;
+    this.buffer[t] = undefined!;
     this.tail = t;
     return result;
   }
 
   peekFirst(): E | undefined {
-    return this.elements[this.head];
+    return this.buffer[this.head];
   }
 
   peekLast(): E | undefined {
-    return this.elements[this.slot(this.tail - 1)];
+    return this.buffer[this.slot(this.tail - 1)];
   }
 
   // *** Collection Methods ***
 
   /**
-   * Returns the number of elements in this deque.
+   * Returns the number of buffer in this deque.
    *
-   * @return the number of elements in this deque
+   * @return the number of buffer in this deque
    */
   size(): number {
     return this.slot(this.tail - this.head);
   }
 
   /**
-   * Returns <tt>true</tt> if this deque contains no elements.
+   * Returns <tt>true</tt> if this deque contains no buffer.
    *
-   * @return <tt>true</tt> if this deque contains no elements
+   * @return <tt>true</tt> if this deque contains no buffer
    */
   isEmpty(): boolean {
     return this.head == this.tail;
   }
 
   /**
-   * Removes all of the elements from this deque.
+   * Removes all the buffer from this deque.
    * The deque will be empty after this call returns.
    */
   clear() {
-    this.elements = this.allocateElements(MIN_INITIAL_CAPACITY);
+    this.buffer = this.allocateBuffer(MIN_INITIAL_CAPACITY);
     this.head = this.tail = 0;
     return this;
   }
@@ -134,7 +135,7 @@ export class ArrayDeque<E> extends Deque<E> {
   *[Symbol.iterator](): IterableIterator<E> {
     let cursor = this.head;
     while (cursor !== this.tail) {
-      yield this.elements[cursor]!;
+      yield this.buffer[cursor]!;
       cursor = this.slot(cursor + 1);
     }
   }
@@ -143,7 +144,7 @@ export class ArrayDeque<E> extends Deque<E> {
     let cursor = this.tail;
     while (cursor !== this.head) {
       const idx = this.slot(cursor - 1);
-      yield this.elements[idx]!;
+      yield this.buffer[idx]!;
       cursor = idx;
     }
   }
@@ -151,9 +152,9 @@ export class ArrayDeque<E> extends Deque<E> {
   removeFirstMatchingItem(predicate: Predicate<E>): E | undefined {
     let cursor = this.head;
     while (cursor !== this.tail) {
-      const item = this.elements[cursor]!;
+      const item = this.buffer[cursor]!;
       if (predicate(item)) {
-        this.elements[cursor] = undefined!;
+        this.buffer[cursor] = undefined!;
         this.compact(cursor);
         return item;
       }
@@ -166,9 +167,9 @@ export class ArrayDeque<E> extends Deque<E> {
     let cursor = this.tail;
     while (cursor !== this.head) {
       const idx = this.slot(cursor - 1);
-      const item = this.elements[idx]!;
+      const item = this.buffer[idx]!;
       if (predicate(item)) {
-        this.elements[idx] = undefined!;
+        this.buffer[idx] = undefined!;
         this.compact(idx);
         return item;
       }
@@ -181,8 +182,8 @@ export class ArrayDeque<E> extends Deque<E> {
     let cursor = this.head;
     let count = 0;
     while (cursor !== this.tail) {
-      if (!predicate(this.elements[cursor]!)) {
-        this.elements[cursor] = undefined!;
+      if (!predicate(this.buffer[cursor]!)) {
+        this.buffer[cursor] = undefined!;
         ++count;
       }
       cursor = this.slot(cursor + 1);
@@ -192,18 +193,18 @@ export class ArrayDeque<E> extends Deque<E> {
   }
 
   private slot(idx: number) {
-    return idx & (this.elements.length - 1);
+    return idx & (this.buffer.length - 1);
   }
 
   private compact(cursor?: number): number {
     let shift = 0;
     cursor ??= this.head;
     while (cursor !== this.tail) {
-      if (this.elements[cursor] == null) {
+      if (this.buffer[cursor] == null) {
         ++shift;
       } else if (shift > 0) {
-        this.elements[this.slot(cursor - shift)] = this.elements[cursor];
-        this.elements[cursor] = undefined!;
+        this.buffer[this.slot(cursor - shift)] = this.buffer[cursor];
+        this.buffer[cursor] = undefined!;
       }
       cursor = this.slot(cursor + 1);
     }
@@ -216,12 +217,12 @@ export class ArrayDeque<E> extends Deque<E> {
     if (newSize < originalSize) newSize = originalSize;
     newSize = this.nextArraySize(newSize);
 
-    if (newSize == this.elements.length && this.head === 0) return;
+    if (newSize == this.buffer.length && this.head === 0) return;
     const tmp = this.toArray();
     this.tail = tmp.length;
     this.head = 0;
     tmp.length = newSize;
-    this.elements = tmp;
+    this.buffer = tmp;
   }
 
   private getQueueIterator(step: -1 | 1): DequeIterator<E> {
@@ -243,18 +244,18 @@ export class ArrayDeque<E> extends Deque<E> {
           cursor = this.slot(cursor + step);
           lastReturn = cursor;
         }
-        return { done: false, value: this.elements[lastReturn] };
+        return { done: false, value: this.buffer[lastReturn] };
       },
       setValue: (item: E) => {
         if (lastReturn === -1) throw new Error("Error invoking setValue: can't be invoked after remove");
-        const oldValue = this.elements[lastReturn];
-        this.elements[lastReturn] = item;
+        const oldValue = this.buffer[lastReturn];
+        this.buffer[lastReturn] = item;
         return oldValue;
       },
       remove: () => {
         if (lastReturn === -1) throw new Error('Error invoking remove: Can only be done once per iteration');
-        const value = this.elements[lastReturn];
-        this.elements[lastReturn] = undefined!;
+        const value = this.buffer[lastReturn];
+        this.buffer[lastReturn] = undefined!;
         if (lastReturn === this.head) {
           this.head = this.slot(lastReturn + 1);
           cursor = this.head;

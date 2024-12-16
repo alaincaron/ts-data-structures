@@ -1,6 +1,6 @@
 import { FlattenCollector, FluentIterator, Generators, iterator, Predicate } from 'ts-fluent-iterators';
+import { MultiMapInterface, MultiMapLike } from './multi_map_interface';
 import { Collection } from '../collections';
-import { MapLike } from '../maps';
 import {
   CapacityMixin,
   Constructor,
@@ -9,37 +9,18 @@ import {
   equalsAny,
   extractOptions,
   hashIterableUnordered,
-  OverflowException,
   WithCapacity,
 } from '../utils';
-
-export type MultiMapLike<K, V> = MapLike<K, V> | MultiMap<K, V>;
 
 export interface MultiMapInitializer<K, V> {
   initial?: MultiMapLike<K, V>;
 }
 
-export abstract class MultiMap<K, V> extends Container implements Iterable<[K, V]> {
-  get(k: K): Collection<V> | undefined {
-    const values = this.getValues(k);
-    return values && values.clone();
-  }
-
-  protected abstract getValues(k: K): Collection<V> | undefined;
+export abstract class MultiMap<K, V> extends Container implements MultiMapInterface<K, V> {
+  abstract getValues(k: K): Collection<V> | undefined;
 
   abstract removeEntry(key: K, value: V): boolean;
   abstract removeKey(key: K): Collection<V> | undefined;
-
-  protected overflowHandler(_key: K, _value: V): boolean {
-    return false;
-  }
-
-  protected handleOverflow(key: K, value: V): boolean {
-    if (!this.isFull()) return false;
-    if (this.overflowHandler(key, value)) return true;
-    if (this.isFull()) throw new OverflowException();
-    return false;
-  }
 
   offer(key: K, value: V) {
     if (this.isFull()) return false;
@@ -81,40 +62,36 @@ export abstract class MultiMap<K, V> extends Container implements Iterable<[K, V
     return this.filterEntries(([_, v]) => predicate(v));
   }
 
-  protected abstract rawIterator(): IterableIterator<[K, Collection<V>]>;
-
   *keys(): IterableIterator<K> {
-    for (const [k, _] of this.rawIterator()) {
+    for (const [k, _] of this.partitions()) {
       yield k;
     }
   }
 
   *values(): IterableIterator<V> {
-    for (const [_, v] of this.rawIterator()) {
+    for (const [_, v] of this.partitions()) {
       yield* v;
     }
   }
 
   *entries(): IterableIterator<[K, V]> {
-    for (const [k, values] of this.rawIterator()) {
+    for (const [k, values] of this.partitions()) {
       for (const v of values) {
         yield [k, v];
       }
     }
   }
 
-  *partitions(): IterableIterator<[K, Collection<V>]> {
-    for (const [k, values] of this.rawIterator()) {
-      yield [k, values.clone()];
-    }
-  }
+  abstract partitions(): IterableIterator<[K, Collection<V>]>;
 
   keyIterator(): FluentIterator<K> {
-    return new FluentIterator(this.rawIterator()).map(([k, _]) => k);
+    return this.partitionIterator().map(([k, _]) => k);
   }
 
   valueIterator(): FluentIterator<V> {
-    return new FluentIterator(this.rawIterator()).map(([_, values]) => values).collectTo(new FlattenCollector());
+    return this.partitionIterator()
+      .map(([_, values]) => values)
+      .collectTo(new FlattenCollector());
   }
 
   partitionIterator(): FluentIterator<[K, Collection<V>]> {
@@ -122,7 +99,7 @@ export abstract class MultiMap<K, V> extends Container implements Iterable<[K, V
   }
 
   entryIterator(): FluentIterator<[K, V]> {
-    return new FluentIterator(this.rawIterator())
+    return this.partitionIterator()
       .map(([k, values]) => iterator(Generators.repeat(_ => k)).zip(values))
       .collectTo(new FlattenCollector());
   }
@@ -140,7 +117,7 @@ export abstract class MultiMap<K, V> extends Container implements Iterable<[K, V
   abstract clone(): MultiMap<K, V>;
 
   hashCode() {
-    return hashIterableUnordered(this.rawIterator());
+    return hashIterableUnordered(this.partitions());
   }
 
   equals(other: unknown) {
@@ -148,7 +125,7 @@ export abstract class MultiMap<K, V> extends Container implements Iterable<[K, V
     if (!(other instanceof MultiMap)) return false;
     if (other.size() !== this.size()) return false;
 
-    for (const [k, values] of this.rawIterator()) {
+    for (const [k, values] of this.partitions()) {
       if (!equalsAny(values, other.getValues(k))) return false;
     }
     return true;

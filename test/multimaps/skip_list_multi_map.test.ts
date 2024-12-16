@@ -26,8 +26,8 @@ describe('SkipListMultiMap', () => {
     it('should initialize with the provided Map', () => {
       const map = SkipListMultiMap.create({ initial: new Map().set('a', 1).set('b', 2) });
       expect(map.size()).equal(2);
-      expect(map.get('a')?.equals(list(1))).to.be.true;
-      expect(map.get('b')?.equals(list(2))).to.be.true;
+      expect(map.getValues('a')?.equals(list(1))).to.be.true;
+      expect(map.getValues('b')?.equals(list(2))).to.be.true;
     });
 
     it('should initialize with the provided IMap', () => {
@@ -36,8 +36,8 @@ describe('SkipListMultiMap', () => {
       map1.put('b', 2);
       const map = SkipListMultiMap.create({ initial: map1 });
       expect(map.size()).equal(2);
-      expect(map.get('a')?.equals(list(1))).to.be.true;
-      expect(map.get('b')?.equals(list(2))).to.be.true;
+      expect(map.getValues('a')?.equals(list(1))).to.be.true;
+      expect(map.getValues('b')?.equals(list(2))).to.be.true;
     });
 
     it('should initialize with the provided Iterable', () => {
@@ -50,24 +50,24 @@ describe('SkipListMultiMap', () => {
         ] as Array<[string, number]>,
       });
       expect(map.size()).equal(4);
-      expect(map.get('a')?.equals(list(1, 3))).to.be.true;
-      expect(map.get('b')?.equals(list(2, 4))).to.be.true;
+      expect(map.getValues('a')?.equals(list(1, 3))).to.be.true;
+      expect(map.getValues('b')?.equals(list(2, 4))).to.be.true;
     });
   });
 
-  describe('put/get', () => {
+  describe('put/getValues', () => {
     it('should return undefined if key is newly added', () => {
       const map = new SkipListMultiMap();
       expect(map.put('foo', 4)).to.be.true;
       expect(map.size()).equal(1);
-      expect(map.get('foo')?.equals(list(4))).to.be.true;
+      expect(map.getValues('foo')?.equals(list(4))).to.be.true;
     });
     it('should return the old value if key already present', () => {
       const map = new SkipListMultiMap();
       expect(map.put('foo', 4)).to.be.true;
       expect(map.put('foo', 2)).to.be.true;
       expect(map.size()).equal(2);
-      expect(map.get('foo')?.equals(list(4, 2))).to.be.true;
+      expect(map.getValues('foo')?.equals(list(4, 2))).to.be.true;
     });
 
     it('should throw if adding a new element and map is full', () => {
@@ -80,18 +80,18 @@ describe('SkipListMultiMap', () => {
   });
 
   describe('offer', () => {
-    it('should return true if key is accpeted and added', () => {
+    it('should return true if key is accepted and added', () => {
       const map = new SkipListMultiMap();
       expect(map.offer('foo', 4)).to.be.true;
       expect(map.size()).equal(1);
-      expect(map.get('foo')?.equals(list(4))).to.be.true;
+      expect(map.getValues('foo')?.equals(list(4))).to.be.true;
     });
     it('should return true if key already present', () => {
       const map = new SkipListMultiMap();
       expect(map.put('foo', 4)).to.be.true;
       expect(map.offer('foo', 2)).to.be.true;
       expect(map.size()).equal(2);
-      expect(map.get('foo')?.equals(list(4, 2))).to.be.true;
+      expect(map.getValues('foo')?.equals(list(4, 2))).to.be.true;
     });
 
     it('should return false if map is full', () => {

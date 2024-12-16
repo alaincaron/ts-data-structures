@@ -1,4 +1,5 @@
-import { List, ListIterator } from './list';
+import { List } from './list';
+import { ListIterator } from './list_interface';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { DoubleLinkedList, UnderflowException, WithCapacity } from '../utils';
 

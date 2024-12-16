@@ -295,7 +295,7 @@ describe('ArrayDeque', () => {
       expect(deque.isEmpty()).to.be.false;
       expect(deque.size()).equal(3);
     });
-    it('should remove first occurence and return true if item is present', () => {
+    it('should remove first occurrence and return true if item is present', () => {
       const arr = [1, 0, 2, 0, 3];
       const deque = ArrayDeque.create({ initial: arr });
       expect(deque.removeItem(0)).to.be.true;
@@ -462,35 +462,35 @@ describe('ArrayDeque', () => {
     });
   });
 
-  describe('removeFirstOccurence', () => {
-    it('should remove the first occurence only', () => {
+  describe('removeFirstOccurrence', () => {
+    it('should remove the first occurrence only', () => {
       const deque = ArrayDeque.create({ initial: [1, 3, 2, 3] });
-      expect(deque.removeFirstOccurence(3)).to.be.true;
+      expect(deque.removeFirstOccurrence(3)).to.be.true;
       expect(deque.toArray()).to.deep.equal([1, 2, 3]);
     });
     it('should not remove any element if not present', () => {
       const deque = ArrayDeque.create({ initial: [1, 2, 3] });
-      expect(deque.removeFirstOccurence(4)).to.be.false;
+      expect(deque.removeFirstOccurrence(4)).to.be.false;
       expect(deque.toArray()).to.deep.equal([1, 2, 3]);
     });
   });
 
-  describe('removeLastOccurence', () => {
-    it('should remove the last occurence only', () => {
+  describe('removeLastOccurrence', () => {
+    it('should remove the last occurrence only', () => {
       const deque = ArrayDeque.create({ initial: [1, 2, 3, 2] });
-      expect(deque.removeLastOccurence(2)).to.be.true;
+      expect(deque.removeLastOccurrence(2)).to.be.true;
       expect(deque.toArray()).to.deep.equal([1, 2, 3]);
     });
     it('should not remove any element if not present', () => {
       const deque = ArrayDeque.create({ initial: [1, 2, 3] });
-      expect(deque.removeLastOccurence(4)).to.be.false;
+      expect(deque.removeLastOccurrence(4)).to.be.false;
       expect(deque.toArray()).to.deep.equal([1, 2, 3]);
     });
   });
 
   describe('resize', () => {
     function getInternalSize<E>(deque: ArrayDeque<E>) {
-      const buffer = (deque as any).elements;
+      const buffer = (deque as any).buffer;
       return buffer.length;
     }
     it('should not modify the length of internal array is newSize not greater  than current size', () => {

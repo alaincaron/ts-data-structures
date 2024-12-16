@@ -1,14 +1,16 @@
 import { Comparator, Comparators, FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { IMap, MapEntry } from './map';
+import { IMap } from './map';
+import { MapEntry } from './map_interface';
+import { SortedMapInterface } from './sortedMapInterface';
 
 export interface SortedMapOptions<K> {
   comparator?: Comparator<K>;
 }
 
-export abstract class SortedMap<K, V> extends IMap<K, V> {
+export abstract class SortedMap<K, V> extends IMap<K, V> implements SortedMapInterface<K, V> {
   public readonly comparator: Comparator<K>;
 
-  constructor(options?: SortedMapOptions<K>) {
+  protected constructor(options?: SortedMapOptions<K>) {
     super();
     this.comparator = options?.comparator ?? Comparators.natural;
   }
@@ -54,6 +56,8 @@ export abstract class SortedMap<K, V> extends IMap<K, V> {
   }
 
   abstract reverseEntryIterator(): FluentIterator<MapEntry<K, V>>;
+  abstract clear(): SortedMap<K, V>;
+  abstract clone(): SortedMap<K, V>;
 
   reverseKeyIterator() {
     return this.reverseEntryIterator().map(e => e.key);
@@ -66,6 +70,4 @@ export abstract class SortedMap<K, V> extends IMap<K, V> {
   *reverseEntries(): IterableIterator<[K, V]> {
     for (const e of this.reverseEntryIterator()) yield [e.key, e.value];
   }
-
-  abstract clone(): SortedMap<K, V>;
 }

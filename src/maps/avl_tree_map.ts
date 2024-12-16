@@ -197,7 +197,7 @@ export class AvlTreeMap<K, V> extends TreeMap<K, V> {
     }
 
     const c = this.comparator(key, parent.left.key);
-    let result: AvlNode<K, V> | undefined = undefined;
+    let result: AvlNode<K, V> | undefined;
 
     if (c < 0) {
       result = this.insertLeft(parent.left, key, value);
@@ -227,7 +227,7 @@ export class AvlTreeMap<K, V> extends TreeMap<K, V> {
     }
 
     const c = this.comparator(key, parent.right.key);
-    let result: AvlNode<K, V> | undefined = undefined;
+    let result: AvlNode<K, V> | undefined;
 
     if (c < 0) {
       result = this.insertLeft(parent.right, key, value);
@@ -336,7 +336,7 @@ export class AvlTreeMap<K, V> extends TreeMap<K, V> {
       return undefined;
     }
 
-    let newRoot: AvlNode<K, V> | undefined = undefined;
+    let newRoot: AvlNode<K, V> | undefined;
     const leftHeight = getHeight(root.left);
     const rightHeight = getHeight(root.right);
 

@@ -3,7 +3,7 @@ import { SortedMapBasedSet } from './sorted_map_based_set';
 import { NavigableMap } from '../maps/navigable_map';
 
 export abstract class NavigableMapBasedSet<E> extends SortedMapBasedSet<E> implements NavigableSet<E> {
-  constructor(delegate: NavigableMap<E, boolean>) {
+  protected constructor(delegate: NavigableMap<E, boolean>) {
     super(delegate);
   }
 

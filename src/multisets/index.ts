@@ -9,3 +9,5 @@ export * from './avl_tree_multi_set';
 export * from './splay_tree_multi_set';
 export * from './skip_list_multi_set';
 export * from './trie_multi_set';
+export * from './multi_set_interface';
+export * from './sorted_multi_set_interface';

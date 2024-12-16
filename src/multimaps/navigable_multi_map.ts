@@ -1,10 +1,11 @@
+import { NavigableMultiMapInterface } from './navigable_multi_map_interface';
 import { SortedMultiMap } from './sorted_multi_map';
 import { Collection } from '../collections';
 import { MapEntry, NavigableMap } from '../maps';
 import { Constructor } from '../utils';
 
-export abstract class NavigableMultiMap<K, V> extends SortedMultiMap<K, V> {
-  constructor(map: NavigableMap<K, Collection<V>>, collectionFactory?: Constructor<Collection<V>>) {
+export abstract class NavigableMultiMap<K, V> extends SortedMultiMap<K, V> implements NavigableMultiMapInterface<K, V> {
+  protected constructor(map: NavigableMap<K, Collection<V>>, collectionFactory?: Constructor<Collection<V>>) {
     super(map, collectionFactory);
   }
 

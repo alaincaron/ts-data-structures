@@ -3,7 +3,7 @@ import { List } from './list';
 import { bsearch, insertSorted, parseArgs, qsort, SearchOptions, shuffle, UnderflowException } from '../utils';
 
 export abstract class BaseArrayList<E> extends List<E> {
-  constructor(protected readonly elements: Array<E>) {
+  protected constructor(protected readonly elements: Array<E>) {
     super();
   }
 
