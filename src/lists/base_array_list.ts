@@ -123,7 +123,7 @@ export abstract class BaseArrayList<E> extends List<E> {
     let shift = 0;
     cursor ??= 0;
     while (cursor < this.size()) {
-      if (this.elements[cursor] == null) {
+      if (this.elements[cursor] === undefined) {
         ++shift;
       } else if (shift > 0) {
         this.elements[cursor - shift] = this.elements[cursor];

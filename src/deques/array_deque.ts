@@ -75,7 +75,7 @@ export class ArrayDeque<E> extends Deque<E> {
   pollFirst(): E | undefined {
     const h = this.head;
     const result = this.buffer[h];
-    if (result == null) return undefined;
+    if (result === undefined) return undefined;
     this.buffer[h] = undefined!; // Must null out slot
     this.head = this.slot(h + 1);
     return result;
@@ -84,7 +84,7 @@ export class ArrayDeque<E> extends Deque<E> {
   pollLast(): E | undefined {
     const t = this.slot(this.tail - 1);
     const result = this.buffer[t];
-    if (result == null) return undefined;
+    if (result === undefined) return undefined;
     this.buffer[t] = undefined!;
     this.tail = t;
     return result;
@@ -154,8 +154,7 @@ export class ArrayDeque<E> extends Deque<E> {
     while (cursor !== this.tail) {
       const item = this.buffer[cursor]!;
       if (predicate(item)) {
-        this.buffer[cursor] = undefined!;
-        this.compact(cursor);
+        this.removeAtCursor(cursor);
         return item;
       }
       cursor = this.slot(cursor + 1);
@@ -169,8 +168,7 @@ export class ArrayDeque<E> extends Deque<E> {
       const idx = this.slot(cursor - 1);
       const item = this.buffer[idx]!;
       if (predicate(item)) {
-        this.buffer[idx] = undefined!;
-        this.compact(idx);
+        this.removeAtCursor(idx);
         return item;
       }
       cursor = idx;
@@ -196,11 +194,12 @@ export class ArrayDeque<E> extends Deque<E> {
     return idx & (this.buffer.length - 1);
   }
 
-  private compact(cursor?: number): number {
+  private compact() {
     let shift = 0;
-    cursor ??= this.head;
+    while (this.head !== this.tail && this.buffer[this.head] === undefined) this.head = this.slot(this.head + 1);
+    let cursor = this.head;
     while (cursor !== this.tail) {
-      if (this.buffer[cursor] == null) {
+      if (this.buffer[cursor] === undefined) {
         ++shift;
       } else if (shift > 0) {
         this.buffer[this.slot(cursor - shift)] = this.buffer[cursor];
@@ -209,7 +208,6 @@ export class ArrayDeque<E> extends Deque<E> {
       cursor = this.slot(cursor + 1);
     }
     this.tail = this.slot(cursor - shift);
-    return shift;
   }
 
   resize(newSize = 0) {
@@ -255,18 +253,48 @@ export class ArrayDeque<E> extends Deque<E> {
       remove: () => {
         if (lastReturn === -1) throw new Error('Error invoking remove: Can only be done once per iteration');
         const value = this.buffer[lastReturn];
-        this.buffer[lastReturn] = undefined!;
-        if (lastReturn === this.head) {
-          this.head = this.slot(lastReturn + 1);
-          cursor = this.head;
-        } else {
-          this.compact(lastReturn);
-          cursor = lastReturn;
-        }
+        cursor = this.updateCursorAfterRemoval(lastReturn, this.removeAtCursor(lastReturn), step);
         lastReturn = -1;
         return value;
       },
     };
+  }
+
+  removeAtCursor(cursor: number) {
+    const left = cursor - this.head + 1;
+    const right = this.tail - cursor;
+    if (left <= right) {
+      while (cursor != this.head) {
+        const new_cursor = this.slot(cursor - 1);
+        this.buffer[cursor] = this.buffer[new_cursor];
+        cursor = new_cursor;
+      }
+      this.buffer[cursor] = undefined!;
+      this.head = this.slot(this.head + 1);
+      return 'left';
+    } else {
+      while (cursor !== this.tail) {
+        const new_cursor = this.slot(cursor + 1);
+        this.buffer[cursor] = this.buffer[new_cursor];
+        cursor = new_cursor;
+      }
+      this.tail = this.slot(this.tail - 1);
+      this.buffer[this.tail] = undefined!;
+      return 'right';
+    }
+  }
+
+  private updateCursorAfterRemoval(lastReturn: number, partition: 'left' | 'right', step: -1 | 1): number {
+    if (partition === 'left') {
+      if (step === 1) {
+        return lastReturn === this.slot(this.head - 1) ? this.head : this.slot(lastReturn + 1);
+      }
+      return this.slot(lastReturn + 1);
+    }
+    if (step === 1) {
+      return lastReturn;
+    }
+    return lastReturn === this.slot(this.tail + 1) ? this.tail : lastReturn;
   }
 
   queueIterator() {

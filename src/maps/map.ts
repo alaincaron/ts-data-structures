@@ -174,7 +174,7 @@ export function buildMap<
   Options extends object = object,
   Initializer extends MapInitializer<K, V> = MapInitializer<K, V>,
 >(factory: Constructor<M, [Options | undefined]>, initializer?: WithCapacity<Options & Initializer>): M {
-  if (initializer?.capacity == null && initializer?.initial == null) {
+  if (initializer?.capacity === undefined && initializer?.initial === undefined) {
     return new factory(initializer);
   }
 

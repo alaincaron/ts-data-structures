@@ -106,7 +106,7 @@ export class LinkedList<E> extends List<E> {
     advance: (cursor: LinkedListEntry<E>) => LinkedListEntry<E>
   ): ListIterator<E> {
     let cursor = this.getEntryAt(start);
-    let lastResult: LinkedListEntry<E> | null = null;
+    let lastResult: LinkedListEntry<E> | undefined;
     return {
       [Symbol.iterator]() {
         return this;
@@ -122,15 +122,15 @@ export class LinkedList<E> extends List<E> {
         return { done: false, value };
       },
       remove: () => {
-        if (lastResult === null) throw new Error('Error invoking remove: Can only be done once per iteration');
+        if (lastResult === undefined) throw new Error('Error invoking remove: Can only be done once per iteration');
         this.linkedList.remove(lastResult);
         const value = lastResult.value;
-        lastResult = null;
+        lastResult = undefined;
         --this._size;
         return value;
       },
       setValue: (newValue: E) => {
-        if (lastResult === null) throw new Error("Error invoking setValue: can't be invoked after remove");
+        if (lastResult === undefined) throw new Error("Error invoking setValue: can't be invoked after remove");
         const value = lastResult.value;
         lastResult.value = newValue;
         return value;

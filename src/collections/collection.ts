@@ -297,7 +297,7 @@ export function buildCollection<
   Options extends object = object,
   Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
 >(factory: Constructor<C, [Options | undefined]>, initializer?: WithCapacity<Options & Initializer>): C {
-  if (initializer?.capacity == null && initializer?.initial == null) return new factory(initializer);
+  if (initializer?.capacity === undefined && initializer?.initial === undefined) return new factory(initializer);
 
   const initialElements = initializer.initial;
 

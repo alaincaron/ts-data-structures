@@ -91,7 +91,7 @@ const BUFFER_TYPES = new Set([
 ]);
 
 export function hashAny(x: any): number {
-  if (x == null) return 0;
+  if (x === null || x === undefined) return 0;
   if (x.hashCode === 'function') return x.hashCode();
   switch (typeof x) {
     case 'string':

@@ -53,13 +53,13 @@ export class AdapterMap<K, V> extends IMap<K, V> {
 
   protected getEntry(key: K): MapEntry<K, V> | undefined {
     const value = this._delegate.get(key);
-    if (value == null) return undefined;
+    if (value === undefined) return undefined;
     return new AdapterMapEntry(this._delegate, key, value);
   }
 
   put(key: K, value: V): V | undefined {
     const old_value = this._delegate.get(key);
-    if (old_value == null && this.isFull()) throw new OverflowException();
+    if (old_value === undefined && this.isFull()) throw new OverflowException();
     this._delegate.set(key, value);
     return old_value;
   }

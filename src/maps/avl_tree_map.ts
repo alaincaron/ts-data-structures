@@ -81,7 +81,7 @@ function rightBalance<K, V>(root: AvlNode<K, V>): AvlNode<K, V> {
 }
 
 function rightMost<K, V>(root: AvlNode<K, V>): AvlNode<K, V> {
-  if (root.right == null) {
+  if (!root.right) {
     return root;
   }
 
@@ -98,7 +98,7 @@ function rightMost<K, V>(root: AvlNode<K, V>): AvlNode<K, V> {
 }
 
 function leftMost<K, V>(root: AvlNode<K, V>): AvlNode<K, V> {
-  if (root.left == null) {
+  if (!root.left) {
     return root;
   }
 
