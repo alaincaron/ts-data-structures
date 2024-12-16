@@ -273,10 +273,11 @@ export class ArrayDeque<E> extends Deque<E> {
       this.head = this.slot(this.head + 1);
       return 'left';
     } else {
-      while (cursor !== this.tail) {
-        const new_cursor = this.slot(cursor + 1);
+      let new_cursor = this.slot(cursor + 1);
+      while (new_cursor !== this.tail) {
         this.buffer[cursor] = this.buffer[new_cursor];
         cursor = new_cursor;
+        new_cursor = this.slot(cursor + 1);
       }
       this.tail = this.slot(this.tail - 1);
       this.buffer[this.tail] = undefined!;
@@ -291,10 +292,7 @@ export class ArrayDeque<E> extends Deque<E> {
       }
       return this.slot(lastReturn + 1);
     }
-    if (step === 1) {
-      return lastReturn;
-    }
-    return lastReturn === this.slot(this.tail + 1) ? this.tail : lastReturn;
+    return lastReturn;
   }
 
   queueIterator() {

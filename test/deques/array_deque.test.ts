@@ -526,6 +526,20 @@ describe('ArrayDeque', () => {
       expect(i).equal(a.length);
       expect(deque.size()).equal(0);
     });
+    it('should remove all even elements', () => {
+      const deque = ArrayDeque.create<number>({ initial: { length: 251, seed: i => i } });
+      const iterator = deque.queueIterator();
+      let last = -1;
+      for (;;) {
+        const item = iterator.next();
+        if (item.done) break;
+        const value = item.value;
+        expect(value).equal(last + 1);
+        if (value % 2 === 0) expect(iterator.remove()).equal(value);
+        last = value;
+      }
+      expect(deque.toArray()).to.deep.equal(Array.from({ length: 125 }, (_, i) => 2 * i + 1));
+    });
     it('should set value of elements in the right order', () => {
       const a = [1, 2, 3, 2];
       const deque = ArrayDeque.create({ initial: a });
@@ -579,6 +593,21 @@ describe('ArrayDeque', () => {
       expect(i).equal(a.length);
       expect(deque.size()).equal(0);
     });
+    it('should remove all even elements', () => {
+      const deque = ArrayDeque.create<number>({ initial: { length: 251, seed: i => i } });
+      const iterator = deque.reverseQueueIterator();
+      let last = 251;
+      for (;;) {
+        const item = iterator.next();
+        if (item.done) break;
+        const value = item.value;
+        expect(value).equal(last - 1);
+        if (value % 2 === 0) expect(iterator.remove()).equal(value);
+        last = value;
+      }
+      expect(deque.toArray()).to.deep.equal(Array.from({ length: 125 }, (_, i) => 2 * i + 1));
+    });
+
     it('should set value of elements in the right order', () => {
       const a = [2, 3, 2, 1];
       const deque = ArrayDeque.create({ initial: a });
