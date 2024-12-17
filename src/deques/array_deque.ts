@@ -1,6 +1,6 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { Deque } from './deque';
-import { DequeIterator } from './deque_interface';
+import { AbstractDeque } from './abstract_deque';
+import { DequeIterator } from './deque';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { QueueOptions } from '../queues';
 import { nextPowerOfTwo, WithCapacity } from '../utils';
@@ -11,7 +11,7 @@ import { nextPowerOfTwo, WithCapacity } from '../utils';
  */
 const MIN_INITIAL_CAPACITY = 8;
 
-export class ArrayDeque<E> extends Deque<E> {
+export class ArrayDeque<E> extends AbstractDeque<E> {
   private buffer: Array<E>;
   private head: number;
   private tail: number;

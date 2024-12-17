@@ -1,7 +1,8 @@
 import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
-import { MapEntry, MapLike, OfferResult } from './map_interface';
+import { IMap, MapEntry, MapLike, OfferResult } from './map_interface';
 import { objectHasFunction } from '../collections/helpers';
 import {
+  buildOptions,
   CapacityMixin,
   Constructor,
   Container,
@@ -17,7 +18,7 @@ export interface MapInitializer<K, V> {
   initial?: MapLike<K, V>;
 }
 
-export abstract class IMap<K, V> extends Container implements Iterable<[K, V]> {
+export abstract class AbstractMap<K, V> extends Container implements IMap<K, V> {
   protected abstract getEntry(key: K): MapEntry<K, V> | undefined;
 
   get(key: K): V | undefined {
@@ -82,7 +83,7 @@ export abstract class IMap<K, V> extends Container implements Iterable<[K, V]> {
     }
   }
 
-  abstract clear(): IMap<K, V>;
+  abstract clear(): AbstractMap<K, V>;
 
   *keys(): IterableIterator<K> {
     for (const e of this.entryIterator()) yield e.key;
@@ -108,7 +109,7 @@ export abstract class IMap<K, V> extends Container implements Iterable<[K, V]> {
     }
   }
 
-  replaceValueIf(predicate: Predicate<[K, V]>, mapper: Mapper<V, V>) {
+  replaceValueIf(predicate: Predicate<[K, V]>, mapper: Mapper<V, V>): AbstractMap<K, V> {
     this.entryIterator()
       .filter(e => predicate([e.key, e.value]))
       .forEach(e => (e.value = mapper(e.value)));
@@ -120,19 +121,19 @@ export abstract class IMap<K, V> extends Container implements Iterable<[K, V]> {
     return this;
   }
 
-  mapValues<V2>(mapper: Mapper<V, V2>): IMap<K, V2> {
-    const result = this.clone() as IMap<K, unknown>;
+  mapValues<V2>(mapper: Mapper<V, V2>): AbstractMap<K, V2> {
+    const result = this.clone() as AbstractMap<K, unknown>;
     result.entryIterator().forEach(e => (e.value = mapper(e.value as V)));
-    return result as IMap<K, V2>;
+    return result as AbstractMap<K, V2>;
   }
 
   toMap() {
     return new Map(this);
   }
 
-  abstract clone(): IMap<K, V>;
+  abstract clone(): AbstractMap<K, V>;
 
-  [Symbol.iterator](): IterableIterator<[K, V]> {
+  [Symbol.iterator](): Iterator<[K, V]> {
     return this.entries();
   }
 
@@ -180,12 +181,7 @@ export function buildMap<
 
   const initialElements = initializer.initial;
 
-  let options: any;
-  if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-    options = { ...(initialElements.buildOptions() as Options), ...initializer };
-  } else {
-    options = { ...initializer };
-  }
+  const options = { ...(buildOptions(initialElements) as Options), ...initializer };
 
   delete options.initial;
   const result = boundMap(factory, options);

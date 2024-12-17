@@ -1,5 +1,5 @@
-import { List } from './list';
-import { ListIterator } from './list_interface';
+import { AbstractList } from './abstract_list';
+import { ListIterator } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { DoubleLinkedList, UnderflowException, WithCapacity } from '../utils';
 
@@ -9,7 +9,7 @@ interface ListEntry<E> {
 
 type LinkedListEntry<E> = DoubleLinkedList.Entry & ListEntry<E>;
 
-export class LinkedList<E> extends List<E> {
+export class LinkedList<E> extends AbstractList<E> {
   private readonly linkedList: DoubleLinkedList<LinkedListEntry<E>>;
   private _size: number;
 

@@ -1,13 +1,13 @@
 import { Predicate, SumCollector } from 'ts-fluent-iterators';
-import { MultiMap } from './multi_map';
+import { AbstractMultiMap } from './abstract_multi_map';
 import { Collection } from '../collections';
 import { ArrayList } from '../lists';
 import { buildMap, IMap } from '../maps';
-import { Constructor, OverflowException } from '../utils';
+import { buildOptions, Constructor, OverflowException } from '../utils';
 
 export type WithCollectionFactory<Type, V> = Type & { collectionFactory?: Constructor<Collection<V>> };
 
-export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
+export abstract class MapBasedMultiMap<K, V> extends AbstractMultiMap<K, V> {
   private readonly collectionFactory: Constructor<Collection<V>>;
 
   protected constructor(
@@ -102,7 +102,7 @@ export abstract class MapBasedMultiMap<K, V> extends MultiMap<K, V> {
     return {
       ...super.buildOptions(),
       collectionFactory: this.collectionFactory,
-      delegate: { ...this.map.buildOptions(), factory: this.map.constructor as Constructor<IMap<K, Collection<V>>> },
+      delegate: { ...buildOptions(this.map), factory: this.map.constructor as Constructor<IMap<K, Collection<V>>> },
     };
   }
 

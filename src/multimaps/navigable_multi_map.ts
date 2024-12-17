@@ -1,61 +1,27 @@
-import { NavigableMultiMapInterface } from './navigable_multi_map_interface';
 import { SortedMultiMap } from './sorted_multi_map';
 import { Collection } from '../collections';
-import { MapEntry, NavigableMap } from '../maps';
-import { Constructor } from '../utils';
+import { MapEntry } from '../maps';
 
-export abstract class NavigableMultiMap<K, V> extends SortedMultiMap<K, V> implements NavigableMultiMapInterface<K, V> {
-  protected constructor(map: NavigableMap<K, Collection<V>>, collectionFactory?: Constructor<Collection<V>>) {
-    super(map, collectionFactory);
-  }
+export interface NavigableMultiMap<K, V> extends SortedMultiMap<K, V> {
+  lowerKey(key: K): K | undefined;
 
-  protected delegate() {
-    return this.map as NavigableMap<K, Collection<V>>;
-  }
+  lowerEntry(key: K): MapEntry<K, Collection<V>> | undefined;
 
-  lowerKey(key: K): K | undefined {
-    return this.delegate().lowerKey(key);
-  }
+  higherKey(key: K): K | undefined;
+  higherEntry(key: K): MapEntry<K, Collection<V>> | undefined;
 
-  lowerEntry(key: K): MapEntry<K, Collection<V>> | undefined {
-    const e = this.delegate().lowerEntry(key);
-    return e && { key: e.key, value: e.value.clone() };
-  }
+  floorKey(key: K): K | undefined;
 
-  higherKey(key: K): K | undefined {
-    return this.delegate().higherKey(key);
-  }
+  floorEntry(key: K): MapEntry<K, Collection<V>> | undefined;
 
-  higherEntry(key: K): MapEntry<K, Collection<V>> | undefined {
-    const e = this.delegate().higherEntry(key);
-    return e && { key: e.key, value: e.value.clone() };
-  }
+  ceilingKey(key: K): K | undefined;
 
-  floorKey(key: K): K | undefined {
-    return this.delegate().floorKey(key);
-  }
+  ceilingEntry(key: K): MapEntry<K, Collection<V>> | undefined;
 
-  floorEntry(key: K): MapEntry<K, Collection<V>> | undefined {
-    const e = this.delegate().floorEntry(key);
-    return e && { key: e.key, value: e.value.clone() };
-  }
+  pollFirstEntry(): MapEntry<K, Collection<V>> | undefined;
 
-  ceilingKey(key: K): K | undefined {
-    return this.delegate().ceilingKey(key);
-  }
+  pollLastEntry(): MapEntry<K, Collection<V>> | undefined;
 
-  ceilingEntry(key: K): MapEntry<K, Collection<V>> | undefined {
-    const e = this.delegate().ceilingEntry(key);
-    return e && { key: e.key, value: e.value.clone() };
-  }
-
-  pollFirstEntry(): MapEntry<K, Collection<V>> | undefined {
-    return this.delegate().pollFirstEntry();
-  }
-
-  pollLastEntry(): MapEntry<K, Collection<V>> | undefined {
-    return this.delegate().pollLastEntry();
-  }
-
-  abstract clone(): NavigableMultiMap<K, V>;
+  clone(): NavigableMultiMap<K, V>;
+  clear(): NavigableMultiMap<K, V>;
 }

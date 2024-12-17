@@ -1,11 +1,11 @@
 import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
-import { IMap, MapInitializer } from './map';
+import { AbstractMap, MapInitializer } from './abstract_map';
 import { MapEntry } from './map_interface';
 import { buildCollection } from '../collections';
 import { ArrayList, LinkedList, List } from '../lists';
-import { Constructor, equalsAny, WithCapacity } from '../utils';
+import { buildOptions, Constructor, equalsAny, WithCapacity } from '../utils';
 
-export abstract class ListBasedMap<K, V> extends IMap<K, V> {
+export abstract class ListBasedMap<K, V> extends AbstractMap<K, V> {
   protected constructor(private readonly _delegate: List<MapEntry<K, V>>) {
     super();
   }
@@ -55,7 +55,7 @@ export abstract class ListBasedMap<K, V> extends IMap<K, V> {
   }
 
   buildOptions() {
-    return this._delegate.buildOptions();
+    return buildOptions(this._delegate);
   }
 
   sort(comparator: Comparator<K> = Comparators.natural) {

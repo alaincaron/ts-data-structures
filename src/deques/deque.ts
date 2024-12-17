@@ -1,95 +1,48 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { DequeInterface, DequeIterator } from './deque_interface';
-import { Queue, QueueOptions } from '../queues';
-import { equalsAny, OverflowException, UnderflowException } from '../utils';
+import { Queue, QueueIterator } from '../queues';
 
-export abstract class Deque<E> extends Queue<E> implements DequeInterface<E> {
-  protected constructor(options?: QueueOptions) {
-    super(options);
-  }
+export interface DequeIterator<E> extends QueueIterator<E> {
+  setValue(item: E): E;
+}
 
-  addFirst(item: E): Deque<E> {
-    if (this.offerFirst(item)) return this;
-    if (!this.handleOverflow(1, 'addFirst')) return this;
-    if (!this.offerFirst(item)) throw new OverflowException();
-    return this;
-  }
+export interface DequeInterface<E> extends Queue<E> {
+  addFirst(item: E): DequeInterface<E>;
 
-  addLast(item: E): Deque<E> {
-    if (this.offerLast(item)) return this;
-    if (!this.handleOverflow(1, 'addLast')) return this;
-    if (!this.offerLast(item)) throw new OverflowException();
-    return this;
-  }
+  addLast(item: E): DequeInterface<E>;
 
-  abstract offerFirst(item: E): boolean;
+  offerFirst(item: E): boolean;
 
-  abstract offerLast(item: E): boolean;
+  offerLast(item: E): boolean;
 
-  offer(item: E): boolean {
-    return this.offerLast(item);
-  }
+  removeFirstMatchingItem(predicate: Predicate<E>): E | undefined;
 
-  removeMatchingItem(predicate: Predicate<E>): E | undefined {
-    return this.removeFirstMatchingItem(predicate);
-  }
+  removeLastMatchingItem(predicate: Predicate<E>): E | undefined;
 
-  abstract removeFirstMatchingItem(predicate: Predicate<E>): E | undefined;
+  removeFirstOccurrence(item: E): boolean;
 
-  abstract removeLastMatchingItem(predicate: Predicate<E>): E | undefined;
+  removeLastOccurrence(item: E): boolean;
 
-  removeFirstOccurrence(item: E) {
-    return this.removeFirstMatchingItem(x => equalsAny(item, x)) != null;
-  }
+  removeFirst(): any;
 
-  removeLastOccurrence(item: E) {
-    return this.removeLastMatchingItem(x => equalsAny(item, x)) != null;
-  }
+  removeLast(): any;
 
-  removeFirst() {
-    if (this.isEmpty()) throw new UnderflowException();
-    return this.pollFirst()!;
-  }
+  pollFirst(): E | undefined;
 
-  removeLast() {
-    if (this.isEmpty()) throw new UnderflowException();
-    return this.pollLast()!;
-  }
+  pollLast(): E | undefined;
 
-  remove(): E {
-    return this.removeFirst();
-  }
+  getFirst(): E;
 
-  abstract pollFirst(): E | undefined;
+  getLast(): E;
 
-  abstract pollLast(): E | undefined;
+  peekFirst(): E | undefined;
 
-  poll(): E | undefined {
-    return this.pollFirst();
-  }
+  peekLast(): E | undefined;
 
-  getFirst(): E {
-    return this.element();
-  }
+  reverseIterator(): IterableIterator<E>;
 
-  getLast(): E {
-    if (this.isEmpty()) throw new UnderflowException();
-    return this.peekLast()!;
-  }
+  queueIterator(): DequeIterator<E>;
 
-  abstract peekFirst(): E | undefined;
+  reverseQueueIterator(): DequeIterator<E>;
 
-  abstract peekLast(): E | undefined;
-
-  peek(): E | undefined {
-    return this.peekFirst();
-  }
-
-  abstract reverseIterator(): IterableIterator<E>;
-
-  abstract queueIterator(): DequeIterator<E>;
-
-  abstract reverseQueueIterator(): DequeIterator<E>;
-
-  abstract clone(): Deque<E>;
+  clone(): DequeInterface<E>;
 }

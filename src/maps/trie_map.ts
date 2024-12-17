@@ -1,8 +1,9 @@
 import { FluentIterator } from 'ts-fluent-iterators';
+import { buildMap, MapInitializer } from './abstract_map';
+import { AbstractSortedMap, SortedMapOptions } from './abstract_sorted_map';
 import { AvlTreeMap } from './avl_tree_map';
-import { buildMap, MapInitializer } from './map';
 import { MapEntry } from './map_interface';
-import { SortedMap, SortedMapOptions } from './sorted_map';
+import { SortedMap } from './sorted_map';
 import { WithCapacity } from '../utils';
 
 interface TrieMapNode<V> {
@@ -32,7 +33,7 @@ class TrieMapEntry<V> implements MapEntry<string, V> {
   }
 }
 
-export class TrieMap<V> extends SortedMap<string, V> {
+export class TrieMap<V> extends AbstractSortedMap<string, V> {
   private root: TrieMapNode<V>;
   private _size = 0;
   private readonly caseSensitive: boolean;

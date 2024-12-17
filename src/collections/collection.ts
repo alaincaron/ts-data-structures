@@ -1,24 +1,8 @@
-import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
-import { CollectionInterface } from './collection_interface';
-import { getSize } from './helpers';
-import { CollectionInitializer, CollectionLike } from './types';
-import {
-  CapacityMixin,
-  Constructor,
-  Container,
-  ContainerOptions,
-  equalsAny,
-  iterableToJSON,
-  OverflowException,
-  WithCapacity,
-} from '../utils';
+import { FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
+import { CollectionLike } from './types';
+import { ContainerInterface } from '../utils';
 
-/**
- * A `Collection` represents a group of objects, known as its
- * elements. Some collections allow duplicate elements and others do
- * not. Some are ordered and others unordered.
- */
-export abstract class Collection<E> extends Container implements CollectionInterface<E> {
+export interface Collection<E> extends Iterable<E>, ContainerInterface {
   /**
    * Returns `true` if this `Collection` contains the specified
    * `item`.  The comparison is done using {@link equalsAny}.
@@ -28,9 +12,7 @@ export abstract class Collection<E> extends Container implements CollectionInter
    * @returns `true` if this `Collections contains the specified
    * `item`, `false` otherwise.
    */
-  contains(item: E): boolean {
-    return this.iterator().contains(x => equalsAny(item, x));
-  }
+  contains(item: E): boolean;
 
   /**
    * Returns `true` if this `Collection` contains the specified
@@ -41,18 +23,14 @@ export abstract class Collection<E> extends Container implements CollectionInter
    * @returns `true` if this `Collections contains the specified
    * `item`, `false` otherwise.
    */
-  includes(item: E): boolean {
-    return this.iterator().includes(item);
-  }
+  includes(item: E): boolean;
 
   /**
    * Returns an array containing all elements of this `Collection`
    *
    * @returns an array containing all elements of this `Collection`
    */
-  toArray(): E[] {
-    return this.iterator().collect();
-  }
+  toArray(): E[];
 
   /**
    * Ensures that this `Collection` contains the specified element.
@@ -67,33 +45,11 @@ export abstract class Collection<E> extends Container implements CollectionInter
    * @throws Overflowexception if the capacity of the `Collection`
    * would be exceeded by adding this element.
    */
+  add(item: E): boolean;
 
-  add(item: E) {
-    if (!this.offer(item)) throw new OverflowException();
-    return true;
-  }
+  offer(item: E): boolean;
 
-  /**
-   * Inserts an element if possible, without exceeding the `capacity`
-   * of this `Collection`, otherwise returning false.
-   *
-   * @param item the item to add to the `Collection`
-   *
-   * @returns `true` if the element can be added without exceeding the `capacity`, `false` otherwise.
-   *
-   */
-  abstract offer(item: E): boolean;
-
-  /**
-   * Removes an item for which the `predicate` returns `true`.
-   *
-   * @param predicate The predicate that is being evaluated for each element.
-   *
-   * @returns the element removed from the `Collection` or `undefined`
-   * if there are no items for which the `predicate` evaluated to
-   * `true`.
-   */
-  abstract removeMatchingItem(predicate: Predicate<E>): E | undefined;
+  removeMatchingItem(predicate: Predicate<E>): E | undefined;
 
   /**
    * Removes an instance of item from the `Collection`
@@ -104,20 +60,9 @@ export abstract class Collection<E> extends Container implements CollectionInter
    *
    * @remarks The comparison for equality is made using the function {@link equalsAny}.
    */
-  removeItem(item: E): boolean {
-    return this.removeMatchingItem(x => equalsAny(item, x)) != null;
-  }
+  removeItem(item: E): boolean;
 
-  /**
-   * Removes items from this `Collection` for which the argument
-   * `predicate` evaluates to `false`.
-   *
-   * @param predicate the predicate used for filtering
-   * item of this `Collection`.
-   *
-   * @returns the number of elements removed from this `Collection`
-   */
-  abstract filter(predicate: Predicate<E>): number;
+  filter(predicate: Predicate<E>): number;
 
   /**
    * Finds an item for which the argument `predicate` evaluates to `true`.
@@ -127,9 +72,7 @@ export abstract class Collection<E> extends Container implements CollectionInter
    * @returns An item for which the `predicate` evaluates to `true` or
    * `undefined`
    */
-  find(predicate: Predicate<E>): E | undefined {
-    return this.iterator().filter(predicate).first();
-  }
+  find(predicate: Predicate<E>): E | undefined;
 
   /**
    * Adds all the items of the `container` to this `Collection` if
@@ -143,15 +86,9 @@ export abstract class Collection<E> extends Container implements CollectionInter
    * @throws Overflowexception if there remaining capacity of this
    * `Collection` is less than the number of items in the `container`.
    */
-  addFully<E1 extends E>(container: CollectionLike<E1>): number {
-    if (this.remaining() < getSize(container)) throw new OverflowException();
-    return this.offerPartially(container);
-  }
+  addFully<E1 extends E>(container: CollectionLike<E1>): number;
 
-  offerFully<E1 extends E>(container: CollectionLike<E1>): number {
-    if (this.remaining() < getSize(container)) return 0;
-    return this.offerPartially(container);
-  }
+  offerFully<E1 extends E>(container: CollectionLike<E1>): number;
 
   /**
    * Adds as many items as possible of the `container` to this
@@ -164,23 +101,9 @@ export abstract class Collection<E> extends Container implements CollectionInter
    * @returns The number of items added
    *
    */
-  offerPartially<E1 extends E>(container: IteratorLike<E1> | CollectionLike<E1>): number {
-    let count = 0;
-    const iter: Iterator<E1> = Iterators.toIterator(container);
-    for (;;) {
-      const item = iter.next();
-      if (item.done || !this.offer(item.value)) break;
-      ++count;
-    }
-    return count;
-  }
+  offerPartially<E1 extends E>(container: IteratorLike<E1> | CollectionLike<E1>): number;
 
-  /**
-   * Removes all elements from this `Collection`
-   *
-   @ @returns This collection.
-   */
-  abstract clear(): Collection<E>;
+  clear(): Collection<E>;
 
   /**
    * Returns true if this `Collection` contains all the elements in the specified `IteratorLike`.
@@ -189,23 +112,9 @@ export abstract class Collection<E> extends Container implements CollectionInter
    *
    * @returns true if this collection contains all the elements in the specified `IteratorLike`
    */
-  containsAll<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
-    const iter = Iterators.toIterator(iteratorLike);
-    for (;;) {
-      const item = iter.next();
-      if (item.done) return true;
-      if (!this.contains(item.value)) return false;
-    }
-  }
+  containsAll<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean;
 
-  disjoint<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
-    const iter = Iterators.toIterator(iteratorLike);
-    for (;;) {
-      const item = iter.next();
-      if (item.done) return true;
-      if (this.contains(item.value)) return false;
-    }
-  }
+  disjoint<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean;
 
   /**
    * Removes all of this collection's elements that are also contained
@@ -217,9 +126,7 @@ export abstract class Collection<E> extends Container implements CollectionInter
    *
    * @returns The number of elements that were removed as a result of this call.
    */
-  removeAll(c: Collection<E>): number {
-    return this.filter(e => !c.contains(e));
-  }
+  removeAll(c: Collection<E>): number;
 
   /**
    * Retains only the elements in this `Collection` that are contained
@@ -231,16 +138,7 @@ export abstract class Collection<E> extends Container implements CollectionInter
    *
    * @returns The number of elements that were removed as a result of this call.
    */
-  retainAll(c: Collection<E>): number {
-    return this.filter(e => c.contains(e));
-  }
-
-  /**
-   * Used to make this {@link Collection} being seen as an
-   * `Iterable<A>`. This allows them to be used in APIs expecting an
-   * `Iterable<A>`
-   */
-  abstract [Symbol.iterator](): IterableIterator<E>;
+  retainAll(c: Collection<E>): number;
 
   /**
    * Returns a `FluentIterator` (
@@ -249,83 +147,11 @@ export abstract class Collection<E> extends Container implements CollectionInter
    *
    * @returns a `FluentIterator` yielding all elements of this `Collection`.
    */
-  iterator() {
-    return new FluentIterator(this[Symbol.iterator]());
-  }
+  iterator(): FluentIterator<E>;
 
-  /**
-   * Returns a hashCode for this `Collection`
-   */
-  abstract hashCode(): number;
+  hashCode(): number;
 
-  /**
-   * Returns true if this collection is equal to the specified argument `other`.
-   */
-  abstract equals(other: unknown): boolean;
+  clone(): Collection<E>;
 
-  /** * Returns a clone of this `Collection`.
-   *
-   * The clone `Collection` will have the same elements and capacity
-   as the original one and also all other settings returned by `{@link Collection.buildOptions}.
-   */
-  abstract clone(): Collection<E>;
-
-  /**
-   * Returns the options used to build this `Collection`.  This is
-   * used buildCollection to initialize the built `Collection` with
-   * the same options as the source `Collection`, e.g. in clone
-   * operation.
-   */
-  buildOptions(): ContainerOptions {
-    return {};
-  }
-
-  /**
-   * Returns a JSON string representation of this `Collection`.
-   */
-  toJSON() {
-    return iterableToJSON(this);
-  }
-}
-
-/**
- * Builds a `Collection`
- */
-export function buildCollection<
-  E,
-  C extends Collection<E>,
-  Options extends object = object,
-  Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
->(factory: Constructor<C, [Options | undefined]>, initializer?: WithCapacity<Options & Initializer>): C {
-  if (initializer?.capacity === undefined && initializer?.initial === undefined) return new factory(initializer);
-
-  const initialElements = initializer.initial;
-
-  let options: any = undefined;
-
-  if (initialElements && 'buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-    options = { ...(initialElements.buildOptions() as Options), ...initializer };
-  }
-  if (!options) {
-    options = { ...initializer };
-  }
-  delete options.initial;
-
-  const result = boundCollection(factory, options);
-  if (initialElements) result.addFully(initialElements);
-  return result;
-}
-
-const constructorMap = new Map();
-
-function boundCollection<E, C extends Collection<E>>(ctor: Constructor<C>, options?: ContainerOptions): C {
-  if (options && 'capacity' in options) {
-    let boundedCtor = constructorMap.get(ctor);
-    if (!boundedCtor) {
-      boundedCtor = CapacityMixin(ctor);
-      constructorMap.set(ctor, boundedCtor);
-    }
-    return new boundedCtor(options);
-  }
-  return new ctor(options);
+  equals(other: unknown): boolean;
 }

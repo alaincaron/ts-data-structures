@@ -1,5 +1,5 @@
+import { buildMap, MapInitializer } from './abstract_map';
 import { AccessType, HashEntry, HashMap, HashMapOptions } from './hash_map';
-import { buildMap, MapInitializer } from './map';
 import { MapEntry } from './map_interface';
 import { DoubleLinkedList, OverflowException, WithCapacity } from '../utils';
 

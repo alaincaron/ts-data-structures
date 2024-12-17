@@ -1,6 +1,6 @@
 import { iterator, Iterators } from 'ts-fluent-iterators';
-import { SetInterface } from './set_interface';
-import { Collection, CollectionLike } from '../collections';
+import { ISet } from './set_interface';
+import { AbstractCollection, CollectionLike } from '../collections';
 import { objectHasFunction } from '../collections/helpers';
 import { hashIterableUnordered, OverflowException } from '../utils';
 
@@ -10,12 +10,12 @@ function getItemsToAdd<E, E1 extends E>(set: ISet<E>, items: CollectionLike<E1>)
     .collectToSet();
 }
 
-export abstract class ISet<E> extends Collection<E> implements SetInterface<E> {
+export abstract class AbstractSet<E> extends AbstractCollection<E> implements ISet<E> {
   toSet() {
     return this.iterator().collectToSet();
   }
 
-  abstract clear(): ISet<E>;
+  abstract clear(): AbstractSet<E>;
 
   add(item: E) {
     if (this.contains(item)) return false;
@@ -40,7 +40,7 @@ export abstract class ISet<E> extends Collection<E> implements SetInterface<E> {
     return this.offerPartially(itemsToAdd);
   }
 
-  abstract clone(): ISet<E>;
+  abstract clone(): AbstractSet<E>;
 
   hashCode() {
     return hashIterableUnordered(this);
@@ -54,7 +54,7 @@ export abstract class ISet<E> extends Collection<E> implements SetInterface<E> {
   }
 }
 
-function isSet<E>(obj: unknown): obj is SetInterface<E> {
+function isSet<E>(obj: unknown): obj is ISet<E> {
   if (!obj || typeof obj !== 'object') return false;
   if (!objectHasFunction(obj, 'size')) return false;
   if (!objectHasFunction(obj, 'toSet')) return false;

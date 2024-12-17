@@ -1,11 +1,10 @@
-import { buildMultiMap, MultiMapInitializer } from './multi_map';
-import { SortedMultiMap } from './sorted_multi_map';
-import { SortedMultiMapOptions } from './sorted_multi_map';
+import { buildMultiMap, MultiMapInitializer } from './abstract_multi_map';
+import { AbstractSortedMultiMap, SortedMultiMapOptions } from './abstract_sorted_multi_map';
 import { Collection } from '../collections';
 import { MapEntry, TrieMap } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class TrieMultiMap<V> extends SortedMultiMap<string, V> {
+export class TrieMultiMap<V> extends AbstractSortedMultiMap<string, V> {
   constructor(options?: SortedMultiMapOptions<string, V>) {
     super(new TrieMap(options), options?.collectionFactory);
   }

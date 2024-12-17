@@ -1,53 +1,24 @@
-import { FlattenCollector, FluentIterator } from 'ts-fluent-iterators';
-import { MapBasedMultiMap } from './map_based_multi_map';
-import { WithCollectionFactory } from './map_based_multi_map';
-import { SortedMultiMapInterface } from './sorted_multi_map_interface';
+import { FluentIterator } from 'ts-fluent-iterators';
+import { MultiMap } from './multi_map';
 import { Collection } from '../collections';
-import { MapEntry, SortedMap, SortedMapOptions } from '../maps';
-import { Constructor } from '../utils';
+import { MapEntry } from '../maps';
 
-export type SortedMultiMapOptions<K, V> = WithCollectionFactory<SortedMapOptions<K>, V>;
+export interface SortedMultiMap<K, V> extends MultiMap<K, V> {
+  firstEntry(): MapEntry<K, Collection<V>> | undefined;
 
-export abstract class SortedMultiMap<K, V> extends MapBasedMultiMap<K, V> implements SortedMultiMapInterface<K, V> {
-  protected constructor(map: SortedMap<K, Collection<V>>, collectionFactory?: Constructor<Collection<V>>) {
-    super(map, collectionFactory);
-  }
+  lastEntry(): MapEntry<K, Collection<V>> | undefined;
 
-  protected delegate() {
-    return this.map as SortedMap<K, Collection<V>>;
-  }
+  firstKey(): K | undefined;
 
-  firstEntry(): MapEntry<K, Collection<V>> | undefined {
-    const e = this.delegate().firstEntry();
-    return e && { key: e.key, value: e.value.clone() };
-  }
+  lastKey(): K | undefined;
 
-  lastEntry(): MapEntry<K, Collection<V>> | undefined {
-    const e = this.delegate().lastEntry();
-    return e && { key: e.key, value: e.value.clone() };
-  }
+  reverseEntryIterator(): FluentIterator<MapEntry<K, Collection<V>>>;
 
-  firstKey(): K | undefined {
-    return this.delegate().firstKey();
-  }
+  reverseKeyIterator(): FluentIterator<K>;
 
-  lastKey(): K | undefined {
-    return this.delegate().lastKey();
-  }
+  reverseValueIterator(): FluentIterator<V>;
 
-  reverseEntryIterator(): FluentIterator<MapEntry<K, Collection<V>>> {
-    return this.delegate()
-      .reverseEntryIterator()
-      .map(e => ({ key: e.key, value: e.value.clone() }));
-  }
+  clear(): SortedMultiMap<K, V>;
 
-  reverseKeyIterator(): FluentIterator<K> {
-    return this.delegate().reverseKeyIterator();
-  }
-
-  reverseValueIterator(): FluentIterator<V> {
-    return this.delegate().reverseValueIterator().collectTo(new FlattenCollector());
-  }
-
-  abstract clone(): SortedMultiMap<K, V>;
+  clone(): SortedMultiMap<K, V>;
 }

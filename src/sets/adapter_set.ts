@@ -1,5 +1,5 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { ISet } from './set';
+import { AbstractSet } from './abstract_set';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { OverflowException, WithCapacity } from '../utils';
 
@@ -7,7 +7,7 @@ export interface AdapterSetOptions<E> {
   delegate?: Set<E>;
 }
 
-export class AdapterSet<E> extends ISet<E> {
+export class AdapterSet<E> extends AbstractSet<E> {
   private readonly _delegate: Set<E>;
 
   constructor(options?: AdapterSetOptions<E>) {

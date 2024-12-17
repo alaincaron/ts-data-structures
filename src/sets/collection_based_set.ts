@@ -1,10 +1,10 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { ISet } from './set';
-import { buildCollection, Collection, CollectionInitializer, CollectionLike } from '../collections';
+import { AbstractSet } from './abstract_set';
+import { Collection, CollectionInitializer, CollectionLike } from '../collections';
 import { ArrayList } from '../lists';
 import { Constructor, extractOptions, WithCapacity } from '../utils';
 
-export abstract class CollectionBasedSet<E> extends ISet<E> {
+export abstract class CollectionBasedSet<E> extends AbstractSet<E> {
   private readonly _delegate: Collection<E>;
   protected constructor(delegate: Collection<E>) {
     super();
@@ -43,12 +43,15 @@ export abstract class CollectionBasedSet<E> extends ISet<E> {
     return this;
   }
 
-  [Symbol.iterator](): IterableIterator<E> {
+  [Symbol.iterator](): Iterator<E> {
     return this._delegate[Symbol.iterator]();
   }
 
   buildOptions() {
-    return this._delegate.buildOptions();
+    if ('buildOptions' in this._delegate && typeof this._delegate.buildOptions === 'function') {
+      return this._delegate.buildOptions();
+    }
+    return {};
   }
 
   add(item: E) {
@@ -72,10 +75,6 @@ export abstract class CollectionBasedSet<E> extends ISet<E> {
     if (initialElements) result.addFully(initialElements);
     return result;
   }
-
-  protected cloneDelegate<C extends Collection<E>>(factory: Constructor<C>): C {
-    return buildCollection<E, C>(factory, { initial: this.delegate() });
-  }
 }
 
 export class ArraySet<E> extends CollectionBasedSet<E> {
@@ -88,6 +87,6 @@ export class ArraySet<E> extends CollectionBasedSet<E> {
   }
 
   clone(): ArraySet<E> {
-    return new ArraySet(this.cloneDelegate<ArrayList<E>>(ArrayList));
+    return new ArraySet<E>(this.delegate().clone() as ArrayList<E>);
   }
 }

@@ -7,7 +7,7 @@ export * from './map_based_set';
 export * from './navigable_map_based_set';
 export * from './navigable_set';
 export * from './open_hash_set';
-export * from './set';
+export * from './abstract_set';
 export * from './skip_list_set';
 export * from './sorted_map_based_set';
 export * from './sorted_set';

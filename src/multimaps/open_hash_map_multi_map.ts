@@ -1,6 +1,6 @@
+import { buildMultiMap, MultiMapInitializer } from './abstract_multi_map';
 import { HashMultiMapOptions } from './hash_multi_map';
 import { MapBasedMultiMap } from './map_based_multi_map';
-import { buildMultiMap, MultiMapInitializer } from './multi_map';
 import { OpenHashMap } from '../maps';
 import { WithCapacity } from '../utils';
 

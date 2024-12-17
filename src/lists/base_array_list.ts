@@ -1,8 +1,8 @@
 import { Comparator, Comparators, Mapper, Predicate } from 'ts-fluent-iterators';
-import { List } from './list';
+import { AbstractList } from './abstract_list';
 import { bsearch, insertSorted, parseArgs, qsort, SearchOptions, shuffle, UnderflowException } from '../utils';
 
-export abstract class BaseArrayList<E> extends List<E> {
+export abstract class BaseArrayList<E> extends AbstractList<E> {
   protected constructor(protected readonly elements: Array<E>) {
     super();
   }
@@ -55,7 +55,7 @@ export abstract class BaseArrayList<E> extends List<E> {
     return x;
   }
 
-  sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): List<E> {
+  sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): BaseArrayList<E> {
     const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
     this.checkBounds(left, right);
     qsort(this.elements, left, right, comparator);
@@ -75,7 +75,7 @@ export abstract class BaseArrayList<E> extends List<E> {
     arg1?: number | Mapper<void, number>,
     arg2?: number | Mapper<void, number>,
     arg3?: Mapper<void, number> | undefined
-  ): List<E> {
+  ): BaseArrayList<E> {
     const { left, right, f: mapper } = parseArgs(this.size(), arg1, arg2, arg3, Math.random);
     this.checkBounds(left, right);
     shuffle(this.elements, left, right, mapper);

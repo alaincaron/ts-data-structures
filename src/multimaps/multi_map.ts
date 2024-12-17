@@ -1,156 +1,58 @@
-import { FlattenCollector, FluentIterator, Generators, iterator, Predicate } from 'ts-fluent-iterators';
-import { MultiMapInterface, MultiMapLike } from './multi_map_interface';
+import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
-import {
-  CapacityMixin,
-  Constructor,
-  Container,
-  ContainerOptions,
-  equalsAny,
-  extractOptions,
-  hashIterableUnordered,
-  WithCapacity,
-} from '../utils';
+import { MapLike } from '../maps';
+import { ContainerInterface } from '../utils';
 
-export interface MultiMapInitializer<K, V> {
-  initial?: MultiMapLike<K, V>;
-}
+export type MultiMapLike<K, V> = MapLike<K, V> | MultiMap<K, V>;
 
-export abstract class MultiMap<K, V> extends Container implements MultiMapInterface<K, V> {
-  abstract getValues(k: K): Collection<V> | undefined;
+export interface MultiMap<K, V> extends ContainerInterface, Iterable<[K, V]> {
+  getValues(k: K): Collection<V> | undefined;
 
-  abstract removeEntry(key: K, value: V): boolean;
-  abstract removeKey(key: K): Collection<V> | undefined;
+  removeEntry(key: K, value: V): boolean;
 
-  offer(key: K, value: V) {
-    if (this.isFull()) return false;
-    return this.put(key, value);
-  }
+  removeKey(key: K): Collection<V> | undefined;
 
-  abstract put(key: K, value: V): boolean;
+  offer(key: K, value: V): boolean;
 
-  putAll<K1 extends K, V1 extends V>(map: MultiMapLike<K1, V1>) {
-    for (const [key, value] of map) {
-      this.put(key, value);
-    }
-  }
+  put(key: K, value: V): boolean;
 
-  abstract clear(): MultiMap<K, V>;
+  putAll<K1 extends K, V1 extends V>(map: MultiMapLike<K1, V1>): void;
 
-  containsKey(key: K) {
-    const col = this.getValues(key);
-    return col ? !col.isEmpty() : false;
-  }
+  clear(): MultiMap<K, V>;
 
-  containsValue(value: V) {
-    for (const v of this.values()) {
-      if (equalsAny(value, v)) return true;
-    }
-    return false;
-  }
+  containsKey(key: K): boolean;
 
-  containsEntry(key: K, value: V) {
-    const col = this.getValues(key);
-    if (!col) return false;
-    return col.contains(value);
-  }
+  containsValue(value: V): boolean;
 
-  abstract filterKeys(predicate: Predicate<K>): number;
-  abstract filterEntries(predicate: Predicate<[K, V]>): number;
+  containsEntry(key: K, value: V): boolean;
 
-  filterValues(predicate: Predicate<V>): number {
-    return this.filterEntries(([_, v]) => predicate(v));
-  }
+  filterKeys(predicate: Predicate<K>): number;
 
-  *keys(): IterableIterator<K> {
-    for (const [k, _] of this.partitions()) {
-      yield k;
-    }
-  }
+  filterEntries(predicate: Predicate<[K, V]>): number;
 
-  *values(): IterableIterator<V> {
-    for (const [_, v] of this.partitions()) {
-      yield* v;
-    }
-  }
+  filterValues(predicate: Predicate<V>): number;
 
-  *entries(): IterableIterator<[K, V]> {
-    for (const [k, values] of this.partitions()) {
-      for (const v of values) {
-        yield [k, v];
-      }
-    }
-  }
+  keys(): IterableIterator<K>;
 
-  abstract partitions(): IterableIterator<[K, Collection<V>]>;
+  values(): IterableIterator<V>;
 
-  keyIterator(): FluentIterator<K> {
-    return this.partitionIterator().map(([k, _]) => k);
-  }
+  entries(): IterableIterator<[K, V]>;
 
-  valueIterator(): FluentIterator<V> {
-    return this.partitionIterator()
-      .map(([_, values]) => values)
-      .collectTo(new FlattenCollector());
-  }
+  partitions(): IterableIterator<[K, Collection<V>]>;
 
-  partitionIterator(): FluentIterator<[K, Collection<V>]> {
-    return new FluentIterator(this.partitions());
-  }
+  keyIterator(): FluentIterator<K>;
 
-  entryIterator(): FluentIterator<[K, V]> {
-    return this.partitionIterator()
-      .map(([k, values]) => iterator(Generators.repeat(_ => k)).zip(values))
-      .collectTo(new FlattenCollector());
-  }
+  valueIterator(): FluentIterator<V>;
 
-  [Symbol.iterator](): IterableIterator<[K, V]> {
-    return this.entries();
-  }
+  partitionIterator(): FluentIterator<[K, Collection<V>]>;
 
-  abstract toJSON(): string;
+  entryIterator(): FluentIterator<[K, V]>;
 
-  buildOptions() {
-    return {};
-  }
+  toJSON(): string;
 
-  abstract clone(): MultiMap<K, V>;
+  clone(): MultiMap<K, V>;
 
-  hashCode() {
-    return hashIterableUnordered(this.partitions());
-  }
+  hashCode(): number;
 
-  equals(other: unknown) {
-    if (this === other) return true;
-    if (!(other instanceof MultiMap)) return false;
-    if (other.size() !== this.size()) return false;
-
-    for (const [k, values] of this.partitions()) {
-      if (!equalsAny(values, other.getValues(k))) return false;
-    }
-    return true;
-  }
-}
-
-export function buildMultiMap<
-  K,
-  V,
-  M extends MultiMap<K, V>,
-  Options extends object = object,
-  Initializer extends MultiMapInitializer<K, V> = MultiMapInitializer<K, V>,
->(factory: Constructor<M>, initializer?: WithCapacity<Options & Initializer>): M {
-  const { options, initialElements } = extractOptions<MultiMapLike<K, V>>(initializer);
-  const result = boundMultiMap(factory, options);
-
-  if (initialElements) result.putAll(initialElements);
-  return result;
-}
-
-function boundMultiMap<K, V, M extends MultiMap<K, V>>(ctor: Constructor<M>, options?: ContainerOptions) {
-  if (options && 'capacity' in options) {
-    const boundedCtor: any = CapacityMixin(ctor);
-    const tmp = new boundedCtor(options);
-    return tmp as unknown as M;
-  }
-  return new ctor(options);
+  equals(other: unknown): boolean;
 }

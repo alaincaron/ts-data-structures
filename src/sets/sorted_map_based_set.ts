@@ -3,7 +3,7 @@ import { SortedSet } from './sorted_set';
 import { SortedMap } from '../maps';
 
 export abstract class SortedMapBasedSet<E> extends MapBasedSet<E> implements SortedSet<E> {
-  constructor(delegate: SortedMap<E, boolean>) {
+  protected constructor(delegate: SortedMap<E, boolean>) {
     super(delegate);
   }
 

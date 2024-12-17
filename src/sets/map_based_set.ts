@@ -1,11 +1,11 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { ISet } from './set';
+import { AbstractSet } from './abstract_set';
 import { CollectionInitializer, CollectionLike } from '../collections';
 import { buildMap, IMap } from '../maps';
-import { Constructor, extractOptions, WithCapacity } from '../utils';
+import { buildOptions, Constructor, extractOptions, WithCapacity } from '../utils';
 
-export abstract class MapBasedSet<E> extends ISet<E> {
-  constructor(private readonly _delegate: IMap<E, boolean>) {
+export abstract class MapBasedSet<E> extends AbstractSet<E> {
+  protected constructor(private readonly _delegate: IMap<E, boolean>) {
     super();
   }
 
@@ -59,7 +59,7 @@ export abstract class MapBasedSet<E> extends ISet<E> {
   abstract clone(): MapBasedSet<E>;
 
   buildOptions() {
-    return this._delegate.buildOptions();
+    return buildOptions(this._delegate);
   }
 
   protected static createSet<

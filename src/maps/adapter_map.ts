@@ -1,5 +1,5 @@
 import { Predicate } from 'ts-fluent-iterators';
-import { buildMap, IMap, MapInitializer } from './map';
+import { AbstractMap, buildMap, MapInitializer } from './abstract_map';
 import { MapEntry } from './map_interface';
 import { OverflowException, WithCapacity } from '../utils';
 
@@ -25,7 +25,7 @@ class AdapterMapEntry<K, V> implements MapEntry<K, V> {
   }
 }
 
-export class AdapterMap<K, V> extends IMap<K, V> {
+export class AdapterMap<K, V> extends AbstractMap<K, V> {
   private readonly _delegate: Map<K, V>;
 
   constructor(options?: AdapterMapOptions<K, V>) {

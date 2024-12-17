@@ -1,5 +1,5 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { buildMap, IMap, MapInitializer } from './map';
+import { AbstractMap, buildMap, MapInitializer } from './abstract_map';
 import { MapEntry } from './map_interface';
 import { equalsAny, hashAny, LARGEST_PRIME, nextPrime, WithCapacity } from '../utils';
 
@@ -22,7 +22,7 @@ export interface HashMapOptions {
 const MIN_INITIAL_CAPACITY = nextPrime(5);
 const DEFAULT_LOAD_FACTOR = 0.75;
 
-export class HashMap<K, V> extends IMap<K, V> {
+export class HashMap<K, V> extends AbstractMap<K, V> {
   private _size: number;
   private slots: Array<HashEntry<K, V> | undefined>;
   public readonly loadFactor: number;

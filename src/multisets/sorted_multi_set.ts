@@ -1,44 +1,20 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { Count, MapBasedMultiSet } from './map_based_multi_set';
-import { SortedMultiSetInterface } from './sorted_multi_set_interface';
-import { MapEntry, SortedMap } from '../maps';
+import { MultiSet } from './multi_set';
+import { MapEntry } from '../maps';
 
-export abstract class SortedMultiSet<E> extends MapBasedMultiSet<E> implements SortedMultiSetInterface<E> {
-  protected constructor(mapFactory: SortedMap<E, Count> | (new () => SortedMap<E, Count>)) {
-    super(mapFactory);
-  }
+export interface SortedMultiSet<E> extends MultiSet<E> {
+  firstEntry(): MapEntry<E, number> | undefined;
 
-  protected delegate() {
-    return this.map as SortedMap<E, Count>;
-  }
+  lastEntry(): MapEntry<E, number> | undefined;
 
-  firstEntry(): MapEntry<E, number> | undefined {
-    const e = this.delegate().firstEntry();
-    return e && { key: e.key, value: e.value.count };
-  }
+  first(): E | undefined;
 
-  lastEntry(): MapEntry<E, number> | undefined {
-    const e = this.delegate().lastEntry();
-    return e && { key: e.key, value: e.value.count };
-  }
+  last(): E | undefined;
 
-  first(): E | undefined {
-    return this.delegate().firstKey();
-  }
+  reverseEntryIterator(): FluentIterator<MapEntry<E, number>>;
 
-  last(): E | undefined {
-    return this.delegate().lastKey();
-  }
+  reverseIterator(): FluentIterator<E>;
 
-  reverseEntryIterator(): FluentIterator<MapEntry<E, number>> {
-    return this.delegate()
-      .reverseEntryIterator()
-      .map(e => ({ key: e.key, value: e.value.count }));
-  }
-
-  reverseIterator(): FluentIterator<E> {
-    return this.delegate().reverseKeyIterator();
-  }
-
-  abstract clone(): SortedMultiSet<E>;
+  clone(): SortedMultiSet<E>;
+  clear(): SortedMultiSet<E>;
 }

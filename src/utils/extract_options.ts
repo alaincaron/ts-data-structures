@@ -9,14 +9,15 @@ export function extractOptions<
     return { options: initializer as Options };
   } else {
     const initialElements = initializer.initial;
-    let options: any = {
-      ...initializer,
-    };
-
-    if ('buildOptions' in initialElements && typeof initialElements.buildOptions === 'function') {
-      options = { ...options, ...initialElements.buildOptions() };
-    }
+    const options = { ...initializer, ...buildOptions(initialElements) };
     delete options.initial;
     return { options, initialElements };
   }
+}
+
+export function buildOptions(obj?: object) {
+  if (obj && 'buildOptions' in obj && typeof obj.buildOptions === 'function') {
+    return obj.buildOptions();
+  }
+  return {};
 }

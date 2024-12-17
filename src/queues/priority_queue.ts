@@ -1,6 +1,6 @@
 import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
-import { Queue, QueueOptions } from './queue';
-import { QueueIterator } from './queue_interface';
+import { AbstractQueue, QueueOptions } from './abstract_queue';
+import { QueueIterator } from './queue';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { nextPowerOfTwo, qsort, WithCapacity } from '../utils';
 
@@ -12,7 +12,7 @@ export type PriorityQueueInitializer<E> = PriorityQueueOptions<E> & CollectionIn
 
 const MIN_SIZE = 8;
 
-export class PriorityQueue<E> extends Queue<E> {
+export class PriorityQueue<E> extends AbstractQueue<E> {
   private buffer: Array<E>;
   private _size: number;
   private readonly comparator: Comparator<E>;

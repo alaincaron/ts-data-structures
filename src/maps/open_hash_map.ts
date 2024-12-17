@@ -1,6 +1,6 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
+import { AbstractMap, buildMap, MapInitializer } from './abstract_map';
 import { HashMapOptions } from './hash_map';
-import { buildMap, IMap, MapInitializer } from './map';
 import { MapEntry } from './map_interface';
 import { equalsAny, hashAny, hashNumber, MAX_ARRAY_SIZE, nextPrime, WithCapacity } from '../utils';
 
@@ -14,7 +14,7 @@ interface HashEntry<K, V> extends MapEntry<K, V> {
 
 type Entry<K, V> = HashEntry<K, V> | 'DELETED' | undefined;
 
-export class OpenHashMap<K, V> extends IMap<K, V> {
+export class OpenHashMap<K, V> extends AbstractMap<K, V> {
   private _size: number;
   public readonly loadFactor: number;
   private slots: Array<Entry<K, V>>;

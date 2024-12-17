@@ -1,73 +1,24 @@
-import { Comparator, Comparators, FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { IMap } from './map';
-import { MapEntry } from './map_interface';
-import { SortedMapInterface } from './sortedMapInterface';
+import { FluentIterator } from 'ts-fluent-iterators';
+import { IMap, MapEntry } from './map_interface';
 
-export interface SortedMapOptions<K> {
-  comparator?: Comparator<K>;
-}
+export interface SortedMap<K, V> extends IMap<K, V> {
+  firstEntry(): MapEntry<K, V> | undefined;
 
-export abstract class SortedMap<K, V> extends IMap<K, V> implements SortedMapInterface<K, V> {
-  public readonly comparator: Comparator<K>;
+  lastEntry(): MapEntry<K, V> | undefined;
 
-  protected constructor(options?: SortedMapOptions<K>) {
-    super();
-    this.comparator = options?.comparator ?? Comparators.natural;
-  }
+  firstKey(): K | undefined;
 
-  firstEntry(): MapEntry<K, V> | undefined {
-    return this.entryIterator()?.first();
-  }
+  lastKey(): K | undefined;
 
-  lastEntry(): MapEntry<K, V> | undefined {
-    return this.reverseEntryIterator()?.first();
-  }
+  reverseEntryIterator(): FluentIterator<MapEntry<K, V>>;
 
-  firstKey() {
-    return this.firstEntry()?.key;
-  }
+  reverseKeyIterator(): FluentIterator<K>;
 
-  lastKey() {
-    return this.lastEntry()?.key;
-  }
+  reverseValueIterator(): FluentIterator<V>;
 
-  filterEntries(predicate: Predicate<[K, V]>): number {
-    const partitions = new FluentIterator(this.entries()).groupBy(predicate);
-    const entriesToKeep = partitions.get(true) ?? [];
-    const entriesToDelete = partitions.get(false) ?? [];
-    if (entriesToKeep.length < entriesToKeep.length) {
-      const originalSize = this.size();
-      this.clear();
-      this.putAll(entriesToKeep);
-      return originalSize - entriesToKeep.length;
-    } else {
-      for (const [k, _v] of entriesToDelete) {
-        this.remove(k);
-      }
-      return entriesToDelete.length;
-    }
-  }
+  reverseEntries(): IterableIterator<[K, V]>;
 
-  buildOptions() {
-    return {
-      ...super.buildOptions(),
-      comparator: this.comparator,
-    };
-  }
+  clear(): SortedMap<K, V>;
 
-  abstract reverseEntryIterator(): FluentIterator<MapEntry<K, V>>;
-  abstract clear(): SortedMap<K, V>;
-  abstract clone(): SortedMap<K, V>;
-
-  reverseKeyIterator() {
-    return this.reverseEntryIterator().map(e => e.key);
-  }
-
-  reverseValueIterator() {
-    return this.reverseEntryIterator().map(e => e.value);
-  }
-
-  *reverseEntries(): IterableIterator<[K, V]> {
-    for (const e of this.reverseEntryIterator()) yield [e.key, e.value];
-  }
+  clone(): SortedMap<K, V>;
 }

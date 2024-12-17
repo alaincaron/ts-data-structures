@@ -1,76 +1,31 @@
-import { Count } from './map_based_multi_set';
-import { NavigableMultiSetInterface } from './navigable_multi_set_interface';
 import { SortedMultiSet } from './sorted_multi_set';
-import { MapEntry, NavigableMap } from '../maps';
+import { MapEntry } from '../maps';
 
-export abstract class NavigableMultiSet<E> extends SortedMultiSet<E> implements NavigableMultiSetInterface<E> {
-  protected constructor(mapFactory: NavigableMap<E, Count> | (new () => NavigableMap<E, Count>)) {
-    super(mapFactory);
-  }
+export interface NavigableMultiSet<E> extends SortedMultiSet<E> {
+  lower(key: E): E | undefined;
 
-  protected delegate() {
-    return this.map as NavigableMap<E, Count>;
-  }
+  lowerEntry(key: E): MapEntry<E, number> | undefined;
 
-  lower(key: E): E | undefined {
-    return this.delegate().lowerKey(key);
-  }
+  higher(key: E): E | undefined;
 
-  lowerEntry(key: E): MapEntry<E, number> | undefined {
-    const e = this.delegate().lowerEntry(key);
-    return e && { key: e.key, value: e.value.count };
-  }
+  higherEntry(key: E): MapEntry<E, number> | undefined;
 
-  higher(key: E): E | undefined {
-    return this.delegate().higherKey(key);
-  }
+  floor(key: E): E | undefined;
 
-  higherEntry(key: E): MapEntry<E, number> | undefined {
-    const e = this.delegate().higherEntry(key);
-    return e && { key: e.key, value: e.value.count };
-  }
+  floorEntry(key: E): MapEntry<E, number> | undefined;
 
-  floor(key: E): E | undefined {
-    return this.delegate().floorKey(key);
-  }
+  ceiling(key: E): E | undefined;
 
-  floorEntry(key: E): MapEntry<E, number> | undefined {
-    const e = this.delegate().floorEntry(key);
-    return e && { key: e.key, value: e.value.count };
-  }
+  ceilingEntry(key: E): MapEntry<E, number> | undefined;
 
-  ceiling(key: E): E | undefined {
-    return this.delegate().ceilingKey(key);
-  }
+  pollFirstEntry(): MapEntry<E, number> | undefined;
 
-  ceilingEntry(key: E): MapEntry<E, number> | undefined {
-    const e = this.delegate().ceilingEntry(key);
-    return e && { key: e.key, value: e.value.count };
-  }
+  pollLastEntry(): MapEntry<E, number> | undefined;
 
-  pollFirstEntry(): MapEntry<E, number> | undefined {
-    const e = this.delegate().pollFirstEntry();
-    return e && { key: e.key, value: e.value.count };
-  }
+  pollFirst(): E | undefined;
 
-  pollLastEntry(): MapEntry<E, number> | undefined {
-    const e = this.delegate().pollLastEntry();
-    return e && { key: e.key, value: e.value.count };
-  }
+  pollLast(): E | undefined;
 
-  pollFirst(): E | undefined {
-    const e = this.delegate().firstEntry();
-    if (!e) return undefined;
-    this.removeItem(e.key);
-    return e.key;
-  }
-
-  pollLast(): E | undefined {
-    const e = this.delegate().lastEntry();
-    if (!e) return undefined;
-    this.removeItem(e.key);
-    return e.key;
-  }
-
-  abstract clone(): NavigableMultiSet<E>;
+  clone(): NavigableMultiSet<E>;
+  clear(): NavigableMultiSet<E>;
 }

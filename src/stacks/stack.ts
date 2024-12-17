@@ -1,45 +1,20 @@
-import { StackInterface } from './stack_interface';
 import { DequeIterator } from '../deques';
-import { Queue, QueueOptions } from '../queues';
-import { UnderflowException } from '../utils';
+import { Queue } from '../queues';
 
-export abstract class Stack<E> extends Queue<E> implements StackInterface<E> {
-  protected constructor(options?: QueueOptions) {
-    super(options);
-  }
+export interface Stack<E> extends Queue<E> {
+  push(item: E): Stack<E>;
 
-  push(item: E): Stack<E> {
-    this.add(item);
-    return this;
-  }
+  tryPush(item: E): boolean;
 
-  tryPush(item: E): boolean {
-    return this.offer(item);
-  }
+  pop(): E;
 
-  pop(): E {
-    return this.remove();
-  }
+  trySwap(): boolean;
 
-  trySwap(): boolean {
-    if (this.size() >= 2) {
-      const a = this.pop();
-      const b = this.pop();
-      this.push(a);
-      this.push(b);
-      return true;
-    }
-    return false;
-  }
+  swap(): Stack<E>;
 
-  swap(): Stack<E> {
-    if (!this.trySwap()) throw new UnderflowException('Need at least two elements for a swap');
-    return this;
-  }
+  clone(): Stack<E>;
 
-  abstract clone(): Stack<E>;
+  queueIterator(): DequeIterator<E>;
 
-  abstract queueIterator(): DequeIterator<E>;
-
-  abstract reverseQueueIterator(): DequeIterator<E>;
+  reverseQueueIterator(): DequeIterator<E>;
 }

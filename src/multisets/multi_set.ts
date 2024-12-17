@@ -1,98 +1,33 @@
-import { MultiSetInterface, MultiSetLike } from './multi_set_interface';
-import { Collection } from '../collections';
-import { objectHasFunction } from '../collections/helpers';
-import {
-  CapacityMixin,
-  Constructor,
-  ContainerOptions,
-  extractOptions,
-  hashIterableUnordered,
-  OverflowException,
-  WithCapacity,
-} from '../utils';
+import { Collection, CollectionLike } from '../collections';
 
-export interface MultiSetInitializer<E> {
-  initial?: MultiSetLike<E>;
-}
+export type MultiSetLike<E> = CollectionLike<E> | MultiSet<E>;
 
-export abstract class MultiSet<E> extends Collection<E> implements MultiSetInterface<E> {
-  abstract count(item: E): number;
+export interface MultiSet<E> extends Collection<E> {
+  count(item: E): number;
 
-  abstract clear(): MultiSet<E>;
+  clear(): MultiSet<E>;
 
-  addCount(item: E, count: number): number {
-    if (this.remaining() < count) throw new OverflowException();
-    return this.offerCount(item, count);
-  }
+  addCount(item: E, count: number): number;
 
-  abstract offerCount(item: E, count: number): number;
-  abstract removeCount(item: E, count: number): number;
+  offerCount(item: E, count: number): number;
 
-  abstract setCount(item: E, count: number): number;
+  removeCount(item: E, count: number): number;
 
-  add(item: E) {
-    return this.addCount(item, 1) >= 1;
-  }
+  setCount(item: E, count: number): number;
 
-  offer(item: E) {
-    return this.offerCount(item, 1) > 0;
-  }
+  add(item: E): boolean;
 
-  removeItem(item: E): boolean {
-    return this.removeCount(item, 1) > 0;
-  }
+  offer(item: E): boolean;
 
-  abstract entries(): IterableIterator<[E, number]>;
+  removeItem(item: E): boolean;
 
-  hashCode() {
-    return hashIterableUnordered(this.entries());
-  }
+  entries(): IterableIterator<[E, number]>;
 
-  equals(other: unknown) {
-    if (this === other) return true;
-    if (!isMultiSet<E>(other)) return false;
-    if (this.size() != other.size()) return false;
-    for (const [e, count] of this.entries()) {
-      if (other.count(e) !== count) return false;
-    }
-    return true;
-  }
+  hashCode(): number;
 
-  abstract clone(): MultiSet<E>;
-}
+  equals(other: unknown): boolean;
 
-function isMultiSet<E>(obj: unknown): obj is MultiSetInterface<E> {
-  if (!obj || typeof obj !== 'object') return false;
-  if (!objectHasFunction(obj, 'size')) return false;
-  if (!objectHasFunction(obj, 'entries')) return false;
-  if (!objectHasFunction(obj, 'count')) return false;
-  return true;
-}
+  clone(): MultiSet<E>;
 
-export function buildMultiSet<
-  E,
-  MS extends MultiSet<E>,
-  Options extends object = object,
-  Initializer extends MultiSetInitializer<E> = MultiSetInitializer<E>,
->(factory: Constructor<MS>, initializer?: WithCapacity<Options & Initializer>): MS {
-  const { options, initialElements } = extractOptions<MultiSetLike<E>>(initializer);
-  const result = boundMultiSet(factory, options);
-  if (initialElements instanceof MultiSet) {
-    for (const [e, count] of initialElements.entries()) {
-      result.setCount(e, count);
-    }
-  } else if (initialElements) {
-    result.addFully(initialElements);
-  }
-
-  return result;
-}
-
-function boundMultiSet<E, MS extends MultiSet<E>>(ctor: Constructor<MS>, options?: ContainerOptions) {
-  if (options && 'capacity' in options) {
-    const boundedCtor: any = CapacityMixin(ctor);
-    const tmp = new boundedCtor(options);
-    return tmp as unknown as MS;
-  }
-  return new ctor(options);
+  clear(): MultiSet<E>;
 }

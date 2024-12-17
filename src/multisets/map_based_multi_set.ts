@@ -1,6 +1,6 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { SumCollector } from 'ts-fluent-iterators/dist/lib/collectors';
-import { MultiSet } from './multi_set';
+import { AbstractMultiSet } from './abstract_multi_set';
 import { IMap } from '../maps';
 import { OverflowException } from '../utils';
 
@@ -8,7 +8,7 @@ export interface Count {
   count: number;
 }
 
-export abstract class MapBasedMultiSet<E> extends MultiSet<E> {
+export abstract class MapBasedMultiSet<E> extends AbstractMultiSet<E> {
   protected readonly map: IMap<E, Count>;
   private _size: number;
 

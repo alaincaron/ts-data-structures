@@ -1,9 +1,9 @@
-import { buildMultiSet, MultiSetInitializer } from './multi_set';
-import { NavigableMultiSet } from './navigable_multi_set';
+import { buildMultiSet, MultiSetInitializer } from './abstract_multi_set';
+import { AbstractNavigableMultiSet } from './abstract_navigable_multi_set';
 import { SkipListMap, SkipListMapOptions } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class SkipListMultiSet<E> extends NavigableMultiSet<E> {
+export class SkipListMultiSet<E> extends AbstractNavigableMultiSet<E> {
   constructor(options?: SkipListMapOptions<E>) {
     super(new SkipListMap(options));
   }

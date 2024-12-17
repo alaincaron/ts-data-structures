@@ -1,6 +1,6 @@
 import { NavigableSet } from './navigable_set';
 import { SortedMapBasedSet } from './sorted_map_based_set';
-import { NavigableMap } from '../maps/navigable_map';
+import { NavigableMap } from '../maps';
 
 export abstract class NavigableMapBasedSet<E> extends SortedMapBasedSet<E> implements NavigableSet<E> {
   protected constructor(delegate: NavigableMap<E, boolean>) {

@@ -1,5 +1,5 @@
-import { CollectionInterface } from '../collections';
+import { Collection } from '../collections';
 
-export interface SetInterface<E> extends CollectionInterface<E> {
+export interface ISet<E> extends Collection<E> {
   toSet(): Set<E>;
 }
