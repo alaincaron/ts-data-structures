@@ -10,19 +10,19 @@ export interface ListIterator<E> extends IterableIterator<E> {
 export interface List<E> extends Collection<E> {
   getAt(idx: number): E;
 
-  getFirst(): any;
+  getFirst(): E;
 
-  getLast(): any;
+  getLast(): E;
 
   offerAt(idx: number, item: E): boolean;
 
   addAt(idx: number, item: E): List<E>;
 
-  offerFirst(item: E): any;
+  offerFirst(item: E): boolean;
 
   addFirst(item: E): List<E>;
 
-  offerLast(item: E): any;
+  offerLast(item: E): boolean;
 
   addLast(item: E): List<E>;
 

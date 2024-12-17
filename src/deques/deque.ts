@@ -22,9 +22,9 @@ export interface DequeInterface<E> extends Queue<E> {
 
   removeLastOccurrence(item: E): boolean;
 
-  removeFirst(): any;
+  removeFirst(): E;
 
-  removeLast(): any;
+  removeLast(): E;
 
   pollFirst(): E | undefined;
 
