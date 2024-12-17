@@ -1,4 +1,4 @@
-import { FluentIterator, IteratorLike, Iterators } from 'ts-fluent-iterators';
+import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
 import { OverflowQueueStrategy, QueueInterface, QueueIterator } from './queue_interface';
 import { Collection, CollectionLike } from '../collections';
 import { getSize } from '../collections/helpers';
@@ -116,5 +116,17 @@ export abstract class Queue<E> extends Collection<E> implements QueueInterface<E
 
   equals(other: unknown) {
     return this === other;
+  }
+
+  filter(predicate: Predicate<E>): number {
+    const iterator = this.queueIterator();
+    let count = 0;
+    for (;;) {
+      const item = iterator.next();
+      if (item.done) return count;
+      if (predicate(item.value)) continue;
+      ++count;
+      iterator.remove();
+    }
   }
 }

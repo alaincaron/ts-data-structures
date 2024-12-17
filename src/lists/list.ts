@@ -109,10 +109,9 @@ export abstract class List<E> extends Collection<E> implements ListInterface<E> 
     for (;;) {
       const item = iterator.next();
       if (item.done) break;
-      if (!predicate(item.value)) {
-        iterator.remove();
-        ++count;
-      }
+      if (predicate(item.value)) continue;
+      iterator.remove();
+      ++count;
     }
     return count;
   }

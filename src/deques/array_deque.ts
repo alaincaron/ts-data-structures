@@ -176,40 +176,9 @@ export class ArrayDeque<E> extends Deque<E> {
     return undefined;
   }
 
-  filter(predicate: Predicate<E>): number {
-    let cursor = this.head;
-    let count = 0;
-    while (cursor !== this.tail) {
-      if (!predicate(this.buffer[cursor]!)) {
-        this.buffer[cursor] = undefined!;
-        ++count;
-      }
-      cursor = this.slot(cursor + 1);
-    }
-    if (count) this.compact();
-    return count;
-  }
-
   private slot(idx: number) {
     return idx & (this.buffer.length - 1);
   }
-
-  private compact() {
-    let shift = 0;
-    while (this.head !== this.tail && this.buffer[this.head] === undefined) this.head = this.slot(this.head + 1);
-    let cursor = this.head;
-    while (cursor !== this.tail) {
-      if (this.buffer[cursor] === undefined) {
-        ++shift;
-      } else if (shift > 0) {
-        this.buffer[this.slot(cursor - shift)] = this.buffer[cursor];
-        this.buffer[cursor] = undefined!;
-      }
-      cursor = this.slot(cursor + 1);
-    }
-    this.tail = this.slot(cursor - shift);
-  }
-
   resize(newSize = 0) {
     const originalSize = this.size();
     if (newSize < originalSize) newSize = originalSize;
