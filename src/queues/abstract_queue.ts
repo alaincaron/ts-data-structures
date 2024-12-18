@@ -1,5 +1,5 @@
 import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
-import { OverflowQueueStrategy, Queue, QueueIterator } from './queue';
+import { FluentQueueIterator, OverflowQueueStrategy, Queue } from './queue';
 import { AbstractCollection, CollectionLike } from '../collections';
 import { getSize } from '../collections/helpers';
 import { hashIterableOrdered, OverflowException, UnderflowException, WithCapacity } from '../utils';
@@ -100,7 +100,7 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
     return new FluentIterator(this.drainIterator());
   }
 
-  abstract queueIterator(): QueueIterator<E>;
+  abstract queueIterator(): FluentQueueIterator<E>;
 
   buildOptions(): WithCapacity<QueueOptions> {
     return {

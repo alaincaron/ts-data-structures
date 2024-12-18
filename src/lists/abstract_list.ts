@@ -1,5 +1,5 @@
 import { Comparator, Comparators, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
-import { List, ListIterator } from './list';
+import { FluentListIterator, List, ListIterator } from './list';
 import { AbstractCollection } from '../collections';
 import { objectHasFunction } from '../collections/helpers';
 import {
@@ -159,11 +159,6 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     return { start: skip, count };
   }
 
-  listIterator(skip?: number, count?: number): ListIterator<E> {
-    const bounds = this.computeIteratorBounds(skip, count);
-    return this.getListIterator(bounds.start, bounds.count, cursor => cursor + 1);
-  }
-
   transform(mapper: Mapper<E, E>): AbstractList<E> {
     return this.replaceIf(_ => true, mapper);
   }
@@ -180,9 +175,14 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     return { start, count };
   }
 
-  reverseListIterator(skip?: number, count?: number): ListIterator<E> {
+  listIterator(skip?: number, count?: number): FluentListIterator<E> {
+    const bounds = this.computeIteratorBounds(skip, count);
+    return new FluentListIterator(this.getListIterator(bounds.start, bounds.count, cursor => cursor + 1));
+  }
+
+  reverseListIterator(skip?: number, count?: number): FluentListIterator<E> {
     const bounds = this.computeReverseIteratorBounds(skip, count);
-    return this.getListIterator(bounds.start, bounds.count, cursor => cursor - 1);
+    return new FluentListIterator(this.getListIterator(bounds.start, bounds.count, cursor => cursor - 1));
   }
 
   replaceIf(predicate: Predicate<E>, f: Mapper<E, E>): AbstractList<E> {
@@ -331,7 +331,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
   }
 
   removeLastMatchingItem(predicate: Predicate<E>): E | undefined {
-    return this.removeFirstItem(this.reverseListIterator(), predicate);
+    return this.removeFirstItem(this.reverseListIterator()[Symbol.iterator](), predicate);
   }
 
   removeMatchingItem(predicate: Predicate<E>): E | undefined {

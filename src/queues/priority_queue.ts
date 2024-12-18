@@ -1,6 +1,6 @@
 import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
 import { AbstractQueue, QueueOptions } from './abstract_queue';
-import { QueueIterator } from './queue';
+import { FluentQueueIterator, QueueIterator } from './queue';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { nextPowerOfTwo, qsort, WithCapacity } from '../utils';
 
@@ -201,12 +201,12 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
     };
   }
 
-  queueIterator(): QueueIterator<E> {
-    return this.getQueueIterator(1);
+  queueIterator(): FluentQueueIterator<E> {
+    return new FluentQueueIterator(this.getQueueIterator(1));
   }
 
-  reverseQueueIterator(): QueueIterator<E> {
-    return this.getQueueIterator(-1);
+  reverseQueueIterator(): FluentQueueIterator<E> {
+    return new FluentQueueIterator(this.getQueueIterator(-1));
   }
 
   private heapify() {

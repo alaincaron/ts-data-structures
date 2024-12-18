@@ -1,5 +1,5 @@
 import { AbstractList } from './abstract_list';
-import { ListIterator } from './list';
+import { FluentListIterator, ListIterator } from './list';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { DoubleLinkedList, UnderflowException, WithCapacity } from '../utils';
 
@@ -138,21 +138,25 @@ export class LinkedList<E> extends AbstractList<E> {
     };
   }
 
-  listIterator(start?: number, count?: number): ListIterator<E> {
+  listIterator(start?: number, count?: number): FluentListIterator<E> {
     const bounds = this.computeIteratorBounds(start, count);
-    return this.getLinkedListIterator(
-      bounds.start,
-      bounds.count,
-      (cursor: LinkedListEntry<E>) => cursor.after as LinkedListEntry<E>
+    return new FluentListIterator(
+      this.getLinkedListIterator(
+        bounds.start,
+        bounds.count,
+        (cursor: LinkedListEntry<E>) => cursor.after as LinkedListEntry<E>
+      )
     );
   }
 
-  reverseListIterator(start?: number, count?: number): ListIterator<E> {
+  reverseListIterator(start?: number, count?: number): FluentListIterator<E> {
     const bounds = this.computeReverseIteratorBounds(start, count);
-    return this.getLinkedListIterator(
-      bounds.start,
-      bounds.count,
-      (cursor: LinkedListEntry<E>) => cursor.before as LinkedListEntry<E>
+    return new FluentListIterator(
+      this.getLinkedListIterator(
+        bounds.start,
+        bounds.count,
+        (cursor: LinkedListEntry<E>) => cursor.before as LinkedListEntry<E>
+      )
     );
   }
 

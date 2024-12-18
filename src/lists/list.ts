@@ -1,5 +1,5 @@
 import { Comparator, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
-import { Collection } from '../collections';
+import { SequencedCollection } from '../collections';
 
 export interface ListIterator<E> extends IterableIterator<E> {
   setValue(item: E): E;
@@ -7,7 +7,25 @@ export interface ListIterator<E> extends IterableIterator<E> {
   remove(): E;
 }
 
-export interface List<E> extends Collection<E> {
+export class FluentListIterator<E> extends FluentIterator<E> {
+  constructor(iterator: ListIterator<E>) {
+    super(iterator);
+  }
+
+  [Symbol.iterator](): ListIterator<E> {
+    return this.iter as ListIterator<E>;
+  }
+
+  setValue(value: E) {
+    return (this.iter as ListIterator<E>).setValue(value);
+  }
+
+  remove() {
+    return (this.iter as ListIterator<E>).remove();
+  }
+}
+
+export interface List<E> extends SequencedCollection<E> {
   getAt(idx: number): E;
 
   getFirst(): E;
@@ -36,13 +54,13 @@ export interface List<E> extends Collection<E> {
 
   removeLast(): E;
 
-  reverseIterator(): FluentIterator<unknown>;
+  reverseIterator(): FluentIterator<E>;
 
-  listIterator(skip?: number, count?: number): ListIterator<E>;
+  listIterator(skip?: number, count?: number): FluentListIterator<E>;
 
   transform(mapper: Mapper<E, E>): List<E>;
 
-  reverseListIterator(skip?: number, count?: number): ListIterator<E>;
+  reverseListIterator(skip?: number, count?: number): FluentListIterator<E>;
 
   replaceIf(predicate: Predicate<E>, f: Mapper<E, E>): List<E>;
 

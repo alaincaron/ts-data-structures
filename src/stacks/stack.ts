@@ -1,4 +1,4 @@
-import { DequeIterator } from '../deques';
+import { FluentDequeIterator } from '../deques';
 import { Queue } from '../queues';
 
 export interface Stack<E> extends Queue<E> {
@@ -14,7 +14,7 @@ export interface Stack<E> extends Queue<E> {
 
   clone(): Stack<E>;
 
-  queueIterator(): DequeIterator<E>;
+  queueIterator(): FluentDequeIterator<E>;
 
-  reverseQueueIterator(): DequeIterator<E>;
+  reverseQueueIterator(): FluentDequeIterator<E>;
 }

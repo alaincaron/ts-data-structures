@@ -1,5 +1,5 @@
 import { Stack } from './stack';
-import { DequeIterator } from '../deques';
+import { FluentDequeIterator } from '../deques';
 import { AbstractQueue, QueueOptions } from '../queues';
 import { UnderflowException } from '../utils';
 
@@ -39,7 +39,7 @@ export abstract class AbstractStack<E> extends AbstractQueue<E> implements Stack
 
   abstract clone(): AbstractStack<E>;
 
-  abstract queueIterator(): DequeIterator<E>;
+  abstract queueIterator(): FluentDequeIterator<E>;
 
-  abstract reverseQueueIterator(): DequeIterator<E>;
+  abstract reverseQueueIterator(): FluentDequeIterator<E>;
 }

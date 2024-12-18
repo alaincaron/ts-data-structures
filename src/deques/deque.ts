@@ -1,14 +1,29 @@
-import { Predicate } from 'ts-fluent-iterators';
-import { Queue, QueueIterator } from '../queues';
+import { FluentIterator, Predicate } from 'ts-fluent-iterators';
+import { SequencedCollection } from '../collections';
+import { FluentQueueIterator, Queue, QueueIterator } from '../queues';
 
 export interface DequeIterator<E> extends QueueIterator<E> {
   setValue(item: E): E;
 }
 
-export interface DequeInterface<E> extends Queue<E> {
-  addFirst(item: E): DequeInterface<E>;
+export class FluentDequeIterator<E> extends FluentQueueIterator<E> {
+  constructor(iter: DequeIterator<E>) {
+    super(iter);
+  }
 
-  addLast(item: E): DequeInterface<E>;
+  [Symbol.iterator]() {
+    return this.iter as DequeIterator<E>;
+  }
+
+  setValue(value: E) {
+    return (this.iter as DequeIterator<E>).setValue(value);
+  }
+}
+
+export interface Deque<E> extends Queue<E>, SequencedCollection<E> {
+  addFirst(item: E): Deque<E>;
+
+  addLast(item: E): Deque<E>;
 
   offerFirst(item: E): boolean;
 
@@ -38,11 +53,11 @@ export interface DequeInterface<E> extends Queue<E> {
 
   peekLast(): E | undefined;
 
-  reverseIterator(): IterableIterator<E>;
+  reverseIterator(): FluentIterator<E>;
 
-  queueIterator(): DequeIterator<E>;
+  queueIterator(): FluentDequeIterator<E>;
 
-  reverseQueueIterator(): DequeIterator<E>;
+  reverseQueueIterator(): FluentDequeIterator<E>;
 
-  clone(): DequeInterface<E>;
+  clone(): Deque<E>;
 }

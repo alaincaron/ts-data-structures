@@ -1,9 +1,9 @@
-import { Predicate } from 'ts-fluent-iterators';
-import { DequeInterface, DequeIterator } from './deque';
+import { FluentIterator, Predicate } from 'ts-fluent-iterators';
+import { Deque, FluentDequeIterator } from './deque';
 import { AbstractQueue, QueueOptions } from '../queues';
 import { equalsAny, OverflowException, UnderflowException } from '../utils';
 
-export abstract class AbstractDeque<E> extends AbstractQueue<E> implements DequeInterface<E> {
+export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque<E> {
   protected constructor(options?: QueueOptions) {
     super(options);
   }
@@ -85,11 +85,27 @@ export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque
     return this.peekFirst();
   }
 
-  abstract reverseIterator(): IterableIterator<E>;
+  abstract reverseIterator(): FluentIterator<E>;
 
-  abstract queueIterator(): DequeIterator<E>;
+  abstract queueIterator(): FluentDequeIterator<E>;
 
-  abstract reverseQueueIterator(): DequeIterator<E>;
+  abstract reverseQueueIterator(): FluentDequeIterator<E>;
 
   abstract clone(): AbstractDeque<E>;
+
+  reverse(): AbstractDeque<E> {
+    const iter1 = this.queueIterator();
+    const iter2 = this.reverseQueueIterator();
+    let i = 0;
+    let j = this.size() - 1;
+    while (i < j) {
+      const item1 = iter1.next();
+      const item2 = iter2.next();
+      iter1.setValue(item2.value);
+      iter2.setValue(item1.value);
+      ++i;
+      --j;
+    }
+    return this;
+  }
 }

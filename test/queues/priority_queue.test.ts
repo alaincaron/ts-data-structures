@@ -264,11 +264,6 @@ describe('PriorityQueue', () => {
       expect(i).equal(a.length);
       expect(queue.size()).equal(0);
     });
-    it('should be iterable', () => {
-      const queue = new PriorityQueue();
-      const iterator = queue.queueIterator();
-      expect(iterator[Symbol.iterator]()).equal(iterator);
-    });
     it('should not allow 2nd remove after next', () => {
       const a = [3, 2, 1, 2];
       const queue = PriorityQueue.create({ initial: a });
@@ -301,11 +296,6 @@ describe('PriorityQueue', () => {
       }
       expect(i).equal(a.length);
       expect(queue.size()).equal(0);
-    });
-    it('should be iterable', () => {
-      const queue = new PriorityQueue();
-      const iterator = queue.reverseQueueIterator();
-      expect(iterator[Symbol.iterator]()).equal(iterator);
     });
     it('should not allow 2nd remove after next', () => {
       const a = [2, 3, 2, 1];

@@ -556,11 +556,6 @@ describe('ArrayDeque', () => {
       expect(i).equal(a.length);
       expect(deque.toArray()).deep.equal(a.map(x => x + 1));
     });
-    it('should be iterable', () => {
-      const deque = new ArrayDeque();
-      const iterator = deque.queueIterator();
-      expect(iterator[Symbol.iterator]()).equal(iterator);
-    });
     it('should not allow remove/setValue after remove', () => {
       const a = [1, 2, 3, 2];
       const deque = ArrayDeque.create({ initial: a });
@@ -623,11 +618,6 @@ describe('ArrayDeque', () => {
       }
       expect(i).equal(a.length);
       expect(deque.toArray()).deep.equal(a.map(x => x + 1));
-    });
-    it('should be iterable', () => {
-      const deque = new ArrayDeque();
-      const iterator = deque.reverseQueueIterator();
-      expect(iterator[Symbol.iterator]()).equal(iterator);
     });
     it('should not allow remove/setValue after remove', () => {
       const a = [2, 3, 2, 1];

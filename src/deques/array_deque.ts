@@ -1,6 +1,6 @@
-import { Predicate } from 'ts-fluent-iterators';
+import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { AbstractDeque } from './abstract_deque';
-import { DequeIterator } from './deque';
+import { DequeIterator, FluentDequeIterator } from './deque';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { QueueOptions } from '../queues';
 import { nextPowerOfTwo, WithCapacity } from '../utils';
@@ -132,7 +132,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     return ArrayDeque.create({ initial: this });
   }
 
-  *[Symbol.iterator](): IterableIterator<E> {
+  *[Symbol.iterator](): Iterator<E> {
     let cursor = this.head;
     while (cursor !== this.tail) {
       yield this.buffer[cursor]!;
@@ -140,13 +140,17 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     }
   }
 
-  *reverseIterator(): IterableIterator<E> {
+  private *getReverseIterator() {
     let cursor = this.tail;
     while (cursor !== this.head) {
       const idx = this.slot(cursor - 1);
       yield this.buffer[idx]!;
       cursor = idx;
     }
+  }
+
+  reverseIterator(): FluentIterator<E> {
+    return new FluentIterator(this.getReverseIterator());
   }
 
   removeFirstMatchingItem(predicate: Predicate<E>): E | undefined {
@@ -192,7 +196,7 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
     this.buffer = tmp;
   }
 
-  private getQueueIterator(step: -1 | 1): DequeIterator<E> {
+  private getDequeIterator(step: -1 | 1): DequeIterator<E> {
     let lastReturn = -1;
     let cursor = step === 1 ? this.head : this.tail;
     return {
@@ -265,10 +269,10 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   }
 
   queueIterator() {
-    return this.getQueueIterator(1);
+    return new FluentDequeIterator(this.getDequeIterator(1));
   }
 
   reverseQueueIterator() {
-    return this.getQueueIterator(-1);
+    return new FluentDequeIterator(this.getDequeIterator(-1));
   }
 }
