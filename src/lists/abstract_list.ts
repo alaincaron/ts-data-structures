@@ -32,6 +32,22 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     return this.offerLast(item);
   }
 
+  pollFirst(): E | undefined {
+    return this.isEmpty() ? undefined : this.removeAt(0);
+  }
+
+  pollLast(): E | undefined {
+    return this.isEmpty() ? undefined : this.removeAt(this.size() - 1);
+  }
+
+  peekFirst(): E | undefined {
+    return this.isEmpty() ? undefined : this.getAt(0);
+  }
+
+  peekLast(): E | undefined {
+    return this.isEmpty() ? undefined : this.getAt(this.size() - 1);
+  }
+
   abstract offerAt(idx: number, item: E): boolean;
 
   protected checkBounds(start: number, end: number) {

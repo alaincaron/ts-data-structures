@@ -14,11 +14,11 @@ export interface SequencedCollection<E> extends Collection<E> {
   removeFirst(): E;
   removeLast(): E;
 
-  // pollFirst(): E | undefined;
-  // pollLast(): E | undefined;
+  pollFirst(): E | undefined;
+  pollLast(): E | undefined;
 
-  // peekFirst(): E | undefined;
-  // peekLast(): E | undefined;
+  peekFirst(): E | undefined;
+  peekLast(): E | undefined;
 
   reverse(): SequencedCollection<E>;
   reverseIterator(): FluentIterator<E>;
