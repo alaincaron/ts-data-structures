@@ -1,10 +1,8 @@
 import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
-import { Container } from '../utils';
+import { ReadOnlyMap, ReadOnlyMapEntry } from './readonly_map';
 
-export interface MapEntry<K, V> {
-  get key(): K;
+export interface MapEntry<K, V> extends ReadOnlyMapEntry<K, V> {
   set value(v: V);
-  get value(): V;
 }
 
 export type MapLike<K, V> = Map<K, V> | IMap<K, V> | Iterable<[K, V]>;
@@ -14,16 +12,10 @@ export interface OfferResult<V> {
   previous?: V;
 }
 
-export interface IMap<K, V> extends Container, Iterable<[K, V]> {
-  get(key: K): V | undefined;
-
+export interface IMap<K, V> extends ReadOnlyMap<K, V> {
   offer(key: K, value: V): OfferResult<V>;
 
   put(key: K, value: V): V | undefined;
-
-  containsKey(key: K): boolean;
-
-  containsValue(value: V): boolean;
 
   remove(key: K): V | undefined;
 
@@ -37,19 +29,7 @@ export interface IMap<K, V> extends Container, Iterable<[K, V]> {
 
   clear(): IMap<K, V>;
 
-  keys(): IterableIterator<K>;
-
-  values(): IterableIterator<V>;
-
-  [Symbol.iterator](): Iterator<[K, V]>;
-
-  keyIterator(): FluentIterator<K>;
-
-  valueIterator(): FluentIterator<V>;
-
   entryIterator(): FluentIterator<MapEntry<K, V>>;
-
-  entries(): IterableIterator<[K, V]>;
 
   replaceValueIf(predicate: Predicate<[K, V]>, mapper: Mapper<V, V>): IMap<K, V>;
 
@@ -57,13 +37,5 @@ export interface IMap<K, V> extends Container, Iterable<[K, V]> {
 
   mapValues<V2>(mapper: Mapper<V, V2>): IMap<K, V2>;
 
-  toMap(): Map<K, V>;
-
   clone(): IMap<K, V>;
-
-  toJSON(): string;
-
-  hashCode(): number;
-
-  equals(other: unknown): boolean;
 }

@@ -14,3 +14,4 @@ export * from './trie_map';
 export * from './map_interface';
 export * from './sorted_map';
 export * from './navigable_map';
+export * from './readonly_map';

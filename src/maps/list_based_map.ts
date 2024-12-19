@@ -87,7 +87,7 @@ export abstract class ListBasedMap<K, V> extends AbstractMap<K, V> {
 
   protected cloneDelegate<L extends List<MapEntry<K, V>>>(factory: Constructor<L>): L {
     const delegate = buildCollection<MapEntry<K, V>, L>(factory, { initial: this.delegate() });
-    return delegate.transform(e => ({ ...e })) as L;
+    return delegate.transform(e => ({ key: e.key, value: e.value })) as L;
   }
 }
 
