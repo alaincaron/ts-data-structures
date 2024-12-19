@@ -1,11 +1,11 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
 import { MapLike } from '../maps';
-import { ContainerInterface } from '../utils';
+import { Container } from '../utils';
 
 export type MultiMapLike<K, V> = MapLike<K, V> | MultiMap<K, V>;
 
-export interface MultiMap<K, V> extends ContainerInterface, Iterable<[K, V]> {
+export interface MultiMap<K, V> extends Container, Iterable<[K, V]> {
   getValues(k: K): Collection<V> | undefined;
 
   removeEntry(key: K, value: V): boolean;

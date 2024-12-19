@@ -1,4 +1,5 @@
 import { Comparator, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
+import { ReadOnlyList } from './readonly_list';
 import { SequencedCollection } from '../collections';
 
 export interface ListIterator<E> extends IterableIterator<E> {
@@ -25,13 +26,7 @@ export class FluentListIterator<E> extends FluentIterator<E> {
   }
 }
 
-export interface List<E> extends SequencedCollection<E> {
-  getAt(idx: number): E;
-
-  getFirst(): E;
-
-  getLast(): E;
-
+export interface List<E> extends ReadOnlyList<E>, SequencedCollection<E> {
   offerAt(idx: number, item: E): boolean;
 
   addAt(idx: number, item: E): List<E>;
@@ -54,8 +49,6 @@ export interface List<E> extends SequencedCollection<E> {
 
   removeLast(): E;
 
-  reverseIterator(): FluentIterator<E>;
-
   listIterator(skip?: number, count?: number): FluentListIterator<E>;
 
   transform(mapper: Mapper<E, E>): List<E>;
@@ -66,17 +59,9 @@ export interface List<E> extends SequencedCollection<E> {
 
   replaceAll(f: Mapper<E, E>): void;
 
-  indexOfFirstOccurrence(predicate: Predicate<E>): number;
-
   clear(): List<E>;
 
   clone(): List<E>;
-
-  indexOf(e: E): number;
-
-  indexOfLastOccurrence(predicate: Predicate<E>): number;
-
-  lastIndexOf(e: E): number;
 
   sort(): List<E>;
 
@@ -87,26 +72,6 @@ export interface List<E> extends SequencedCollection<E> {
   sort(arg1: number, arg2: number, arg3: Comparator<E> | undefined): List<E>;
 
   sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): List<E>;
-
-  isOrdered(): boolean;
-
-  isOrdered(arg1: number | Comparator<E> | undefined): boolean;
-
-  isOrdered(arg1: number, arg2: number | Comparator<E> | undefined): boolean;
-
-  isOrdered(arg1: number, arg2: number, arg3: Comparator<E> | undefined): boolean;
-
-  isOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean;
-
-  isStrictlyOrdered(): boolean;
-
-  isStrictlyOrdered(arg1: number | Comparator<E> | undefined): boolean;
-
-  isStrictlyOrdered(arg1: number, arg2: number | Comparator<E> | undefined): boolean;
-
-  isStrictlyOrdered(arg1: number, arg2: number, arg3: Comparator<E> | undefined): boolean;
-
-  isStrictlyOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean;
 
   reverse(start?: number, end?: number): List<E>;
 

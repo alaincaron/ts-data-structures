@@ -1,14 +1,15 @@
 import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
 import { Collection } from './collection';
 import { getSize } from './helpers';
+import { ReadOnlyCollection } from './readonly_collection';
 import { CollectionInitializer, CollectionLike } from './types';
 import {
-  buildOptions,
+  AbstractContainer,
   CapacityMixin,
   Constructor,
-  Container,
   ContainerOptions,
   equalsAny,
+  extractOptions,
   iterableToJSON,
   OverflowException,
   WithCapacity,
@@ -19,7 +20,7 @@ import {
  * elements. Some collections allow duplicate elements and others do
  * not. Some are ordered and others unordered.
  */
-export abstract class AbstractCollection<E> extends Container implements Collection<E> {
+export abstract class AbstractCollection<E> extends AbstractContainer implements Collection<E> {
   /**
    * Returns `true` if this `Collection` contains the specified
    * `item`.  The comparison is done using {@link equalsAny}.
@@ -218,7 +219,7 @@ export abstract class AbstractCollection<E> extends Container implements Collect
    *
    * @returns The number of elements that were removed as a result of this call.
    */
-  removeAll(c: Collection<E>): number {
+  removeAll(c: ReadOnlyCollection<E>): number {
     return this.filter(e => !c.contains(e));
   }
 
@@ -232,7 +233,7 @@ export abstract class AbstractCollection<E> extends Container implements Collect
    *
    * @returns The number of elements that were removed as a result of this call.
    */
-  retainAll(c: Collection<E>): number {
+  retainAll(c: ReadOnlyCollection<E>): number {
     return this.filter(e => c.contains(e));
   }
 
@@ -298,13 +299,7 @@ export function buildCollection<
   Options extends object = object,
   Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
 >(factory: Constructor<C, [Options | undefined]>, initializer?: WithCapacity<Options & Initializer>): C {
-  if (initializer?.capacity === undefined && initializer?.initial === undefined) return new factory(initializer);
-
-  const initialElements = initializer.initial;
-
-  const options = { ...(buildOptions(initialElements) as Options), ...initializer };
-
-  delete options.initial;
+  const { options, initialElements } = extractOptions<CollectionLike<E>>(initializer);
 
   const result = boundCollection(factory, options);
   if (initialElements) result.addFully(initialElements);

@@ -1,37 +1,8 @@
-import { FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
+import { IteratorLike, Predicate } from 'ts-fluent-iterators';
+import { ReadOnlyCollection } from './readonly_collection';
 import { CollectionLike } from './types';
-import { ContainerInterface } from '../utils';
 
-export interface Collection<E> extends Iterable<E>, ContainerInterface {
-  /**
-   * Returns `true` if this `Collection` contains the specified
-   * `item`.  The comparison is done using {@link equalsAny}.
-   *
-   * @param item The item whose presence is tested.
-   *
-   * @returns `true` if this `Collections contains the specified
-   * `item`, `false` otherwise.
-   */
-  contains(item: E): boolean;
-
-  /**
-   * Returns `true` if this `Collection` contains the specified
-   * `item`.  The comparison is done using identify operator (`===`)/
-   *
-   * @param item The item whose presence is tested.
-   *
-   * @returns `true` if this `Collections contains the specified
-   * `item`, `false` otherwise.
-   */
-  includes(item: E): boolean;
-
-  /**
-   * Returns an array containing all elements of this `Collection`
-   *
-   * @returns an array containing all elements of this `Collection`
-   */
-  toArray(): E[];
-
+export interface Collection<E> extends ReadOnlyCollection<E> {
   /**
    * Ensures that this `Collection` contains the specified element.
    * Returns `true` if this `Collection` changed as a result of the
@@ -65,16 +36,6 @@ export interface Collection<E> extends Iterable<E>, ContainerInterface {
   filter(predicate: Predicate<E>): number;
 
   /**
-   * Finds an item for which the argument `predicate` evaluates to `true`.
-   *
-   * @param predicate the predicate used to select an item
-   *
-   * @returns An item for which the `predicate` evaluates to `true` or
-   * `undefined`
-   */
-  find(predicate: Predicate<E>): E | undefined;
-
-  /**
    * Adds all the items of the `container` to this `Collection` if
    * there is enough remaining capacity.
    *
@@ -106,17 +67,6 @@ export interface Collection<E> extends Iterable<E>, ContainerInterface {
   clear(): Collection<E>;
 
   /**
-   * Returns true if this `Collection` contains all the elements in the specified `IteratorLike`.
-   *
-   * @param iteratorLike The items to be checked for containment in this `Collection`.
-   *
-   * @returns true if this collection contains all the elements in the specified `IteratorLike`
-   */
-  containsAll<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean;
-
-  disjoint<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean;
-
-  /**
    * Removes all of this collection's elements that are also contained
    * in the specified `Collection`. After this call returns, this
    * `Collection` will contain no elements in common with the
@@ -126,7 +76,7 @@ export interface Collection<E> extends Iterable<E>, ContainerInterface {
    *
    * @returns The number of elements that were removed as a result of this call.
    */
-  removeAll(c: Collection<E>): number;
+  removeAll(c: ReadOnlyCollection<E>): number;
 
   /**
    * Retains only the elements in this `Collection` that are contained
@@ -138,20 +88,7 @@ export interface Collection<E> extends Iterable<E>, ContainerInterface {
    *
    * @returns The number of elements that were removed as a result of this call.
    */
-  retainAll(c: Collection<E>): number;
-
-  /**
-   * Returns a `FluentIterator` (
-   * https://github.com/alaincaron/ts-fluent-iterators/blob/main/docs/classes/FluentIterator.md)
-   * yielding all elements of this `Collection`.
-   *
-   * @returns a `FluentIterator` yielding all elements of this `Collection`.
-   */
-  iterator(): FluentIterator<E>;
-
-  hashCode(): number;
+  retainAll(c: ReadOnlyCollection<E>): number;
 
   clone(): Collection<E>;
-
-  equals(other: unknown): boolean;
 }

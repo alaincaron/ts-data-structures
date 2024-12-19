@@ -21,7 +21,7 @@ describe('ArrayStack', () => {
       expect(stack.isFull()).to.be.false;
     });
 
-    it('should have the same elements as the array argument in revers order', () => {
+    it('should have the same elements as the array argument in reverse order', () => {
       const arr = [1, 2];
       const stack = ArrayStack.create({ capacity: 2, initial: arr });
       expect(stack.capacity()).equal(2);

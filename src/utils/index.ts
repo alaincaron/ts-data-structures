@@ -7,5 +7,4 @@ export * from './container';
 export * from './constructor';
 export * from './json';
 export * from './capacity_mixin';
-export * from './extract_options';
 export * as Objects from './objects';

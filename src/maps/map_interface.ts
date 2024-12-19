@@ -1,5 +1,5 @@
 import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
-import { ContainerInterface } from '../utils';
+import { Container } from '../utils';
 
 export interface MapEntry<K, V> {
   get key(): K;
@@ -14,7 +14,7 @@ export interface OfferResult<V> {
   previous?: V;
 }
 
-export interface IMap<K, V> extends ContainerInterface, Iterable<[K, V]> {
+export interface IMap<K, V> extends Container, Iterable<[K, V]> {
   get(key: K): V | undefined;
 
   offer(key: K, value: V): OfferResult<V>;

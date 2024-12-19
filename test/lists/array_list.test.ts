@@ -74,6 +74,16 @@ describe('ArrayList', () => {
         OverflowException
       );
     });
+
+    it('should use explicitly specified options rather than those inherited from the initializer', () => {
+      const list1 = ArrayList.create({ capacity: 25, initial: [1, 2, 3] });
+      const list2 = ArrayList.create({ capacity: 10, initial: list1 });
+      const list3 = ArrayList.create({ initial: list1 });
+      expect(list2.toArray()).deep.equal([1, 2, 3]);
+      expect(list2.capacity()).equal(10);
+      expect(list3.toArray()).deep.equal([1, 2, 3]);
+      expect(list3.capacity()).equal(25);
+    });
   });
 
   describe('clone', () => {

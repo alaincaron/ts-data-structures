@@ -2,12 +2,12 @@ import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
 import { IMap, MapEntry, MapLike, OfferResult } from './map_interface';
 import { objectHasFunction } from '../collections/helpers';
 import {
-  buildOptions,
+  AbstractContainer,
   CapacityMixin,
   Constructor,
-  Container,
   ContainerOptions,
   equalsAny,
+  extractOptions,
   hashIterableUnordered,
   mapToJSON,
   OverflowException,
@@ -18,7 +18,7 @@ export interface MapInitializer<K, V> {
   initial?: MapLike<K, V>;
 }
 
-export abstract class AbstractMap<K, V> extends Container implements IMap<K, V> {
+export abstract class AbstractMap<K, V> extends AbstractContainer implements IMap<K, V> {
   protected abstract getEntry(key: K): MapEntry<K, V> | undefined;
 
   get(key: K): V | undefined {
@@ -175,15 +175,7 @@ export function buildMap<
   Options extends object = object,
   Initializer extends MapInitializer<K, V> = MapInitializer<K, V>,
 >(factory: Constructor<M, [Options | undefined]>, initializer?: WithCapacity<Options & Initializer>): M {
-  if (initializer?.capacity === undefined && initializer?.initial === undefined) {
-    return new factory(initializer);
-  }
-
-  const initialElements = initializer.initial;
-
-  const options = { ...(buildOptions(initialElements) as Options), ...initializer };
-
-  delete options.initial;
+  const { options, initialElements } = extractOptions<MapLike<K, V>>(initializer);
   const result = boundMap(factory, options);
 
   if (initialElements) result.putAll(initialElements);

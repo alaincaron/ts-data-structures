@@ -10,7 +10,7 @@ export interface ContainerOptions {
   capacity?: number;
 }
 
-export interface ContainerInterface {
+export interface Container {
   size(): number;
 
   /**
@@ -40,12 +40,14 @@ export interface ContainerInterface {
    * @returns the number of elements that can be added to this {@link Container} without exceeding its `capacity`.
    */
   remaining(): number;
+
+  toJSON(): string;
 }
 
 /**
  * A `Container` is an object that can contain objects.
  */
-export abstract class Container implements ContainerInterface {
+export abstract class AbstractContainer implements Container {
   /**
    * Returns the number of items in this {@link Container}.
    * @returns the number of items in this {@link Container}.
@@ -87,6 +89,8 @@ export abstract class Container implements ContainerInterface {
   remaining(): number {
     return this.capacity() - this.size();
   }
+
+  abstract toJSON(): string;
 }
 
 export interface ContainerInitializer<ContainerLike extends object> {
@@ -98,3 +102,26 @@ export type AddCapacity<T extends unknown[]> = T extends []
   : [T[0] & ContainerOptions, ...ParameterTail<T>];
 
 export type WithCapacity<Type extends object> = ContainerOptions & Type;
+
+export function extractOptions<
+  ContainerType extends object,
+  Options extends ContainerOptions = ContainerOptions,
+  Initializer extends ContainerInitializer<ContainerType> = ContainerInitializer<ContainerType>,
+>(initializer?: Options & Initializer) {
+  if (!initializer?.initial) {
+    return { options: initializer as Options };
+  } else {
+    const initialElements = initializer.initial;
+    const options = { ...buildOptions(initialElements), ...initializer };
+    delete options.initial;
+    if ('capacity' in options && !Number.isFinite(options.capacity)) delete options.capacity;
+    return { options, initialElements };
+  }
+}
+
+export function buildOptions(obj?: object) {
+  if (obj && 'buildOptions' in obj && typeof obj.buildOptions === 'function') {
+    return obj.buildOptions();
+  }
+  return {};
+}

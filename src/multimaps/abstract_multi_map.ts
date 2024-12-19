@@ -2,9 +2,9 @@ import { FlattenCollector, FluentIterator, Generators, iterator, Predicate } fro
 import { MultiMap, MultiMapLike } from './multi_map';
 import { Collection } from '../collections';
 import {
+  AbstractContainer,
   CapacityMixin,
   Constructor,
-  Container,
   ContainerOptions,
   equalsAny,
   extractOptions,
@@ -16,7 +16,7 @@ export interface MultiMapInitializer<K, V> {
   initial?: MultiMapLike<K, V>;
 }
 
-export abstract class AbstractMultiMap<K, V> extends Container implements MultiMap<K, V> {
+export abstract class AbstractMultiMap<K, V> extends AbstractContainer implements MultiMap<K, V> {
   abstract getValues(k: K): Collection<V> | undefined;
 
   abstract removeEntry(key: K, value: V): boolean;
