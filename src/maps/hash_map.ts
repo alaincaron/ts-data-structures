@@ -1,6 +1,6 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { AbstractMap, buildMap, MapInitializer } from './abstract_map';
-import { MapEntry } from './map_interface';
+import { AbstractMap, buildMap } from './abstract_map';
+import { MapEntry, MapInitializer } from './map_interface';
 import { equalsAny, hashAny, LARGEST_PRIME, nextPrime, WithCapacity } from '../utils';
 
 export interface HashEntry<K, V> extends MapEntry<K, V> {

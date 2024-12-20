@@ -1,7 +1,7 @@
 import { Comparator, Comparators, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
 import { FluentListIterator, List, ListIterator } from './list';
 import { AbstractCollection } from '../collections';
-import { objectHasFunction } from '../collections/helpers';
+import { Objects } from '../utils';
 import {
   equalsAny,
   equalsIterable,
@@ -120,7 +120,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
   }
 
   filter(predicate: Predicate<E>) {
-    const iterator = this.listIterator();
+    const iterator = this.listIterator()[Symbol.iterator]();
     let count = 0;
     for (;;) {
       const item = iterator.next();
@@ -136,7 +136,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     return new FluentIterator(this.reverseListIterator());
   }
 
-  private getListIterator(start: number, count: number, advance: (cursor: number) => number): ListIterator<E> {
+  private getListIterator(start: number, count: number, step: 1 | -1): ListIterator<E> {
     let lastReturn = -1;
     let cursor = start;
     return {
@@ -149,7 +149,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
         }
         --count;
         lastReturn = cursor;
-        cursor = advance(cursor);
+        cursor += step;
         return { done: false, value: this.getAt(lastReturn) };
       },
       setValue: (item: E) => {
@@ -193,16 +193,16 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
 
   listIterator(skip?: number, count?: number): FluentListIterator<E> {
     const bounds = this.computeIteratorBounds(skip, count);
-    return new FluentListIterator(this.getListIterator(bounds.start, bounds.count, cursor => cursor + 1));
+    return new FluentListIterator(this.getListIterator(bounds.start, bounds.count, 1));
   }
 
   reverseListIterator(skip?: number, count?: number): FluentListIterator<E> {
     const bounds = this.computeReverseIteratorBounds(skip, count);
-    return new FluentListIterator(this.getListIterator(bounds.start, bounds.count, cursor => cursor - 1));
+    return new FluentListIterator(this.getListIterator(bounds.start, bounds.count, -1));
   }
 
   replaceIf(predicate: Predicate<E>, f: Mapper<E, E>): AbstractList<E> {
-    const iter = this.listIterator();
+    const iter = this.listIterator()[Symbol.iterator]();
     for (;;) {
       const item = iter.next();
       if (item.done) break;
@@ -378,7 +378,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
 
 function isList(obj: unknown): obj is List<unknown> {
   if (!obj || typeof obj !== 'object') return false;
-  if (!objectHasFunction(obj, 'size')) return false;
-  if (!objectHasFunction(obj, 'listIterator')) return false;
+  if (!Objects.hasFunction(obj, 'size')) return false;
+  if (!Objects.hasFunction(obj, 'listIterator')) return false;
   return true;
 }

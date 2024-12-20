@@ -1,10 +1,23 @@
-import { FluentIterator } from 'ts-fluent-iterators';
-import { Container } from '../utils';
+import { ArrayGenerator, FluentIterator } from 'ts-fluent-iterators';
+import { Container, ContainerInitializer, LengthProvider } from '../utils';
 
 export interface ReadOnlyMapEntry<K, V> {
   get key(): K;
   get value(): V;
 }
+
+/**
+ * Describes an object that can behave like a Map.  It has a
+ * `size` or `length` and it is possible to iterate through its
+ * elements.
+ */
+
+export type MapLike<K, V> = (Iterable<[K, V]> & LengthProvider) | ArrayGenerator<[K, V]>;
+
+/**
+ * Interface used to specify initial elements in a create method for a {@link Map}.
+ */
+export type MapInitializer<K, V> = ContainerInitializer<MapLike<K, V>>;
 
 export interface ReadOnlyMap<K, V> extends Container, Iterable<[K, V]> {
   get(key: K): V | undefined;

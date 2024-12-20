@@ -1,5 +1,6 @@
-import { buildMap, MapInitializer } from './abstract_map';
+import { buildMap } from './abstract_map';
 import { SortedMapOptions } from './abstract_sorted_map';
+import { MapInitializer } from './readonly_map';
 import { BinaryNode, TreeMap } from './tree_map';
 import { WithCapacity } from '../utils';
 

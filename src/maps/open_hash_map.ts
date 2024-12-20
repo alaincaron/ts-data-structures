@@ -1,7 +1,7 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { AbstractMap, buildMap, MapInitializer } from './abstract_map';
+import { AbstractMap, buildMap } from './abstract_map';
 import { HashMapOptions } from './hash_map';
-import { MapEntry } from './map_interface';
+import { MapEntry, MapInitializer } from './map_interface';
 import { equalsAny, hashAny, hashNumber, MAX_ARRAY_SIZE, nextPrime, WithCapacity } from '../utils';
 
 const DEFAULT_INITIAL_SIZE = 5; // should be prime.

@@ -1,11 +1,9 @@
 import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
-import { ReadOnlyMap, ReadOnlyMapEntry } from './readonly_map';
+import { MapLike, ReadOnlyMap, ReadOnlyMapEntry } from './readonly_map';
 
 export interface MapEntry<K, V> extends ReadOnlyMapEntry<K, V> {
   set value(v: V);
 }
-
-export type MapLike<K, V> = Map<K, V> | IMap<K, V> | Iterable<[K, V]>;
 
 export interface OfferResult<V> {
   accepted: boolean;
@@ -39,3 +37,5 @@ export interface IMap<K, V> extends ReadOnlyMap<K, V> {
 
   clone(): IMap<K, V>;
 }
+
+export * from './readonly_map';

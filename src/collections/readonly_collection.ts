@@ -1,5 +1,17 @@
-import { FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
-import { Container } from '../utils';
+import { ArrayGenerator, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
+import { Container, ContainerInitializer, LengthProvider } from '../utils';
+
+/**
+ * Describes an object that can behave like a Collection.  It has a
+ * `size` or `length` and it is possible to iterate through its
+ * elements.
+ */
+export type CollectionLike<E> = (Iterable<E> & LengthProvider) | ArrayGenerator<E>;
+
+/**
+ * Interface used to specify initial elements in a create method for a {@link Collection}.
+ */
+export type CollectionInitializer<E> = ContainerInitializer<CollectionLike<E>>;
 
 export interface ReadOnlyCollection<E> extends Iterable<E>, Container {
   /**

@@ -154,35 +154,27 @@ export class ArrayDeque<E> extends AbstractDeque<E> {
   }
 
   removeFirstMatchingItem(predicate: Predicate<E>): E | undefined {
-    let cursor = this.head;
-    while (cursor !== this.tail) {
-      const item = this.buffer[cursor]!;
-      if (predicate(item)) {
-        this.removeAtCursor(cursor);
-        return item;
-      }
-      cursor = this.slot(cursor + 1);
+    const iterator = this.queueIterator()[Symbol.iterator]();
+    for (;;) {
+      const item = iterator.next();
+      if (item.done) return undefined;
+      if (predicate(item.value)) return iterator.remove();
     }
-    return undefined;
   }
 
   removeLastMatchingItem(predicate: Predicate<E>): E | undefined {
-    let cursor = this.tail;
-    while (cursor !== this.head) {
-      const idx = this.slot(cursor - 1);
-      const item = this.buffer[idx]!;
-      if (predicate(item)) {
-        this.removeAtCursor(idx);
-        return item;
-      }
-      cursor = idx;
+    const iterator = this.reverseQueueIterator()[Symbol.iterator]();
+    for (;;) {
+      const item = iterator.next();
+      if (item.done) return undefined;
+      if (predicate(item.value)) return iterator.remove();
     }
-    return undefined;
   }
 
   private slot(idx: number) {
     return idx & (this.buffer.length - 1);
   }
+
   resize(newSize = 0) {
     const originalSize = this.size();
     if (newSize < originalSize) newSize = originalSize;

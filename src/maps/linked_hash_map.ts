@@ -1,6 +1,6 @@
-import { buildMap, MapInitializer } from './abstract_map';
+import { buildMap } from './abstract_map';
 import { AccessType, HashEntry, HashMap, HashMapOptions } from './hash_map';
-import { MapEntry } from './map_interface';
+import { MapEntry, MapInitializer } from './map_interface';
 import { DoubleLinkedList, OverflowException, WithCapacity } from '../utils';
 
 export enum Ordering {

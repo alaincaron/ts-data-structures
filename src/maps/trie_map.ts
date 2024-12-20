@@ -1,8 +1,8 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { buildMap, MapInitializer } from './abstract_map';
+import { buildMap } from './abstract_map';
 import { AbstractSortedMap, SortedMapOptions } from './abstract_sorted_map';
 import { AvlTreeMap } from './avl_tree_map';
-import { MapEntry } from './map_interface';
+import { MapEntry, MapInitializer } from './map_interface';
 import { SortedMap } from './sorted_map';
 import { WithCapacity } from '../utils';
 

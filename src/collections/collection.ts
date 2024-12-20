@@ -1,6 +1,5 @@
 import { IteratorLike, Predicate } from 'ts-fluent-iterators';
-import { ReadOnlyCollection } from './readonly_collection';
-import { CollectionLike } from './types';
+import { CollectionLike, ReadOnlyCollection } from './readonly_collection';
 
 export interface Collection<E> extends ReadOnlyCollection<E> {
   /**

@@ -30,9 +30,7 @@ export abstract class AbstractMultiMap<K, V> extends AbstractContainer implement
   abstract put(key: K, value: V): boolean;
 
   putAll<K1 extends K, V1 extends V>(map: MultiMapLike<K1, V1>) {
-    for (const [key, value] of map) {
-      this.put(key, value);
-    }
+    FluentIterator.from(map).forEach(([k, v]) => this.put(k, v));
   }
 
   abstract clear(): AbstractMultiMap<K, V>;

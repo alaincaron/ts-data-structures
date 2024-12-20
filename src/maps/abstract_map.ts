@@ -1,6 +1,5 @@
 import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
-import { IMap, MapEntry, MapLike, OfferResult } from './map_interface';
-import { objectHasFunction } from '../collections/helpers';
+import { IMap, MapEntry, MapInitializer, MapLike, OfferResult } from './map_interface';
 import {
   AbstractContainer,
   CapacityMixin,
@@ -10,13 +9,10 @@ import {
   extractOptions,
   hashIterableUnordered,
   mapToJSON,
+  Objects,
   OverflowException,
   WithCapacity,
 } from '../utils';
-
-export interface MapInitializer<K, V> {
-  initial?: MapLike<K, V>;
-}
 
 export abstract class AbstractMap<K, V> extends AbstractContainer implements IMap<K, V> {
   protected abstract getEntry(key: K): MapEntry<K, V> | undefined;
@@ -59,10 +55,7 @@ export abstract class AbstractMap<K, V> extends AbstractContainer implements IMa
   }
 
   containsValue(value: V) {
-    for (const v of this.values()) {
-      if (equalsAny(value, v)) return true;
-    }
-    return false;
+    return this.valueIterator().contains(v => equalsAny(value, v));
   }
 
   abstract remove(key: K): V | undefined;
@@ -78,9 +71,7 @@ export abstract class AbstractMap<K, V> extends AbstractContainer implements IMa
   abstract filterEntries(predicate: Predicate<[K, V]>): number;
 
   putAll<K1 extends K, V1 extends V>(map: MapLike<K1, V1>) {
-    for (const [key, value] of map) {
-      this.put(key, value);
-    }
+    FluentIterator.from(map).forEach(([k, v]) => this.put(k, v));
   }
 
   abstract clear(): AbstractMap<K, V>;
@@ -162,9 +153,9 @@ export abstract class AbstractMap<K, V> extends AbstractContainer implements IMa
 
 function isMap<K, V>(obj: unknown): obj is IMap<K, V> {
   if (!obj || typeof obj !== 'object') return false;
-  if (!objectHasFunction(obj, 'size')) return false;
-  if (!objectHasFunction(obj, 'toMap')) return false;
-  if (!objectHasFunction(obj, 'get')) return false;
+  if (!Objects.hasFunction(obj, 'size')) return false;
+  if (!Objects.hasFunction(obj, 'toMap')) return false;
+  if (!Objects.hasFunction(obj, 'get')) return false;
   return true;
 }
 

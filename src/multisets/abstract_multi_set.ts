@@ -1,18 +1,18 @@
-import { MultiSet, MultiSetLike } from './multi_set';
-import { AbstractCollection } from '../collections';
-import { objectHasFunction } from '../collections/helpers';
+import { MultiSet } from './multi_set';
+import { AbstractCollection, CollectionLike } from '../collections';
 import {
   CapacityMixin,
   Constructor,
   ContainerOptions,
   extractOptions,
   hashIterableUnordered,
+  Objects,
   OverflowException,
   WithCapacity,
 } from '../utils';
 
 export interface MultiSetInitializer<E> {
-  initial?: MultiSetLike<E>;
+  initial?: CollectionLike<E>;
 }
 
 export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implements MultiSet<E> {
@@ -63,9 +63,9 @@ export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implemen
 
 function isMultiSet<E>(obj: unknown): obj is MultiSet<E> {
   if (!obj || typeof obj !== 'object') return false;
-  if (!objectHasFunction(obj, 'size')) return false;
-  if (!objectHasFunction(obj, 'entries')) return false;
-  if (!objectHasFunction(obj, 'count')) return false;
+  if (!Objects.hasFunction(obj, 'size')) return false;
+  if (!Objects.hasFunction(obj, 'entries')) return false;
+  if (!Objects.hasFunction(obj, 'count')) return false;
   return true;
 }
 
@@ -75,9 +75,9 @@ export function buildMultiSet<
   Options extends object = object,
   Initializer extends MultiSetInitializer<E> = MultiSetInitializer<E>,
 >(factory: Constructor<MS>, initializer?: WithCapacity<Options & Initializer>): MS {
-  const { options, initialElements } = extractOptions<MultiSetLike<E>>(initializer);
+  const { options, initialElements } = extractOptions<CollectionLike<E>>(initializer);
   const result = boundMultiSet(factory, options);
-  if (initialElements instanceof AbstractMultiSet) {
+  if (isMultiSet<E>(initialElements)) {
     for (const [e, count] of initialElements.entries()) {
       result.setCount(e, count);
     }

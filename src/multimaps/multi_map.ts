@@ -3,7 +3,7 @@ import { Collection } from '../collections';
 import { MapLike } from '../maps';
 import { Container } from '../utils';
 
-export type MultiMapLike<K, V> = MapLike<K, V> | MultiMap<K, V>;
+export type MultiMapLike<K, V> = MapLike<K, V>;
 
 export interface MultiMap<K, V> extends Container, Iterable<[K, V]> {
   getValues(k: K): Collection<V> | undefined;

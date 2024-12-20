@@ -1,8 +1,7 @@
 import { iterator, Iterators } from 'ts-fluent-iterators';
 import { ISet } from './set_interface';
 import { AbstractCollection, CollectionLike } from '../collections';
-import { objectHasFunction } from '../collections/helpers';
-import { hashIterableUnordered, OverflowException } from '../utils';
+import { hashIterableUnordered, Objects, OverflowException } from '../utils';
 
 function getItemsToAdd<E, E1 extends E>(set: ISet<E>, items: CollectionLike<E1>): Set<E> {
   return iterator(Iterators.toIterator(items))
@@ -56,8 +55,8 @@ export abstract class AbstractSet<E> extends AbstractCollection<E> implements IS
 
 function isSet<E>(obj: unknown): obj is ISet<E> {
   if (!obj || typeof obj !== 'object') return false;
-  if (!objectHasFunction(obj, 'size')) return false;
-  if (!objectHasFunction(obj, 'toSet')) return false;
-  if (!objectHasFunction(obj, 'iterator')) return false;
+  if (!Objects.hasFunction(obj, 'size')) return false;
+  if (!Objects.hasFunction(obj, 'toSet')) return false;
+  if (!Objects.hasFunction(obj, 'iterator')) return false;
   return true;
 }

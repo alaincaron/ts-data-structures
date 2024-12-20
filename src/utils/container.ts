@@ -125,3 +125,16 @@ export function buildOptions(obj?: object) {
   }
   return {};
 }
+
+type NumberProvider = number | (() => number);
+export type LengthProvider = { length: NumberProvider } | { size: NumberProvider };
+
+export function getSize(items: LengthProvider) {
+  if ('size' in items) {
+    return typeof items.size === 'function' ? items.size() : items.size;
+  }
+  if ('length' in items) {
+    return typeof items.length === 'function' ? items.length() : items.length;
+  }
+  throw new Error('Unable to extract number of items');
+}

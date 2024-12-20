@@ -1,6 +1,6 @@
 import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
-import { AbstractMap, MapInitializer } from './abstract_map';
-import { MapEntry } from './map_interface';
+import { AbstractMap } from './abstract_map';
+import { MapEntry, MapInitializer } from './map_interface';
 import { buildCollection } from '../collections';
 import { ArrayList, LinkedList, List } from '../lists';
 import { buildOptions, Constructor, equalsAny, WithCapacity } from '../utils';

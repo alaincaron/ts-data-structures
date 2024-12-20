@@ -1,8 +1,6 @@
 import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
 import { Collection } from './collection';
-import { getSize } from './helpers';
-import { ReadOnlyCollection } from './readonly_collection';
-import { CollectionInitializer, CollectionLike } from './types';
+import { CollectionInitializer, CollectionLike, ReadOnlyCollection } from './readonly_collection';
 import {
   AbstractContainer,
   CapacityMixin,
@@ -10,6 +8,7 @@ import {
   ContainerOptions,
   equalsAny,
   extractOptions,
+  getSize,
   iterableToJSON,
   OverflowException,
   WithCapacity,
@@ -192,21 +191,11 @@ export abstract class AbstractCollection<E> extends AbstractContainer implements
    * @returns true if this collection contains all the elements in the specified `IteratorLike`
    */
   containsAll<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
-    const iter = Iterators.toIterator(iteratorLike);
-    for (;;) {
-      const item = iter.next();
-      if (item.done) return true;
-      if (!this.contains(item.value)) return false;
-    }
+    return FluentIterator.from(iteratorLike).all(x => this.contains(x));
   }
 
   disjoint<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
-    const iter = Iterators.toIterator(iteratorLike);
-    for (;;) {
-      const item = iter.next();
-      if (item.done) return true;
-      if (this.contains(item.value)) return false;
-    }
+    return FluentIterator.from(iteratorLike).all(x => !this.contains(x));
   }
 
   /**

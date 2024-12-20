@@ -1,8 +1,7 @@
 import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
 import { FluentQueueIterator, OverflowQueueStrategy, Queue } from './queue';
 import { AbstractCollection, CollectionLike } from '../collections';
-import { getSize } from '../collections/helpers';
-import { hashIterableOrdered, OverflowException, UnderflowException, WithCapacity } from '../utils';
+import { getSize, hashIterableOrdered, OverflowException, UnderflowException, WithCapacity } from '../utils';
 
 export interface QueueOptions {
   overflowStrategy?: OverflowQueueStrategy;

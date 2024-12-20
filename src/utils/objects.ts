@@ -65,3 +65,10 @@ export function deepSortKeys(obj: unknown, comparator: Comparator<string> = Comp
       .sort(Comparators.onResultOf(comparator, extractKey))
   );
 }
+
+export function hasFunction(obj: any, attribute: string | symbol) {
+  if (attribute in obj) {
+    return typeof obj[attribute] === 'function';
+  }
+  return false;
+}
