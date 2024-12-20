@@ -5,6 +5,8 @@ import { Container } from '../utils';
 
 export type MultiMapLike<K, V> = MapLike<K, V>;
 
+// TODO make a ReadOnlyMultiMap interface
+
 export interface MultiMap<K, V> extends Container, Iterable<[K, V]> {
   getValues(k: K): Collection<V> | undefined;
 

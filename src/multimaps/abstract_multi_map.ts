@@ -9,6 +9,7 @@ import {
   equalsAny,
   extractOptions,
   hashIterableUnordered,
+  Objects,
   WithCapacity,
 } from '../utils';
 
@@ -120,8 +121,7 @@ export abstract class AbstractMultiMap<K, V> extends AbstractContainer implement
 
   equals(other: unknown) {
     if (this === other) return true;
-    // TODO use is a MultiMap function guard
-    if (!(other instanceof AbstractMultiMap)) return false;
+    if (!isMultiMap<K, V>(other)) return false;
     if (other.size() !== this.size()) return false;
 
     for (const [k, values] of this.partitions()) {
@@ -129,6 +129,13 @@ export abstract class AbstractMultiMap<K, V> extends AbstractContainer implement
     }
     return true;
   }
+}
+
+function isMultiMap<K, V>(obj: unknown): obj is MultiMap<K, V> {
+  if (!obj || typeof obj !== 'object') return false;
+  if (!Objects.hasFunction(obj, 'size')) return false;
+  if (!Objects.hasFunction(obj, 'getValues')) return false;
+  return true;
 }
 
 export function buildMultiMap<
