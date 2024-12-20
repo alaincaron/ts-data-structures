@@ -8,4 +8,6 @@ export interface ReadOnlyMultiSet<E> extends ReadOnlyCollection<E> {
   hashCode(): number;
 
   equals(other: unknown): boolean;
+
+  clone(): ReadOnlyMultiSet<E>;
 }

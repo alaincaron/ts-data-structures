@@ -76,4 +76,6 @@ export interface ReadOnlyCollection<E> extends Iterable<E>, Container {
   hashCode(): number;
 
   equals(other: unknown): boolean;
+
+  clone(): ReadOnlyCollection<E>;
 }

@@ -37,4 +37,6 @@ export interface ReadOnlyList<E> extends ReadOnlyCollection<E> {
   isStrictlyOrdered(arg1: number, arg2: number, arg3: Comparator<E> | undefined): boolean;
 
   isStrictlyOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean;
+
+  clone(): ReadOnlyList<E>;
 }

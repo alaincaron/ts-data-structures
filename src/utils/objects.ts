@@ -66,7 +66,7 @@ export function deepSortKeys(obj: unknown, comparator: Comparator<string> = Comp
   );
 }
 
-export function hasFunction(obj: any, attribute: string | symbol) {
+export function hasFunction(obj: any, attribute: string | symbol): boolean {
   if (attribute in obj) {
     return typeof obj[attribute] === 'function';
   }

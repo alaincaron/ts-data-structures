@@ -46,5 +46,7 @@ export interface ReadOnlyMap<K, V> extends Container, Iterable<[K, V]> {
 
   hashCode(): number;
 
+  clone(): ReadOnlyMap<K, V>;
+
   equals(other: unknown): boolean;
 }
