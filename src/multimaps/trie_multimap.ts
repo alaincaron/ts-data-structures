@@ -1,5 +1,5 @@
-import { buildMultiMap, MultiMapInitializer } from './abstract_multi_map';
-import { AbstractSortedMultiMap, SortedMultiMapOptions } from './abstract_sorted_multi_map';
+import { buildMultiMap, MultiMapInitializer } from './abstract_multimap';
+import { AbstractSortedMultiMap, SortedMultiMapOptions } from './abstract_sorted_multimap';
 import { Collection } from '../collections';
 import { MapEntry, TrieMap } from '../maps';
 import { WithCapacity } from '../utils';

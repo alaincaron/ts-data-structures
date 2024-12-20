@@ -1,6 +1,6 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { SumCollector } from 'ts-fluent-iterators/dist/lib/collectors';
-import { AbstractMultiSet } from './abstract_multi_set';
+import { AbstractMultiSet } from './abstract_multiset';
 import { IMap } from '../maps';
 import { OverflowException } from '../utils';
 

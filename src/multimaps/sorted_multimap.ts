@@ -1,5 +1,5 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { MultiMap } from './multi_map';
+import { MultiMap } from './multimap';
 import { Collection } from '../collections';
 import { MapEntry } from '../maps';
 

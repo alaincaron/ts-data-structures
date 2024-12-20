@@ -1,6 +1,6 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { Count, MapBasedMultiSet } from './map_based_multi_set';
-import { SortedMultiSet } from './sorted_multi_set';
+import { Count, MapBasedMultiSet } from './map_based_multiset';
+import { SortedMultiSet } from './sorted_multiset';
 import { MapEntry, SortedMap } from '../maps';
 
 export abstract class AbstractSortedMultiSet<E> extends MapBasedMultiSet<E> implements SortedMultiSet<E> {

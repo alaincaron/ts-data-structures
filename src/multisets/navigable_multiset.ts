@@ -1,4 +1,4 @@
-import { SortedMultiSet } from './sorted_multi_set';
+import { SortedMultiSet } from './sorted_multiset';
 import { MapEntry } from '../maps';
 
 export interface NavigableMultiSet<E> extends SortedMultiSet<E> {

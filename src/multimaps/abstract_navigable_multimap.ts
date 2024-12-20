@@ -1,5 +1,5 @@
-import { AbstractSortedMultiMap } from './abstract_sorted_multi_map';
-import { NavigableMultiMap } from './navigable_multi_map';
+import { AbstractSortedMultiMap } from './abstract_sorted_multimap';
+import { NavigableMultiMap } from './navigable_multimap';
 import { Collection } from '../collections';
 import { MapEntry, NavigableMap } from '../maps';
 import { Constructor } from '../utils';

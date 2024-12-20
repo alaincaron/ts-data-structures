@@ -1,5 +1,5 @@
 import { Predicate, SumCollector } from 'ts-fluent-iterators';
-import { AbstractMultiMap } from './abstract_multi_map';
+import { AbstractMultiMap } from './abstract_multimap';
 import { Collection } from '../collections';
 import { ArrayList } from '../lists';
 import { buildMap, IMap } from '../maps';

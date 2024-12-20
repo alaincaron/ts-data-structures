@@ -1,4 +1,4 @@
-import { MultiSet } from './multi_set';
+import { MultiSet } from './multiset';
 import { AbstractCollection, CollectionLike } from '../collections';
 import {
   CapacityMixin,

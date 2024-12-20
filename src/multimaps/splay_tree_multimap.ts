@@ -1,6 +1,6 @@
-import { buildMultiMap, MultiMapInitializer } from './abstract_multi_map';
-import { AbstractNavigableMultiMap } from './abstract_navigable_multi_map';
-import { SortedMultiMapOptions } from './abstract_sorted_multi_map';
+import { buildMultiMap, MultiMapInitializer } from './abstract_multimap';
+import { AbstractNavigableMultiMap } from './abstract_navigable_multimap';
+import { SortedMultiMapOptions } from './abstract_sorted_multimap';
 import { SplayTreeMap } from '../maps';
 import { WithCapacity } from '../utils';
 

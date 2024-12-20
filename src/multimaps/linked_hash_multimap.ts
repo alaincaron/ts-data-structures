@@ -1,5 +1,5 @@
-import { buildMultiMap, MultiMapInitializer } from './abstract_multi_map';
-import { MapBasedMultiMap, WithCollectionFactory } from './map_based_multi_map';
+import { buildMultiMap, MultiMapInitializer } from './abstract_multimap';
+import { MapBasedMultiMap, WithCollectionFactory } from './map_based_multimap';
 import { LinkedHashMap, LinkedHashMapOptions } from '../maps';
 import { WithCapacity } from '../utils';
 

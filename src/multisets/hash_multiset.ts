@@ -1,5 +1,5 @@
-import { buildMultiSet, MultiSetInitializer } from './abstract_multi_set';
-import { MapBasedMultiSet } from './map_based_multi_set';
+import { buildMultiSet, MultiSetInitializer } from './abstract_multiset';
+import { MapBasedMultiSet } from './map_based_multiset';
 import { HashMap, HashMapOptions } from '../maps';
 import { WithCapacity } from '../utils';
 

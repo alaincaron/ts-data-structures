@@ -1,5 +1,5 @@
-import { buildMultiSet, MultiSetInitializer } from './abstract_multi_set';
-import { AbstractNavigableMultiSet } from './abstract_navigable_multi_set';
+import { buildMultiSet, MultiSetInitializer } from './abstract_multiset';
+import { AbstractNavigableMultiSet } from './abstract_navigable_multiset';
 import { AvlTreeMap, SortedMapOptions } from '../maps';
 import { WithCapacity } from '../utils';
 

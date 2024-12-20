@@ -1,7 +1,7 @@
 import { FlattenCollector, FluentIterator } from 'ts-fluent-iterators';
-import { MapBasedMultiMap } from './map_based_multi_map';
-import { WithCollectionFactory } from './map_based_multi_map';
-import { SortedMultiMap } from './sorted_multi_map';
+import { MapBasedMultiMap } from './map_based_multimap';
+import { WithCollectionFactory } from './map_based_multimap';
+import { SortedMultiMap } from './sorted_multimap';
 import { Collection } from '../collections';
 import { MapEntry, SortedMap, SortedMapOptions } from '../maps';
 import { Constructor } from '../utils';

@@ -1,5 +1,5 @@
 import { FlattenCollector, FluentIterator, Generators, iterator, Predicate } from 'ts-fluent-iterators';
-import { MultiMap, MultiMapLike } from './multi_map';
+import { MultiMap, MultiMapLike } from './multimap';
 import { Collection } from '../collections';
 import {
   AbstractContainer,

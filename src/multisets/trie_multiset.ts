@@ -1,6 +1,6 @@
-import { buildMultiSet, MultiSetInitializer } from './abstract_multi_set';
-import { AbstractSortedMultiSet } from './abstract_sorted_multi_set';
-import { Count } from './map_based_multi_set';
+import { buildMultiSet, MultiSetInitializer } from './abstract_multiset';
+import { AbstractSortedMultiSet } from './abstract_sorted_multiset';
+import { Count } from './map_based_multiset';
 import { SortedMapOptions, TrieMap } from '../maps';
 import { WithCapacity } from '../utils';
 

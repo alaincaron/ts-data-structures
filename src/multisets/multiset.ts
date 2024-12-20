@@ -1,4 +1,4 @@
-import { ReadOnlyMultiSet } from './readonly_multi_set';
+import { ReadOnlyMultiSet } from './readonly_multiset';
 import { Collection } from '../collections';
 
 export interface MultiSet<E> extends ReadOnlyMultiSet<E>, Collection<E> {

@@ -1,6 +1,6 @@
-import { AbstractSortedMultiSet } from './abstract_sorted_multi_set';
-import { Count } from './map_based_multi_set';
-import { NavigableMultiSet } from './navigable_multi_set';
+import { AbstractSortedMultiSet } from './abstract_sorted_multiset';
+import { Count } from './map_based_multiset';
+import { NavigableMultiSet } from './navigable_multiset';
 import { MapEntry, NavigableMap } from '../maps';
 
 export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSet<E> implements NavigableMultiSet<E> {

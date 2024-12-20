@@ -1,5 +1,5 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { MultiSet } from './multi_set';
+import { MultiSet } from './multiset';
 import { MapEntry } from '../maps';
 
 export interface SortedMultiSet<E> extends MultiSet<E> {

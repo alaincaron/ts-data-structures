@@ -1,4 +1,4 @@
-import { SortedMultiMap } from './sorted_multi_map';
+import { SortedMultiMap } from './sorted_multimap';
 import { Collection } from '../collections';
 import { MapEntry } from '../maps';
 
