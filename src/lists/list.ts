@@ -1,6 +1,6 @@
 import { Comparator, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
 import { ReadOnlyList } from './readonly_list';
-import { SequencedCollection } from '../collections';
+import { Collection, SequencedCollection } from '../collections';
 
 export interface ListIterator<E> extends IterableIterator<E> {
   setValue(item: E): E;
@@ -26,7 +26,7 @@ export class FluentListIterator<E> extends FluentIterator<E> {
   }
 }
 
-export interface List<E> extends ReadOnlyList<E>, SequencedCollection<E> {
+export interface List<E> extends Collection<E>, ReadOnlyList<E>, SequencedCollection<E> {
   offerAt(idx: number, item: E): boolean;
 
   addAt(idx: number, item: E): List<E>;

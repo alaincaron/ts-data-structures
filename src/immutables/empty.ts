@@ -1,0 +1,148 @@
+import { Comparator, Comparators, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
+import { ReadOnlyList } from '../lists';
+import { ReadOnlyMultiSet } from '../multisets';
+import { ReadOnlySet } from '../sets';
+import { hashIterableOrdered, IndexOutOfBoundsException, Objects, parseArgs } from '../utils';
+
+class EmptyCollection<E> implements ReadOnlyList<E>, ReadOnlySet<E>, ReadOnlyMultiSet<E> {
+  private static readonly INSTANCE = new EmptyCollection<never>();
+  private() {}
+
+  static instance<E>() {
+    return EmptyCollection.INSTANCE as EmptyCollection<E>;
+  }
+
+  getAt(_: number): E {
+    throw new IndexOutOfBoundsException();
+  }
+
+  getFirst(): E {
+    throw new IndexOutOfBoundsException();
+  }
+
+  getLast(): E {
+    throw new IndexOutOfBoundsException();
+  }
+
+  reverseIterator(): FluentIterator<E> {
+    return FluentIterator.empty();
+  }
+
+  indexOfFirstOccurrence(_: Predicate<E>): number {
+    return -1;
+  }
+
+  indexOf(_: E): number {
+    return -1;
+  }
+
+  indexOfLastOccurrence(_: Predicate<E>): number {
+    return -1;
+  }
+
+  lastIndexOf(_: E): number {
+    return -1;
+  }
+
+  isOrdered(): boolean;
+  isOrdered(arg1: number | Comparator<E> | undefined): boolean;
+  isOrdered(arg1: number, arg2: number | Comparator<E> | undefined): boolean;
+  isOrdered(arg1: number, arg2: number, arg3: Comparator<E> | undefined): boolean;
+  isOrdered(
+    arg1?: number | Comparator<E> | undefined,
+    arg2?: number | Comparator<E> | undefined,
+    arg3?: Comparator<E> | undefined
+  ): boolean;
+  isOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>) {
+    const { left, right } = parseArgs(0, arg1, arg2, arg3, Comparators.natural);
+    if (left !== 0 || right !== 0) throw new IndexOutOfBoundsException();
+    return true;
+  }
+
+  isStrictlyOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>) {
+    return this.isOrdered(arg1, arg2, arg3);
+  }
+
+  clone(): EmptyCollection<E> {
+    return this;
+  }
+
+  contains(_: E): boolean {
+    return false;
+  }
+
+  includes(_: E): boolean {
+    return false;
+  }
+
+  toArray(): E[] {
+    return [];
+  }
+
+  find(_: Predicate<E>): E | undefined {
+    return undefined;
+  }
+
+  containsAll<E1 extends E>(_: IteratorLike<E1>): boolean {
+    return false;
+  }
+
+  disjoint<E1 extends E>(_: IteratorLike<E1>): boolean {
+    return true;
+  }
+
+  iterator(): FluentIterator<E> {
+    return FluentIterator.empty();
+  }
+
+  hashCode(): number {
+    return hashIterableOrdered(this);
+  }
+
+  equals(other: unknown): boolean {
+    if (other === this) return true;
+    if (!other) return false;
+    if (!Objects.hasFunction(other, 'isEmpty')) return false;
+    return (other as ReadOnlyList<E>).isEmpty();
+  }
+
+  *[Symbol.iterator](): Iterator<E> {}
+
+  size(): number {
+    return 0;
+  }
+
+  capacity(): number {
+    return 0;
+  }
+
+  isEmpty(): boolean {
+    return true;
+  }
+
+  isFull(): boolean {
+    return true;
+  }
+
+  remaining(): number {
+    return 0;
+  }
+
+  toJSON(): string {
+    return '[]';
+  }
+
+  toSet() {
+    return new Set<E>();
+  }
+
+  count(_: E) {
+    return 0;
+  }
+
+  *entries() {}
+}
+
+export function emptyCollection<E>() {
+  return EmptyCollection.instance<E>();
+}

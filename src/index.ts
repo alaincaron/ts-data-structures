@@ -7,7 +7,7 @@ export * from './maps';
 export * from './multimaps';
 export * from './multisets';
 export * from './queues';
-export * from './readonly';
+export * from './immutables';
 export * from './sets';
 export * from './stacks';
 export * from './utils';

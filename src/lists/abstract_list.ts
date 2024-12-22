@@ -1,7 +1,7 @@
 import { Comparator, Comparators, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
+import { isList } from './helpers';
 import { FluentListIterator, List, ListIterator } from './list';
 import { AbstractCollection } from '../collections';
-import { Objects } from '../utils';
 import {
   equalsAny,
   equalsIterable,
@@ -372,13 +372,6 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     if (this === other) return true;
     if (!isList(other)) return false;
     if (other.size() !== this.size()) return false;
-    return equalsIterable(this.listIterator(), other.listIterator());
+    return equalsIterable(this, other);
   }
-}
-
-function isList(obj: unknown): obj is List<unknown> {
-  if (!obj || typeof obj !== 'object') return false;
-  if (!Objects.hasFunction(obj, 'size')) return false;
-  if (!Objects.hasFunction(obj, 'listIterator')) return false;
-  return true;
 }
