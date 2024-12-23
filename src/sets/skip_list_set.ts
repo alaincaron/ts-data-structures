@@ -4,20 +4,22 @@ import { CollectionInitializer } from '../collections';
 import { SkipListMap, SortedMapOptions } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class SkipListSet<E> extends NavigableMapBasedSet<E> {
-  constructor(delegate?: SkipListMap<E, boolean>) {
-    super(delegate ?? new SkipListMap());
+export class SkipListSet<E> extends NavigableMapBasedSet<E, SkipListMap<E, boolean>, SortedMapOptions<E>> {
+  constructor(options?: SortedMapOptions<E>) {
+    super(SkipListMap, options);
   }
 
   static create<E>(initializer?: WithCapacity<SortedMapOptions<E> & CollectionInitializer<E>>): SkipListSet<E> {
-    return MapBasedSet.createSet<E, SkipListMap<E, boolean>, SkipListSet<E>>(
+    return MapBasedSet.createSet<E, SkipListMap<E, boolean>, SortedMapOptions<E>, SkipListSet<E>>(
       SkipListSet,
-      SkipListMap.create,
       initializer
     );
   }
 
   clone(): SkipListSet<E> {
-    return new SkipListSet(this.cloneDelegate<SkipListMap<E, boolean>>(SkipListMap));
+    return MapBasedSet.createSet<E, SkipListMap<E, boolean>, SortedMapOptions<E>, SkipListSet<E>>(SkipListSet, {
+      ...this.buildOptions(),
+      initial: this.iterator(),
+    });
   }
 }

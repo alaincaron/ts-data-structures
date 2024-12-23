@@ -1,15 +1,22 @@
+import { Constructor } from 'ts-fluent-iterators';
 import { AbstractSortedMultiSet } from './abstract_sorted_multiset';
-import { Count } from './map_based_multiset';
 import { NavigableMultiSet } from './navigable_multiset';
-import { MutableMapEntry, NavigableMap } from '../maps';
+import { MutableMapEntry, NavigableMap, SortedMapOptions } from '../maps';
 
-export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSet<E> implements NavigableMultiSet<E> {
-  protected constructor(mapFactory: NavigableMap<E, Count> | (new () => NavigableMap<E, Count>)) {
-    super(mapFactory);
+export abstract class AbstractNavigableMultiSet<
+    E,
+    M extends NavigableMap<E, number>,
+    Options extends SortedMapOptions<E> = SortedMapOptions<E>,
+  >
+  extends AbstractSortedMultiSet<E, M, Options>
+  implements NavigableMultiSet<E>
+{
+  protected constructor(ctor: Constructor<M, [Options | undefined]>, options?: Options) {
+    super(ctor, options);
   }
 
   protected delegate() {
-    return this.map as NavigableMap<E, Count>;
+    return this.map as NavigableMap<E, number>;
   }
 
   lower(key: E): E | undefined {
@@ -17,8 +24,7 @@ export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSe
   }
 
   lowerEntry(key: E): MutableMapEntry<E, number> | undefined {
-    const e = this.delegate().lowerEntry(key);
-    return e && { key: e.key, value: e.value.count };
+    return this.delegate().lowerEntry(key);
   }
 
   higher(key: E): E | undefined {
@@ -26,8 +32,7 @@ export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSe
   }
 
   higherEntry(key: E): MutableMapEntry<E, number> | undefined {
-    const e = this.delegate().higherEntry(key);
-    return e && { key: e.key, value: e.value.count };
+    return this.delegate().higherEntry(key);
   }
 
   floor(key: E): E | undefined {
@@ -35,8 +40,7 @@ export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSe
   }
 
   floorEntry(key: E): MutableMapEntry<E, number> | undefined {
-    const e = this.delegate().floorEntry(key);
-    return e && { key: e.key, value: e.value.count };
+    return this.delegate().floorEntry(key);
   }
 
   ceiling(key: E): E | undefined {
@@ -44,18 +48,15 @@ export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSe
   }
 
   ceilingEntry(key: E): MutableMapEntry<E, number> | undefined {
-    const e = this.delegate().ceilingEntry(key);
-    return e && { key: e.key, value: e.value.count };
+    return this.delegate().ceilingEntry(key);
   }
 
   pollFirstEntry(): MutableMapEntry<E, number> | undefined {
-    const e = this.delegate().pollFirstEntry();
-    return e && { key: e.key, value: e.value.count };
+    return this.delegate().pollFirstEntry();
   }
 
   pollLastEntry(): MutableMapEntry<E, number> | undefined {
-    const e = this.delegate().pollLastEntry();
-    return e && { key: e.key, value: e.value.count };
+    return this.delegate().pollLastEntry();
   }
 
   pollFirst(): E | undefined {
@@ -72,5 +73,5 @@ export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSe
     return e.key;
   }
 
-  abstract clone(): AbstractNavigableMultiSet<E>;
+  abstract clone(): AbstractNavigableMultiSet<E, M, Options>;
 }

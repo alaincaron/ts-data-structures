@@ -51,7 +51,7 @@ export class AdapterMap<K, V> extends AbstractMap<K, V> {
     return this;
   }
 
-  protected getEntry(key: K): MutableMapEntry<K, V> | undefined {
+  getEntry(key: K): MutableMapEntry<K, V> | undefined {
     const value = this._delegate.get(key);
     if (value === undefined) return undefined;
     return new AdapterMapEntry(this._delegate, key, value);

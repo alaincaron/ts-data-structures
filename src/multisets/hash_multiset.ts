@@ -3,9 +3,9 @@ import { MapBasedMultiSet } from './map_based_multiset';
 import { HashMap, HashMapOptions } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class HashMultiSet<E> extends MapBasedMultiSet<E> {
+export class HashMultiSet<E> extends MapBasedMultiSet<E, HashMap<E, number>, HashMapOptions> {
   constructor(options?: HashMapOptions) {
-    super(new HashMap(options));
+    super(HashMap, options);
   }
 
   static create<E>(initializer?: WithCapacity<HashMapOptions & MultiSetInitializer<E>>): HashMultiSet<E> {

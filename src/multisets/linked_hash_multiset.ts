@@ -3,9 +3,9 @@ import { MapBasedMultiSet } from './map_based_multiset';
 import { LinkedHashMap, LinkedHashMapOptions } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class LinkedHashMultiSet<E> extends MapBasedMultiSet<E> {
+export class LinkedHashMultiSet<E> extends MapBasedMultiSet<E, LinkedHashMap<E, number>, LinkedHashMapOptions> {
   constructor(options?: LinkedHashMapOptions) {
-    super(new LinkedHashMap(options));
+    super(LinkedHashMap, options);
   }
 
   static create<E>(initializer?: WithCapacity<LinkedHashMapOptions & MultiSetInitializer<E>>): LinkedHashMultiSet<E> {

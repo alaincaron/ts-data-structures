@@ -1,25 +1,30 @@
-import { FluentIterator } from 'ts-fluent-iterators';
-import { Count, MapBasedMultiSet } from './map_based_multiset';
+import { Constructor, FluentIterator } from 'ts-fluent-iterators';
+import { MapBasedMultiSet } from './map_based_multiset';
 import { SortedMultiSet } from './sorted_multiset';
-import { MutableMapEntry, SortedMap } from '../maps';
+import { MutableMapEntry, SortedMap, SortedMapOptions } from '../maps';
 
-export abstract class AbstractSortedMultiSet<E> extends MapBasedMultiSet<E> implements SortedMultiSet<E> {
-  protected constructor(mapFactory: SortedMap<E, Count> | (new () => SortedMap<E, Count>)) {
-    super(mapFactory);
+export abstract class AbstractSortedMultiSet<
+    E,
+    M extends SortedMap<E, number>,
+    Options extends SortedMapOptions<E> = SortedMapOptions<E>,
+  >
+  extends MapBasedMultiSet<E, M, Options>
+  implements SortedMultiSet<E>
+{
+  protected constructor(ctor: Constructor<M, [Options | undefined]>, options?: Options) {
+    super(ctor, options);
   }
 
   protected delegate() {
-    return this.map as SortedMap<E, Count>;
+    return this.map as SortedMap<E, number>;
   }
 
   firstEntry(): MutableMapEntry<E, number> | undefined {
-    const e = this.delegate().firstEntry();
-    return e && { key: e.key, value: e.value.count };
+    return this.delegate().firstEntry();
   }
 
   lastEntry(): MutableMapEntry<E, number> | undefined {
-    const e = this.delegate().lastEntry();
-    return e && { key: e.key, value: e.value.count };
+    return this.delegate().lastEntry();
   }
 
   first(): E | undefined {
@@ -31,14 +36,12 @@ export abstract class AbstractSortedMultiSet<E> extends MapBasedMultiSet<E> impl
   }
 
   reverseEntryIterator(): FluentIterator<MutableMapEntry<E, number>> {
-    return this.delegate()
-      .reverseEntryIterator()
-      .map(e => ({ key: e.key, value: e.value.count }));
+    return this.delegate().reverseEntryIterator();
   }
 
   reverseIterator(): FluentIterator<E> {
     return this.delegate().reverseKeyIterator();
   }
 
-  abstract clone(): AbstractSortedMultiSet<E>;
+  abstract clone(): AbstractSortedMultiSet<E, M, Options>;
 }

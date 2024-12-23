@@ -296,7 +296,10 @@ export function buildCollection<
 
 const constructorMap = new Map();
 
-function boundCollection<E, C extends MutableCollection<E>>(ctor: Constructor<C>, options?: ContainerOptions): C {
+export function boundCollection<E, C extends MutableCollection<E>, Options extends ContainerOptions = ContainerOptions>(
+  ctor: Constructor<C, [Options | undefined]>,
+  options?: Options
+): C {
   if (options && 'capacity' in options) {
     let boundedCtor = constructorMap.get(ctor);
     if (!boundedCtor) {

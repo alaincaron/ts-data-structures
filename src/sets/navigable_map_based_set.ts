@@ -1,14 +1,18 @@
+import { Constructor } from 'ts-fluent-iterators';
 import { NavigableSet } from './navigable_set';
 import { SortedMapBasedSet } from './sorted_map_based_set';
-import { NavigableMap } from '../maps';
+import { NavigableMap, SortedMapOptions } from '../maps';
 
-export abstract class NavigableMapBasedSet<E> extends SortedMapBasedSet<E> implements NavigableSet<E> {
-  protected constructor(delegate: NavigableMap<E, boolean>) {
-    super(delegate);
+export abstract class NavigableMapBasedSet<E, M extends NavigableMap<E, boolean>, Options extends SortedMapOptions<E>>
+  extends SortedMapBasedSet<E, M, Options>
+  implements NavigableSet<E>
+{
+  protected constructor(ctor: Constructor<M, [Options | undefined]>, options?: Options) {
+    super(ctor, options);
   }
 
-  protected delegate() {
-    return super.delegate() as NavigableMap<E, boolean>;
+  protected delegate(): M {
+    return super.delegate() as M;
   }
 
   floor(e: E) {
@@ -35,5 +39,5 @@ export abstract class NavigableMapBasedSet<E> extends SortedMapBasedSet<E> imple
     return this.delegate().pollLastEntry()?.key;
   }
 
-  abstract clone(): NavigableMapBasedSet<E>;
+  abstract clone(): NavigableMapBasedSet<E, M, Options>;
 }

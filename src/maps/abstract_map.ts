@@ -14,7 +14,7 @@ import {
 } from '../utils';
 
 export abstract class AbstractMap<K, V> extends AbstractContainer implements MutableMap<K, V> {
-  protected abstract getEntry(key: K): MutableMapEntry<K, V> | undefined;
+  abstract getEntry(key: K): MutableMapEntry<K, V> | undefined;
 
   get(key: K): V | undefined {
     return this.getEntry(key)?.value;

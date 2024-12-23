@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { Comparators, iterator } from 'ts-fluent-iterators';
+import { narrow } from './helper';
 import { OverflowException, TrieMultiSet } from '../../src';
 
 describe('TrieMultiSet', () => {
@@ -59,10 +60,10 @@ describe('TrieMultiSet', () => {
       ms.setCount('foo', fooValue);
 
       expect(ms.first()).equal('foo');
-      expect(ms.firstEntry()).deep.equal({ key: 'foo', value: fooValue });
+      expect(narrow(ms.firstEntry())).deep.equal({ key: 'foo', value: fooValue });
 
       expect(ms.last()).equal('bar');
-      expect(ms.lastEntry()).deep.equal({ key: 'bar', value: barValue });
+      expect(narrow(ms.lastEntry())).deep.equal({ key: 'bar', value: barValue });
     });
   });
 
@@ -342,12 +343,12 @@ describe('TrieMultiSet', () => {
       ms.setCount('foo', fooValue);
 
       expect(ms.first()).equal('bar');
-      expect(ms.firstEntry()).to.deep.equal({ key: 'bar', value: barValue });
+      expect(narrow(ms.firstEntry())).to.deep.equal({ key: 'bar', value: barValue });
 
       expect(ms.last()).equal('foo');
-      expect(ms.lastEntry()).to.deep.equal({ key: 'foo', value: fooValue });
+      expect(narrow(ms.lastEntry())).to.deep.equal({ key: 'foo', value: fooValue });
 
-      expect(ms.reverseEntryIterator().collect()).to.deep.equal([
+      expect(ms.reverseEntryIterator().map(narrow).collect()).to.deep.equal([
         { key: 'foo', value: fooValue },
         { key: 'bar', value: barValue },
       ]);

@@ -3,20 +3,22 @@ import { CollectionInitializer } from '../collections';
 import { LinkedHashMap, LinkedHashMapOptions } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class LinkedHashSet<E> extends MapBasedSet<E> {
-  constructor(delegate?: LinkedHashMap<E, boolean>) {
-    super(delegate ?? new LinkedHashMap());
+export class LinkedHashSet<E> extends MapBasedSet<E, LinkedHashMap<E, boolean>, LinkedHashMapOptions> {
+  constructor(options?: LinkedHashMapOptions) {
+    super(LinkedHashMap, options);
   }
 
   static create<E>(initializer?: WithCapacity<LinkedHashMapOptions & CollectionInitializer<E>>): LinkedHashSet<E> {
-    return MapBasedSet.createSet<E, LinkedHashMap<E, boolean>, LinkedHashSet<E>>(
+    return MapBasedSet.createSet<E, LinkedHashMap<E, boolean>, LinkedHashMapOptions, LinkedHashSet<E>>(
       LinkedHashSet,
-      LinkedHashMap.create,
       initializer
     );
   }
 
   clone(): LinkedHashSet<E> {
-    return new LinkedHashSet(this.cloneDelegate<LinkedHashMap<E, boolean>>(LinkedHashMap));
+    return MapBasedSet.createSet<E, LinkedHashMap<E, boolean>, LinkedHashMapOptions, LinkedHashSet<E>>(LinkedHashSet, {
+      ...this.buildOptions(),
+      initial: this.iterator(),
+    });
   }
 }

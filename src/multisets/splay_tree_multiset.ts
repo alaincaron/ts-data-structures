@@ -3,9 +3,9 @@ import { AbstractNavigableMultiSet } from './abstract_navigable_multiset';
 import { SortedMapOptions, SplayTreeMap } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class SplayTreeMultiSet<E> extends AbstractNavigableMultiSet<E> {
+export class SplayTreeMultiSet<E> extends AbstractNavigableMultiSet<E, SplayTreeMap<E, number>> {
   constructor(options?: SortedMapOptions<E>) {
-    super(new SplayTreeMap(options));
+    super(SplayTreeMap, options);
   }
 
   static create<E>(initializer?: WithCapacity<SortedMapOptions<E> & MultiSetInitializer<E>>): SplayTreeMultiSet<E> {

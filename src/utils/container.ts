@@ -105,9 +105,9 @@ export type WithCapacity<Type extends object> = ContainerOptions & Type;
 
 export function extractOptions<
   ContainerType extends object,
-  Options extends ContainerOptions = ContainerOptions,
+  Options extends object = object,
   Initializer extends ContainerInitializer<ContainerType> = ContainerInitializer<ContainerType>,
->(initializer?: Options & Initializer) {
+>(initializer?: WithCapacity<Options & Initializer>) {
   if (!initializer?.initial) {
     return { options: initializer as Options };
   } else {

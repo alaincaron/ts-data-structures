@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { Comparators, Generators } from 'ts-fluent-iterators';
+import { narrow } from './helper';
 import { OverflowException, SkipListMultiSet } from '../../src';
 
 describe('SkipListMultiSet', () => {
@@ -345,27 +346,27 @@ describe('SkipListMultiSet', () => {
     ms.setCount('foo', fooValue);
 
     expect(ms.first()).equal('bar');
-    expect(ms.firstEntry()).to.deep.equal({ key: 'bar', value: barValue });
+    expect(narrow(ms.firstEntry())).to.deep.equal({ key: 'bar', value: barValue });
 
     expect(ms.last()).equal('foo');
-    expect(ms.lastEntry()).to.deep.equal({ key: 'foo', value: fooValue });
+    expect(narrow(ms.lastEntry())).to.deep.equal({ key: 'foo', value: fooValue });
 
     expect(ms.lower('bar')).to.be.undefined;
-    expect(ms.lowerEntry('bar')).to.be.undefined;
+    expect(narrow(ms.lowerEntry('bar'))).to.be.undefined;
 
     expect(ms.lower('baz')).equal('bar');
-    expect(ms.lowerEntry('baz')).to.deep.equal({ key: 'bar', value: barValue });
+    expect(narrow(ms.lowerEntry('baz'))).to.deep.equal({ key: 'bar', value: barValue });
 
     expect(ms.higher('baz')).equal('foo');
-    expect(ms.higherEntry('bar')).to.deep.equal({ key: 'foo', value: fooValue });
+    expect(narrow(ms.higherEntry('bar'))).to.deep.equal({ key: 'foo', value: fooValue });
 
     expect(ms.floor('bar')).equal('bar');
-    expect(ms.floorEntry('bar')).to.deep.equal({ key: 'bar', value: barValue });
+    expect(narrow(ms.floorEntry('bar'))).to.deep.equal({ key: 'bar', value: barValue });
 
     expect(ms.ceiling('baz')).equal('foo');
-    expect(ms.ceilingEntry('baz')).to.deep.equal({ key: 'foo', value: fooValue });
+    expect(narrow(ms.ceilingEntry('baz'))).to.deep.equal({ key: 'foo', value: fooValue });
 
-    expect(ms.reverseEntryIterator().collect()).to.deep.equal([
+    expect(ms.reverseEntryIterator().map(narrow).collect()).to.deep.equal([
       { key: 'foo', value: fooValue },
       { key: 'bar', value: barValue },
     ]);
@@ -375,8 +376,8 @@ describe('SkipListMultiSet', () => {
     expect(ms.pollFirst()).equal('bar');
     expect(ms.pollLast()).equal('foo');
 
-    expect(ms.pollFirstEntry()).deep.equal({ key: 'bar', value: barValue - 1 });
-    expect(ms.pollLastEntry()).deep.equal({ key: 'foo', value: fooValue - 1 });
+    expect(narrow(ms.pollFirstEntry())).deep.equal({ key: 'bar', value: barValue - 1 });
+    expect(narrow(ms.pollLastEntry())).deep.equal({ key: 'foo', value: fooValue - 1 });
   });
 
   it('should respect the passed comparator', () => {
@@ -387,9 +388,9 @@ describe('SkipListMultiSet', () => {
     ms.setCount('foo', fooValue);
 
     expect(ms.first()).equal('foo');
-    expect(ms.firstEntry()).deep.equal({ key: 'foo', value: fooValue });
+    expect(narrow(ms.firstEntry())).deep.equal({ key: 'foo', value: fooValue });
 
     expect(ms.last()).equal('bar');
-    expect(ms.lastEntry()).deep.equal({ key: 'bar', value: barValue });
+    expect(narrow(ms.lastEntry())).deep.equal({ key: 'bar', value: barValue });
   });
 });

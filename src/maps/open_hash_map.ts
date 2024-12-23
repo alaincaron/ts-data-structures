@@ -110,7 +110,7 @@ export class OpenHashMap<K, V> extends AbstractMap<K, V> {
     return this.findIndex(key) >= 0;
   }
 
-  protected getEntry(key: K) {
+  getEntry(key: K) {
     const idx = this.findIndex(key);
     return idx >= 0 ? (this.slots[idx] as MutableMapEntry<K, V>) : undefined;
   }

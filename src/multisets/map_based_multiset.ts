@@ -1,28 +1,20 @@
-import { Predicate } from 'ts-fluent-iterators';
-import { SumCollector } from 'ts-fluent-iterators/dist/lib/collectors';
+import { Constructor, Predicate } from 'ts-fluent-iterators';
 import { AbstractMultiSet } from './abstract_multiset';
 import { MutableMap } from '../maps';
 import { OverflowException } from '../utils';
 
-export interface Count {
-  count: number;
-}
-
-export abstract class MapBasedMultiSet<E> extends AbstractMultiSet<E> {
-  protected readonly map: MutableMap<E, Count>;
+export abstract class MapBasedMultiSet<
+  E,
+  M extends MutableMap<E, number>,
+  Options extends object = object,
+> extends AbstractMultiSet<E> {
+  protected readonly map: MutableMap<E, number>;
   private _size: number;
 
-  protected constructor(mapFactory: MutableMap<E, Count> | (new () => MutableMap<E, Count>)) {
+  protected constructor(ctor: Constructor<M, [Options | undefined]>, options?: Options) {
     super();
-    if (typeof mapFactory === 'function') {
-      this.map = new mapFactory();
-    } else {
-      this.map = mapFactory;
-    }
-    this._size = this.map
-      .valueIterator()
-      .map(c => c.count)
-      .collectTo(new SumCollector());
+    this.map = new ctor(options);
+    this._size = 0;
   }
 
   size() {
@@ -37,18 +29,18 @@ export abstract class MapBasedMultiSet<E> extends AbstractMultiSet<E> {
 
   count(item: E): number {
     const e = this.map.get(item);
-    return e?.count ?? 0;
+    return e ?? 0;
   }
 
   offerCount(item: E, count: number): number {
     if (count < 0 || !Number.isSafeInteger(count)) throw new Error(`Invalid count: ${count}`);
     const x = Math.min(this.remaining(), count);
     if (x === 0) return 0;
-    const e = this.map.get(item);
+    const e = this.map.getEntry(item);
     if (e) {
-      e.count += x;
+      e.value += x;
     } else {
-      this.map.put(item, { count });
+      this.map.put(item, x);
     }
     this._size += x;
     return x;
@@ -57,47 +49,48 @@ export abstract class MapBasedMultiSet<E> extends AbstractMultiSet<E> {
   removeCount(item: E, count: number): number {
     if (count < 0 || !Number.isSafeInteger(count)) throw new Error(`Invalid count: ${count}`);
     if (count === 0) return 0;
-    const e = this.map.get(item);
+    const e = this.map.getEntry(item);
     if (!e) return 0;
-    const x = Math.min(e.count, count);
-    e.count -= x;
-    if (!e.count) this.map.remove(item);
+    const x = Math.min(e.value, count);
+    e.value -= x;
+    if (!e.value) this.map.remove(item);
     this._size -= x;
     return x;
   }
 
   setCount(item: E, count: number): number {
     if (count < 0 || !Number.isSafeInteger(count)) throw new Error(`Invalid count: ${count}`);
-    const e = this.map.get(item);
+    const e = this.map.getEntry(item);
 
     if (!e) {
       if (count === 0) return 0;
-      this.map.put(item, { count });
+      if (count > this.remaining()) throw new OverflowException();
+      this.map.put(item, count);
       this._size += count;
       return 0;
     }
     if (count === 0) {
       this.map.remove(item);
-      this._size -= e.count;
-      return e.count;
+      this._size -= e.value;
+      return e.value;
     } else {
-      const oldCount = e.count;
-      const x = count - oldCount;
+      const oldValue = e.value;
+      const x = count - oldValue;
       if (x > this.remaining()) throw new OverflowException();
       this._size += x;
-      e.count = count;
-      return oldCount;
+      e.value = count;
+      return oldValue;
     }
   }
 
   removeMatchingItem(predicate: Predicate<E>) {
-    for (const [e, counter] of this.map.entries()) {
-      if (predicate(e)) {
-        if (--counter.count === 0) {
-          this.map.remove(e);
+    for (const e of this.map.entryIterator()) {
+      if (predicate(e.key)) {
+        if (--e.value === 0) {
+          this.map.remove(e.key);
         }
         --this._size;
-        return e;
+        return e.key;
       }
     }
     return undefined;
@@ -111,23 +104,23 @@ export abstract class MapBasedMultiSet<E> extends AbstractMultiSet<E> {
     let nbRemoved = 0;
     for (const e of removedEntries) {
       this.map.remove(e[0]);
-      nbRemoved += e[1].count;
+      nbRemoved += e[1];
     }
     this._size -= nbRemoved;
     return nbRemoved;
   }
 
   *[Symbol.iterator](): IterableIterator<E> {
-    for (const [e, { count }] of this.map.entries()) {
-      for (let i = 0; i < count; ++i) yield e;
+    for (const [key, count] of this.map.entries()) {
+      for (let i = 0; i < count; ++i) yield key;
     }
   }
 
   *entries(): IterableIterator<[E, number]> {
-    for (const [e, { count }] of this.map.entries()) {
-      yield [e, count];
+    for (const e of this.map.entries()) {
+      yield e;
     }
   }
 
-  abstract clone(): MapBasedMultiSet<E>;
+  abstract clone(): MapBasedMultiSet<E, M, Options>;
 }

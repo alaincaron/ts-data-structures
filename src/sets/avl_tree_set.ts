@@ -4,16 +4,22 @@ import { CollectionInitializer } from '../collections';
 import { AvlTreeMap, SortedMapOptions } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class AvlTreeSet<E> extends NavigableMapBasedSet<E> {
-  constructor(delegate?: AvlTreeMap<E, boolean>) {
-    super(delegate ?? new AvlTreeMap());
+export class AvlTreeSet<E> extends NavigableMapBasedSet<E, AvlTreeMap<E, boolean>, SortedMapOptions<E>> {
+  constructor(options?: SortedMapOptions<E>) {
+    super(AvlTreeMap, options);
   }
 
   static create<E>(initializer?: WithCapacity<SortedMapOptions<E> & CollectionInitializer<E>>): AvlTreeSet<E> {
-    return MapBasedSet.createSet<E, AvlTreeMap<E, boolean>, AvlTreeSet<E>>(AvlTreeSet, AvlTreeMap.create, initializer);
+    return MapBasedSet.createSet<E, AvlTreeMap<E, boolean>, SortedMapOptions<E>, AvlTreeSet<E>>(
+      AvlTreeSet,
+      initializer
+    );
   }
 
   clone(): AvlTreeSet<E> {
-    return new AvlTreeSet(this.cloneDelegate<AvlTreeMap<E, boolean>>(AvlTreeMap));
+    return MapBasedSet.createSet<E, AvlTreeMap<E, boolean>, SortedMapOptions<E>, AvlTreeSet<E>>(AvlTreeSet, {
+      ...this.buildOptions(),
+      initial: this.iterator(),
+    });
   }
 }

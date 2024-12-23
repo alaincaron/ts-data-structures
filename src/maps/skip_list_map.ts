@@ -173,7 +173,7 @@ export class SkipListMap<K, V> extends AbstractNavigableMap<K, V> {
     return original_size - this.size();
   }
 
-  protected getEntry(key: K): SkipListNode<K, V> | undefined {
+  getEntry(key: K): SkipListNode<K, V> | undefined {
     const { node, exact } = this.findNode(key);
     return node && exact ? node : undefined;
   }

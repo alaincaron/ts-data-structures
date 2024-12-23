@@ -20,6 +20,8 @@ export type MapLike<K, V> = (Iterable<[K, V]> & LengthProvider) | ArrayGenerator
 export type MapInitializer<K, V> = ContainerInitializer<MapLike<K, V>>;
 
 export interface IMap<K, V> extends Container, Iterable<[K, V]> {
+  getEntry(key: K): MapEntry<K, V> | undefined;
+
   get(key: K): V | undefined;
 
   containsKey(key: K): boolean;

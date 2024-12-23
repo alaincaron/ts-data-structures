@@ -53,7 +53,7 @@ export class SplayTreeMap<K, V> extends TreeMap<K, V> {
     return this._size;
   }
 
-  protected getEntry(key: K): SplayNode<K, V> | undefined {
+  getEntry(key: K): SplayNode<K, V> | undefined {
     let root = this.getRoot();
     if (!root) return root;
 

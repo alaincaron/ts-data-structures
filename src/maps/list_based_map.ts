@@ -27,7 +27,7 @@ export abstract class ListBasedMap<K, V> extends AbstractMap<K, V> {
     return this;
   }
 
-  protected getEntry(key: K) {
+  getEntry(key: K) {
     return this._delegate.find(e => equalsAny(e.key, key));
   }
 

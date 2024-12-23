@@ -3,9 +3,9 @@ import { AbstractNavigableMultiSet } from './abstract_navigable_multiset';
 import { AvlTreeMap, SortedMapOptions } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class AvlTreeMultiSet<E> extends AbstractNavigableMultiSet<E> {
+export class AvlTreeMultiSet<E> extends AbstractNavigableMultiSet<E, AvlTreeMap<E, number>> {
   constructor(options?: SortedMapOptions<E>) {
-    super(new AvlTreeMap(options));
+    super(AvlTreeMap, options);
   }
 
   static create<E>(initializer?: WithCapacity<SortedMapOptions<E> & MultiSetInitializer<E>>): AvlTreeMultiSet<E> {

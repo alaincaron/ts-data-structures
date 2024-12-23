@@ -11,6 +11,8 @@ export interface OfferResult<V> {
 }
 
 export interface MutableMap<K, V> extends IMap<K, V> {
+  getEntry(key: K): MutableMapEntry<K, V> | undefined;
+
   offer(key: K, value: V): OfferResult<V>;
 
   put(key: K, value: V): V | undefined;

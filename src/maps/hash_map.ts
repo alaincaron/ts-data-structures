@@ -52,7 +52,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     return h;
   }
 
-  protected getEntry(key: K): MutableMapEntry<K, V> | undefined {
+  getEntry(key: K): MutableMapEntry<K, V> | undefined {
     const h = hashAny(key);
     const slot = this.getSlot(h, this.slots);
     let e = this.slots[slot];

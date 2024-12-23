@@ -1,16 +1,15 @@
 import { buildMultiSet, MultiSetInitializer } from './abstract_multiset';
 import { AbstractSortedMultiSet } from './abstract_sorted_multiset';
-import { Count } from './map_based_multiset';
 import { SortedMapOptions, TrieMap } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class TrieMultiSet extends AbstractSortedMultiSet<string> {
+export class TrieMultiSet extends AbstractSortedMultiSet<string, TrieMap<number>> {
   constructor(options?: SortedMapOptions<string>) {
-    super(new TrieMap(options));
+    super(TrieMap, options);
   }
 
   protected delegate() {
-    return this.map as TrieMap<Count>;
+    return this.map as TrieMap<number>;
   }
 
   getHeight() {

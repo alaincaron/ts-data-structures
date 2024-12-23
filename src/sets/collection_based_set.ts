@@ -2,13 +2,17 @@ import { Constructor, Predicate } from 'ts-fluent-iterators';
 import { AbstractSet } from './abstract_set';
 import { CollectionInitializer, CollectionLike, MutableCollection } from '../collections';
 import { ArrayList } from '../lists';
-import { extractOptions, WithCapacity } from '../utils';
+import { ContainerOptions, extractOptions, WithCapacity } from '../utils';
 
-export abstract class CollectionBasedSet<E> extends AbstractSet<E> {
+export abstract class CollectionBasedSet<
+  E,
+  C extends MutableCollection<E>,
+  Options extends object = object,
+> extends AbstractSet<E> {
   private readonly _delegate: MutableCollection<E>;
-  protected constructor(delegate: MutableCollection<E>) {
+  protected constructor(ctor: Constructor<C, [Options | undefined]>, options?: Options) {
     super();
-    this._delegate = delegate;
+    this._delegate = 'create' in ctor && typeof ctor.create === 'function' ? ctor.create(options) : new ctor(options);
   }
 
   protected delegate() {
@@ -38,7 +42,7 @@ export abstract class CollectionBasedSet<E> extends AbstractSet<E> {
     return this._delegate.filter(predicate);
   }
 
-  clear(): CollectionBasedSet<E> {
+  clear(): CollectionBasedSet<E, C, Options> {
     this._delegate.clear();
     return this;
   }
@@ -60,33 +64,35 @@ export abstract class CollectionBasedSet<E> extends AbstractSet<E> {
     return d.add(item);
   }
 
-  abstract clone(): CollectionBasedSet<E>;
+  abstract clone(): CollectionBasedSet<E, C, Options>;
 
   protected static createSet<
     E,
     C extends MutableCollection<E>,
-    S extends CollectionBasedSet<E>,
-    Options extends object = object,
+    Options extends object,
+    S extends CollectionBasedSet<E, C, Options>,
     Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
-  >(setFactory: Constructor<S>, colFactory: (options?: Options) => C, initializer?: Options & Initializer): S {
+  >(ctor: Constructor<S>, initializer?: WithCapacity<Options & Initializer>): S {
     const { options, initialElements } = extractOptions<CollectionLike<E>>(initializer);
-    const delegate = colFactory(options);
-    const result = new setFactory(delegate);
+    const result = new ctor(options);
     if (initialElements) result.addFully(initialElements);
     return result;
   }
 }
 
-export class ArraySet<E> extends CollectionBasedSet<E> {
-  constructor(delegate?: ArrayList<E>) {
-    super(delegate ?? new ArrayList<E>());
+export class ArraySet<E> extends CollectionBasedSet<E, ArrayList<E>, object> {
+  constructor(options?: object) {
+    super(ArrayList, options);
   }
 
   static create<E>(initializer?: WithCapacity<CollectionInitializer<E>>): ArraySet<E> {
-    return CollectionBasedSet.createSet<E, ArrayList<E>, ArraySet<E>>(ArraySet, ArrayList.create, initializer);
+    return CollectionBasedSet.createSet<E, ArrayList<E>, ContainerOptions, ArraySet<E>>(ArraySet, initializer);
   }
 
   clone(): ArraySet<E> {
-    return new ArraySet<E>(this.delegate().clone() as ArrayList<E>);
+    return CollectionBasedSet.createSet<E, ArrayList<E>, ContainerOptions, ArraySet<E>>(ArraySet, {
+      ...this.buildOptions(),
+      initial: this.iterator(),
+    });
   }
 }
