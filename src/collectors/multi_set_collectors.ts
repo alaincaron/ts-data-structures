@@ -4,14 +4,14 @@ import {
   AvlTreeMultiSet,
   HashMultiSet,
   LinkedHashMultiSet,
-  MultiSet,
+  MutableMultiSet,
   OpenHashMultiSet,
   SkipListMultiSet,
   SplayTreeMultiSet,
 } from '../multisets';
 import { WithCapacity } from '../utils';
 
-export class MultiSetCollector<E, MS extends MultiSet<E>> implements Collector<E, MS> {
+export class MultiSetCollector<E, MS extends MutableMultiSet<E>> implements Collector<E, MS> {
   constructor(private readonly ms: MS) {}
 
   collect(e: E) {

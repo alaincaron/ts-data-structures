@@ -2,7 +2,7 @@ import { FluentIterator } from 'ts-fluent-iterators';
 import { buildMap } from './abstract_map';
 import { AbstractSortedMap, SortedMapOptions } from './abstract_sorted_map';
 import { AvlTreeMap } from './avl_tree_map';
-import { MapEntry, MapInitializer } from './map_interface';
+import { MapInitializer, MutableMapEntry } from './mutable_map';
 import { SortedMap } from './sorted_map';
 import { WithCapacity } from '../utils';
 
@@ -16,7 +16,7 @@ export interface TrieMapOptions extends SortedMapOptions<string> {
   caseSensitive?: boolean;
 }
 
-class TrieMapEntry<V> implements MapEntry<string, V> {
+class TrieMapEntry<V> implements MutableMapEntry<string, V> {
   constructor(
     private _key: string,
     private node: TrieMapNode<V>
@@ -212,7 +212,7 @@ export class TrieMap<V> extends AbstractSortedMap<string, V> {
     return node;
   }
 
-  getEntry(word: string): MapEntry<string, V> | undefined {
+  getEntry(word: string): MutableMapEntry<string, V> | undefined {
     const node = this.getNodePrefix(word);
     return node?.value === undefined ? undefined : new TrieMapEntry(word, node);
   }
@@ -300,8 +300,8 @@ export class TrieMap<V> extends AbstractSortedMap<string, V> {
     return new FluentIterator(this.entryGenerator(prefix));
   }
 
-  private *entryGenerator(prefix: string = ''): IterableIterator<MapEntry<string, V>> {
-    function* helper(prefix: string, node: TrieMapNode<V>): IterableIterator<MapEntry<string, V>> {
+  private *entryGenerator(prefix: string = ''): IterableIterator<MutableMapEntry<string, V>> {
+    function* helper(prefix: string, node: TrieMapNode<V>): IterableIterator<MutableMapEntry<string, V>> {
       if (node.value !== undefined) {
         yield new TrieMapEntry(prefix, node);
       }
@@ -314,8 +314,8 @@ export class TrieMap<V> extends AbstractSortedMap<string, V> {
     yield* helper(prefix, startNode);
   }
 
-  private *reverseEntryGenerator(): IterableIterator<MapEntry<string, V>> {
-    function* helper(prefix: string, node: TrieMapNode<V>): IterableIterator<MapEntry<string, V>> {
+  private *reverseEntryGenerator(): IterableIterator<MutableMapEntry<string, V>> {
+    function* helper(prefix: string, node: TrieMapNode<V>): IterableIterator<MutableMapEntry<string, V>> {
       for (const [c, child] of node.children.reverseEntries()) {
         yield* helper(prefix + c, child);
       }

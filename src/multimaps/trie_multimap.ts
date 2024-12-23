@@ -1,7 +1,7 @@
 import { buildMultiMap, MultiMapInitializer } from './abstract_multimap';
 import { AbstractSortedMultiMap, SortedMultiMapOptions } from './abstract_sorted_multimap';
-import { Collection } from '../collections';
-import { MapEntry, TrieMap } from '../maps';
+import { MutableCollection } from '../collections';
+import { MutableMapEntry, TrieMap } from '../maps';
 import { WithCapacity } from '../utils';
 
 export class TrieMultiMap<V> extends AbstractSortedMultiMap<string, V> {
@@ -10,15 +10,15 @@ export class TrieMultiMap<V> extends AbstractSortedMultiMap<string, V> {
   }
 
   protected delegate() {
-    return this.map as TrieMap<Collection<V>>;
+    return this.map as TrieMap<MutableCollection<V>>;
   }
 
-  firstEntry(): MapEntry<string, Collection<V>> | undefined {
+  firstEntry(): MutableMapEntry<string, MutableCollection<V>> | undefined {
     const e = this.delegate().firstEntry();
     return e && { key: e.key, value: e.value.clone() };
   }
 
-  lastEntry(): MapEntry<string, Collection<V>> | undefined {
+  lastEntry(): MutableMapEntry<string, MutableCollection<V>> | undefined {
     const e = this.delegate().lastEntry();
     return e && { key: e.key, value: e.value.clone() };
   }

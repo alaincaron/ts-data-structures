@@ -1,16 +1,13 @@
-import { ReadOnlyMultiSet } from './readonly_multiset';
 import { Collection } from '../collections';
 
-export interface MultiSet<E> extends ReadOnlyMultiSet<E>, Collection<E> {
-  addCount(item: E, count: number): number;
+export interface MultiSet<E> extends Collection<E> {
+  count(item: E): number;
 
-  offerCount(item: E, count: number): number;
+  entries(): IterableIterator<[E, number]>;
 
-  removeCount(item: E, count: number): number;
+  hashCode(): number;
 
-  setCount(item: E, count: number): number;
+  equals(other: unknown): boolean;
 
   clone(): MultiSet<E>;
-
-  clear(): MultiSet<E>;
 }

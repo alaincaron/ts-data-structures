@@ -1,26 +1,21 @@
 import { Comparator, Comparators, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
-import { ReadOnlyCollection } from '../collections';
-import { ReadOnlyList } from '../lists';
-import { ReadOnlyMultiSet } from '../multisets';
-import { ReadOnlySet } from '../sets';
+import { Collection } from '../collections';
+import { List } from '../lists';
 import {
-  equalsAny,
-  hashIterableOrdered,
-  IndexOutOfBoundsException,
-  iterableToJSON,
-  Objects,
-  parseArgs,
-} from '../utils';
+  checkListBound,
+  checkListBounds,
+  computeListIteratorBounds,
+  computeListReverseIteratorBounds,
+} from '../lists/helpers';
+import { MultiSet } from '../multisets';
+import { ISet } from '../sets';
+import { equalsAny, hashIterableOrdered, iterableToJSON, Objects, parseArgs } from '../utils';
 
-export class SingletonCollection<E> implements ReadOnlyList<E>, ReadOnlySet<E>, ReadOnlyMultiSet<E> {
+export class SingletonCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
   constructor(private readonly item: E) {}
 
-  private checkBound(idx: number) {
-    if (idx !== 0) throw new IndexOutOfBoundsException();
-  }
-
   getAt(idx: number): E {
-    this.checkBound(idx);
+    checkListBound(this, idx);
     return this.item;
   }
 
@@ -28,12 +23,30 @@ export class SingletonCollection<E> implements ReadOnlyList<E>, ReadOnlySet<E>, 
     return this.item;
   }
 
+  peekFirst() {
+    return this.item;
+  }
+
   getLast(): E {
+    return this.item;
+  }
+
+  peekLast() {
     return this.item;
   }
 
   reverseIterator(): FluentIterator<E> {
     return FluentIterator.singleton(this.item);
+  }
+
+  listIterator(skip?: number, count?: number): FluentIterator<E> {
+    const bounds = computeListIteratorBounds(this, skip, count);
+    return bounds.count ? FluentIterator.singleton(this.item) : FluentIterator.empty();
+  }
+
+  reverseListIterator(skip?: number, count?: number): FluentIterator<E> {
+    const bounds = computeListReverseIteratorBounds(this, skip, count);
+    return bounds.count ? FluentIterator.singleton(this.item) : FluentIterator.empty();
   }
 
   indexOfFirstOccurrence(predicate: Predicate<E>): number {
@@ -54,8 +67,7 @@ export class SingletonCollection<E> implements ReadOnlyList<E>, ReadOnlySet<E>, 
 
   isOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>) {
     const { left, right } = parseArgs(0, arg1, arg2, arg3, Comparators.natural);
-    this.checkBound(left);
-    this.checkBound(right);
+    checkListBounds(this, left, right);
     return true;
   }
 
@@ -80,7 +92,10 @@ export class SingletonCollection<E> implements ReadOnlyList<E>, ReadOnlySet<E>, 
     return item === this.item;
   }
 
-  toArray(): E[] {
+  toArray(start?: number, end?: number): E[] {
+    start ??= 0;
+    end ??= 1;
+    checkListBounds(this, start, end);
     return [this.item];
   }
 
@@ -109,7 +124,7 @@ export class SingletonCollection<E> implements ReadOnlyList<E>, ReadOnlySet<E>, 
     if (!other) return false;
     if (!Objects.hasFunction(other, 'size')) return false;
     if (!Objects.hasFunction(other, 'contains')) return false;
-    const tmp = other as ReadOnlyCollection<E>;
+    const tmp = other as Collection<E>;
     return tmp.size() === 1 && tmp.contains(this.item);
   }
 

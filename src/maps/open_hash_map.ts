@@ -1,14 +1,14 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { AbstractMap, buildMap } from './abstract_map';
 import { HashMapOptions } from './hash_map';
-import { MapEntry, MapInitializer } from './map_interface';
+import { MapInitializer, MutableMapEntry } from './mutable_map';
 import { equalsAny, hashAny, hashNumber, MAX_ARRAY_SIZE, nextPrime, WithCapacity } from '../utils';
 
 const DEFAULT_INITIAL_SIZE = 5; // should be prime.
 const DEFAULT_LOAD_FACTOR = 0.7;
 const DELETED = 'DELETED';
 
-interface HashEntry<K, V> extends MapEntry<K, V> {
+interface HashEntry<K, V> extends MutableMapEntry<K, V> {
   hash: number;
 }
 
@@ -61,7 +61,7 @@ export class OpenHashMap<K, V> extends AbstractMap<K, V> {
     return count;
   }
 
-  protected *entryGenerator(): IterableIterator<MapEntry<K, V>> {
+  protected *entryGenerator(): IterableIterator<MutableMapEntry<K, V>> {
     for (const e of this.slots) {
       if (!e || e === DELETED) continue;
       yield e;
@@ -112,7 +112,7 @@ export class OpenHashMap<K, V> extends AbstractMap<K, V> {
 
   protected getEntry(key: K) {
     const idx = this.findIndex(key);
-    return idx >= 0 ? (this.slots[idx] as MapEntry<K, V>) : undefined;
+    return idx >= 0 ? (this.slots[idx] as MutableMapEntry<K, V>) : undefined;
   }
 
   put(key: K, value: V) {

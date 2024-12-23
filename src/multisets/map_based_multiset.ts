@@ -1,7 +1,7 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { SumCollector } from 'ts-fluent-iterators/dist/lib/collectors';
 import { AbstractMultiSet } from './abstract_multiset';
-import { IMap } from '../maps';
+import { MutableMap } from '../maps';
 import { OverflowException } from '../utils';
 
 export interface Count {
@@ -9,10 +9,10 @@ export interface Count {
 }
 
 export abstract class MapBasedMultiSet<E> extends AbstractMultiSet<E> {
-  protected readonly map: IMap<E, Count>;
+  protected readonly map: MutableMap<E, Count>;
   private _size: number;
 
-  protected constructor(mapFactory: IMap<E, Count> | (new () => IMap<E, Count>)) {
+  protected constructor(mapFactory: MutableMap<E, Count> | (new () => MutableMap<E, Count>)) {
     super();
     if (typeof mapFactory === 'function') {
       this.map = new mapFactory();

@@ -1,15 +1,15 @@
 import { iterator, Iterators } from 'ts-fluent-iterators';
-import { ISet } from './set_interface';
+import { MutableSet } from './set_interface';
 import { AbstractCollection, CollectionLike } from '../collections';
 import { hashIterableUnordered, Objects, OverflowException } from '../utils';
 
-function getItemsToAdd<E, E1 extends E>(set: ISet<E>, items: CollectionLike<E1>): Set<E> {
+function getItemsToAdd<E, E1 extends E>(set: MutableSet<E>, items: CollectionLike<E1>): Set<E> {
   return iterator(Iterators.toIterator(items))
     .filter(x => !set.contains(x))
     .collectToSet();
 }
 
-export abstract class AbstractSet<E> extends AbstractCollection<E> implements ISet<E> {
+export abstract class AbstractSet<E> extends AbstractCollection<E> implements MutableSet<E> {
   toSet() {
     return this.iterator().collectToSet();
   }
@@ -53,7 +53,7 @@ export abstract class AbstractSet<E> extends AbstractCollection<E> implements IS
   }
 }
 
-function isSet<E>(obj: unknown): obj is ISet<E> {
+function isSet<E>(obj: unknown): obj is MutableSet<E> {
   if (!obj || typeof obj !== 'object') return false;
   if (!Objects.hasFunction(obj, 'size')) return false;
   if (!Objects.hasFunction(obj, 'toSet')) return false;

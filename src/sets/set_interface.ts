@@ -1,10 +1,10 @@
-import { Collection, ReadOnlyCollection } from '../collections';
+import { Collection, MutableCollection } from '../collections';
 
-export interface ReadOnlySet<E> extends ReadOnlyCollection<E> {
+export interface ISet<E> extends Collection<E> {
   toSet(): Set<E>;
-  clone(): ReadOnlySet<E>;
+  clone(): ISet<E>;
 }
 
-export interface ISet<E> extends Collection<E>, ReadOnlySet<E> {
-  clone(): ISet<E>;
+export interface MutableSet<E> extends MutableCollection<E>, ISet<E> {
+  clone(): MutableSet<E>;
 }

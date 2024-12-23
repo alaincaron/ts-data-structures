@@ -1,6 +1,6 @@
 import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
-import { Collection } from './collection';
-import { CollectionInitializer, CollectionLike, ReadOnlyCollection } from './readonly_collection';
+import { Collection, CollectionInitializer, CollectionLike } from './collection';
+import { MutableCollection } from './mutable_collection';
 import {
   AbstractContainer,
   CapacityMixin,
@@ -19,7 +19,7 @@ import {
  * elements. Some collections allow duplicate elements and others do
  * not. Some are ordered and others unordered.
  */
-export abstract class AbstractCollection<E> extends AbstractContainer implements Collection<E> {
+export abstract class AbstractCollection<E> extends AbstractContainer implements MutableCollection<E> {
   /**
    * Returns `true` if this `Collection` contains the specified
    * `item`.  The comparison is done using {@link equalsAny}.
@@ -208,7 +208,7 @@ export abstract class AbstractCollection<E> extends AbstractContainer implements
    *
    * @returns The number of elements that were removed as a result of this call.
    */
-  removeAll(c: ReadOnlyCollection<E>): number {
+  removeAll(c: Collection<E>): number {
     return this.filter(e => !c.contains(e));
   }
 
@@ -222,12 +222,12 @@ export abstract class AbstractCollection<E> extends AbstractContainer implements
    *
    * @returns The number of elements that were removed as a result of this call.
    */
-  retainAll(c: ReadOnlyCollection<E>): number {
+  retainAll(c: Collection<E>): number {
     return this.filter(e => c.contains(e));
   }
 
   /**
-   * Used to make this {@link Collection} being seen as an
+   * Used to make this {@link MutableCollection} being seen as an
    * `Iterable<A>`. This allows them to be used in APIs expecting an
    * `Iterable<A>`
    */
@@ -284,7 +284,7 @@ export abstract class AbstractCollection<E> extends AbstractContainer implements
  */
 export function buildCollection<
   E,
-  C extends Collection<E>,
+  C extends MutableCollection<E>,
   Options extends object = object,
   Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,
 >(factory: Constructor<C, [Options | undefined]>, initializer?: WithCapacity<Options & Initializer>): C {
@@ -297,7 +297,7 @@ export function buildCollection<
 
 const constructorMap = new Map();
 
-function boundCollection<E, C extends Collection<E>>(ctor: Constructor<C>, options?: ContainerOptions): C {
+function boundCollection<E, C extends MutableCollection<E>>(ctor: Constructor<C>, options?: ContainerOptions): C {
   if (options && 'capacity' in options) {
     let boundedCtor = constructorMap.get(ctor);
     if (!boundedCtor) {

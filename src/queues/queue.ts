@@ -1,5 +1,5 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { Collection } from '../collections';
+import { MutableCollection } from '../collections';
 
 export type OverflowQueueStrategy = 'throw' | 'overwrite' | 'discard';
 
@@ -21,7 +21,7 @@ export class FluentQueueIterator<E> extends FluentIterator<E> {
   }
 }
 
-export interface Queue<E> extends Collection<E> {
+export interface Queue<E> extends MutableCollection<E> {
   overflowStrategy(): OverflowQueueStrategy;
 
   poll(): E | undefined;

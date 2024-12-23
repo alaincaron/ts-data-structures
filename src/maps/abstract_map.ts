@@ -1,5 +1,5 @@
 import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
-import { IMap, MapEntry, MapInitializer, MapLike, OfferResult } from './map_interface';
+import { MapInitializer, MapLike, MutableMap, MutableMapEntry, OfferResult } from './mutable_map';
 import {
   AbstractContainer,
   CapacityMixin,
@@ -14,8 +14,8 @@ import {
   WithCapacity,
 } from '../utils';
 
-export abstract class AbstractMap<K, V> extends AbstractContainer implements IMap<K, V> {
-  protected abstract getEntry(key: K): MapEntry<K, V> | undefined;
+export abstract class AbstractMap<K, V> extends AbstractContainer implements MutableMap<K, V> {
+  protected abstract getEntry(key: K): MutableMapEntry<K, V> | undefined;
 
   get(key: K): V | undefined {
     return this.getEntry(key)?.value;
@@ -92,7 +92,7 @@ export abstract class AbstractMap<K, V> extends AbstractContainer implements IMa
     return this.entryIterator().map(e => e.value);
   }
 
-  abstract entryIterator(): FluentIterator<MapEntry<K, V>>;
+  abstract entryIterator(): FluentIterator<MutableMapEntry<K, V>>;
 
   *entries(): IterableIterator<[K, V]> {
     for (const entry of this.entryIterator()) {
@@ -151,7 +151,7 @@ export abstract class AbstractMap<K, V> extends AbstractContainer implements IMa
   }
 }
 
-function isMap<K, V>(obj: unknown): obj is IMap<K, V> {
+function isMap<K, V>(obj: unknown): obj is MutableMap<K, V> {
   if (!obj || typeof obj !== 'object') return false;
   if (!Objects.hasFunction(obj, 'size')) return false;
   if (!Objects.hasFunction(obj, 'toMap')) return false;
@@ -162,7 +162,7 @@ function isMap<K, V>(obj: unknown): obj is IMap<K, V> {
 export function buildMap<
   K,
   V,
-  M extends IMap<K, V>,
+  M extends MutableMap<K, V>,
   Options extends object = object,
   Initializer extends MapInitializer<K, V> = MapInitializer<K, V>,
 >(factory: Constructor<M, [Options | undefined]>, initializer?: WithCapacity<Options & Initializer>): M {
@@ -175,7 +175,7 @@ export function buildMap<
 
 const constructorMap = new Map();
 
-function boundMap<K, V, M extends IMap<K, V>>(ctor: Constructor<M>, options?: ContainerOptions) {
+function boundMap<K, V, M extends MutableMap<K, V>>(ctor: Constructor<M>, options?: ContainerOptions) {
   if (options && 'capacity' in options) {
     let boundedCtor = constructorMap.get(ctor);
     if (!boundedCtor) {

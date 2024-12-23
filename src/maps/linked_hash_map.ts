@@ -1,6 +1,6 @@
 import { buildMap } from './abstract_map';
 import { AccessType, HashEntry, HashMap, HashMapOptions } from './hash_map';
-import { MapEntry, MapInitializer } from './map_interface';
+import { MapInitializer, MutableMapEntry } from './mutable_map';
 import { DoubleLinkedList, OverflowException, WithCapacity } from '../utils';
 
 export enum Ordering {
@@ -63,11 +63,11 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   }
 
   mostRecent() {
-    return this.linkedList.last() as unknown as MapEntry<K, V>;
+    return this.linkedList.last() as unknown as MutableMapEntry<K, V>;
   }
 
   leastRecent() {
-    return this.linkedList.first() as unknown as MapEntry<K, V>;
+    return this.linkedList.first() as unknown as MutableMapEntry<K, V>;
   }
 
   protected override overflowHandler(_key: K, _value: V): boolean {
@@ -104,7 +104,7 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   }
 
   protected *entryGenerator() {
-    for (const e of this.linkedList.entries()) yield e as unknown as MapEntry<K, V>;
+    for (const e of this.linkedList.entries()) yield e as unknown as MutableMapEntry<K, V>;
   }
 
   buildOptions() {

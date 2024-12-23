@@ -1,21 +1,21 @@
 import { Predicate, SumCollector } from 'ts-fluent-iterators';
 import { AbstractMultiMap } from './abstract_multimap';
-import { Collection } from '../collections';
+import { MutableCollection } from '../collections';
 import { ArrayList } from '../lists';
-import { buildMap, IMap } from '../maps';
+import { buildMap, MutableMap } from '../maps';
 import { buildOptions, Constructor, OverflowException } from '../utils';
 
-export type WithCollectionFactory<Type, V> = Type & { collectionFactory?: Constructor<Collection<V>> };
+export type WithCollectionFactory<Type, V> = Type & { collectionFactory?: Constructor<MutableCollection<V>> };
 
 export abstract class MapBasedMultiMap<K, V> extends AbstractMultiMap<K, V> {
-  private readonly collectionFactory: Constructor<Collection<V>>;
+  private readonly collectionFactory: Constructor<MutableCollection<V>>;
 
   protected constructor(
-    protected readonly map: IMap<K, Collection<V>>,
-    collectionFactory?: Constructor<Collection<V>>
+    protected readonly map: MutableMap<K, MutableCollection<V>>,
+    collectionFactory?: Constructor<MutableCollection<V>>
   ) {
     super();
-    this.collectionFactory = collectionFactory ?? (ArrayList as unknown as Constructor<Collection<V>>);
+    this.collectionFactory = collectionFactory ?? (ArrayList as unknown as Constructor<MutableCollection<V>>);
   }
 
   capacity(): number {
@@ -29,7 +29,7 @@ export abstract class MapBasedMultiMap<K, V> extends AbstractMultiMap<K, V> {
       .collectTo(new SumCollector());
   }
 
-  getValues(k: K): Collection<V> | undefined {
+  getValues(k: K): MutableCollection<V> | undefined {
     return this.map.get(k);
   }
 
@@ -42,7 +42,7 @@ export abstract class MapBasedMultiMap<K, V> extends AbstractMultiMap<K, V> {
     return false;
   }
 
-  removeKey(key: K): Collection<V> | undefined {
+  removeKey(key: K): MutableCollection<V> | undefined {
     return this.map.remove(key);
   }
 
@@ -90,7 +90,7 @@ export abstract class MapBasedMultiMap<K, V> extends AbstractMultiMap<K, V> {
     return nbRemoved;
   }
 
-  partitions(): IterableIterator<[K, Collection<V>]> {
+  partitions(): IterableIterator<[K, MutableCollection<V>]> {
     return this.map.entries();
   }
 
@@ -102,13 +102,16 @@ export abstract class MapBasedMultiMap<K, V> extends AbstractMultiMap<K, V> {
     return {
       ...super.buildOptions(),
       collectionFactory: this.collectionFactory,
-      delegate: { ...buildOptions(this.map), factory: this.map.constructor as Constructor<IMap<K, Collection<V>>> },
+      delegate: {
+        ...buildOptions(this.map),
+        factory: this.map.constructor as Constructor<MutableMap<K, MutableCollection<V>>>,
+      },
     };
   }
 
   abstract clone(): MapBasedMultiMap<K, V>;
 
-  protected cloneDelegate<M extends IMap<K, Collection<V>>>(factory: Constructor<M>): M {
-    return buildMap<K, Collection<V>, M>(factory, { initial: this.map });
+  protected cloneDelegate<M extends MutableMap<K, MutableCollection<V>>>(factory: Constructor<M>): M {
+    return buildMap<K, MutableCollection<V>, M>(factory, { initial: this.map });
   }
 }

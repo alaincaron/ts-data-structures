@@ -1,13 +1,13 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { AbstractMap, buildMap } from './abstract_map';
-import { MapEntry, MapInitializer } from './map_interface';
+import { MapInitializer, MutableMapEntry } from './mutable_map';
 import { OverflowException, WithCapacity } from '../utils';
 
 export interface AdapterMapOptions<K, V> {
   delegate?: Map<K, V>;
 }
 
-class AdapterMapEntry<K, V> implements MapEntry<K, V> {
+class AdapterMapEntry<K, V> implements MutableMapEntry<K, V> {
   constructor(
     private readonly map: Map<K, V>,
     private readonly _key: K,
@@ -51,7 +51,7 @@ export class AdapterMap<K, V> extends AbstractMap<K, V> {
     return this;
   }
 
-  protected getEntry(key: K): MapEntry<K, V> | undefined {
+  protected getEntry(key: K): MutableMapEntry<K, V> | undefined {
     const value = this._delegate.get(key);
     if (value === undefined) return undefined;
     return new AdapterMapEntry(this._delegate, key, value);

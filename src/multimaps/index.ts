@@ -9,6 +9,6 @@ export * from './skip_list_map_multimap';
 export * from './sorted_multimap';
 export * from './splay_tree_multimap';
 export * from './trie_multimap';
-export * from './multimap';
+export * from './mutable_multimap';
 export * from './abstract_sorted_multimap';
 export * from './navigable_multimap';

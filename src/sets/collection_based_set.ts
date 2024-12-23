@@ -1,12 +1,12 @@
 import { Predicate } from 'ts-fluent-iterators';
 import { AbstractSet } from './abstract_set';
-import { Collection, CollectionInitializer, CollectionLike } from '../collections';
+import { CollectionInitializer, CollectionLike, MutableCollection } from '../collections';
 import { ArrayList } from '../lists';
 import { Constructor, extractOptions, WithCapacity } from '../utils';
 
 export abstract class CollectionBasedSet<E> extends AbstractSet<E> {
-  private readonly _delegate: Collection<E>;
-  protected constructor(delegate: Collection<E>) {
+  private readonly _delegate: MutableCollection<E>;
+  protected constructor(delegate: MutableCollection<E>) {
     super();
     this._delegate = delegate;
   }
@@ -64,7 +64,7 @@ export abstract class CollectionBasedSet<E> extends AbstractSet<E> {
 
   protected static createSet<
     E,
-    C extends Collection<E>,
+    C extends MutableCollection<E>,
     S extends CollectionBasedSet<E>,
     Options extends object = object,
     Initializer extends CollectionInitializer<E> = CollectionInitializer<E>,

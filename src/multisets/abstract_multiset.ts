@@ -1,4 +1,4 @@
-import { MultiSet } from './multiset';
+import { MutableMultiSet } from './mutable_multiset';
 import { AbstractCollection, CollectionLike } from '../collections';
 import {
   CapacityMixin,
@@ -15,7 +15,7 @@ export interface MultiSetInitializer<E> {
   initial?: CollectionLike<E>;
 }
 
-export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implements MultiSet<E> {
+export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implements MutableMultiSet<E> {
   abstract count(item: E): number;
 
   abstract clear(): AbstractMultiSet<E>;
@@ -61,7 +61,7 @@ export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implemen
   abstract clone(): AbstractMultiSet<E>;
 }
 
-function isMultiSet<E>(obj: unknown): obj is MultiSet<E> {
+function isMultiSet<E>(obj: unknown): obj is MutableMultiSet<E> {
   if (!obj || typeof obj !== 'object') return false;
   if (!Objects.hasFunction(obj, 'size')) return false;
   if (!Objects.hasFunction(obj, 'entries')) return false;
@@ -71,7 +71,7 @@ function isMultiSet<E>(obj: unknown): obj is MultiSet<E> {
 
 export function buildMultiSet<
   E,
-  MS extends MultiSet<E>,
+  MS extends MutableMultiSet<E>,
   Options extends object = object,
   Initializer extends MultiSetInitializer<E> = MultiSetInitializer<E>,
 >(factory: Constructor<MS>, initializer?: WithCapacity<Options & Initializer>): MS {
@@ -88,7 +88,7 @@ export function buildMultiSet<
   return result;
 }
 
-function boundMultiSet<E, MS extends MultiSet<E>>(ctor: Constructor<MS>, options?: ContainerOptions) {
+function boundMultiSet<E, MS extends MutableMultiSet<E>>(ctor: Constructor<MS>, options?: ContainerOptions) {
   if (options && 'capacity' in options) {
     const boundedCtor: any = CapacityMixin(ctor);
     const tmp = new boundedCtor(options);

@@ -1,9 +1,9 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { AbstractMap, buildMap } from './abstract_map';
-import { MapEntry, MapInitializer } from './map_interface';
+import { MapInitializer, MutableMapEntry } from './mutable_map';
 import { equalsAny, hashAny, LARGEST_PRIME, nextPrime, WithCapacity } from '../utils';
 
-export interface HashEntry<K, V> extends MapEntry<K, V> {
+export interface HashEntry<K, V> extends MutableMapEntry<K, V> {
   next: HashEntry<K, V> | undefined;
   readonly hash: number;
 }
@@ -52,7 +52,7 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     return h;
   }
 
-  protected getEntry(key: K): MapEntry<K, V> | undefined {
+  protected getEntry(key: K): MutableMapEntry<K, V> | undefined {
     const h = hashAny(key);
     const slot = this.getSlot(h, this.slots);
     let e = this.slots[slot];
@@ -167,11 +167,11 @@ export class HashMap<K, V> extends AbstractMap<K, V> {
     return this;
   }
 
-  protected *entryGenerator(): IterableIterator<MapEntry<K, V>> {
+  protected *entryGenerator(): IterableIterator<MutableMapEntry<K, V>> {
     for (let i = 0; i < this.slots.length; ++i) {
       let e = this.slots[i];
       while (e) {
-        yield e as unknown as MapEntry<K, V>;
+        yield e as unknown as MutableMapEntry<K, V>;
         e = e.next;
       }
     }

@@ -1,16 +1,16 @@
 import { Comparator, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
-import { ReadOnlyCollection } from '../collections';
-import { ReadOnlyList } from '../lists';
-import { ReadOnlySet } from '../sets';
+import { Collection } from '../collections';
+import { List } from '../lists';
+import { ISet } from '../sets';
 
-export class ImmutableCollection<E> implements ReadOnlyCollection<E> {
-  constructor(protected readonly _delegate: ReadOnlyCollection<E>) {}
+export class ImmutableCollection<E> implements Collection<E> {
+  constructor(protected readonly _delegate: Collection<E>) {}
 
-  protected get delegate(): ReadOnlyCollection<E> {
+  protected get delegate(): Collection<E> {
     return this._delegate;
   }
 
-  clone(): ReadOnlyCollection<E> {
+  clone(): Collection<E> {
     return this;
   }
 
@@ -79,13 +79,13 @@ export class ImmutableCollection<E> implements ReadOnlyCollection<E> {
   }
 }
 
-export class ImmutableList<E> extends ImmutableCollection<E> implements ReadOnlyList<E> {
-  constructor(delegate: ReadOnlyList<E>) {
+export class ImmutableList<E> extends ImmutableCollection<E> implements List<E> {
+  constructor(delegate: List<E>) {
     super(delegate);
   }
 
-  protected get delegate(): ReadOnlyList<E> {
-    return super.delegate as ReadOnlyList<E>;
+  protected get delegate(): List<E> {
+    return super.delegate as List<E>;
   }
 
   getAt(idx: number) {
@@ -108,6 +108,16 @@ export class ImmutableList<E> extends ImmutableCollection<E> implements ReadOnly
     return this.delegate.indexOfFirstOccurrence(predicate);
   }
 
+  listIterator(skip?: number, count?: number): FluentIterator<E> {
+    const iterator = this.delegate.listIterator(skip, count);
+    return new FluentIterator(iterator[Symbol.iterator]());
+  }
+
+  reverseListIterator(skip?: number, count?: number): FluentIterator<E> {
+    const iterator = this.delegate.reverseListIterator(skip, count);
+    return new FluentIterator(iterator[Symbol.iterator]());
+  }
+
   indexOf(e: E): number {
     return this.delegate.indexOf(e);
   }
@@ -128,21 +138,29 @@ export class ImmutableList<E> extends ImmutableCollection<E> implements ReadOnly
     return this.delegate.isStrictlyOrdered(arg1, arg2, arg3);
   }
 
-  clone(): ReadOnlyList<E> {
+  peekFirst() {
+    return this.delegate.peekFirst();
+  }
+
+  peekLast() {
+    return this.delegate.peekLast();
+  }
+
+  clone(): List<E> {
     return this;
   }
 }
 
-export class ImmutableSet<E> extends ImmutableCollection<E> implements ReadOnlySet<E> {
-  constructor(delegate: ReadOnlySet<E>) {
+export class ImmutableSet<E> extends ImmutableCollection<E> implements ISet<E> {
+  constructor(delegate: ISet<E>) {
     super(delegate);
   }
 
-  protected get delegate(): ReadOnlySet<E> {
-    return super.delegate as ReadOnlySet<E>;
+  protected get delegate(): ISet<E> {
+    return super.delegate as ISet<E>;
   }
 
-  clone(): ReadOnlySet<E> {
+  clone(): ISet<E> {
     return this;
   }
 

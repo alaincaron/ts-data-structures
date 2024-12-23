@@ -1,5 +1,6 @@
 import { Comparator, Comparators, Mapper, Predicate } from 'ts-fluent-iterators';
 import { AbstractList } from './abstract_list';
+import { checkListBound, checkListBoundForAdd, checkListBounds } from './helpers';
 import { bsearch, insertSorted, parseArgs, qsort, SearchOptions, shuffle, UnderflowException } from '../utils';
 
 export abstract class BaseArrayList<E> extends AbstractList<E> {
@@ -15,13 +16,13 @@ export abstract class BaseArrayList<E> extends AbstractList<E> {
 
   offerAt(idx: number, item: E): boolean {
     if (this.isFull()) return false;
-    this.checkBoundForAdd(idx);
+    checkListBoundForAdd(this, idx);
     this.elements.splice(idx, 0, item);
     return true;
   }
 
   removeAt(idx: number): E {
-    this.checkBound(idx);
+    checkListBound(this, idx);
     return this.elements.splice(idx, 1)[0];
   }
 
@@ -44,12 +45,12 @@ export abstract class BaseArrayList<E> extends AbstractList<E> {
   }
 
   getAt(idx: number): E {
-    this.checkBound(idx);
+    checkListBound(this, idx);
     return this.elements[idx];
   }
 
   setAt(idx: number, item: E): E {
-    this.checkBound(idx);
+    checkListBound(this, idx);
     const x = this.elements[idx];
     this.elements[idx] = item;
     return x;
@@ -57,7 +58,7 @@ export abstract class BaseArrayList<E> extends AbstractList<E> {
 
   sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): BaseArrayList<E> {
     const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
-    this.checkBounds(left, right);
+    checkListBounds(this, left, right);
     qsort(this.elements, left, right, comparator);
     return this;
   }
@@ -77,7 +78,7 @@ export abstract class BaseArrayList<E> extends AbstractList<E> {
     arg3?: Mapper<void, number> | undefined
   ): BaseArrayList<E> {
     const { left, right, f: mapper } = parseArgs(this.size(), arg1, arg2, arg3, Math.random);
-    this.checkBounds(left, right);
+    checkListBounds(this, left, right);
     shuffle(this.elements, left, right, mapper);
     return this;
   }
@@ -88,7 +89,7 @@ export abstract class BaseArrayList<E> extends AbstractList<E> {
 
   removeRange(start: number, end?: number) {
     end ??= this.size();
-    this.checkBounds(start, end);
+    checkListBounds(this, start, end);
     this.elements.splice(start, end - start);
     return this;
   }

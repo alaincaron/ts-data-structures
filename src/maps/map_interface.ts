@@ -1,41 +1,52 @@
-import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
-import { MapLike, ReadOnlyMap, ReadOnlyMapEntry } from './readonly_map';
+import { ArrayGenerator, FluentIterator } from 'ts-fluent-iterators';
+import { Container, ContainerInitializer, LengthProvider } from '../utils';
 
-export interface MapEntry<K, V> extends ReadOnlyMapEntry<K, V> {
-  set value(v: V);
+export interface MapEntry<K, V> {
+  get key(): K;
+  get value(): V;
 }
 
-export interface OfferResult<V> {
-  accepted: boolean;
-  previous?: V;
-}
+/**
+ * Describes an object that can behave like a Map.  It has a
+ * `size` or `length` and it is possible to iterate through its
+ * elements.
+ */
 
-export interface IMap<K, V> extends ReadOnlyMap<K, V> {
-  offer(key: K, value: V): OfferResult<V>;
+export type MapLike<K, V> = (Iterable<[K, V]> & LengthProvider) | ArrayGenerator<[K, V]>;
 
-  put(key: K, value: V): V | undefined;
+/**
+ * Interface used to specify initial elements in a create method for a {@link Map}.
+ */
+export type MapInitializer<K, V> = ContainerInitializer<MapLike<K, V>>;
 
-  remove(key: K): V | undefined;
+export interface IMap<K, V> extends Container, Iterable<[K, V]> {
+  get(key: K): V | undefined;
 
-  filterKeys(predicate: Predicate<K>): number;
+  containsKey(key: K): boolean;
 
-  filterValues(predicate: Predicate<V>): number;
+  containsValue(value: V): boolean;
 
-  filterEntries(predicate: Predicate<[K, V]>): number;
+  keys(): IterableIterator<K>;
 
-  putAll<K1 extends K, V1 extends V>(map: MapLike<K1, V1>): void;
+  values(): IterableIterator<V>;
 
-  clear(): IMap<K, V>;
+  [Symbol.iterator](): Iterator<[K, V]>;
+
+  keyIterator(): FluentIterator<K>;
+
+  valueIterator(): FluentIterator<V>;
 
   entryIterator(): FluentIterator<MapEntry<K, V>>;
 
-  replaceValueIf(predicate: Predicate<[K, V]>, mapper: Mapper<V, V>): IMap<K, V>;
+  entries(): IterableIterator<[K, V]>;
 
-  transformValues(mapper: Mapper<V, V>): IMap<K, V>;
+  toMap(): Map<K, V>;
 
-  mapValues<V2>(mapper: Mapper<V, V2>): IMap<K, V2>;
+  toJSON(): string;
+
+  hashCode(): number;
 
   clone(): IMap<K, V>;
-}
 
-export * from './readonly_map';
+  equals(other: unknown): boolean;
+}

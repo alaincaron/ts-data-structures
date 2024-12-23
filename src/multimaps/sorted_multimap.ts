@@ -1,18 +1,18 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { MultiMap } from './multimap';
-import { Collection } from '../collections';
-import { MapEntry } from '../maps';
+import { MutableMultiMap } from './mutable_multimap';
+import { MutableCollection } from '../collections';
+import { MutableMapEntry } from '../maps';
 
-export interface SortedMultiMap<K, V> extends MultiMap<K, V> {
-  firstEntry(): MapEntry<K, Collection<V>> | undefined;
+export interface SortedMultiMap<K, V> extends MutableMultiMap<K, V> {
+  firstEntry(): MutableMapEntry<K, MutableCollection<V>> | undefined;
 
-  lastEntry(): MapEntry<K, Collection<V>> | undefined;
+  lastEntry(): MutableMapEntry<K, MutableCollection<V>> | undefined;
 
   firstKey(): K | undefined;
 
   lastKey(): K | undefined;
 
-  reverseEntryIterator(): FluentIterator<MapEntry<K, Collection<V>>>;
+  reverseEntryIterator(): FluentIterator<MutableMapEntry<K, MutableCollection<V>>>;
 
   reverseKeyIterator(): FluentIterator<K>;
 

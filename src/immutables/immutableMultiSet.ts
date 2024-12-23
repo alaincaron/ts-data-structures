@@ -1,11 +1,11 @@
 import { emptyCollection } from './empty';
 import { SingletonCollection } from './singleton';
-import { ReadOnlyMultiSet } from '../multisets';
+import { MultiSet } from '../multisets';
 
-export function empty<E>(): ReadOnlyMultiSet<E> {
+export function empty<E>(): MultiSet<E> {
   return emptyCollection();
 }
 
-export function singleton<E>(item: E): ReadOnlyMultiSet<E> {
+export function singleton<E>(item: E): MultiSet<E> {
   return new SingletonCollection(item);
 }

@@ -2,27 +2,30 @@ import { FlattenCollector, FluentIterator } from 'ts-fluent-iterators';
 import { MapBasedMultiMap } from './map_based_multimap';
 import { WithCollectionFactory } from './map_based_multimap';
 import { SortedMultiMap } from './sorted_multimap';
-import { Collection } from '../collections';
-import { MapEntry, SortedMap, SortedMapOptions } from '../maps';
+import { MutableCollection } from '../collections';
+import { MutableMapEntry, SortedMap, SortedMapOptions } from '../maps';
 import { Constructor } from '../utils';
 
 export type SortedMultiMapOptions<K, V> = WithCollectionFactory<SortedMapOptions<K>, V>;
 
 export abstract class AbstractSortedMultiMap<K, V> extends MapBasedMultiMap<K, V> implements SortedMultiMap<K, V> {
-  protected constructor(map: SortedMap<K, Collection<V>>, collectionFactory?: Constructor<Collection<V>>) {
+  protected constructor(
+    map: SortedMap<K, MutableCollection<V>>,
+    collectionFactory?: Constructor<MutableCollection<V>>
+  ) {
     super(map, collectionFactory);
   }
 
   protected delegate() {
-    return this.map as SortedMap<K, Collection<V>>;
+    return this.map as SortedMap<K, MutableCollection<V>>;
   }
 
-  firstEntry(): MapEntry<K, Collection<V>> | undefined {
+  firstEntry(): MutableMapEntry<K, MutableCollection<V>> | undefined {
     const e = this.delegate().firstEntry();
     return e && { key: e.key, value: e.value.clone() };
   }
 
-  lastEntry(): MapEntry<K, Collection<V>> | undefined {
+  lastEntry(): MutableMapEntry<K, MutableCollection<V>> | undefined {
     const e = this.delegate().lastEntry();
     return e && { key: e.key, value: e.value.clone() };
   }
@@ -35,7 +38,7 @@ export abstract class AbstractSortedMultiMap<K, V> extends MapBasedMultiMap<K, V
     return this.delegate().lastKey();
   }
 
-  reverseEntryIterator(): FluentIterator<MapEntry<K, Collection<V>>> {
+  reverseEntryIterator(): FluentIterator<MutableMapEntry<K, MutableCollection<V>>> {
     return this.delegate()
       .reverseEntryIterator()
       .map(e => ({ key: e.key, value: e.value.clone() }));

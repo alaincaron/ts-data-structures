@@ -1,7 +1,7 @@
 import { AbstractSortedMultiSet } from './abstract_sorted_multiset';
 import { Count } from './map_based_multiset';
 import { NavigableMultiSet } from './navigable_multiset';
-import { MapEntry, NavigableMap } from '../maps';
+import { MutableMapEntry, NavigableMap } from '../maps';
 
 export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSet<E> implements NavigableMultiSet<E> {
   protected constructor(mapFactory: NavigableMap<E, Count> | (new () => NavigableMap<E, Count>)) {
@@ -16,7 +16,7 @@ export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSe
     return this.delegate().lowerKey(key);
   }
 
-  lowerEntry(key: E): MapEntry<E, number> | undefined {
+  lowerEntry(key: E): MutableMapEntry<E, number> | undefined {
     const e = this.delegate().lowerEntry(key);
     return e && { key: e.key, value: e.value.count };
   }
@@ -25,7 +25,7 @@ export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSe
     return this.delegate().higherKey(key);
   }
 
-  higherEntry(key: E): MapEntry<E, number> | undefined {
+  higherEntry(key: E): MutableMapEntry<E, number> | undefined {
     const e = this.delegate().higherEntry(key);
     return e && { key: e.key, value: e.value.count };
   }
@@ -34,7 +34,7 @@ export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSe
     return this.delegate().floorKey(key);
   }
 
-  floorEntry(key: E): MapEntry<E, number> | undefined {
+  floorEntry(key: E): MutableMapEntry<E, number> | undefined {
     const e = this.delegate().floorEntry(key);
     return e && { key: e.key, value: e.value.count };
   }
@@ -43,17 +43,17 @@ export abstract class AbstractNavigableMultiSet<E> extends AbstractSortedMultiSe
     return this.delegate().ceilingKey(key);
   }
 
-  ceilingEntry(key: E): MapEntry<E, number> | undefined {
+  ceilingEntry(key: E): MutableMapEntry<E, number> | undefined {
     const e = this.delegate().ceilingEntry(key);
     return e && { key: e.key, value: e.value.count };
   }
 
-  pollFirstEntry(): MapEntry<E, number> | undefined {
+  pollFirstEntry(): MutableMapEntry<E, number> | undefined {
     const e = this.delegate().pollFirstEntry();
     return e && { key: e.key, value: e.value.count };
   }
 
-  pollLastEntry(): MapEntry<E, number> | undefined {
+  pollLastEntry(): MutableMapEntry<E, number> | undefined {
     const e = this.delegate().pollLastEntry();
     return e && { key: e.key, value: e.value.count };
   }

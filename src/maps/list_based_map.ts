@@ -1,12 +1,12 @@
 import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
 import { AbstractMap } from './abstract_map';
-import { MapEntry, MapInitializer } from './map_interface';
+import { MapInitializer, MutableMapEntry } from './mutable_map';
 import { buildCollection } from '../collections';
-import { ArrayList, LinkedList, List } from '../lists';
+import { ArrayList, LinkedList, MutableList } from '../lists';
 import { buildOptions, Constructor, equalsAny, WithCapacity } from '../utils';
 
 export abstract class ListBasedMap<K, V> extends AbstractMap<K, V> {
-  protected constructor(private readonly _delegate: List<MapEntry<K, V>>) {
+  protected constructor(private readonly _delegate: MutableList<MutableMapEntry<K, V>>) {
     super();
   }
 
@@ -65,7 +65,7 @@ export abstract class ListBasedMap<K, V> extends AbstractMap<K, V> {
   protected static createMap<
     K,
     V,
-    L extends List<MapEntry<K, V>>,
+    L extends MutableList<MutableMapEntry<K, V>>,
     M extends ListBasedMap<K, V>,
     Options extends object = object,
     Initializer extends MapInitializer<K, V> = MapInitializer<K, V>,
@@ -85,19 +85,19 @@ export abstract class ListBasedMap<K, V> extends AbstractMap<K, V> {
     return result;
   }
 
-  protected cloneDelegate<L extends List<MapEntry<K, V>>>(factory: Constructor<L>): L {
-    const delegate = buildCollection<MapEntry<K, V>, L>(factory, { initial: this.delegate() });
+  protected cloneDelegate<L extends MutableList<MutableMapEntry<K, V>>>(factory: Constructor<L>): L {
+    const delegate = buildCollection<MutableMapEntry<K, V>, L>(factory, { initial: this.delegate() });
     return delegate.transform(e => ({ key: e.key, value: e.value })) as L;
   }
 }
 
 export class ArrayMap<K, V> extends ListBasedMap<K, V> {
-  constructor(delegate?: ArrayList<MapEntry<K, V>>) {
-    super(delegate ?? new ArrayList<MapEntry<K, V>>());
+  constructor(delegate?: ArrayList<MutableMapEntry<K, V>>) {
+    super(delegate ?? new ArrayList<MutableMapEntry<K, V>>());
   }
 
   static create<K, V>(initializer?: WithCapacity<MapInitializer<K, V>>): ArrayMap<K, V> {
-    return ListBasedMap.createMap<K, V, ArrayList<MapEntry<K, V>>, ArrayMap<K, V>>(
+    return ListBasedMap.createMap<K, V, ArrayList<MutableMapEntry<K, V>>, ArrayMap<K, V>>(
       ArrayMap,
       ArrayList.create,
       initializer
@@ -105,17 +105,17 @@ export class ArrayMap<K, V> extends ListBasedMap<K, V> {
   }
 
   clone(): ArrayMap<K, V> {
-    return new ArrayMap(this.cloneDelegate<ArrayList<MapEntry<K, V>>>(ArrayList));
+    return new ArrayMap(this.cloneDelegate<ArrayList<MutableMapEntry<K, V>>>(ArrayList));
   }
 }
 
 export class LinkedMap<K, V> extends ListBasedMap<K, V> {
-  constructor(delegate?: LinkedList<MapEntry<K, V>>) {
-    super(delegate ?? new LinkedList<MapEntry<K, V>>());
+  constructor(delegate?: LinkedList<MutableMapEntry<K, V>>) {
+    super(delegate ?? new LinkedList<MutableMapEntry<K, V>>());
   }
 
   static create<K, V>(initializer?: WithCapacity<MapInitializer<K, V>>): LinkedMap<K, V> {
-    return ListBasedMap.createMap<K, V, LinkedList<MapEntry<K, V>>, LinkedMap<K, V>>(
+    return ListBasedMap.createMap<K, V, LinkedList<MutableMapEntry<K, V>>, LinkedMap<K, V>>(
       LinkedMap,
       LinkedList.create,
       initializer
@@ -123,6 +123,6 @@ export class LinkedMap<K, V> extends ListBasedMap<K, V> {
   }
 
   clone(): LinkedMap<K, V> {
-    return new LinkedMap(this.cloneDelegate<LinkedList<MapEntry<K, V>>>(LinkedList));
+    return new LinkedMap(this.cloneDelegate<LinkedList<MutableMapEntry<K, V>>>(LinkedList));
   }
 }

@@ -1,34 +1,40 @@
-import { FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { ReadOnlyMultiMap } from './readonly_multimap';
+import { FluentIterator } from 'ts-fluent-iterators';
 import { Collection } from '../collections';
 import { MapLike } from '../maps';
+import { Container } from '../utils';
 
 export type MultiMapLike<K, V> = MapLike<K, V>;
 
-export interface MultiMap<K, V> extends ReadOnlyMultiMap<K, V> {
+export interface MultiMap<K, V> extends Container, Iterable<[K, V]> {
   getValues(k: K): Collection<V> | undefined;
 
-  removeEntry(key: K, value: V): boolean;
+  containsKey(key: K): boolean;
 
-  removeKey(key: K): Collection<V> | undefined;
+  containsValue(value: V): boolean;
 
-  offer(key: K, value: V): boolean;
+  containsEntry(key: K, value: V): boolean;
 
-  put(key: K, value: V): boolean;
+  keys(): IterableIterator<K>;
 
-  putAll<K1 extends K, V1 extends V>(map: MultiMapLike<K1, V1>): void;
+  values(): IterableIterator<V>;
 
-  clear(): MultiMap<K, V>;
-
-  filterKeys(predicate: Predicate<K>): number;
-
-  filterEntries(predicate: Predicate<[K, V]>): number;
-
-  filterValues(predicate: Predicate<V>): number;
+  entries(): IterableIterator<[K, V]>;
 
   partitions(): IterableIterator<[K, Collection<V>]>;
 
+  keyIterator(): FluentIterator<K>;
+
+  valueIterator(): FluentIterator<V>;
+
   partitionIterator(): FluentIterator<[K, Collection<V>]>;
 
+  entryIterator(): FluentIterator<[K, V]>;
+
+  toJSON(): string;
+
   clone(): MultiMap<K, V>;
+
+  hashCode(): number;
+
+  equals(other: unknown): boolean;
 }

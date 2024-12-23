@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Comparators, iterator } from 'ts-fluent-iterators';
 import { list } from './helper';
-import { Collection, MapEntry, OverflowException, TrieMultiMap } from '../../src';
+import { MutableCollection, MutableMapEntry, OverflowException, TrieMultiMap } from '../../src';
 
 describe('TrieMultiMap', () => {
   describe('constructor', () => {
@@ -319,14 +319,16 @@ describe('TrieMultiMap', () => {
       expect(e?.key).equal('foo');
       expect(e?.value?.equals(fooValue)).to.be.true;
 
-      expect(map.reverseEntryIterator().collect()).satisfies((arr: MapEntry<string, Collection<number>>[]) => {
-        expect(arr.length).equal(2);
-        expect(arr[0].key).equal('foo');
-        expect(arr[0].value.equals(fooValue)).to.be.true;
-        expect(arr[1].key).equal('bar');
-        expect(arr[1].value.equals(barValue)).to.be.true;
-        return true;
-      });
+      expect(map.reverseEntryIterator().collect()).satisfies(
+        (arr: MutableMapEntry<string, MutableCollection<number>>[]) => {
+          expect(arr.length).equal(2);
+          expect(arr[0].key).equal('foo');
+          expect(arr[0].value.equals(fooValue)).to.be.true;
+          expect(arr[1].key).equal('bar');
+          expect(arr[1].value.equals(barValue)).to.be.true;
+          return true;
+        }
+      );
 
       expect(map.reverseKeyIterator().collect()).to.deep.equal(['foo', 'bar']);
 

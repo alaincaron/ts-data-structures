@@ -1,10 +1,10 @@
 import { FluentIterator } from 'ts-fluent-iterators';
 import { AbstractNavigableMap } from './abstract_navigable_map';
 import { SortedMapOptions } from './abstract_sorted_map';
-import { MapEntry } from './map_interface';
+import { MutableMapEntry } from './mutable_map';
 import { ArrayStack } from '../stacks';
 
-export interface BinaryNode<K, V> extends MapEntry<K, V> {
+export interface BinaryNode<K, V> extends MutableMapEntry<K, V> {
   get left(): BinaryNode<K, V> | undefined;
   get right(): BinaryNode<K, V> | undefined;
 }
@@ -187,7 +187,7 @@ export abstract class TreeMap<K, V> extends AbstractNavigableMap<K, V> {
   private *getEntryGenerator(
     onPush: (node: BinaryNode<K, V>) => BinaryNode<K, V> | undefined,
     onPop: (node: BinaryNode<K, V>) => BinaryNode<K, V> | undefined
-  ): IterableIterator<MapEntry<K, V>> {
+  ): IterableIterator<MutableMapEntry<K, V>> {
     const stack = new ArrayStack<BinaryNode<K, V>>();
     let cursor = this.getRoot();
 
@@ -202,14 +202,14 @@ export abstract class TreeMap<K, V> extends AbstractNavigableMap<K, V> {
     }
   }
 
-  private entryGenerator(): IterableIterator<MapEntry<K, V>> {
+  private entryGenerator(): IterableIterator<MutableMapEntry<K, V>> {
     return this.getEntryGenerator(
       cursor => cursor.left,
       cursor => cursor.right
     );
   }
 
-  private reverseEntryGenerator(): IterableIterator<MapEntry<K, V>> {
+  private reverseEntryGenerator(): IterableIterator<MutableMapEntry<K, V>> {
     return this.getEntryGenerator(
       cursor => cursor.right,
       cursor => cursor.left

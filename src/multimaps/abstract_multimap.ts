@@ -1,6 +1,6 @@
 import { FlattenCollector, FluentIterator, Generators, iterator, Predicate } from 'ts-fluent-iterators';
-import { MultiMap, MultiMapLike } from './multimap';
-import { Collection } from '../collections';
+import { MultiMapLike, MutableMultiMap } from './mutable_multimap';
+import { MutableCollection } from '../collections';
 import {
   AbstractContainer,
   CapacityMixin,
@@ -17,11 +17,11 @@ export interface MultiMapInitializer<K, V> {
   initial?: MultiMapLike<K, V>;
 }
 
-export abstract class AbstractMultiMap<K, V> extends AbstractContainer implements MultiMap<K, V> {
-  abstract getValues(k: K): Collection<V> | undefined;
+export abstract class AbstractMultiMap<K, V> extends AbstractContainer implements MutableMultiMap<K, V> {
+  abstract getValues(k: K): MutableCollection<V> | undefined;
 
   abstract removeEntry(key: K, value: V): boolean;
-  abstract removeKey(key: K): Collection<V> | undefined;
+  abstract removeKey(key: K): MutableCollection<V> | undefined;
 
   offer(key: K, value: V) {
     if (this.isFull()) return false;
@@ -81,7 +81,7 @@ export abstract class AbstractMultiMap<K, V> extends AbstractContainer implement
     }
   }
 
-  abstract partitions(): IterableIterator<[K, Collection<V>]>;
+  abstract partitions(): IterableIterator<[K, MutableCollection<V>]>;
 
   keyIterator(): FluentIterator<K> {
     return this.partitionIterator().map(([k, _]) => k);
@@ -93,7 +93,7 @@ export abstract class AbstractMultiMap<K, V> extends AbstractContainer implement
       .collectTo(new FlattenCollector());
   }
 
-  partitionIterator(): FluentIterator<[K, Collection<V>]> {
+  partitionIterator(): FluentIterator<[K, MutableCollection<V>]> {
     return new FluentIterator(this.partitions());
   }
 
@@ -131,7 +131,7 @@ export abstract class AbstractMultiMap<K, V> extends AbstractContainer implement
   }
 }
 
-function isMultiMap<K, V>(obj: unknown): obj is MultiMap<K, V> {
+function isMultiMap<K, V>(obj: unknown): obj is MutableMultiMap<K, V> {
   if (!obj || typeof obj !== 'object') return false;
   if (!Objects.hasFunction(obj, 'size')) return false;
   if (!Objects.hasFunction(obj, 'getValues')) return false;
@@ -141,7 +141,7 @@ function isMultiMap<K, V>(obj: unknown): obj is MultiMap<K, V> {
 export function buildMultiMap<
   K,
   V,
-  M extends MultiMap<K, V>,
+  M extends MutableMultiMap<K, V>,
   Options extends object = object,
   Initializer extends MultiMapInitializer<K, V> = MultiMapInitializer<K, V>,
 >(factory: Constructor<M>, initializer?: WithCapacity<Options & Initializer>): M {
@@ -152,7 +152,7 @@ export function buildMultiMap<
   return result;
 }
 
-function boundMultiMap<K, V, M extends MultiMap<K, V>>(ctor: Constructor<M>, options?: ContainerOptions) {
+function boundMultiMap<K, V, M extends MutableMultiMap<K, V>>(ctor: Constructor<M>, options?: ContainerOptions) {
   if (options && 'capacity' in options) {
     const boundedCtor: any = CapacityMixin(ctor);
     const tmp = new boundedCtor(options);

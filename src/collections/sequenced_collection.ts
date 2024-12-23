@@ -1,15 +1,27 @@
 import { FluentIterator } from 'ts-fluent-iterators';
 import { Collection } from './collection';
+import { MutableCollection } from './mutable_collection';
 
 export interface SequencedCollection<E> extends Collection<E> {
-  addFirst(item: E): SequencedCollection<E>;
-  addLast(item: E): SequencedCollection<E>;
+  getFirst(): E;
+
+  getLast(): E;
+
+  peekFirst(): E | undefined;
+
+  peekLast(): E | undefined;
+
+  reverseIterator(): FluentIterator<E>;
+
+  clone(): SequencedCollection<E>;
+}
+
+export interface SequencedMutableCollection<E> extends SequencedCollection<E>, MutableCollection<E> {
+  addFirst(item: E): SequencedMutableCollection<E>;
+  addLast(item: E): SequencedMutableCollection<E>;
 
   offerFirst(item: E): boolean;
   offerLast(item: E): boolean;
-
-  getFirst(): E;
-  getLast(): E;
 
   removeFirst(): E;
   removeLast(): E;
@@ -17,9 +29,7 @@ export interface SequencedCollection<E> extends Collection<E> {
   pollFirst(): E | undefined;
   pollLast(): E | undefined;
 
-  peekFirst(): E | undefined;
-  peekLast(): E | undefined;
+  reverse(): SequencedMutableCollection<E>;
 
-  reverse(): SequencedCollection<E>;
-  reverseIterator(): FluentIterator<E>;
+  clone(): SequencedMutableCollection<E>;
 }

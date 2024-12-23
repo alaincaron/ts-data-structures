@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Comparators } from 'ts-fluent-iterators';
 import { list } from './helper';
-import { Collection, MapEntry, OverflowException, SkipListMultiMap } from '../../src';
+import { MutableCollection, MutableMapEntry, OverflowException, SkipListMultiMap } from '../../src';
 
 describe('SkipListMultiMap', () => {
   describe('constructor', () => {
@@ -305,26 +305,28 @@ describe('SkipListMultiMap', () => {
     expect(e.key).equal('foo');
     expect(e.value.equals(fooValue)).to.be.true;
 
-    expect(map.reverseEntryIterator().collect()).satisfies((arr: MapEntry<string, Collection<number>>[]) => {
-      expect(arr.length).equal(2);
-      expect(arr[0].key).equal('foo');
-      expect(arr[0].value.equals(fooValue)).to.be.true;
-      expect(arr[1].key).equal('bar');
-      expect(arr[1].value.equals(barValue)).to.be.true;
-      return true;
-    });
+    expect(map.reverseEntryIterator().collect()).satisfies(
+      (arr: MutableMapEntry<string, MutableCollection<number>>[]) => {
+        expect(arr.length).equal(2);
+        expect(arr[0].key).equal('foo');
+        expect(arr[0].value.equals(fooValue)).to.be.true;
+        expect(arr[1].key).equal('bar');
+        expect(arr[1].value.equals(barValue)).to.be.true;
+        return true;
+      }
+    );
 
     expect(map.reverseKeyIterator().collect()).to.deep.equal(['foo', 'bar']);
 
     expect(map.reverseValueIterator().collect()).to.deep.equal(fooValue.iterator().append(barValue).collect());
 
-    expect(map.pollFirstEntry()).satisfies((e: MapEntry<string, Collection<number>>) => {
+    expect(map.pollFirstEntry()).satisfies((e: MutableMapEntry<string, MutableCollection<number>>) => {
       expect(e.key).equal('bar');
       expect(e.value.equals(barValue)).to.be.true;
       return true;
     });
 
-    expect(map.pollLastEntry()).satisfies((e: MapEntry<string, Collection<number>>) => {
+    expect(map.pollLastEntry()).satisfies((e: MutableMapEntry<string, MutableCollection<number>>) => {
       expect(e.key).equal('foo');
       expect(e.value.equals(fooValue)).to.be.true;
       return true;

@@ -2,10 +2,10 @@ import { FluentIterator, iterator, Predicate } from 'ts-fluent-iterators';
 import { buildMap } from './abstract_map';
 import { AbstractNavigableMap } from './abstract_navigable_map';
 import { SortedMapOptions } from './abstract_sorted_map';
-import { MapEntry, MapInitializer } from './map_interface';
+import { MapInitializer, MutableMapEntry } from './mutable_map';
 import { DoubleLinkedList, WithCapacity } from '../utils';
 
-export interface SkipListNode<K, V> extends MapEntry<K, V> {
+export interface SkipListNode<K, V> extends MutableMapEntry<K, V> {
   up: SkipListNode<K, V> | undefined;
   down: SkipListNode<K, V> | undefined;
   level: number;

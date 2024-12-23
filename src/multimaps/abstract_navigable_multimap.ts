@@ -1,26 +1,29 @@
 import { AbstractSortedMultiMap } from './abstract_sorted_multimap';
 import { NavigableMultiMap } from './navigable_multimap';
-import { Collection } from '../collections';
-import { MapEntry, NavigableMap } from '../maps';
+import { MutableCollection } from '../collections';
+import { MutableMapEntry, NavigableMap } from '../maps';
 import { Constructor } from '../utils';
 
 export abstract class AbstractNavigableMultiMap<K, V>
   extends AbstractSortedMultiMap<K, V>
   implements NavigableMultiMap<K, V>
 {
-  protected constructor(map: NavigableMap<K, Collection<V>>, collectionFactory?: Constructor<Collection<V>>) {
+  protected constructor(
+    map: NavigableMap<K, MutableCollection<V>>,
+    collectionFactory?: Constructor<MutableCollection<V>>
+  ) {
     super(map, collectionFactory);
   }
 
   protected delegate() {
-    return this.map as NavigableMap<K, Collection<V>>;
+    return this.map as NavigableMap<K, MutableCollection<V>>;
   }
 
   lowerKey(key: K): K | undefined {
     return this.delegate().lowerKey(key);
   }
 
-  lowerEntry(key: K): MapEntry<K, Collection<V>> | undefined {
+  lowerEntry(key: K): MutableMapEntry<K, MutableCollection<V>> | undefined {
     const e = this.delegate().lowerEntry(key);
     return e && { key: e.key, value: e.value.clone() };
   }
@@ -29,7 +32,7 @@ export abstract class AbstractNavigableMultiMap<K, V>
     return this.delegate().higherKey(key);
   }
 
-  higherEntry(key: K): MapEntry<K, Collection<V>> | undefined {
+  higherEntry(key: K): MutableMapEntry<K, MutableCollection<V>> | undefined {
     const e = this.delegate().higherEntry(key);
     return e && { key: e.key, value: e.value.clone() };
   }
@@ -38,7 +41,7 @@ export abstract class AbstractNavigableMultiMap<K, V>
     return this.delegate().floorKey(key);
   }
 
-  floorEntry(key: K): MapEntry<K, Collection<V>> | undefined {
+  floorEntry(key: K): MutableMapEntry<K, MutableCollection<V>> | undefined {
     const e = this.delegate().floorEntry(key);
     return e && { key: e.key, value: e.value.clone() };
   }
@@ -47,16 +50,16 @@ export abstract class AbstractNavigableMultiMap<K, V>
     return this.delegate().ceilingKey(key);
   }
 
-  ceilingEntry(key: K): MapEntry<K, Collection<V>> | undefined {
+  ceilingEntry(key: K): MutableMapEntry<K, MutableCollection<V>> | undefined {
     const e = this.delegate().ceilingEntry(key);
     return e && { key: e.key, value: e.value.clone() };
   }
 
-  pollFirstEntry(): MapEntry<K, Collection<V>> | undefined {
+  pollFirstEntry(): MutableMapEntry<K, MutableCollection<V>> | undefined {
     return this.delegate().pollFirstEntry();
   }
 
-  pollLastEntry(): MapEntry<K, Collection<V>> | undefined {
+  pollLastEntry(): MutableMapEntry<K, MutableCollection<V>> | undefined {
     return this.delegate().pollLastEntry();
   }
 

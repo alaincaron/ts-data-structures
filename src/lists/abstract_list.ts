@@ -1,13 +1,11 @@
 import { Comparator, Comparators, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
-import { isList } from './helpers';
-import { FluentListIterator, List, ListIterator } from './list';
+import { checkListBounds, computeListIteratorBounds, computeListReverseIteratorBounds, isList } from './helpers';
+import { FluentListIterator, ListIterator, MutableList } from './mutable_list';
 import { AbstractCollection } from '../collections';
 import {
   equalsAny,
   equalsIterable,
   hashIterableOrdered,
-  IllegalArgumentException,
-  IndexOutOfBoundsException,
   OverflowException,
   parseArgs,
   qsort,
@@ -15,7 +13,7 @@ import {
   UnderflowException,
 } from '../utils';
 
-export abstract class AbstractList<E> extends AbstractCollection<E> implements List<E> {
+export abstract class AbstractList<E> extends AbstractCollection<E> implements MutableList<E> {
   abstract getAt(idx: number): E;
 
   getFirst() {
@@ -50,22 +48,6 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
 
   abstract offerAt(idx: number, item: E): boolean;
 
-  protected checkBounds(start: number, end: number) {
-    this.checkBoundForAdd(start);
-    this.checkBoundForAdd(end);
-    if (start > end) {
-      throw new IllegalArgumentException(`Argument start ${start} must be at least as argument end ${end}`);
-    }
-  }
-
-  protected checkBound(idx: number) {
-    if (idx < 0 || idx >= this.size()) throw new IndexOutOfBoundsException();
-  }
-
-  protected checkBoundForAdd(idx: number) {
-    if (idx < 0 || idx > this.size()) throw new IndexOutOfBoundsException();
-  }
-
   addAt(idx: number, item: E): AbstractList<E> {
     if (!this.offerAt(idx, item)) throw new OverflowException();
     return this;
@@ -95,7 +77,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
 
   removeRange(start: number, end?: number): AbstractList<E> {
     end ??= this.size();
-    this.checkBounds(start, end);
+    checkListBounds(this, start, end);
     const iter = this.listIterator(start);
     for (let i = start; i < end; ++i) {
       const item = iter.next();
@@ -166,38 +148,17 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     };
   }
 
-  protected computeIteratorBounds(skip?: number, count?: number) {
-    skip ??= 0;
-    this.checkBoundForAdd(skip);
-    count ??= this.size() - skip;
-    if (count < 0 || count + skip > this.size())
-      throw new IndexOutOfBoundsException(`Invalid skip = ${skip}, count = ${count}, size = ${this.size}`);
-    return { start: skip, count };
-  }
-
   transform(mapper: Mapper<E, E>): AbstractList<E> {
     return this.replaceIf(_ => true, mapper);
   }
 
-  protected computeReverseIteratorBounds(skip?: number, count?: number) {
-    skip ??= 0;
-    this.checkBoundForAdd(skip);
-    const start = this.size() - 1 - skip;
-    count ??= start + 1;
-    if (count < 0 || count > start + 1)
-      throw new IndexOutOfBoundsException(
-        `Reverse iterator invalid skip = ${skip}, count = ${count}, size= ${this.size()}`
-      );
-    return { start, count };
-  }
-
   listIterator(skip?: number, count?: number): FluentListIterator<E> {
-    const bounds = this.computeIteratorBounds(skip, count);
+    const bounds = computeListIteratorBounds(this, skip, count);
     return new FluentListIterator(this.getListIterator(bounds.start, bounds.count, 1));
   }
 
   reverseListIterator(skip?: number, count?: number): FluentListIterator<E> {
-    const bounds = this.computeReverseIteratorBounds(skip, count);
+    const bounds = computeListReverseIteratorBounds(this, skip, count);
     return new FluentListIterator(this.getListIterator(bounds.start, bounds.count, -1));
   }
 
@@ -249,7 +210,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
 
   sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): AbstractList<E> {
     const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
-    this.checkBounds(left, right);
+    checkListBounds(this, left, right);
     if (left >= right) return this;
     const arr = qsort(this.toArray(left, right), comparator);
     const iter = this.listIterator(left, right - left);
@@ -267,7 +228,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
 
   isOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean {
     const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
-    this.checkBounds(left, right);
+    checkListBounds(this, left, right);
     return Comparators.isOrdered(comparator, this.listIterator(left, right - left));
   }
 
@@ -278,7 +239,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
 
   isStrictlyOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean {
     const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
-    this.checkBounds(left, right);
+    checkListBounds(this, left, right);
 
     return Comparators.isStrictlyOrdered(comparator, this.listIterator(left, right - left));
   }
@@ -286,7 +247,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
   reverse(start?: number, end?: number): AbstractList<E> {
     start ??= 0;
     end ??= this.size();
-    this.checkBounds(start, end);
+    checkListBounds(this, start, end);
     if (end - start <= 1) return this;
     const iter1 = this.listIterator(start);
     const iter2 = this.reverseListIterator(this.size() - end);
@@ -313,7 +274,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
     arg3?: Mapper<void, number> | undefined
   ): AbstractList<E> {
     const { left, right, f: random } = parseArgs(this.size(), arg1, arg2, arg3, Math.random);
-    this.checkBounds(left, right);
+    checkListBounds(this, left, right);
     if (left >= right) return this;
     const arr = shuffle(this.toArray(left, right), random);
     const iter = this.listIterator(left);
@@ -327,7 +288,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements L
   toArray(start?: number, end?: number): E[] {
     start ??= 0;
     end ??= this.size();
-    this.checkBounds(start, end);
+    checkListBounds(this, start, end);
     return new FluentIterator(this.listIterator(start, end - start)).collect();
   }
 

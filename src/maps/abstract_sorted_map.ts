@@ -1,6 +1,6 @@
 import { Comparator, Comparators, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { AbstractMap } from './abstract_map';
-import { MapEntry } from './map_interface';
+import { MutableMapEntry } from './mutable_map';
 import { SortedMap } from './sorted_map';
 
 export interface SortedMapOptions<K> {
@@ -15,11 +15,11 @@ export abstract class AbstractSortedMap<K, V> extends AbstractMap<K, V> implemen
     this.comparator = options?.comparator ?? Comparators.natural;
   }
 
-  firstEntry(): MapEntry<K, V> | undefined {
+  firstEntry(): MutableMapEntry<K, V> | undefined {
     return this.entryIterator()?.first();
   }
 
-  lastEntry(): MapEntry<K, V> | undefined {
+  lastEntry(): MutableMapEntry<K, V> | undefined {
     return this.reverseEntryIterator()?.first();
   }
 
@@ -55,7 +55,7 @@ export abstract class AbstractSortedMap<K, V> extends AbstractMap<K, V> implemen
     };
   }
 
-  abstract reverseEntryIterator(): FluentIterator<MapEntry<K, V>>;
+  abstract reverseEntryIterator(): FluentIterator<MutableMapEntry<K, V>>;
   abstract clear(): AbstractSortedMap<K, V>;
   abstract clone(): AbstractSortedMap<K, V>;
 

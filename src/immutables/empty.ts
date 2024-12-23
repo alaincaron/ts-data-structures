@@ -1,12 +1,12 @@
 import { Comparator, Comparators, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
-import { ReadOnlyList } from '../lists';
-import { ReadOnlyMultiSet } from '../multisets';
-import { ReadOnlySet } from '../sets';
+import { List } from '../lists';
+import { MultiSet } from '../multisets';
+import { ISet } from '../sets';
 import { hashIterableOrdered, IndexOutOfBoundsException, Objects, parseArgs } from '../utils';
 
-class EmptyCollection<E> implements ReadOnlyList<E>, ReadOnlySet<E>, ReadOnlyMultiSet<E> {
+class EmptyCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
   private static readonly INSTANCE = new EmptyCollection<never>();
-  private() {}
+  private constructor() {}
 
   static instance<E>() {
     return EmptyCollection.INSTANCE as EmptyCollection<E>;
@@ -42,6 +42,13 @@ class EmptyCollection<E> implements ReadOnlyList<E>, ReadOnlySet<E>, ReadOnlyMul
 
   lastIndexOf(_: E): number {
     return -1;
+  }
+  peekFirst(): E | undefined {
+    return undefined;
+  }
+
+  peekLast(): E | undefined {
+    return undefined;
   }
 
   isOrdered(): boolean;
@@ -99,11 +106,21 @@ class EmptyCollection<E> implements ReadOnlyList<E>, ReadOnlySet<E>, ReadOnlyMul
     return hashIterableOrdered(this);
   }
 
+  listIterator(skip?: number, count?: number): FluentIterator<E> {
+    if (skip || count) throw new IndexOutOfBoundsException('Empty list');
+    return FluentIterator.empty();
+  }
+
+  reverseListIterator(skip?: number, count?: number): FluentIterator<E> {
+    if (skip || count) throw new IndexOutOfBoundsException('Empty list');
+    return FluentIterator.empty();
+  }
+
   equals(other: unknown): boolean {
     if (other === this) return true;
     if (!other) return false;
     if (!Objects.hasFunction(other, 'isEmpty')) return false;
-    return (other as ReadOnlyList<E>).isEmpty();
+    return (other as List<E>).isEmpty();
   }
 
   *[Symbol.iterator](): Iterator<E> {}

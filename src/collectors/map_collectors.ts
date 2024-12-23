@@ -5,9 +5,9 @@ import {
   AvlTreeMap,
   HashMap,
   HashMapOptions,
-  IMap,
   LinkedHashMap,
   LinkedHashMapOptions,
+  MutableMap,
   OpenHashMap,
   SkipListMap,
   SortedMapOptions,
@@ -15,7 +15,7 @@ import {
 } from '../maps';
 import { WithCapacity } from '../utils';
 
-export class IMapCollector<K, V, M extends IMap<K, V>> implements Collector<[K, V], M> {
+export class IMapCollector<K, V, M extends MutableMap<K, V>> implements Collector<[K, V], M> {
   constructor(
     private readonly m: M,
     private readonly collisionHandler?: CollisionHandler<K, V>

@@ -1,5 +1,5 @@
 import { FluentIterator, Predicate } from 'ts-fluent-iterators';
-import { SequencedCollection } from '../collections';
+import { SequencedMutableCollection } from '../collections';
 import { FluentQueueIterator, Queue, QueueIterator } from '../queues';
 
 export interface DequeIterator<E> extends QueueIterator<E> {
@@ -20,7 +20,7 @@ export class FluentDequeIterator<E> extends FluentQueueIterator<E> {
   }
 }
 
-export interface Deque<E> extends Queue<E>, SequencedCollection<E> {
+export interface Deque<E> extends Queue<E>, SequencedMutableCollection<E> {
   addFirst(item: E): Deque<E>;
 
   addLast(item: E): Deque<E>;

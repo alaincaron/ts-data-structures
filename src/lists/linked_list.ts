@@ -1,5 +1,11 @@
 import { AbstractList } from './abstract_list';
-import { FluentListIterator, ListIterator } from './list';
+import {
+  checkListBound,
+  checkListBoundForAdd,
+  computeListIteratorBounds,
+  computeListReverseIteratorBounds,
+} from './helpers';
+import { FluentListIterator, ListIterator } from './mutable_list';
 import { buildCollection, CollectionInitializer } from '../collections';
 import { DoubleLinkedList, UnderflowException, WithCapacity } from '../utils';
 
@@ -39,7 +45,7 @@ export class LinkedList<E> extends AbstractList<E> {
   }
 
   getAt(idx: number): E {
-    this.checkBound(idx);
+    checkListBound(this, idx);
     const e = this.getEntryAt(idx);
     return e.value;
   }
@@ -56,7 +62,7 @@ export class LinkedList<E> extends AbstractList<E> {
 
   offerAt(idx: number, item: E): boolean {
     if (this.isFull()) return false;
-    this.checkBoundForAdd(idx);
+    checkListBoundForAdd(this, idx);
     const e = { value: item } as LinkedListEntry<E>;
     const existing = this.getEntryAt(idx);
     this.linkedList.addBefore(e, existing);
@@ -65,7 +71,7 @@ export class LinkedList<E> extends AbstractList<E> {
   }
 
   setAt(idx: number, item: E): E {
-    this.checkBound(idx);
+    checkListBound(this, idx);
     const e = this.getEntryAt(idx);
     const old = e.value;
     e.value = item;
@@ -73,7 +79,7 @@ export class LinkedList<E> extends AbstractList<E> {
   }
 
   removeAt(idx: number): E {
-    this.checkBound(idx);
+    checkListBound(this, idx);
     const e = this.getEntryAt(idx);
     this.linkedList.remove(e as LinkedListEntry<E>);
     --this._size;
@@ -139,7 +145,7 @@ export class LinkedList<E> extends AbstractList<E> {
   }
 
   listIterator(start?: number, count?: number): FluentListIterator<E> {
-    const bounds = this.computeIteratorBounds(start, count);
+    const bounds = computeListIteratorBounds(this, start, count);
     return new FluentListIterator(
       this.getLinkedListIterator(
         bounds.start,
@@ -150,7 +156,7 @@ export class LinkedList<E> extends AbstractList<E> {
   }
 
   reverseListIterator(start?: number, count?: number): FluentListIterator<E> {
-    const bounds = this.computeReverseIteratorBounds(start, count);
+    const bounds = computeListReverseIteratorBounds(this, start, count);
     return new FluentListIterator(
       this.getLinkedListIterator(
         bounds.start,
