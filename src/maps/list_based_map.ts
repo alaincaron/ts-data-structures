@@ -1,9 +1,9 @@
-import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
+import { Comparator, Comparators, Constructor, Predicate } from 'ts-fluent-iterators';
 import { AbstractMap } from './abstract_map';
 import { MapInitializer, MutableMapEntry } from './mutable_map';
 import { buildCollection } from '../collections';
 import { ArrayList, LinkedList, MutableList } from '../lists';
-import { buildOptions, Constructor, equalsAny, WithCapacity } from '../utils';
+import { buildOptions, equalsAny, WithCapacity } from '../utils';
 
 export abstract class ListBasedMap<K, V> extends AbstractMap<K, V> {
   protected constructor(private readonly _delegate: MutableList<MutableMapEntry<K, V>>) {

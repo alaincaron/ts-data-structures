@@ -1,8 +1,8 @@
+import { Constructor } from 'ts-fluent-iterators';
 import { AbstractSortedMultiMap } from './abstract_sorted_multimap';
 import { NavigableMultiMap } from './navigable_multimap';
 import { MutableCollection } from '../collections';
 import { MutableMapEntry, NavigableMap } from '../maps';
-import { Constructor } from '../utils';
 
 export abstract class AbstractNavigableMultiMap<K, V>
   extends AbstractSortedMultiMap<K, V>

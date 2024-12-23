@@ -1,4 +1,4 @@
-import { Constructor } from './constructor';
+import { Constructor } from 'ts-fluent-iterators';
 import { AddCapacity, ContainerOptions } from './container';
 
 export function CapacityMixin<TBase extends Constructor<any, any[]>>(

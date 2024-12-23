@@ -1,9 +1,8 @@
-import { FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
+import { Constructor, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
 import { MapInitializer, MapLike, MutableMap, MutableMapEntry, OfferResult } from './mutable_map';
 import {
   AbstractContainer,
   CapacityMixin,
-  Constructor,
   ContainerOptions,
   equalsAny,
   extractOptions,

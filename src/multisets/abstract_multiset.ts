@@ -1,8 +1,8 @@
+import { Constructor } from 'ts-fluent-iterators';
 import { MutableMultiSet } from './mutable_multiset';
 import { AbstractCollection, CollectionLike } from '../collections';
 import {
   CapacityMixin,
-  Constructor,
   ContainerOptions,
   extractOptions,
   hashIterableUnordered,

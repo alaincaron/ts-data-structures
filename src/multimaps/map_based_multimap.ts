@@ -1,9 +1,9 @@
-import { Predicate, SumCollector } from 'ts-fluent-iterators';
+import { Constructor, Predicate, SumCollector } from 'ts-fluent-iterators';
 import { AbstractMultiMap } from './abstract_multimap';
 import { MutableCollection } from '../collections';
 import { ArrayList } from '../lists';
 import { buildMap, MutableMap } from '../maps';
-import { buildOptions, Constructor, OverflowException } from '../utils';
+import { buildOptions, OverflowException } from '../utils';
 
 export type WithCollectionFactory<Type, V> = Type & { collectionFactory?: Constructor<MutableCollection<V>> };
 

@@ -1,8 +1,8 @@
-import { Predicate } from 'ts-fluent-iterators';
+import { Constructor, Predicate } from 'ts-fluent-iterators';
 import { AbstractSet } from './abstract_set';
 import { CollectionInitializer, CollectionLike, MutableCollection } from '../collections';
 import { ArrayList } from '../lists';
-import { Constructor, extractOptions, WithCapacity } from '../utils';
+import { extractOptions, WithCapacity } from '../utils';
 
 export abstract class CollectionBasedSet<E> extends AbstractSet<E> {
   private readonly _delegate: MutableCollection<E>;

@@ -1,10 +1,9 @@
-import { FlattenCollector, FluentIterator, Generators, iterator, Predicate } from 'ts-fluent-iterators';
+import { Constructor, FlattenCollector, FluentIterator, Generators, iterator, Predicate } from 'ts-fluent-iterators';
 import { MultiMapLike, MutableMultiMap } from './mutable_multimap';
 import { MutableCollection } from '../collections';
 import {
   AbstractContainer,
   CapacityMixin,
-  Constructor,
   ContainerOptions,
   equalsAny,
   extractOptions,

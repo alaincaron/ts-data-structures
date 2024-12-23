@@ -1,10 +1,9 @@
-import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
+import { Constructor, FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
 import { Collection, CollectionInitializer, CollectionLike } from './collection';
 import { MutableCollection } from './mutable_collection';
 import {
   AbstractContainer,
   CapacityMixin,
-  Constructor,
   ContainerOptions,
   equalsAny,
   extractOptions,

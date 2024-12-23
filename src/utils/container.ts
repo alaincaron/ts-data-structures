@@ -1,4 +1,4 @@
-import { ParameterTail } from './constructor';
+import { ParameterTail } from 'ts-fluent-iterators';
 
 /**
  * Options for building Container objects (`IMap` or `Collection`).

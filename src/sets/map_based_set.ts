@@ -1,8 +1,8 @@
-import { Predicate } from 'ts-fluent-iterators';
+import { Constructor, Predicate } from 'ts-fluent-iterators';
 import { AbstractSet } from './abstract_set';
 import { CollectionInitializer, CollectionLike } from '../collections';
 import { buildMap, MutableMap } from '../maps';
-import { buildOptions, Constructor, extractOptions, WithCapacity } from '../utils';
+import { buildOptions, extractOptions, WithCapacity } from '../utils';
 
 export abstract class MapBasedSet<E> extends AbstractSet<E> {
   protected constructor(private readonly _delegate: MutableMap<E, boolean>) {
