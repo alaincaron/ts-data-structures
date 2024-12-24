@@ -1,5 +1,5 @@
-import { Comparator, Comparators, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
-import { Collection } from '../collections';
+import { Collector, Comparator, Comparators, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
+import { Collection, MutableCollection } from '../collections';
 import { List } from '../lists';
 import {
   checkListBound,
@@ -97,6 +97,24 @@ export class SingletonCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
     end ??= 1;
     checkListBounds(this, start, end);
     return [this.item];
+  }
+
+  toCollector<R>(c: Collector<E, R>): R {
+    c.collect(this.item);
+    return c.result;
+  }
+
+  toCollection<C extends MutableCollection<E>>(c: C): C {
+    c.add(this.item);
+    return c;
+  }
+
+  toReadOnly(): SingletonCollection<E> {
+    return this;
+  }
+
+  asReadOnly(): SingletonCollection<E> {
+    return this;
   }
 
   find(predicate: Predicate<E>): E | undefined {

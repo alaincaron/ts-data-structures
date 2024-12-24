@@ -1,6 +1,7 @@
 import { iterator, Iterators } from 'ts-fluent-iterators';
-import { MutableSet } from './set_interface';
+import { ISet, MutableSet } from './set_interface';
 import { AbstractCollection, CollectionLike } from '../collections';
+import { ImmutableSet } from '../immutables';
 import { hashIterableUnordered, Objects, OverflowException } from '../utils';
 
 function getItemsToAdd<E, E1 extends E>(set: MutableSet<E>, items: CollectionLike<E1>): Set<E> {
@@ -37,6 +38,14 @@ export abstract class AbstractSet<E> extends AbstractCollection<E> implements Mu
     const itemsToAdd = getItemsToAdd(this, items);
     if (this.remaining() < itemsToAdd.size) throw new OverflowException();
     return this.offerPartially(itemsToAdd);
+  }
+
+  toReadOnly(): ISet<E> {
+    return ImmutableSet.copy(this);
+  }
+
+  asReadOnly(): ISet<E> {
+    return ImmutableSet.asReadOnly(this);
   }
 
   abstract clone(): AbstractSet<E>;

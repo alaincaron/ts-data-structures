@@ -1,6 +1,8 @@
 import { Constructor } from 'ts-fluent-iterators';
+import { MultiSet } from './multiset';
 import { MutableMultiSet } from './mutable_multiset';
 import { AbstractCollection, CollectionLike } from '../collections';
+import { ImmutableMultiSet } from '../immutables';
 import {
   CapacityMixin,
   ContainerOptions,
@@ -43,6 +45,14 @@ export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implemen
   }
 
   abstract entries(): IterableIterator<[E, number]>;
+
+  asReadOnly(): MultiSet<E> {
+    return ImmutableMultiSet.asReadOnly(this);
+  }
+
+  toReadOnly() {
+    return ImmutableMultiSet.copy(this);
+  }
 
   hashCode() {
     return hashIterableUnordered(this.entries());

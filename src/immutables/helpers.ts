@@ -1,81 +1,99 @@
-import { Comparator, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
-import { Collection } from '../collections';
+import { Collector, Comparator, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
+import { Collection, MutableCollection } from '../collections';
 import { List } from '../lists';
+import { MultiSet } from '../multisets';
 import { ISet } from '../sets';
 
 export class ImmutableCollection<E> implements Collection<E> {
   constructor(protected readonly _delegate: Collection<E>) {}
 
-  protected get delegate(): Collection<E> {
+  protected get delegate() {
     return this._delegate;
   }
 
-  clone(): Collection<E> {
+  clone() {
     return this;
   }
 
-  contains(item: E): boolean {
+  contains(item: E) {
     return this._delegate.contains(item);
   }
 
-  includes(item: E): boolean {
+  includes(item: E) {
     return this._delegate.includes(item);
   }
 
-  toArray(): E[] {
+  toArray() {
     return this._delegate.toArray();
   }
 
-  find(predicate: Predicate<E>): E | undefined {
+  toCollector<R>(c: Collector<E, R>) {
+    return this._delegate.toCollector(c);
+  }
+
+  toCollection<C extends MutableCollection<E>>(c: C) {
+    c.addFully(this);
+    return c;
+  }
+
+  find(predicate: Predicate<E>) {
     return this._delegate.find(predicate);
   }
 
-  containsAll<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
+  containsAll<E1 extends E>(iteratorLike: IteratorLike<E1>) {
     return this._delegate.containsAll(iteratorLike);
   }
 
-  disjoint<E1 extends E>(iteratorLike: IteratorLike<E1>): boolean {
+  disjoint<E1 extends E>(iteratorLike: IteratorLike<E1>) {
     return this._delegate.containsAll(iteratorLike);
   }
 
-  iterator(): FluentIterator<E> {
+  iterator() {
     return this._delegate.iterator();
   }
 
-  hashCode(): number {
+  hashCode() {
     return this._delegate.hashCode();
   }
 
-  equals(other: unknown): boolean {
+  equals(other: unknown) {
     return this._delegate.equals(other);
   }
 
-  size(): number {
+  size() {
     return this._delegate.size();
   }
 
-  capacity(): number {
+  capacity() {
     return this._delegate.size();
   }
 
-  isEmpty(): boolean {
+  isEmpty() {
     return this._delegate.isEmpty();
   }
 
-  isFull(): boolean {
+  isFull() {
     return true;
   }
 
-  remaining(): number {
+  remaining() {
     return 0;
   }
 
-  toJSON(): string {
+  toJSON() {
     return this._delegate.toJSON();
   }
 
   [Symbol.iterator]() {
     return this._delegate[Symbol.iterator]();
+  }
+
+  asReadOnly() {
+    return this;
+  }
+
+  toReadOnly() {
+    return this;
   }
 }
 
@@ -84,7 +102,7 @@ export class ImmutableList<E> extends ImmutableCollection<E> implements List<E> 
     super(delegate);
   }
 
-  protected get delegate(): List<E> {
+  protected get delegate() {
     return super.delegate as List<E>;
   }
 
@@ -108,33 +126,33 @@ export class ImmutableList<E> extends ImmutableCollection<E> implements List<E> 
     return this.delegate.indexOfFirstOccurrence(predicate);
   }
 
-  listIterator(skip?: number, count?: number): FluentIterator<E> {
+  listIterator(skip?: number, count?: number) {
     const iterator = this.delegate.listIterator(skip, count);
     return new FluentIterator(iterator[Symbol.iterator]());
   }
 
-  reverseListIterator(skip?: number, count?: number): FluentIterator<E> {
+  reverseListIterator(skip?: number, count?: number) {
     const iterator = this.delegate.reverseListIterator(skip, count);
     return new FluentIterator(iterator[Symbol.iterator]());
   }
 
-  indexOf(e: E): number {
+  indexOf(e: E) {
     return this.delegate.indexOf(e);
   }
 
-  indexOfLastOccurrence(predicate: Predicate<E>): number {
+  indexOfLastOccurrence(predicate: Predicate<E>) {
     return this.delegate.indexOfLastOccurrence(predicate);
   }
 
-  lastIndexOf(e: E): number {
+  lastIndexOf(e: E) {
     return this.delegate.lastIndexOf(e);
   }
 
-  isOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean {
+  isOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>) {
     return this.delegate.isOrdered(arg1, arg2, arg3);
   }
 
-  isStrictlyOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): boolean {
+  isStrictlyOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>) {
     return this.delegate.isStrictlyOrdered(arg1, arg2, arg3);
   }
 
@@ -146,7 +164,7 @@ export class ImmutableList<E> extends ImmutableCollection<E> implements List<E> 
     return this.delegate.peekLast();
   }
 
-  clone(): List<E> {
+  clone() {
     return this;
   }
 }
@@ -160,11 +178,33 @@ export class ImmutableSet<E> extends ImmutableCollection<E> implements ISet<E> {
     return super.delegate as ISet<E>;
   }
 
-  clone(): ISet<E> {
+  clone() {
     return this;
   }
 
   toSet(): Set<E> {
     return this.delegate.toSet();
+  }
+}
+
+export class ImmutableMultiSet<E> extends ImmutableCollection<E> implements MultiSet<E> {
+  constructor(delegate: MultiSet<E>) {
+    super(delegate);
+  }
+
+  protected get delegate() {
+    return super.delegate as MultiSet<E>;
+  }
+
+  count(item: E) {
+    return this.delegate.count(item);
+  }
+
+  entries() {
+    return this.delegate.entries();
+  }
+
+  clone() {
+    return this;
   }
 }

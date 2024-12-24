@@ -1,7 +1,9 @@
 import { Comparator, Comparators, FluentIterator, Mapper, Predicate } from 'ts-fluent-iterators';
 import { checkListBounds, computeListIteratorBounds, computeListReverseIteratorBounds, isList } from './helpers';
+import { List } from './list';
 import { FluentListIterator, ListIterator, MutableList } from './mutable_list';
 import { AbstractCollection } from '../collections';
+import { ImmutableList } from '../immutables';
 import {
   equalsAny,
   equalsIterable,
@@ -334,5 +336,13 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
     if (!isList(other)) return false;
     if (other.size() !== this.size()) return false;
     return equalsIterable(this, other);
+  }
+
+  toReadOnly(): List<E> {
+    return ImmutableList.copy(this);
+  }
+
+  asReadOnly(): List<E> {
+    return ImmutableList.asReadOnly(this);
   }
 }

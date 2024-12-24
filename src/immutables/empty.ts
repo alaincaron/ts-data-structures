@@ -1,4 +1,5 @@
-import { Comparator, Comparators, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
+import { Collector, Comparator, Comparators, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
+import { MutableCollection } from '../collections';
 import { List } from '../lists';
 import { MultiSet } from '../multisets';
 import { ISet } from '../sets';
@@ -6,6 +7,7 @@ import { hashIterableOrdered, IndexOutOfBoundsException, Objects, parseArgs } fr
 
 class EmptyCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
   private static readonly INSTANCE = new EmptyCollection<never>();
+
   private constructor() {}
 
   static instance<E>() {
@@ -43,6 +45,7 @@ class EmptyCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
   lastIndexOf(_: E): number {
     return -1;
   }
+
   peekFirst(): E | undefined {
     return undefined;
   }
@@ -158,6 +161,22 @@ class EmptyCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
   }
 
   *entries() {}
+
+  toCollector<R>(c: Collector<E, R>): R {
+    return c.result;
+  }
+
+  toCollection<C extends MutableCollection<E>>(c: C): C {
+    return c;
+  }
+
+  toReadOnly() {
+    return this;
+  }
+
+  asReadOnly() {
+    return this;
+  }
 }
 
 export function emptyCollection<E>() {

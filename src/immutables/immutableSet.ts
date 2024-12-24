@@ -29,7 +29,7 @@ export function hashCopy<E>(items: CollectionLike<E>): ISet<E> {
 }
 
 export function copy<E>(items: CollectionLike<E>): ISet<E> {
-  const delegate = new ArraySet<E>();
+  const delegate = new LinkedHashSet<E>();
   delegate.addFully(items);
   return new ImmutableSet(delegate);
 }

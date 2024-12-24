@@ -5,9 +5,5 @@ export interface MultiSet<E> extends Collection<E> {
 
   entries(): IterableIterator<[E, number]>;
 
-  hashCode(): number;
-
-  equals(other: unknown): boolean;
-
   clone(): MultiSet<E>;
 }
