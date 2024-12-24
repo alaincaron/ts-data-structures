@@ -177,6 +177,20 @@ class EmptyCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
   asReadOnly() {
     return this;
   }
+
+  entryIterator(): FluentIterator<[E, number]> {
+    return FluentIterator.empty();
+  }
+
+  keyIterator(): FluentIterator<E> {
+    return FluentIterator.empty();
+  }
+
+  *keys(): IterableIterator<E> {}
+
+  nbKeys(): number {
+    return 0;
+  }
 }
 
 export function emptyCollection<E>() {

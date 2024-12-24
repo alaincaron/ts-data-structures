@@ -1,4 +1,4 @@
-import { Constructor, Predicate } from 'ts-fluent-iterators';
+import { Constructor, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { AbstractMultiSet } from './abstract_multiset';
 import { MutableMap } from '../maps';
 import { OverflowException } from '../utils';
@@ -120,6 +120,22 @@ export abstract class MapBasedMultiSet<
     for (const e of this.map.entries()) {
       yield e;
     }
+  }
+
+  keyIterator(): FluentIterator<E> {
+    return this.map.keyIterator();
+  }
+
+  keys(): IterableIterator<E> {
+    return this.map.keys();
+  }
+
+  nbKeys(): number {
+    return this.map.size();
+  }
+
+  entryIterator(): FluentIterator<[E, number]> {
+    return FluentIterator.from(this.map);
   }
 
   abstract clone(): MapBasedMultiSet<E, M, Options>;

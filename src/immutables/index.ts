@@ -1,4 +1,4 @@
-export * as ImmutableCollection from './immutableCollection';
-export * as ImmutableList from './immutableList';
-export * as ImmutableSet from './immutableSet';
-export * as ImmutableMultiSet from './immutableMultiSet';
+export * from './immutableCollection';
+export * from './immutableList';
+export * from './immutableSet';
+export * from './immutableMultiSet';

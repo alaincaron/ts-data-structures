@@ -1,33 +1,75 @@
-import { emptyCollection } from './empty';
-import { ImmutableList } from './helpers';
-import { SingletonCollection } from './singleton';
-import { CollectionLike } from '../collections';
-import { AdapterArrayList, List } from '../lists';
-import { isReadOnlyList } from '../lists/helpers';
+import { Comparator, FluentIterator, Predicate } from 'ts-fluent-iterators';
+import { ImmutableCollection } from './immutableCollection';
+import { List } from '../lists';
 
-export function empty<E>(): List<E> {
-  return emptyCollection();
-}
-
-export function singleton<E>(item: E): List<E> {
-  return new SingletonCollection(item);
-}
-
-export function copyOf<E>(...items: E[]): List<E> {
-  return new ImmutableList(AdapterArrayList.create({ initial: items }));
-}
-
-export function copy<E>(items: CollectionLike<E>): List<E> {
-  if (isReadOnlyList<E>(items)) return items;
-  const delegate = new AdapterArrayList<E>();
-  delegate.addFully(items);
-  return new ImmutableList(delegate);
-}
-
-export function asReadOnly<E>(items: List<E> | E[]): List<E> {
-  if (Array.isArray(items)) {
-    return new ImmutableList(new AdapterArrayList({ delegate: items }));
+export class ImmutableList<E> extends ImmutableCollection<E> implements List<E> {
+  constructor(delegate: List<E>) {
+    super(delegate);
   }
-  if (isReadOnlyList<E>(items)) return items;
-  return new ImmutableList<E>(items);
+
+  protected get delegate() {
+    return super.delegate as List<E>;
+  }
+
+  getAt(idx: number) {
+    return this.delegate.getAt(idx);
+  }
+
+  getFirst() {
+    return this.delegate.getFirst();
+  }
+
+  getLast() {
+    return this.delegate.getLast();
+  }
+
+  reverseIterator() {
+    return this.delegate.reverseIterator();
+  }
+
+  indexOfFirstOccurrence(predicate: Predicate<E>) {
+    return this.delegate.indexOfFirstOccurrence(predicate);
+  }
+
+  listIterator(skip?: number, count?: number) {
+    const iterator = this.delegate.listIterator(skip, count);
+    return new FluentIterator(iterator[Symbol.iterator]());
+  }
+
+  reverseListIterator(skip?: number, count?: number) {
+    const iterator = this.delegate.reverseListIterator(skip, count);
+    return new FluentIterator(iterator[Symbol.iterator]());
+  }
+
+  indexOf(e: E) {
+    return this.delegate.indexOf(e);
+  }
+
+  indexOfLastOccurrence(predicate: Predicate<E>) {
+    return this.delegate.indexOfLastOccurrence(predicate);
+  }
+
+  lastIndexOf(e: E) {
+    return this.delegate.lastIndexOf(e);
+  }
+
+  isOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>) {
+    return this.delegate.isOrdered(arg1, arg2, arg3);
+  }
+
+  isStrictlyOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>) {
+    return this.delegate.isStrictlyOrdered(arg1, arg2, arg3);
+  }
+
+  peekFirst() {
+    return this.delegate.peekFirst();
+  }
+
+  peekLast() {
+    return this.delegate.peekLast();
+  }
+
+  clone() {
+    return this;
+  }
 }

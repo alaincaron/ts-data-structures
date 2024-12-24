@@ -3,7 +3,7 @@ import { checkListBounds, computeListIteratorBounds, computeListReverseIteratorB
 import { List } from './list';
 import { FluentListIterator, ListIterator, MutableList } from './mutable_list';
 import { AbstractCollection } from '../collections';
-import { ImmutableList } from '../immutables';
+import { Immutable } from '../immutables/immutable';
 import {
   equalsAny,
   equalsIterable,
@@ -339,10 +339,10 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
   }
 
   toReadOnly(): List<E> {
-    return ImmutableList.copy(this);
+    return Immutable.toList(this);
   }
 
   asReadOnly(): List<E> {
-    return ImmutableList.asReadOnly(this);
+    return Immutable.asReadOnlyList(this);
   }
 }

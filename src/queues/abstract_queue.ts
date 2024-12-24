@@ -1,7 +1,7 @@
 import { FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
 import { FluentQueueIterator, OverflowQueueStrategy, Queue } from './queue';
 import { AbstractCollection, Collection, CollectionLike } from '../collections';
-import { ImmutableCollection, ImmutableList } from '../immutables';
+import { Immutable } from '../immutables/immutable';
 import { getSize, hashIterableOrdered, OverflowException, UnderflowException, WithCapacity } from '../utils';
 
 export interface QueueOptions {
@@ -131,10 +131,10 @@ export abstract class AbstractQueue<E> extends AbstractCollection<E> implements 
   }
 
   toReadOnly(): Collection<E> {
-    return ImmutableList.copy(this);
+    return Immutable.toList(this);
   }
 
   asReadOnly(): Collection<E> {
-    return ImmutableCollection.asReadOnly(this);
+    return Immutable.asReadOnlyCollection(this);
   }
 }

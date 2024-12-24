@@ -1,7 +1,8 @@
 import { AbstractList } from './abstract_list';
 import { List } from './list';
 import { MutableList } from './mutable_list';
-import { ImmutableList } from '../immutables/helpers';
+import { isCollection } from '../collections';
+import { ImmutableList } from '../immutables/immutableList';
 import { IllegalArgumentException, IndexOutOfBoundsException, Objects } from '../utils';
 
 export function checkListBounds<E>(list: List<E>, start: number, end: number) {
@@ -44,9 +45,8 @@ export function computeListReverseIteratorBounds<E>(list: List<E>, skip?: number
 }
 
 export function isList<E>(obj: unknown): obj is List<E> {
-  if (!obj || typeof obj !== 'object') return false;
+  if (!isCollection(obj)) return true;
   if (obj instanceof AbstractList || obj instanceof ImmutableList) return true;
-  if (!Objects.hasFunction(obj, 'size')) return false;
   if (!Objects.hasFunction(obj, 'getAt')) return false;
   return true;
 }

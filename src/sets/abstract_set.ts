@@ -1,7 +1,14 @@
 import { iterator, Iterators } from 'ts-fluent-iterators';
 import { ISet, MutableSet } from './set_interface';
-import { AbstractCollection, CollectionLike } from '../collections';
+import {
+  AbstractCollection,
+  CollectionLike,
+  isCollection,
+  isReadOnlyCollection,
+  isWritableCollection,
+} from '../collections';
 import { ImmutableSet } from '../immutables';
+import { Immutable } from '../immutables/immutable';
 import { hashIterableUnordered, Objects, OverflowException } from '../utils';
 
 function getItemsToAdd<E, E1 extends E>(set: MutableSet<E>, items: CollectionLike<E1>): Set<E> {
@@ -41,11 +48,11 @@ export abstract class AbstractSet<E> extends AbstractCollection<E> implements Mu
   }
 
   toReadOnly(): ISet<E> {
-    return ImmutableSet.copy(this);
+    return Immutable.toSet(this);
   }
 
   asReadOnly(): ISet<E> {
-    return ImmutableSet.asReadOnly(this);
+    return Immutable.asReadOnlySet(this);
   }
 
   abstract clone(): AbstractSet<E>;
@@ -62,10 +69,16 @@ export abstract class AbstractSet<E> extends AbstractCollection<E> implements Mu
   }
 }
 
-function isSet<E>(obj: unknown): obj is MutableSet<E> {
-  if (!obj || typeof obj !== 'object') return false;
-  if (!Objects.hasFunction(obj, 'size')) return false;
+function isSet<E>(obj: unknown): obj is ISet<E> {
+  if (!isCollection(obj)) return false;
+  if (obj instanceof AbstractSet || obj instanceof ImmutableSet) return true;
   if (!Objects.hasFunction(obj, 'toSet')) return false;
-  if (!Objects.hasFunction(obj, 'iterator')) return false;
   return true;
+}
+export function isWritableSet<E>(obj: unknown): obj is MutableSet<E> {
+  return isWritableCollection(obj) && isSet(obj);
+}
+
+export function isReadonlySet<E>(obj: unknown): obj is ISet<E> {
+  return isReadOnlyCollection(obj) && isSet(obj);
 }

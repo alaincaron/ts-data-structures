@@ -1,8 +1,9 @@
-import { Constructor } from 'ts-fluent-iterators';
+import { Constructor, FluentIterator } from 'ts-fluent-iterators';
 import { MultiSet } from './multiset';
 import { MutableMultiSet } from './mutable_multiset';
-import { AbstractCollection, CollectionLike } from '../collections';
+import { AbstractCollection, CollectionLike, isCollection } from '../collections';
 import { ImmutableMultiSet } from '../immutables';
+import { Immutable } from '../immutables/immutable';
 import {
   CapacityMixin,
   ContainerOptions,
@@ -47,11 +48,11 @@ export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implemen
   abstract entries(): IterableIterator<[E, number]>;
 
   asReadOnly(): MultiSet<E> {
-    return ImmutableMultiSet.asReadOnly(this);
+    return Immutable.asReadOnlyMultiSet(this);
   }
 
   toReadOnly() {
-    return ImmutableMultiSet.copy(this);
+    return Immutable.toMultiSet(this);
   }
 
   hashCode() {
@@ -69,14 +70,29 @@ export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implemen
   }
 
   abstract clone(): AbstractMultiSet<E>;
+
+  abstract entryIterator(): FluentIterator<[E, number]>;
+
+  abstract keyIterator(): FluentIterator<E>;
+
+  abstract keys(): IterableIterator<E>;
+
+  abstract nbKeys(): number;
 }
 
-function isMultiSet<E>(obj: unknown): obj is MutableMultiSet<E> {
-  if (!obj || typeof obj !== 'object') return false;
-  if (!Objects.hasFunction(obj, 'size')) return false;
-  if (!Objects.hasFunction(obj, 'entries')) return false;
+export function isMultiSet<E>(obj: unknown): obj is MultiSet<E> {
+  if (!isCollection(obj)) return false;
+  if (obj instanceof AbstractMultiSet || obj instanceof ImmutableMultiSet) return true;
   if (!Objects.hasFunction(obj, 'count')) return false;
   return true;
+}
+
+export function isWritableMultiSet<E>(obj: unknown): obj is MutableMultiSet<E> {
+  return isMultiSet(obj) && Objects.hasFunction(obj, 'offerCount');
+}
+
+export function isReadOnlyMultiSet<E>(obj: unknown): obj is MultiSet<E> {
+  return isMultiSet(obj) && !Objects.hasFunction(obj, 'offerCount');
 }
 
 export function buildMultiSet<

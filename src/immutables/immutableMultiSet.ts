@@ -1,31 +1,41 @@
-import { emptyCollection } from './empty';
-import { ImmutableMultiSet } from './helpers';
-import { SingletonCollection } from './singleton';
-import { CollectionLike } from '../collections';
-import { LinkedHashMultiSet, MultiSet, MutableMultiSet } from '../multisets';
+import { FluentIterator } from 'ts-fluent-iterators';
+import { ImmutableCollection } from './immutableCollection';
+import { MultiSet } from '../multisets';
 
-export function empty<E>(): MultiSet<E> {
-  return emptyCollection();
-}
-
-export function singleton<E>(item: E): MultiSet<E> {
-  return new SingletonCollection(item);
-}
-
-export function copyOf<E>(...items: E[]): MultiSet<E> {
-  const delegate = LinkedHashMultiSet.create({ initial: items });
-  return new ImmutableMultiSet(delegate);
-}
-
-export function copy<E>(items: CollectionLike<E>): MultiSet<E> {
-  const delegate = new LinkedHashMultiSet<E>();
-  delegate.addFully(items);
-  return new ImmutableMultiSet(delegate);
-}
-
-export function asReadOnly<E>(items: MutableMultiSet<E>): MultiSet<E> {
-  if ('add' in items) {
-    return new ImmutableMultiSet<E>(items);
+export class ImmutableMultiSet<E> extends ImmutableCollection<E> implements MultiSet<E> {
+  constructor(delegate: MultiSet<E>) {
+    super(delegate);
   }
-  return items as MultiSet<E>;
+
+  protected get delegate() {
+    return super.delegate as MultiSet<E>;
+  }
+
+  count(item: E) {
+    return this.delegate.count(item);
+  }
+
+  entries() {
+    return this.delegate.entries();
+  }
+
+  clone() {
+    return this;
+  }
+
+  entryIterator(): FluentIterator<[E, number]> {
+    return this.delegate.entryIterator();
+  }
+
+  keyIterator(): FluentIterator<E> {
+    return this.delegate.keyIterator();
+  }
+
+  keys(): IterableIterator<E> {
+    return this.delegate.keys();
+  }
+
+  nbKeys(): number {
+    return this.delegate.nbKeys();
+  }
 }

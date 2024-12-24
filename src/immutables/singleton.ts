@@ -185,4 +185,20 @@ export class SingletonCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
   *entries(): IterableIterator<[E, number]> {
     yield [this.item, 1];
   }
+
+  entryIterator(): FluentIterator<[E, number]> {
+    return FluentIterator.singleton([this.item, 1]);
+  }
+
+  keyIterator(): FluentIterator<E> {
+    return FluentIterator.singleton(this.item);
+  }
+
+  *keys() {
+    yield this.item;
+  }
+
+  nbKeys(): number {
+    return 1;
+  }
 }
