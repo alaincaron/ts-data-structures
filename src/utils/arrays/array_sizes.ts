@@ -28,9 +28,9 @@ export const LARGEST_PRIME = MAX_ARRAY_SIZE - 1;
  * 1040*1.11=1154.
  *
  * Chunks are chosen such that they are optimized for a hashtable
- * growthfactor of 2.0;
+ * growth factor of 2.0;
  *
- * If your hashtable has such a growthfactor then, after initially
+ * If your hashtable has such a growth factor then, after initially
  * "rounding to a prime" upon hashtable construction, it will
  * later expand to prime capacities such that there exist no
  * better primes.

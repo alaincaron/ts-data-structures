@@ -2,8 +2,7 @@ import { Constructor, FluentIterator } from 'ts-fluent-iterators';
 import { MultiSet } from './multiset';
 import { MutableMultiSet } from './mutable_multiset';
 import { AbstractCollection, CollectionLike, isCollection } from '../collections';
-import { ImmutableMultiSet } from '../immutables';
-import { Immutable } from '../immutables/immutable';
+import { Immutable, ImmutableMultiSet } from '../immutables';
 import {
   CapacityMixin,
   ContainerOptions,

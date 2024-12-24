@@ -80,7 +80,7 @@ export abstract class CollectionBasedSet<
   }
 }
 
-export class ArraySet<E> extends CollectionBasedSet<E, ArrayList<E>, object> {
+export class ArraySet<E> extends CollectionBasedSet<E, ArrayList<E>> {
   constructor(options?: object) {
     super(ArrayList, options);
   }

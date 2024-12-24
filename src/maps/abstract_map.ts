@@ -111,10 +111,10 @@ export abstract class AbstractMap<K, V> extends AbstractContainer implements Mut
     return this;
   }
 
-  mapValues<V2>(mapper: Mapper<V, V2>): AbstractMap<K, V2> {
+  mapValues<V2>(mapper: Mapper<V, V2>): MutableMap<K, V2> {
     const result = this.clone() as AbstractMap<K, unknown>;
     result.entryIterator().forEach(e => (e.value = mapper(e.value as V)));
-    return result as AbstractMap<K, V2>;
+    return result as MutableMap<K, V2>;
   }
 
   toMap() {

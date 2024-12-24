@@ -8,7 +8,7 @@ import {
   isWritableCollection,
 } from '../collections';
 import { ImmutableSet } from '../immutables';
-import { Immutable } from '../immutables/immutable';
+import { Immutable } from '../immutables';
 import { hashIterableUnordered, Objects, OverflowException } from '../utils';
 
 function getItemsToAdd<E, E1 extends E>(set: MutableSet<E>, items: CollectionLike<E1>): Set<E> {

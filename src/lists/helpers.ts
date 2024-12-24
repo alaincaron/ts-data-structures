@@ -2,7 +2,7 @@ import { AbstractList } from './abstract_list';
 import { List } from './list';
 import { MutableList } from './mutable_list';
 import { isCollection } from '../collections';
-import { ImmutableList } from '../immutables/immutableList';
+import { ImmutableList } from '../immutables';
 import { IllegalArgumentException, IndexOutOfBoundsException, Objects } from '../utils';
 
 export function checkListBounds<E>(list: List<E>, start: number, end: number) {

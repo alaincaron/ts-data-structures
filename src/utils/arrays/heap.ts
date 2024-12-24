@@ -104,8 +104,7 @@ export function isHeap<E>(arr: E[], comparator: Comparator<E> = Comparators.natu
 function remove<E>(arr: E[], comparator: Comparator<E>): E | undefined {
   if (arr.length <= 0) return undefined;
   const item = arr[0];
-  const tmp = arr[arr.length - 1];
-  arr[0] = tmp;
+  arr[0] = arr[arr.length - 1];
   arr.splice(arr.length - 1, 1);
   heapifyDown(arr, 0, comparator);
   return item;
