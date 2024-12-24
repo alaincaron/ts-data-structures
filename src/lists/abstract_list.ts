@@ -3,7 +3,7 @@ import { checkListBounds, computeListIteratorBounds, computeListReverseIteratorB
 import { List } from './list';
 import { FluentListIterator, ListIterator, MutableList } from './mutable_list';
 import { AbstractCollection } from '../collections';
-import { Immutable } from '../immutables/immutable';
+import { Immutable } from '../immutables';
 import {
   equalsAny,
   equalsIterable,
