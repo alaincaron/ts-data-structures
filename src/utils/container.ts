@@ -40,8 +40,6 @@ export interface Container {
    * @returns the number of elements that can be added to this {@link Container} without exceeding its `capacity`.
    */
   remaining(): number;
-
-  toJSON(): string;
 }
 
 /**
@@ -89,8 +87,6 @@ export abstract class AbstractContainer implements Container {
   remaining(): number {
     return this.capacity() - this.size();
   }
-
-  abstract toJSON(): string;
 }
 
 export interface ContainerInitializer<ContainerLike extends object> {

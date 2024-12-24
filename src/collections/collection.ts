@@ -85,4 +85,6 @@ export interface Collection<E> extends Iterable<E>, Container {
 
   asReadOnly(): Collection<E>;
   toReadOnly(): Collection<E>;
+
+  toJSON(): string;
 }
