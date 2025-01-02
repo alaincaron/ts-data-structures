@@ -1,11 +1,11 @@
 import { Collector, Comparator, Comparators, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
 import { MutableCollection } from '../collections';
 import { List } from '../lists';
-import { MultiSet } from '../multisets';
-import { ISet } from '../sets';
+import { MultiSetEntry, NavigableMultiSet } from '../multisets';
+import { NavigableSet } from '../sets';
 import { hashIterableOrdered, IndexOutOfBoundsException, Objects, parseArgs } from '../utils';
 
-class EmptyCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
+class EmptyCollection<E> implements List<E>, NavigableSet<E>, NavigableMultiSet<E> {
   private static readonly INSTANCE = new EmptyCollection<never>();
 
   private constructor() {}
@@ -178,7 +178,7 @@ class EmptyCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
     return this;
   }
 
-  entryIterator(): FluentIterator<[E, number]> {
+  entryIterator(): FluentIterator<MultiSetEntry<E>> {
     return FluentIterator.empty();
   }
 
@@ -190,6 +190,58 @@ class EmptyCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
 
   nbKeys(): number {
     return 0;
+  }
+
+  first() {
+    return undefined;
+  }
+
+  last() {
+    return undefined;
+  }
+
+  firstEntry() {
+    return undefined;
+  }
+
+  lastEntry() {
+    return undefined;
+  }
+
+  reverseEntryIterator() {
+    return FluentIterator.empty();
+  }
+
+  lowerEntry() {
+    return undefined;
+  }
+
+  lower() {
+    return undefined;
+  }
+
+  higherEntry() {
+    return undefined;
+  }
+
+  higher() {
+    return undefined;
+  }
+
+  floor(_: E) {
+    return undefined;
+  }
+
+  floorEntry(_: E) {
+    return undefined;
+  }
+
+  ceiling(_: E) {
+    return undefined;
+  }
+
+  ceilingEntry(_: E) {
+    return undefined;
   }
 }
 

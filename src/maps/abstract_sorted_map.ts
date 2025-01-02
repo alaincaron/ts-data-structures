@@ -1,13 +1,13 @@
 import { Comparator, Comparators, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { AbstractMap } from './abstract_map';
 import { MutableMapEntry } from './mutable_map';
-import { SortedMap } from './sorted_map';
+import { MutableSortedMap } from './sorted_map';
 
 export interface SortedMapOptions<K> {
   comparator?: Comparator<K>;
 }
 
-export abstract class AbstractSortedMap<K, V> extends AbstractMap<K, V> implements SortedMap<K, V> {
+export abstract class AbstractSortedMap<K, V> extends AbstractMap<K, V> implements MutableSortedMap<K, V> {
   public readonly comparator: Comparator<K>;
 
   protected constructor(options?: SortedMapOptions<K>) {

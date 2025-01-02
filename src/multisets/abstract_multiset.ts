@@ -1,5 +1,5 @@
 import { Constructor, FluentIterator } from 'ts-fluent-iterators';
-import { MultiSet } from './multiset';
+import { MultiSet, MultiSetEntry } from './multiset';
 import { MutableMultiSet } from './mutable_multiset';
 import { AbstractCollection, CollectionLike, isCollection } from '../collections';
 import { Immutable, ImmutableMultiSet } from '../immutables';
@@ -44,7 +44,7 @@ export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implemen
     return this.removeCount(item, 1) > 0;
   }
 
-  abstract entries(): IterableIterator<[E, number]>;
+  abstract entries(): IterableIterator<MultiSetEntry<E>>;
 
   asReadOnly(): MultiSet<E> {
     return Immutable.asReadOnlyMultiSet(this);
@@ -62,15 +62,15 @@ export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implemen
     if (this === other) return true;
     if (!isMultiSet<E>(other)) return false;
     if (this.size() != other.size()) return false;
-    for (const [e, count] of this.entries()) {
-      if (other.count(e) !== count) return false;
+    for (const { key, count } of this.entries()) {
+      if (other.count(key) !== count) return false;
     }
     return true;
   }
 
   abstract clone(): AbstractMultiSet<E>;
 
-  abstract entryIterator(): FluentIterator<[E, number]>;
+  abstract entryIterator(): FluentIterator<MultiSetEntry<E>>;
 
   abstract keyIterator(): FluentIterator<E>;
 
@@ -103,8 +103,8 @@ export function buildMultiSet<
   const { options, initialElements } = extractOptions<CollectionLike<E>>(initializer);
   const result = boundMultiSet(factory, options);
   if (isMultiSet<E>(initialElements)) {
-    for (const [e, count] of initialElements.entries()) {
-      result.setCount(e, count);
+    for (const { key, count } of initialElements.entries()) {
+      result.setCount(key, count);
     }
   } else if (initialElements) {
     result.addFully(initialElements);
@@ -114,7 +114,7 @@ export function buildMultiSet<
 }
 
 function boundMultiSet<E, MS extends MutableMultiSet<E>>(ctor: Constructor<MS>, options?: ContainerOptions) {
-  if (options && 'capacity' in options) {
+  if (options && 'capacity' in options && Number.isFinite(options.capacity)) {
     const boundedCtor: any = CapacityMixin(ctor);
     const tmp = new boundedCtor(options);
     return tmp as unknown as MS;

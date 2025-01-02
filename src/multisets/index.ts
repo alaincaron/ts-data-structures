@@ -14,3 +14,5 @@ export * from './skip_list_multiset';
 export * from './sorted_multiset';
 export * from './splay_tree_multiset';
 export * from './trie_multiset';
+export * from './array_multiset';
+export * from './linked_list_multiset';

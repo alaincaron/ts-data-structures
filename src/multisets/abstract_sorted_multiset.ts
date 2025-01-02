@@ -1,30 +1,31 @@
 import { Constructor, FluentIterator } from 'ts-fluent-iterators';
 import { MapBasedMultiSet } from './map_based_multiset';
-import { SortedMultiSet } from './sorted_multiset';
-import { MutableMapEntry, SortedMap, SortedMapOptions } from '../maps';
+import { MultiSetEntry } from './multiset';
+import { MutableSortedMultiSet } from './mutable_sorted_multiset';
+import { MutableSortedMap, SortedMapOptions } from '../maps';
 
 export abstract class AbstractSortedMultiSet<
     E,
-    M extends SortedMap<E, number>,
+    M extends MutableSortedMap<E, number>,
     Options extends SortedMapOptions<E> = SortedMapOptions<E>,
   >
   extends MapBasedMultiSet<E, M, Options>
-  implements SortedMultiSet<E>
+  implements MutableSortedMultiSet<E>
 {
   protected constructor(ctor: Constructor<M, [Options | undefined]>, options?: Options) {
     super(ctor, options);
   }
 
   protected delegate() {
-    return this.map as SortedMap<E, number>;
+    return this.map as MutableSortedMap<E, number>;
   }
 
-  firstEntry(): MutableMapEntry<E, number> | undefined {
-    return this.delegate().firstEntry();
+  firstEntry(): MultiSetEntry<E> | undefined {
+    return this.convert(this.delegate().firstEntry());
   }
 
-  lastEntry(): MutableMapEntry<E, number> | undefined {
-    return this.delegate().lastEntry();
+  lastEntry(): MultiSetEntry<E> | undefined {
+    return this.convert(this.delegate().lastEntry());
   }
 
   first(): E | undefined {
@@ -35,8 +36,10 @@ export abstract class AbstractSortedMultiSet<
     return this.delegate().lastKey();
   }
 
-  reverseEntryIterator(): FluentIterator<MutableMapEntry<E, number>> {
-    return this.delegate().reverseEntryIterator();
+  reverseEntryIterator(): FluentIterator<MultiSetEntry<E>> {
+    return this.delegate()
+      .reverseEntryIterator()
+      .map(e => this.convert(e)!);
   }
 
   reverseIterator(): FluentIterator<E> {

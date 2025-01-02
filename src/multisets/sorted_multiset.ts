@@ -1,20 +1,16 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { MutableMultiSet } from './mutable_multiset';
-import { MutableMapEntry } from '../maps';
+import { MultiSet, MultiSetEntry } from './multiset';
 
-export interface SortedMultiSet<E> extends MutableMultiSet<E> {
-  firstEntry(): MutableMapEntry<E, number> | undefined;
+export interface SortedMultiSet<E> extends MultiSet<E> {
+  firstEntry(): MultiSetEntry<E> | undefined;
 
-  lastEntry(): MutableMapEntry<E, number> | undefined;
+  lastEntry(): MultiSetEntry<E> | undefined;
 
   first(): E | undefined;
 
   last(): E | undefined;
 
-  reverseEntryIterator(): FluentIterator<MutableMapEntry<E, number>>;
+  reverseEntryIterator(): FluentIterator<MultiSetEntry<E>>;
 
   reverseIterator(): FluentIterator<E>;
-
-  clone(): SortedMultiSet<E>;
-  clear(): SortedMultiSet<E>;
 }

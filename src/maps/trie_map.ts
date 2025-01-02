@@ -3,13 +3,13 @@ import { buildMap } from './abstract_map';
 import { AbstractSortedMap, SortedMapOptions } from './abstract_sorted_map';
 import { AvlTreeMap } from './avl_tree_map';
 import { MapInitializer, MutableMapEntry } from './mutable_map';
-import { SortedMap } from './sorted_map';
+import { MutableSortedMap } from './sorted_map';
 import { WithCapacity } from '../utils';
 
 interface TrieMapNode<V> {
   key: string;
   value?: V;
-  children: SortedMap<string, TrieMapNode<V>>;
+  children: MutableSortedMap<string, TrieMapNode<V>>;
 }
 
 export interface TrieMapOptions extends SortedMapOptions<string> {

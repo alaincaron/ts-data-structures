@@ -1,24 +1,37 @@
 import { FluentIterator } from 'ts-fluent-iterators';
+import { MultiMap } from './multimap';
 import { MutableMultiMap } from './mutable_multimap';
-import { MutableCollection } from '../collections';
-import { MutableMapEntry } from '../maps';
+import { Collection, MutableCollection } from '../collections';
+import { MapEntry, MutableMapEntry } from '../maps';
 
-export interface SortedMultiMap<K, V> extends MutableMultiMap<K, V> {
-  firstEntry(): MutableMapEntry<K, MutableCollection<V>> | undefined;
+export interface SortedMultiMap<K, V> extends MultiMap<K, V> {
+  firstEntry(): MapEntry<K, Collection<V>> | undefined;
 
-  lastEntry(): MutableMapEntry<K, MutableCollection<V>> | undefined;
+  lastEntry(): MapEntry<K, Collection<V>> | undefined;
 
-  firstKey(): K | undefined;
-
-  lastKey(): K | undefined;
-
-  reverseEntryIterator(): FluentIterator<MutableMapEntry<K, MutableCollection<V>>>;
+  reverseEntryIterator(): FluentIterator<MapEntry<K, Collection<V>>>;
 
   reverseKeyIterator(): FluentIterator<K>;
 
   reverseValueIterator(): FluentIterator<V>;
 
-  clear(): SortedMultiMap<K, V>;
-
   clone(): SortedMultiMap<K, V>;
+}
+
+export interface MutableSortedMultiMap<K, V> extends SortedMultiMap<K, V>, MutableMultiMap<K, V> {
+  getValues(k: K): MutableCollection<V> | undefined;
+
+  firstEntry(): MutableMapEntry<K, MutableCollection<V>> | undefined;
+
+  lastEntry(): MutableMapEntry<K, MutableCollection<V>> | undefined;
+
+  reverseEntryIterator(): FluentIterator<MutableMapEntry<K, MutableCollection<V>>>;
+
+  partitions(): IterableIterator<[K, MutableCollection<V>]>;
+
+  partitionIterator(): FluentIterator<[K, MutableCollection<V>]>;
+
+  clear(): MutableSortedMultiMap<K, V>;
+
+  clone(): MutableSortedMultiMap<K, V>;
 }

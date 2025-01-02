@@ -175,7 +175,7 @@ export function buildMap<
 const constructorMap = new Map();
 
 function boundMap<K, V, M extends MutableMap<K, V>>(ctor: Constructor<M>, options?: ContainerOptions) {
-  if (options && 'capacity' in options) {
+  if (options && 'capacity' in options && Number.isFinite(options.capacity)) {
     let boundedCtor = constructorMap.get(ctor);
     if (!boundedCtor) {
       boundedCtor = CapacityMixin(ctor);

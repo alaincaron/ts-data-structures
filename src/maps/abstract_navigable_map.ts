@@ -1,8 +1,8 @@
 import { AbstractSortedMap, SortedMapOptions } from './abstract_sorted_map';
 import { MutableMapEntry } from './mutable_map';
-import { NavigableMap } from './navigable_map';
+import { MutableNavigableMap } from './navigable_map';
 
-export abstract class AbstractNavigableMap<K, V> extends AbstractSortedMap<K, V> implements NavigableMap<K, V> {
+export abstract class AbstractNavigableMap<K, V> extends AbstractSortedMap<K, V> implements MutableNavigableMap<K, V> {
   protected constructor(options?: SortedMapOptions<K>) {
     super(options);
   }

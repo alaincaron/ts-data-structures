@@ -311,7 +311,7 @@ export function boundCollection<E, C extends MutableCollection<E>, Options exten
   ctor: Constructor<C, [Options | undefined]>,
   options?: Options
 ): C {
-  if (options && 'capacity' in options) {
+  if (options && 'capacity' in options && Number.isFinite(options.capacity)) {
     let boundedCtor = constructorMap.get(ctor);
     if (!boundedCtor) {
       boundedCtor = CapacityMixin(ctor);

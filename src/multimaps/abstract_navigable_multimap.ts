@@ -2,21 +2,21 @@ import { Constructor } from 'ts-fluent-iterators';
 import { AbstractSortedMultiMap } from './abstract_sorted_multimap';
 import { NavigableMultiMap } from './navigable_multimap';
 import { MutableCollection } from '../collections';
-import { MutableMapEntry, NavigableMap } from '../maps';
+import { MutableMapEntry, MutableNavigableMap } from '../maps';
 
 export abstract class AbstractNavigableMultiMap<K, V>
   extends AbstractSortedMultiMap<K, V>
   implements NavigableMultiMap<K, V>
 {
   protected constructor(
-    map: NavigableMap<K, MutableCollection<V>>,
+    map: MutableNavigableMap<K, MutableCollection<V>>,
     collectionFactory?: Constructor<MutableCollection<V>>
   ) {
     super(map, collectionFactory);
   }
 
   protected delegate() {
-    return this.map as NavigableMap<K, MutableCollection<V>>;
+    return this.map as MutableNavigableMap<K, MutableCollection<V>>;
   }
 
   lowerKey(key: K): K | undefined {

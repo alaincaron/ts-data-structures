@@ -1,11 +1,15 @@
 import { Constructor } from 'ts-fluent-iterators';
-import { NavigableSet } from './navigable_set';
+import { MutableNavigableSet } from './navigable_set';
 import { SortedMapBasedSet } from './sorted_map_based_set';
-import { NavigableMap, SortedMapOptions } from '../maps';
+import { MutableNavigableMap, SortedMapOptions } from '../maps';
 
-export abstract class NavigableMapBasedSet<E, M extends NavigableMap<E, boolean>, Options extends SortedMapOptions<E>>
+export abstract class NavigableMapBasedSet<
+    E,
+    M extends MutableNavigableMap<E, boolean>,
+    Options extends SortedMapOptions<E>,
+  >
   extends SortedMapBasedSet<E, M, Options>
-  implements NavigableSet<E>
+  implements MutableNavigableSet<E>
 {
   protected constructor(ctor: Constructor<M, [Options | undefined]>, options?: Options) {
     super(ctor, options);

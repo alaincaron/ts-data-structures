@@ -1,3 +1,4 @@
+export * from './bimaps';
 export * from './collections';
 export * from './collectors';
 export * from './deques';

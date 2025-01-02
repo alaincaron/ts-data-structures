@@ -1,6 +1,7 @@
 import { Constructor, FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { AbstractMultiSet } from './abstract_multiset';
-import { MutableMap } from '../maps';
+import { MultiSetEntry } from './multiset';
+import { MapEntry, MutableMap } from '../maps';
 import { OverflowException } from '../utils';
 
 export abstract class MapBasedMultiSet<
@@ -9,12 +10,16 @@ export abstract class MapBasedMultiSet<
   Options extends object = object,
 > extends AbstractMultiSet<E> {
   protected readonly map: MutableMap<E, number>;
-  private _size: number;
+  protected _size: number;
 
   protected constructor(ctor: Constructor<M, [Options | undefined]>, options?: Options) {
     super();
     this.map = new ctor(options);
     this._size = 0;
+  }
+
+  protected convert<E>(e: MapEntry<E, number> | undefined): MultiSetEntry<E> | undefined {
+    return e && { key: e.key, count: e.value };
   }
 
   size() {
@@ -116,9 +121,9 @@ export abstract class MapBasedMultiSet<
     }
   }
 
-  *entries(): IterableIterator<[E, number]> {
+  *entries(): IterableIterator<MultiSetEntry<E>> {
     for (const e of this.map.entries()) {
-      yield e;
+      yield { key: e[0], count: e[1] };
     }
   }
 
@@ -134,8 +139,8 @@ export abstract class MapBasedMultiSet<
     return this.map.size();
   }
 
-  entryIterator(): FluentIterator<[E, number]> {
-    return FluentIterator.from(this.map);
+  entryIterator(): FluentIterator<MultiSetEntry<E>> {
+    return this.map.entryIterator().map(e => this.convert(e)!);
   }
 
   abstract clone(): MapBasedMultiSet<E, M, Options>;

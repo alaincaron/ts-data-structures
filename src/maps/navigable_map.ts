@@ -1,4 +1,5 @@
-import { MutableMapEntry } from './mutable_map';
+import { FluentIterator } from 'ts-fluent-iterators';
+import { MutableMap, MutableMapEntry } from './mutable_map';
 import { SortedMap } from './sorted_map';
 
 export interface NavigableMap<K, V> extends SortedMap<K, V> {
@@ -18,10 +19,17 @@ export interface NavigableMap<K, V> extends SortedMap<K, V> {
 
   ceilingEntry(key: K): MutableMapEntry<K, V> | undefined;
 
+  clone(): NavigableMap<K, V>;
+}
+
+export interface MutableNavigableMap<K, V> extends NavigableMap<K, V>, MutableMap<K, V> {
+  getEntry(key: K): MutableMapEntry<K, V> | undefined;
+  entryIterator(): FluentIterator<MutableMapEntry<K, V>>;
+  reverseEntryIterator(): FluentIterator<MutableMapEntry<K, V>>;
   pollFirstEntry(): MutableMapEntry<K, V> | undefined;
   pollLastEntry(): MutableMapEntry<K, V> | undefined;
 
-  clone(): NavigableMap<K, V>;
+  clone(): MutableNavigableMap<K, V>;
 
-  clear(): NavigableMap<K, V>;
+  clear(): MutableNavigableMap<K, V>;
 }

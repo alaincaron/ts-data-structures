@@ -23,7 +23,7 @@ export class ImmutableMultiSet<E> extends ImmutableCollection<E> implements Mult
     return this;
   }
 
-  entryIterator(): FluentIterator<[E, number]> {
+  entryIterator() {
     return this.delegate.entryIterator();
   }
 

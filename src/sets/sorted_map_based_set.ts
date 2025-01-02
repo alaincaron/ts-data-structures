@@ -1,15 +1,15 @@
 import { Constructor } from 'ts-fluent-iterators';
 import { MapBasedSet } from './map_based_set';
-import { SortedSet } from './sorted_set';
-import { SortedMap, SortedMapOptions } from '../maps';
+import { MutableSortedSet } from './sorted_set';
+import { MutableSortedMap, SortedMapOptions } from '../maps';
 
 export abstract class SortedMapBasedSet<
     E,
-    M extends SortedMap<E, boolean>,
+    M extends MutableSortedMap<E, boolean>,
     Options extends SortedMapOptions<E> = SortedMapOptions<E>,
   >
   extends MapBasedSet<E, M, Options>
-  implements SortedSet<E>
+  implements MutableSortedSet<E>
 {
   protected constructor(ctor: Constructor<M, [Options | undefined]>, options?: Options) {
     super(ctor, options);
@@ -29,6 +29,11 @@ export abstract class SortedMapBasedSet<
 
   reverseIterator() {
     return this.delegate().reverseKeyIterator();
+  }
+
+  clear() {
+    this.delegate().clear();
+    return this;
   }
 
   abstract clone(): SortedMapBasedSet<E, M, Options>;

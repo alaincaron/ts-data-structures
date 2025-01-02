@@ -1,31 +1,22 @@
+import { MultiSetEntry } from './multiset';
 import { SortedMultiSet } from './sorted_multiset';
-import { MutableMapEntry } from '../maps';
 
 export interface NavigableMultiSet<E> extends SortedMultiSet<E> {
   lower(key: E): E | undefined;
 
-  lowerEntry(key: E): MutableMapEntry<E, number> | undefined;
+  lowerEntry(key: E): MultiSetEntry<E> | undefined;
 
   higher(key: E): E | undefined;
 
-  higherEntry(key: E): MutableMapEntry<E, number> | undefined;
+  higherEntry(key: E): MultiSetEntry<E> | undefined;
 
   floor(key: E): E | undefined;
 
-  floorEntry(key: E): MutableMapEntry<E, number> | undefined;
+  floorEntry(key: E): MultiSetEntry<E> | undefined;
 
   ceiling(key: E): E | undefined;
 
-  ceilingEntry(key: E): MutableMapEntry<E, number> | undefined;
-
-  pollFirstEntry(): MutableMapEntry<E, number> | undefined;
-
-  pollLastEntry(): MutableMapEntry<E, number> | undefined;
-
-  pollFirst(): E | undefined;
-
-  pollLast(): E | undefined;
+  ceilingEntry(key: E): MultiSetEntry<E> | undefined;
 
   clone(): NavigableMultiSet<E>;
-  clear(): NavigableMultiSet<E>;
 }

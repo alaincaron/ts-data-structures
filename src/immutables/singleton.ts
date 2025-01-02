@@ -7,11 +7,11 @@ import {
   computeListIteratorBounds,
   computeListReverseIteratorBounds,
 } from '../lists/helpers';
-import { MultiSet } from '../multisets';
-import { ISet } from '../sets';
+import { MultiSetEntry, SortedMultiSet } from '../multisets';
+import { SortedSet } from '../sets';
 import { equalsAny, hashIterableOrdered, iterableToJSON, Objects, parseArgs } from '../utils';
 
-export class SingletonCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
+export class SingletonCollection<E> implements List<E>, SortedSet<E>, SortedMultiSet<E> {
   constructor(private readonly item: E) {}
 
   getAt(idx: number): E {
@@ -182,12 +182,12 @@ export class SingletonCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
     return equalsAny(item, this.item) ? 1 : 0;
   }
 
-  *entries(): IterableIterator<[E, number]> {
-    yield [this.item, 1];
+  *entries(): IterableIterator<MultiSetEntry<E>> {
+    yield this.firstEntry();
   }
 
-  entryIterator(): FluentIterator<[E, number]> {
-    return FluentIterator.singleton([this.item, 1]);
+  entryIterator(): FluentIterator<MultiSetEntry<E>> {
+    return new FluentIterator(this.entries());
   }
 
   keyIterator(): FluentIterator<E> {
@@ -200,5 +200,25 @@ export class SingletonCollection<E> implements List<E>, ISet<E>, MultiSet<E> {
 
   nbKeys(): number {
     return 1;
+  }
+
+  first() {
+    return this.item;
+  }
+
+  last() {
+    return this.item;
+  }
+
+  firstEntry(): MultiSetEntry<E> {
+    return { key: this.item, count: 1 };
+  }
+
+  lastEntry(): MultiSetEntry<E> {
+    return this.firstEntry();
+  }
+
+  reverseEntryIterator(): FluentIterator<MultiSetEntry<E>> {
+    return this.entryIterator();
   }
 }
