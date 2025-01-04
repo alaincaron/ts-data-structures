@@ -77,11 +77,9 @@ export class BiMap<K, V> extends AbstractContainer implements MutableBiMap<K, V>
     if (this.isFull() && !this.containsKey(k) && !this.containsValue(v)) {
       throw new OverflowException();
     }
-    const oldV = this.getValue(k);
-    if (oldV !== undefined && !equalsAny(oldV, v)) throw new IllegalArgumentException();
-    this.keyMapping.put(k, v);
-    this.valueMapping.put(v, k);
-    return this;
+    const oldK = this.getKey(v);
+    if (oldK !== undefined && !equalsAny(oldK, k)) throw new IllegalArgumentException();
+    return this.doForcePut(k, v);
   }
 
   putAll<K1 extends K, V1 extends V>(items: MapLike<K1, V1>) {
@@ -165,7 +163,7 @@ export class BiMap<K, V> extends AbstractContainer implements MutableBiMap<K, V>
   }
 
   entryIterator() {
-    return this.keyMapping.entryIterator();
+    return this.keyMapping.entryIterator().map(({ key, value }) => ({ key, value }));
   }
 
   entries() {

@@ -1,5 +1,12 @@
 import { expect } from 'chai';
-import { createHashBiMap, HashMap, IllegalArgumentException, OverflowException } from '../../src';
+import {
+  AdapterMap,
+  createAvlTreeBiMap,
+  createHashBiMap,
+  HashMap,
+  IllegalArgumentException,
+  OverflowException,
+} from '../../src';
 
 describe('HashBiMap', () => {
   describe('constructor', () => {
@@ -54,19 +61,28 @@ describe('HashBiMap', () => {
   });
 
   describe('put/get', () => {
-    it('should return this if key is newly added', () => {
+    it('should return undefined if key is newly added', () => {
       const map = createHashBiMap();
-      expect(map.put('foo', 4)).to.equal(map);
+      expect(map.put('foo', 4)).to.be.undefined;
       expect(map.size()).equal(1);
       expect(map.getValue('foo')).equal(4);
     });
+
     it('should return the old value if key already present', () => {
       const map = createHashBiMap();
       map.put('foo', 4);
-      expect(() => map.put('foo', 5)).to.throw(IllegalArgumentException);
-      expect(map.forcePut('foo', 2)).equal(4);
+      expect(map.put('foo', 5)).equal(4);
+      expect(map.forcePut('foo', 2)).equal(5);
       expect(map.size()).equal(1);
       expect(map.getValue('foo')).equal(2);
+    });
+
+    it('should throw if the value is already present in the bimap', () => {
+      const map = createHashBiMap();
+      map.put('foo', 1);
+      map.put('bar', 2);
+      expect(() => map.put('bar', 1)).to.throw(IllegalArgumentException);
+      expect(map.put('bar', 2)).equal(2);
     });
 
     it('should throw if adding a new element and map is full', () => {
@@ -74,6 +90,7 @@ describe('HashBiMap', () => {
       map.put('foo', 1);
       expect(map.forcePut('foo', 2)).equal(1);
       expect(() => map.put('bar', 4)).to.throw(OverflowException);
+      expect(() => map.forcePut('bar', 4)).to.throw(OverflowException);
       expect(map.isFull()).to.be.true;
       expect(map.size()).equal(1);
     });
@@ -188,16 +205,11 @@ describe('HashBiMap', () => {
     });
   });
 
-  describe('remove', () => {
-    it('should return undefined on empty map', () => {
+  describe('removeKey/removeValue/removeEntry', () => {
+    it('should return undefined if item is missing or associated key/value if found', () => {
       const map = createHashBiMap();
       expect(map.removeKey('foo')).to.be.undefined;
       expect(map.removeValue('foo')).to.be.undefined;
-      expect(map.isEmpty()).to.be.true;
-      expect(map.size()).equal(0);
-    });
-    it('should return false if item is missing', () => {
-      const map = createHashBiMap();
       map.put('foo', 1);
       map.put('bar', 2);
       expect(map.removeKey('foobar')).to.be.undefined;
@@ -205,6 +217,15 @@ describe('HashBiMap', () => {
       expect(map.size()).equal(2);
       expect(map.removeKey('foo')).to.equal(1);
       expect(map.removeValue(2)).to.equal('bar');
+      expect(map.isEmpty()).to.be.true;
+    });
+    it('should return true if the matching entry was deleted', () => {
+      const map = createHashBiMap();
+      expect(map.removeEntry('foo', 1)).to.be.false;
+      map.put('foo', 1);
+      expect(map.removeEntry('foo', 2)).to.be.false;
+      expect(map.removeEntry('bar', 1)).to.be.false;
+      expect(map.removeEntry('foo', 1)).to.be.true;
       expect(map.isEmpty()).to.be.true;
     });
   });
@@ -238,7 +259,7 @@ describe('HashBiMap', () => {
   });
 
   describe('toIMap', () => {
-    it('should iterate over all entries', () => {
+    it('should return a corresponding IMap', () => {
       const arr: [string, number][] = [
         ['c', 3],
         ['a', 1],
@@ -247,6 +268,45 @@ describe('HashBiMap', () => {
       const bimap = createHashBiMap({ initial: arr });
       const map = HashMap.create({ initial: arr });
       expect(bimap.toIMap().equals(map)).equal(true);
+    });
+  });
+
+  describe('toMap', () => {
+    it('should return a corresponding Map', () => {
+      const arr: [string, number][] = [
+        ['c', 3],
+        ['a', 1],
+        ['b', 2],
+      ];
+      const bimap = createHashBiMap({ initial: arr });
+      const map = new AdapterMap({ delegate: new Map(arr) });
+      expect(new AdapterMap({ delegate: bimap.toMap() }).equals(map)).equal(true);
+    });
+  });
+
+  describe('equals/hashCode', () => {
+    it('should return true if the bimaps have the same mappings', () => {
+      const map1 = createHashBiMap();
+      const map2 = createAvlTreeBiMap();
+      map1.put('foo', 1);
+      expect(map1.equals(undefined)).to.be.false;
+      expect(map1.equals(2)).to.be.false;
+      expect(map1.equals(map1)).to.be.true;
+      expect(map1.equals(map2)).to.be.false;
+      expect(map2.equals(map1)).to.be.false;
+      map2.put('foo', 1);
+      expect(map1.equals(map2)).to.be.true;
+      expect(map2.equals(map1)).to.be.true;
+      expect(map1.hashCode()).equals(map2.hashCode());
+      map1.put('bar', 2);
+      map2.put('bar', 2);
+      expect(map1.equals(map2)).to.be.true;
+      expect(map2.equals(map1)).to.be.true;
+      expect(map1.hashCode()).equals(map2.hashCode());
+      map1.put('foobar', 3);
+      map2.put('foobar', 4);
+      expect(map1.equals(map2)).to.be.false;
+      expect(map2.equals(map1)).to.be.false;
     });
   });
 });

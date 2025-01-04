@@ -32,8 +32,8 @@ describe('AvlTreeBiMap', () => {
 
     it('should initialize with the provided IMap', () => {
       const map1 = createAvlTreeBiMap();
-      map1.put('a', 1);
-      map1.put('b', 2);
+      expect(map1.put('a', 1)).to.be.undefined;
+      expect(map1.put('b', 2)).to.be.undefined;
       const map = createAvlTreeBiMap({ initial: map1 });
       expect(map.getValue('a')).equal(1);
       expect(map.getValue('b')).equal(2);
@@ -54,19 +54,28 @@ describe('AvlTreeBiMap', () => {
   });
 
   describe('put/get', () => {
-    it('should return this if key is newly added', () => {
+    it('should return undefined if key is newly added', () => {
       const map = createAvlTreeBiMap();
-      expect(map.put('foo', 4)).to.equal(map);
+      expect(map.put('foo', 4)).to.be.undefined;
       expect(map.size()).equal(1);
       expect(map.getValue('foo')).equal(4);
     });
+
     it('should return the old value if key already present', () => {
       const map = createAvlTreeBiMap();
       map.put('foo', 4);
-      expect(() => map.put('foo', 5)).to.throw(IllegalArgumentException);
-      expect(map.forcePut('foo', 2)).equal(4);
+      expect(map.put('foo', 5)).equal(4);
+      expect(map.forcePut('foo', 2)).equal(5);
       expect(map.size()).equal(1);
       expect(map.getValue('foo')).equal(2);
+    });
+
+    it('should throw if the value is already present in the bimap', () => {
+      const map = createAvlTreeBiMap();
+      map.put('foo', 1);
+      map.put('bar', 2);
+      expect(() => map.put('bar', 1)).to.throw(IllegalArgumentException);
+      expect(map.put('bar', 2)).equal(2);
     });
 
     it('should throw if adding a new element and map is full', () => {
@@ -100,7 +109,7 @@ describe('AvlTreeBiMap', () => {
     it('should return false if offering a new element and map is full', () => {
       const map = createAvlTreeBiMap({ capacity: 1 });
       map.put('foo', 1);
-      expect(map.forcePut('foo', 2)).equal(1);
+      expect(map.put('foo', 2)).equal(1);
       expect(map.offer('bar', 3)).to.deep.equal({ accepted: false });
       expect(map.isFull()).to.be.true;
       expect(map.size()).equal(1);
@@ -212,16 +221,47 @@ describe('AvlTreeBiMap', () => {
     });
   });
 
-  describe('entries', () => {
-    it('should iterate over all entries', () => {
+  describe('inverse', () => {
+    it('should return an inverse view of the map', () => {
+      const map = createAvlTreeBiMap<string, number>();
+      map.put('foo', 1);
+      const inverse = map.inverse();
+      expect(inverse.getValue(1)).equals('foo');
+      map.put('foo', 2);
+      expect(inverse.getValue(1)).to.be.undefined;
+      expect(inverse.getValue(2)).equal('foo');
+      inverse.put(3, 'bar');
+      expect(map.getValue('bar')).equal(3);
+      inverse.clear();
+      expect(map.isEmpty()).to.be.true;
+    });
+  });
+
+  describe('toJSON', () => {
+    it('should return a JSON string representing the bimap', () => {
       const map = createAvlTreeBiMap();
-      map.put('c', 3);
-      map.put('a', 1);
-      map.put('b', 2);
-      expect(Array.from(map.entries())).deep.equal([
-        ['a', 1],
-        ['b', 2],
-        ['c', 3],
+      map.put('foo', 1);
+      map.put('bar', 2);
+      expect(map.toJSON()).equals('{"bar":2,"foo":1}');
+    });
+  });
+
+  describe('iterators', () => {
+    it('should return iterators', () => {
+      const map = createAvlTreeBiMap();
+      map.put('foo', 1);
+      map.put('bar', 2);
+      expect(Array.from(map.keys())).to.deep.equal(['bar', 'foo']);
+      expect(Array.from(map.values())).to.deep.equal([1, 2]);
+      expect(Array.from(map.keyIterator())).to.deep.equal(['bar', 'foo']);
+      expect(Array.from(map.valueIterator())).to.deep.equal([1, 2]);
+      expect(Array.from(map.entryIterator())).to.deep.equal([
+        { key: 'bar', value: 2 },
+        { key: 'foo', value: 1 },
+      ]);
+      expect(Array.from(map.entries())).to.deep.equal([
+        ['bar', 2],
+        ['foo', 1],
       ]);
     });
   });

@@ -35,17 +35,15 @@ export abstract class AbstractSortedMap<K, V> extends AbstractMap<K, V> implemen
     const partitions = new FluentIterator(this.entries()).groupBy(predicate);
     const entriesToKeep = partitions.get(true) ?? [];
     const entriesToDelete = partitions.get(false) ?? [];
-    if (entriesToKeep.length < entriesToKeep.length) {
-      const originalSize = this.size();
+    if (entriesToKeep.length < entriesToDelete.length) {
       this.clear();
       this.putAll(entriesToKeep);
-      return originalSize - entriesToKeep.length;
     } else {
       for (const [k, _v] of entriesToDelete) {
         this.remove(k);
       }
-      return entriesToDelete.length;
     }
+    return entriesToDelete.length;
   }
 
   buildOptions() {

@@ -41,7 +41,7 @@ export interface MutableBiMap<K, V> extends ReadOnlyBiMap<K, V> {
   removeKey(key: K): V | undefined;
   removeValue(value: V): K | undefined;
   removeEntry(key: K, value: V): boolean;
-  put(key: K, value: V): MutableBiMap<K, V>;
+  put(key: K, value: V): V | undefined;
   forcePut(key: K, value: V): V | undefined;
   putAll<K1 extends K, V1 extends V>(items: MapLike<K1, V1>): MutableBiMap<K, V>;
   putAllForce<K1 extends K, V1 extends V>(items: MapLike<K1, V1>): MutableBiMap<K, V>;
