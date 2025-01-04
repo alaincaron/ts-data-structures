@@ -79,6 +79,29 @@ describe('HashBiMap', () => {
     });
   });
 
+  describe('putAllForce', () => {
+    it('should accept if value is already mapped to another key', () => {
+      const map = createHashBiMap<string, number>();
+      map.put('foo', 1);
+      const x: [string, number] = ['bar', 1];
+      expect(map.putAllForce([x])).to.equal(map);
+      expect(map.size()).equal(1);
+      expect(map.getValue('bar')).equal(1);
+      expect(map.getKey(1)).equal('bar');
+    });
+    it('should return the map if the value is not already mapped to another key', () => {
+      const map = createHashBiMap();
+      map.put('foo', 1);
+      const x: [string, number] = ['bar', 2];
+      expect(map.putAllForce([x])).equal(map);
+      expect(map.size()).equal(2);
+      expect(map.getValue('foo')).equal(1);
+      expect(map.getValue('bar')).equal(2);
+      expect(map.getKey(1)).equal('foo');
+      expect(map.getKey(2)).equal('bar');
+    });
+  });
+
   describe('offer', () => {
     it('should return undefined if key is newly added', () => {
       const map = createHashBiMap();
@@ -176,10 +199,13 @@ describe('HashBiMap', () => {
     it('should return false if item is missing', () => {
       const map = createHashBiMap();
       map.put('foo', 1);
-      expect(map.removeKey('bar')).to.be.undefined;
+      map.put('bar', 2);
+      expect(map.removeKey('foobar')).to.be.undefined;
       expect(map.isEmpty()).to.be.false;
-      expect(map.size()).equal(1);
+      expect(map.size()).equal(2);
       expect(map.removeKey('foo')).to.equal(1);
+      expect(map.removeValue(2)).to.equal('bar');
+      expect(map.isEmpty()).to.be.true;
     });
   });
 

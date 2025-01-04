@@ -1,5 +1,5 @@
-import { Collector, IteratorLike, Predicate } from 'ts-fluent-iterators';
-import { Collection, MutableCollection } from '../collections';
+import { IteratorLike, Predicate } from 'ts-fluent-iterators';
+import { Collection } from '../collections';
 
 export class ImmutableCollection<E> implements Collection<E> {
   constructor(protected readonly _delegate: Collection<E>) {}
@@ -22,15 +22,6 @@ export class ImmutableCollection<E> implements Collection<E> {
 
   toArray() {
     return this._delegate.toArray();
-  }
-
-  toCollector<R>(c: Collector<E, R>) {
-    return this._delegate.toCollector(c);
-  }
-
-  toCollection<C extends MutableCollection<E>>(c: C) {
-    c.addFully(this);
-    return c;
   }
 
   find(predicate: Predicate<E>) {

@@ -1,5 +1,4 @@
-import { ArrayGenerator, Collector, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
-import { MutableCollection } from './mutable_collection';
+import { ArrayGenerator, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
 import { Container, ContainerInitializer, LengthProvider } from '../utils';
 
 /**
@@ -79,9 +78,6 @@ export interface Collection<E> extends Iterable<E>, Container {
   equals(other: unknown): boolean;
 
   clone(): Collection<E>;
-
-  toCollector<R>(c: Collector<E, R>): R;
-  toCollection<C extends MutableCollection<E>>(c: C): C;
 
   asReadOnly(): Collection<E>;
   toReadOnly(): Collection<E>;

@@ -74,6 +74,7 @@ describe('AvlTreeBiMap', () => {
       map.put('foo', 1);
       expect(map.forcePut('foo', 2)).equal(1);
       expect(() => map.put('bar', 4)).to.throw(OverflowException);
+      expect(() => map.forcePut('bar', 4)).to.throw(OverflowException);
       expect(map.isFull()).to.be.true;
       expect(map.size()).equal(1);
     });

@@ -53,7 +53,8 @@ export class BiMap<K, V> extends AbstractContainer implements MutableBiMap<K, V>
     if (oldV !== undefined) {
       this.valueMapping.remove(oldV);
     }
-    this.valueMapping.put(v, k);
+    const oldK = this.valueMapping.put(v, k);
+    if (oldK !== undefined) this.keyMapping.remove(oldK);
     return oldV;
   }
 

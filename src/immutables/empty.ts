@@ -1,5 +1,4 @@
-import { Collector, Comparator, Comparators, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
-import { MutableCollection } from '../collections';
+import { Comparator, Comparators, FluentIterator, IteratorLike, Predicate } from 'ts-fluent-iterators';
 import { List } from '../lists';
 import { MultiSetEntry, NavigableMultiSet } from '../multisets';
 import { NavigableSet } from '../sets';
@@ -161,14 +160,6 @@ class EmptyCollection<E> implements List<E>, NavigableSet<E>, NavigableMultiSet<
   }
 
   *entries() {}
-
-  toCollector<R>(c: Collector<E, R>): R {
-    return c.result;
-  }
-
-  toCollection<C extends MutableCollection<E>>(c: C): C {
-    return c;
-  }
 
   toReadOnly() {
     return this;

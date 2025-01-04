@@ -1,4 +1,4 @@
-import { Collector, Constructor, FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
+import { Constructor, FluentIterator, IteratorLike, Iterators, Predicate } from 'ts-fluent-iterators';
 import { Collection, CollectionInitializer, CollectionLike } from './collection';
 import { MutableCollection } from './mutable_collection';
 import {
@@ -275,14 +275,6 @@ export abstract class AbstractCollection<E> extends AbstractContainer implements
    */
   toJSON() {
     return iterableToJSON(this);
-  }
-
-  toCollector<R>(c: Collector<E, R>): R {
-    return this.iterator().collectTo(c);
-  }
-  toCollection<C extends MutableCollection<E>>(c: C): C {
-    c.addFully(this);
-    return c;
   }
 
   abstract toReadOnly(): Collection<E>;
