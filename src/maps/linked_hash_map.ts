@@ -62,14 +62,6 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
     }
   }
 
-  mostRecent() {
-    return this.linkedList.last() as unknown as MutableMapEntry<K, V>;
-  }
-
-  leastRecent() {
-    return this.linkedList.first() as unknown as MutableMapEntry<K, V>;
-  }
-
   protected override overflowHandler(_key: K, _value: V): boolean {
     switch (this.overflowStrategy) {
       case OverflowStrategy.REMOVE_LEAST_RECENT:
@@ -86,13 +78,13 @@ export class LinkedHashMap<K, V> extends HashMap<K, V> {
   }
 
   private removeMostRecent() {
-    const e = this.mostRecent();
+    const e = this.linkedList.last() as unknown as MutableMapEntry<K, V>;
     if (!e) return undefined;
     return super.remove(e.key);
   }
 
   private removeLeastRecent() {
-    const e = this.leastRecent();
+    const e = this.linkedList.first() as unknown as MutableMapEntry<K, V>;
     if (!e) return;
     return super.remove(e.key);
   }

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { LinkedHashMap, Ordering, OverflowException } from '../../src';
+import { LinkedHashMap, Ordering, OverflowException, OverflowStrategy } from '../../src';
 
 function collectKeys<K, V>(m: LinkedHashMap<K, V>): K[] {
   return Array.from(m.keys());
@@ -25,15 +25,35 @@ describe('LinkedHashMap', () => {
       expect(map.isFull()).to.be.false;
     });
 
-    it('should initialize with the provided Map and respect ordering', () => {
+    it('should initialize with the provided Map and respect access ordering', () => {
       const map = LinkedHashMap.create({ ordering: Ordering.ACCESS, initial: new Map().set('a', 1).set('b', 2) });
       expect(map.size()).equal(2);
       expect(collectKeys(map)).to.deep.equal(['a', 'b']);
       expect(map.get('b')).equal(2);
       expect(map.get('a')).equal(1);
       expect(collectKeys(map)).to.deep.equal(['b', 'a']);
-      expect(map.mostRecent().key).equal('a');
-      expect(map.leastRecent().key).equal('b');
+    });
+
+    it('should initialize with the provided Map and respect insertion ordering', () => {
+      const map = LinkedHashMap.create({ ordering: Ordering.INSERTION, initial: new Map().set('a', 1).set('b', 2) });
+      expect(map.size()).equal(2);
+      expect(collectKeys(map)).to.deep.equal(['a', 'b']);
+      expect(map.get('b')).equal(2);
+      expect(map.get('a')).equal(1);
+      expect(collectKeys(map)).to.deep.equal(['a', 'b']);
+      expect(map.put('a', 3)).equal(1);
+      expect(collectKeys(map)).to.deep.equal(['a', 'b']);
+    });
+
+    it('should initialize with the provided Map and respect modification ordering', () => {
+      const map = LinkedHashMap.create({ ordering: Ordering.MODIFICATION, initial: new Map().set('a', 1).set('b', 2) });
+      expect(map.size()).equal(2);
+      expect(collectKeys(map)).to.deep.equal(['a', 'b']);
+      expect(map.get('b')).equal(2);
+      expect(map.get('a')).equal(1);
+      expect(collectKeys(map)).to.deep.equal(['a', 'b']);
+      expect(map.put('a', 3)).equal(1);
+      expect(collectKeys(map)).to.deep.equal(['b', 'a']);
     });
 
     it('should initialize with the provided IMap', () => {
@@ -269,6 +289,51 @@ describe('LinkedHashMap', () => {
         ] as Array<[string, number]>,
       });
       expect(map.toJSON()).equal('{"a":1,"b":2}');
+    });
+  });
+
+  describe('overflowHandler', () => {
+    const initialMap = new LinkedHashMap();
+    initialMap.put('a', 1);
+    initialMap.put('b', 2);
+    it('should remove the first alement', () => {
+      const map = LinkedHashMap.create({
+        capacity: 2,
+        overflowStrategy: OverflowStrategy.REMOVE_LEAST_RECENT,
+        initial: initialMap,
+      });
+      map.put('c', 3);
+      const map2 = LinkedHashMap.create({
+        initial: [
+          ['b', 2],
+          ['c', 3],
+        ] as [string, number][],
+      });
+      expect(map.equals(map2)).to.be.true;
+    });
+    it('should remove the last alement', () => {
+      const map = LinkedHashMap.create({
+        capacity: 2,
+        overflowStrategy: OverflowStrategy.REMOVE_MOST_RECENT,
+        initial: initialMap,
+      });
+      map.put('c', 3);
+      const map2 = LinkedHashMap.create({
+        initial: [
+          ['a', 1],
+          ['c', 3],
+        ] as [string, number][],
+      });
+      expect(map.equals(map2)).to.be.true;
+    });
+    it('should discard the element inserted', () => {
+      const map = LinkedHashMap.create({
+        capacity: 2,
+        overflowStrategy: OverflowStrategy.DISCARD,
+        initial: initialMap,
+      });
+      expect(map.put('c', 3)).to.be.undefined;
+      expect(map.equals(initialMap)).to.be.true;
     });
   });
 });
