@@ -10,7 +10,7 @@ export function* merge_iterators<A>(
   iterators: IteratorGenerator<IteratorGenerator<A>>,
   comparator: Comparator<A> = Comparators.natural
 ): IterableIterator<A> {
-  const q = new PriorityQueue<MergeItem<A>>({ comparator: (item1, item2) => comparator(item1.data, item2.data) });
+  const q = new PriorityQueue<MergeItem<A>>({ comparator: Comparators.onResultOf(comparator, x => x.data) });
   FluentIterator.from(iterators)
     .map(iter => Iterators.toIterator(iter))
     .forEach(iter => {
