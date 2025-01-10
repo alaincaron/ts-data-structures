@@ -1,5 +1,7 @@
 import { Comparator, Comparators } from 'ts-fluent-iterators';
-import { emptyCollection } from './empty';
+import { EmptyList } from './emptyList';
+import { EmptyMultiSet } from './emptyMultiSet';
+import { EmptySet } from './emptySet';
 import { ImmutableCollection } from './immutableCollection';
 import { ImmutableList } from './immutableList';
 import { ImmutableMultiSet } from './immutableMultiSet';
@@ -7,7 +9,9 @@ import { ImmutableNavigableSet } from './immutableNavigableSet';
 import { ImmutableSet } from './immutableSet';
 import { ImmutableSortedMultiSet } from './immutableSortedMultiSet';
 import { ImmutableSortedSet } from './immutableSortedSet';
-import { SingletonCollection } from './singleton';
+import { SingletonList } from './singletonList';
+import { SingletonMultiSet } from './singletonMultiSet';
+import { SingletonSet } from './singletonSet';
 import { Collection, CollectionLike, isCollection } from '../collections';
 import { collectionIsReadOnly } from '../collections/helpers';
 import { AdapterArrayList, List } from '../lists';
@@ -28,20 +32,12 @@ const THRESHOLD = 25;
 export class Immutable {
   private constructor() {}
 
-  static emptyCollection<E>(): Collection<E> {
-    return emptyCollection();
-  }
-
   static emptyList<E>(): List<E> {
-    return emptyCollection();
-  }
-
-  static singletonCollection<E>(item: E): Collection<E> {
-    return new SingletonCollection(item);
+    return EmptyList.instance();
   }
 
   static singletonList<E>(item: E): List<E> {
-    return new SingletonCollection(item);
+    return new SingletonList(item);
   }
 
   static asReadOnlyCollection<E>(items: Collection<E>): Collection<E> {
@@ -103,11 +99,11 @@ export class Immutable {
   }
 
   static emptySet<E>(): NavigableSet<E> {
-    return emptyCollection();
+    return EmptySet.instance();
   }
 
   static singletonSet<E>(item: E): SortedSet<E> {
-    return new SingletonCollection(item);
+    return new SingletonSet(item);
   }
 
   static setOf<E>(...items: E[]): ISet<E> {
@@ -198,11 +194,11 @@ export class Immutable {
   }
 
   static emptyMultiSet<E>(): SortedMultiSet<E> {
-    return emptyCollection();
+    return EmptyMultiSet.instance();
   }
 
   static singletonMultiSet<E>(item: E): SortedMultiSet<E> {
-    return new SingletonCollection(item);
+    return new SingletonMultiSet(item);
   }
 
   static multiSetOf<E>(...items: E[]): MultiSet<E> {

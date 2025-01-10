@@ -1,10 +1,15 @@
 import { Comparator, FluentIterator, Predicate } from 'ts-fluent-iterators';
+import { EmptyList } from './emptyList';
 import { ImmutableCollection } from './immutableCollection';
 import { List } from '../lists';
 
 export class ImmutableList<E> extends ImmutableCollection<E> implements List<E> {
   constructor(delegate: List<E>) {
     super(delegate);
+  }
+
+  static empty<E>(): List<E> {
+    return EmptyList.instance();
   }
 
   protected get delegate() {

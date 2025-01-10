@@ -69,7 +69,7 @@ export abstract class AbstractSet<E> extends AbstractCollection<E> implements Mu
   }
 }
 
-function isSet<E>(obj: unknown): obj is ISet<E> {
+export function isSet<E>(obj: unknown): obj is ISet<E> {
   if (!isCollection(obj)) return false;
   if (obj instanceof AbstractSet || obj instanceof ImmutableSet) return true;
   if (!Objects.hasFunction(obj, 'toSet')) return false;
