@@ -1,12 +1,9 @@
-import { Comparator, Comparators, FluentIterator } from 'ts-fluent-iterators';
+import { FluentIterator } from 'ts-fluent-iterators';
 import { SingletonCollection } from './singletonCollection';
-import { isSet, NavigableSet } from '../sets';
+import { isSet, SortedSet } from '../sets';
 
-export class SingletonSet<E> extends SingletonCollection<E> implements NavigableSet<E> {
-  constructor(
-    item: E,
-    private readonly comparator: Comparator<E> = Comparators.natural
-  ) {
+export class SingletonSet<E> extends SingletonCollection<E> implements SortedSet<E> {
+  constructor(item: E) {
     super(item);
   }
 
@@ -41,21 +38,5 @@ export class SingletonSet<E> extends SingletonCollection<E> implements Navigable
 
   reverseIterator() {
     return FluentIterator.singleton(this.item);
-  }
-
-  floor(e: E): E | undefined {
-    return this.comparator(e, this.item) >= 0 ? this.item : undefined;
-  }
-
-  ceiling(e: E): E | undefined {
-    return this.comparator(e, this.item) <= 0 ? this.item : undefined;
-  }
-
-  lower(e: E): E | undefined {
-    return this.comparator(e, this.item) > 0 ? this.item : undefined;
-  }
-
-  higher(e: E): E | undefined {
-    return this.comparator(e, this.item) < 0 ? this.item : undefined;
   }
 }

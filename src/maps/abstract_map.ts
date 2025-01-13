@@ -150,7 +150,7 @@ export abstract class AbstractMap<K, V> extends AbstractContainer implements Mut
   }
 }
 
-function isMap<K, V>(obj: unknown): obj is MutableMap<K, V> {
+export function isMap<K, V>(obj: unknown): obj is MutableMap<K, V> {
   if (!obj || typeof obj !== 'object') return false;
   if (!Objects.hasFunction(obj, 'size')) return false;
   if (!Objects.hasFunction(obj, 'toMap')) return false;

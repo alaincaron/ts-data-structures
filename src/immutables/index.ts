@@ -1,5 +1,6 @@
 export * from './emptyCollection';
 export * from './emptyList';
+export * from './emptyMap';
 export * from './emptyMultiSet';
 export * from './emptySet';
 export * from './immutable';
@@ -13,4 +14,5 @@ export * from './immutableSortedSet';
 export * from './singletonCollection';
 export * from './singletonList';
 export * from './singletonMultiSet';
+export * from './singletonNavigableSet';
 export * from './singletonSet';
