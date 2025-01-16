@@ -23,94 +23,103 @@ export class Heap<E> {
   }
 
   insert(item: E) {
-    insert(this.data, item, this.comparator);
+    HeapUtils.insert(this.data, item, this.comparator);
   }
 
   remove(): E | undefined {
-    return remove(this.data, this.comparator);
+    return HeapUtils.remove(this.data, this.comparator);
   }
 
   heapify() {
-    heapify(this.data, this.comparator);
+    HeapUtils.heapify(this.data, this.comparator);
   }
 
   isHeap() {
-    return isHeap(this.data, this.comparator);
+    return HeapUtils.isHeap(this.data, this.comparator);
   }
 }
 
-function heapifyUp<E>(arr: E[], child: number, comparator: Comparator<E>): boolean {
-  let modified = false;
-  while (child > 0) {
-    const parent = (child - 1) >> 1;
-    if (comparator(arr[child], arr[parent]) >= 0) {
-      break;
+export class HeapUtils {
+  private constructor() {}
+
+  static heapifyUp<E>(arr: E[], child: number, comparator: Comparator<E>): boolean {
+    let modified = false;
+    while (child > 0) {
+      const parent = (child - 1) >> 1;
+      if (comparator(arr[child], arr[parent]) >= 0) {
+        break;
+      }
+      HeapUtils.swap(arr, child, parent);
+      modified = true;
+      child = parent;
     }
-    swap(arr, child, parent);
-    modified = true;
-    child = parent;
+    return modified;
   }
-  return modified;
-}
 
-function heapifyDown<E>(arr: E[], parent: number, comparator: Comparator<E>): boolean {
-  let modified = false;
-  while (true) {
-    const leftChild = (parent << 1) + 1;
-    const rightChild = leftChild + 1;
-    let smallest = parent;
+  static heapifyDown<E>(
+    arr: E[],
+    parent: number,
+    comparator: Comparator<E> = Comparators.natural,
+    len: number = arr.length
+  ): boolean {
+    let modified = false;
+    while (true) {
+      const leftChild = (parent << 1) + 1;
+      const rightChild = leftChild + 1;
+      let smallest = parent;
 
-    if (leftChild < arr.length && comparator(arr[leftChild], arr[smallest]) < 0) {
-      smallest = leftChild;
+      if (leftChild < len && comparator(arr[leftChild], arr[smallest]) < 0) {
+        smallest = leftChild;
+      }
+
+      if (rightChild < len && comparator(arr[rightChild], arr[smallest]) < 0) {
+        smallest = rightChild;
+      }
+
+      if (smallest === parent) {
+        break;
+      }
+
+      HeapUtils.swap(arr, parent, smallest);
+      modified = true;
+      parent = smallest;
     }
-
-    if (rightChild < arr.length && comparator(arr[rightChild], arr[smallest]) < 0) {
-      smallest = rightChild;
-    }
-
-    if (smallest === parent) {
-      break;
-    }
-
-    swap(arr, parent, smallest);
-    modified = true;
-    parent = smallest;
+    return modified;
   }
-  return modified;
-}
 
-export function heapify<E>(arr: E[], comparator: Comparator<E> = Comparators.natural): void {
-  for (let i = (arr.length >> 1) - 1; i >= 0; --i) heapifyDown(arr, i, comparator);
-}
-
-function swap<E>(arr: E[], i: number, j: number) {
-  const tmp = arr[i];
-  arr[i] = arr[j];
-  arr[j] = tmp;
-}
-
-export function isHeap<E>(arr: E[], comparator: Comparator<E> = Comparators.natural): boolean {
-  let parent = 0;
-  for (;;) {
-    const left = (parent << 1) + 1;
-    if (left >= arr.length) return true;
-    if (comparator(arr[parent], arr[left]) > 0) return false;
-    const right = left + 1;
-    if (right < arr.length && comparator(arr[parent], arr[right]) > 0) return false;
-    ++parent;
+  static heapify<E>(arr: E[], comparator: Comparator<E> = Comparators.natural, len: number = arr.length): void {
+    for (let i = (len >> 1) - 1; i >= 0; --i) HeapUtils.heapifyDown(arr, i, comparator);
   }
-}
 
-function remove<E>(arr: E[], comparator: Comparator<E>): E | undefined {
-  if (arr.length <= 0) return undefined;
-  const item = arr[0];
-  arr[0] = arr[arr.length - 1];
-  arr.splice(arr.length - 1, 1);
-  heapifyDown(arr, 0, comparator);
-  return item;
-}
+  static swap<E>(arr: E[], i: number, j: number) {
+    const tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
 
-function insert<E>(arr: E[], item: E, comparator: Comparator<E>): void {
-  arr.splice(arr.length, 0, item);
-  heapifyUp(arr, arr.length - 1, comparator);
+  static isHeap<E>(arr: E[], comparator: Comparator<E> = Comparators.natural, len: number = arr.length): boolean {
+    let parent = 0;
+    for (;;) {
+      const left = (parent << 1) + 1;
+      if (left >= len) return true;
+      if (comparator(arr[parent], arr[left]) > 0) return false;
+      const right = left + 1;
+      if (right < len && comparator(arr[parent], arr[right]) > 0) return false;
+      ++parent;
+    }
+  }
+
+  static remove<E>(arr: E[], comparator: Comparator<E>): E | undefined {
+    if (arr.length <= 0) return undefined;
+    const item = arr[0];
+    arr[0] = arr[arr.length - 1];
+    arr.splice(arr.length - 1, 1);
+    HeapUtils.heapifyDown(arr, 0, comparator);
+    return item;
+  }
+
+  static insert<E>(arr: E[], item: E, comparator: Comparator<E>): void {
+    arr.splice(arr.length, 0, item);
+    HeapUtils.heapifyUp(arr, arr.length - 1, comparator);
+  }
 }
