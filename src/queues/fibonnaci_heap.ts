@@ -96,20 +96,21 @@ export class FibonacciHeap<E> extends AbstractQueue<E> {
 
   merge(force = false): void {
     let needMerge = this.needsMerge || force;
+    let maxArraySize: number | undefined;
     if (!needMerge) {
-      const maxArraySize = this.maxArraySize();
-      needMerge = this.heaps.length > maxArraySize || this.heaps.length < maxArraySize / 2;
+      maxArraySize = this.maxArraySize();
+      needMerge = this.heaps.length < maxArraySize || this.heaps.length > maxArraySize * 2;
     }
     if (needMerge) {
-      this._mergeHeaps();
+      this.mergeHeaps(maxArraySize);
       this.needsMerge = false;
     }
   }
 
-  private _mergeHeaps(): void {
-    const newHeaps: E[][] = Array.from({ length: this.maxArraySize() }, () => []);
+  private mergeHeaps(maxArraySize?: number): void {
+    const newHeaps: E[][] = Array.from({ length: maxArraySize ?? this.maxArraySize() }, () => []);
     let i = 0;
-    for (const value of this.rawIterator()) {
+    for (const value of this) {
       newHeaps[i++].push(value);
       if (i === newHeaps.length) i = 0;
     }
@@ -124,12 +125,7 @@ export class FibonacciHeap<E> extends AbstractQueue<E> {
     return this.nodeCount;
   }
 
-  [Symbol.iterator]() {
-    this.merge();
-    return this.rawIterator();
-  }
-
-  private *rawIterator() {
+  *[Symbol.iterator]() {
     for (const heap of this.heaps) {
       for (const value of heap) {
         yield value;

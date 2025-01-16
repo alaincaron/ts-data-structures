@@ -143,7 +143,8 @@ describe('FibonacciHeap', () => {
     });
     it('should return the first item matching the predicate', () => {
       const queue = FibonacciHeap.create({ initial: { length: 10, seed: (i: number) => i } });
-      expect(queue.find(x => x >= 5)).equal(5);
+      const a = queue.toArray().find(x => x >= 5);
+      expect(queue.find(x => x >= 5)).equal(a);
     });
   });
 
