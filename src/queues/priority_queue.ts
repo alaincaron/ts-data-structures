@@ -2,7 +2,7 @@ import { Comparator, Comparators, Predicate } from 'ts-fluent-iterators';
 import { AbstractQueue, QueueOptions } from './abstract_queue';
 import { FluentQueueIterator, QueueIterator } from './queue';
 import { buildCollection, CollectionInitializer } from '../collections';
-import { nextPowerOfTwo, qsort, WithCapacity } from '../utils';
+import { HeapUtils, nextPowerOfTwo, qsort, WithCapacity } from '../utils';
 
 export interface PriorityQueueOptions<E> extends QueueOptions {
   comparator?: Comparator<E>;
@@ -42,58 +42,16 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
     return true;
   }
 
-  private parent(index: number): number {
-    return (index - 1) >> 1;
-  }
-
-  private leftChild(index: number): number {
-    return (index << 1) + 1;
-  }
-
   private swap(i: number, j: number) {
-    const tmp = this.buffer[i];
-    this.buffer[i] = this.buffer[j];
-    this.buffer[j] = tmp;
+    HeapUtils.swap(this.buffer, i, j);
   }
 
   private heapifyUp(child: number): boolean {
-    let modified = false;
-    while (child > 0) {
-      const parent = this.parent(child);
-      if (this.comparator(this.buffer[child], this.buffer[parent]) >= 0) {
-        break;
-      }
-      this.swap(child, parent);
-      modified = true;
-      child = parent;
-    }
-    return modified;
+    return HeapUtils.heapifyUp(this.buffer, child, this.comparator);
   }
 
   private heapifyDown(parent: number): boolean {
-    let modified = false;
-    while (true) {
-      const leftChild = this.leftChild(parent);
-      const rightChild = leftChild + 1;
-      let smallest = parent;
-
-      if (leftChild < this._size && this.comparator(this.buffer[leftChild], this.buffer[smallest]) < 0) {
-        smallest = leftChild;
-      }
-
-      if (rightChild < this._size && this.comparator(this.buffer[rightChild], this.buffer[smallest]) < 0) {
-        smallest = rightChild;
-      }
-
-      if (smallest === parent) {
-        break;
-      }
-
-      this.swap(parent, smallest);
-      modified = true;
-      parent = smallest;
-    }
-    return modified;
+    return HeapUtils.heapifyDown(this.buffer, parent, this.comparator, this._size);
   }
 
   peek(): E | undefined {
@@ -139,7 +97,7 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
         if (i < this._size) this.swap(i, this._size);
       }
     }
-    if (count) this.heapify();
+    if (count) HeapUtils.heapify(this.buffer, this.comparator, this._size);
     return count;
   }
 
@@ -207,9 +165,5 @@ export class PriorityQueue<E> extends AbstractQueue<E> {
 
   reverseQueueIterator(): FluentQueueIterator<E> {
     return new FluentQueueIterator(this.getQueueIterator(-1));
-  }
-
-  private heapify() {
-    for (let i = (this._size >> 1) - 1; i >= 0; --i) this.heapifyDown(i);
   }
 }

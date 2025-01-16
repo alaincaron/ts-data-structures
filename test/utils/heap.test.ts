@@ -1,13 +1,14 @@
 import { expect } from 'chai';
-import { Heap, heapify, isHeap } from '../../src';
+import { Comparators } from 'ts-fluent-iterators';
+import { Heap, HeapUtils } from '../../src';
 
 describe('Heap', () => {
   it('should heapify array', () => {
     const a = Array.from({ length: 250 }, (_, i) => i);
     a.shuffle();
-    expect(isHeap(a)).to.be.false;
-    heapify(a);
-    expect(isHeap(a)).to.be.true;
+    expect(HeapUtils.isHeap(a)).to.be.false;
+    HeapUtils.heapify(a, Comparators.natural);
+    expect(HeapUtils.isHeap(a)).to.be.true;
   });
 
   it('should remove elements in the right order', () => {
@@ -31,6 +32,6 @@ describe('Heap', () => {
       h.insert(item);
       expect(h.isHeap()).to.be.true;
     }
-    expect(isHeap(h.data)).to.be.true;
+    expect(HeapUtils.isHeap(h.data)).to.be.true;
   });
 });
