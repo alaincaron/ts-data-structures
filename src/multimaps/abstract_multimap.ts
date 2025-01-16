@@ -130,7 +130,7 @@ export abstract class AbstractMultiMap<K, V> extends AbstractContainer implement
   }
 }
 
-function isMultiMap<K, V>(obj: unknown): obj is MutableMultiMap<K, V> {
+export function isMultiMap<K, V>(obj: unknown): obj is MutableMultiMap<K, V> {
   if (!obj || typeof obj !== 'object') return false;
   if (!Objects.hasFunction(obj, 'size')) return false;
   if (!Objects.hasFunction(obj, 'getValues')) return false;

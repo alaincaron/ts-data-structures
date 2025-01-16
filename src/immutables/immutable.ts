@@ -1,10 +1,12 @@
 import { Comparator, Comparators } from 'ts-fluent-iterators';
 import { EmptyList } from './emptyList';
+import { EmptyMultiMap } from './emptyMultiMap';
 import { EmptyMultiSet } from './emptyMultiSet';
 import { EmptySet } from './emptySet';
 import { ImmutableCollection } from './immutableCollection';
 import { ImmutableList } from './immutableList';
 import { ImmutableMultiSet } from './immutableMultiSet';
+import { ImmutableNavigableMultiSet } from './ImmutableNavigableMultiSet';
 import { ImmutableNavigableSet } from './immutableNavigableSet';
 import { ImmutableSet } from './immutableSet';
 import { ImmutableSortedMultiSet } from './immutableSortedMultiSet';
@@ -23,6 +25,7 @@ import {
   LinkedHashMultiSet,
   MultiSet,
   MutableMultiSet,
+  NavigableMultiSet,
 } from '../multisets';
 import { SortedMultiSet } from '../multisets';
 import { ArraySet, AvlTreeSet, ISet, isReadonlySet, LinkedHashSet, NavigableSet, SortedSet } from '../sets';
@@ -193,7 +196,7 @@ export class Immutable {
     return new ImmutableNavigableSet(items);
   }
 
-  static emptyMultiSet<E>(): SortedMultiSet<E> {
+  static emptyMultiSet<E>(): NavigableMultiSet<E> {
     return EmptyMultiSet.instance();
   }
 
@@ -242,6 +245,11 @@ export class Immutable {
     }
   }
 
+  static asReadOnlyMultiSet<E>(items: MultiSet<E>): MultiSet<E> {
+    if (isReadOnlyMultiSet<E>(items)) return items;
+    return new ImmutableMultiSet(items);
+  }
+
   static toSortedMultiSet<E>(
     items: CollectionLike<E>,
     comparator: Comparator<E> = Comparators.natural
@@ -257,9 +265,31 @@ export class Immutable {
         return new ImmutableSortedMultiSet(delegate);
     }
   }
+  static asReadOnlySortedMultiSet<E>(items: SortedMultiSet<E>): SortedMultiSet<E> {
+    if (isReadOnlyMultiSet<E>(items) && 'first' in items) return items;
+    return new ImmutableSortedMultiSet(items);
+  }
 
-  static asReadOnlyMultiSet<E>(items: MutableMultiSet<E>): MultiSet<E> {
+  static toNavigableMultiSet<E>(
+    items: CollectionLike<E>,
+    comparator: Comparator<E> = Comparators.natural
+  ): NavigableMultiSet<E> {
+    if (isReadOnlyMultiSet<E>(items) && 'floor' in items) return items as NavigableMultiSet<E>;
+    const delegate = AvlTreeMultiSet.create({ comparator, initial: items });
+    switch (delegate.size()) {
+      case 0:
+        return Immutable.emptyMultiSet();
+      default:
+        return new ImmutableNavigableMultiSet(delegate);
+    }
+  }
+
+  static asReadOnlyNavigableMultiSet<E>(items: MutableMultiSet<E>): MultiSet<E> {
     if (isReadOnlyMultiSet<E>(items)) return items;
-    return new ImmutableMultiSet(items);
+    return new ImmutableNavigableMultiSet(items);
+  }
+
+  static emptyMultiMap<K, V>() {
+    return EmptyMultiMap.instance<K, V>();
   }
 }

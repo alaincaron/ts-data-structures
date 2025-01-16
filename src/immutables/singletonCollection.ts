@@ -58,7 +58,7 @@ export abstract class SingletonCollection<E> implements Collection<E> {
   }
 
   isEmpty(): boolean {
-    return true;
+    return false;
   }
 
   isFull(): boolean {

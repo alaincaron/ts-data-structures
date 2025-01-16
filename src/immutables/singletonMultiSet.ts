@@ -8,14 +8,6 @@ export class SingletonMultiSet<E> extends SingletonCollection<E> implements Sort
     super(item);
   }
 
-  peekFirst() {
-    return this.item;
-  }
-
-  peekLast() {
-    return this.item;
-  }
-
   reverseIterator(): FluentIterator<E> {
     return FluentIterator.singleton(this.item);
   }

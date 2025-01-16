@@ -3,9 +3,9 @@ import { IMap, MapEntry } from './map_interface';
 import { MutableMap, MutableMapEntry } from './mutable_map';
 
 export interface SortedMap<K, V> extends IMap<K, V> {
-  firstEntry(): MutableMapEntry<K, V> | undefined;
+  firstEntry(): MapEntry<K, V> | undefined;
 
-  lastEntry(): MutableMapEntry<K, V> | undefined;
+  lastEntry(): MapEntry<K, V> | undefined;
 
   firstKey(): K | undefined;
 
