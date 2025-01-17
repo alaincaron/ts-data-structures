@@ -69,7 +69,7 @@ describe('PriorityQueue', () => {
       expect(queue.toArray()).to.deep.equal(arr);
     });
 
-    it('should throw if number of inital elements exceed capacity', () => {
+    it('should throw if number of initial elements exceed capacity', () => {
       expect(() => PriorityQueue.create({ capacity: 5, initial: { length: 10, seed: i => i + 1 } })).to.throw(
         OverflowException
       );
@@ -161,7 +161,7 @@ describe('PriorityQueue', () => {
       expect(queue.isEmpty()).to.be.false;
       expect(queue.size()).equal(3);
     });
-    it('should remove first occurence and return true if item is present', () => {
+    it('should remove first occurrence and return true if item is present', () => {
       const arr = [1, 0, 2, 0, 3];
       const queue = PriorityQueue.create({ initial: arr });
       expect(queue.removeItem(0)).to.be.true;
