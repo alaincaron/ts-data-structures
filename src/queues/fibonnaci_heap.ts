@@ -19,7 +19,7 @@ export type FibonacciHeapInitializer<E> = FibonacciHeapOptions<E> & CollectionIn
 
 export class FibonacciHeap<E> extends AbstractQueue<E> {
   private heaps: E[][] = [];
-  private nodeCount: number = 0;
+  private _size: number = 0;
   private needsMerge: boolean = false;
   private readonly comparator: Comparator<E>;
 
@@ -30,7 +30,7 @@ export class FibonacciHeap<E> extends AbstractQueue<E> {
 
   clear() {
     this.heaps = [];
-    this.nodeCount = 0;
+    this._size = 0;
     this.needsMerge = false;
     return this;
   }
@@ -40,11 +40,13 @@ export class FibonacciHeap<E> extends AbstractQueue<E> {
   }
 
   private maxArraySize() {
-    return Math.floor(Math.log2(this.nodeCount)) + 1;
+    return Math.floor(Math.log2(this._size)) + 1;
   }
 
   private maxHeapSize() {
-    return Math.floor(this.size() / this.maxArraySize()) + 1;
+    const maxArraySize = this.maxArraySize();
+    const maxItems = 1 << maxArraySize;
+    return Math.floor(maxItems / maxArraySize) + 1;
   }
 
   private heapWithMinLength() {
@@ -61,7 +63,7 @@ export class FibonacciHeap<E> extends AbstractQueue<E> {
       heap.push(value);
       HeapUtils.heapify(heap, this.comparator);
     }
-    this.nodeCount++;
+    this._size++;
     if (heap.length > 1 && heap.length > this.maxHeapSize()) this.needsMerge = true;
     this.merge();
     return true;
@@ -85,7 +87,7 @@ export class FibonacciHeap<E> extends AbstractQueue<E> {
     if (!minHeap) return undefined;
 
     const minValue = HeapUtils.remove(minHeap, this.comparator);
-    this.nodeCount--;
+    this._size--;
 
     if (minHeap.length === 0) {
       this.heaps.splice(minIndex, 1);
@@ -122,7 +124,7 @@ export class FibonacciHeap<E> extends AbstractQueue<E> {
   }
 
   size(): number {
-    return this.nodeCount;
+    return this._size;
   }
 
   *[Symbol.iterator]() {
@@ -168,7 +170,7 @@ export class FibonacciHeap<E> extends AbstractQueue<E> {
         const heap = this.heaps[cursor.heap];
         heap.splice(cursor.idx, 1);
         cursor.idx--;
-        this.nodeCount--;
+        this._size--;
         this.needsMerge = true;
         if (heap.length === 0) {
           this.heaps.splice(cursor.heap, 1);
