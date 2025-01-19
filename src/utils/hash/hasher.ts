@@ -92,10 +92,10 @@ export abstract class AbstractHasher implements Hasher {
     let buf: Buffer;
     if (Number.isSafeInteger(h) && h <= MAX_SAFE_INT && h >= MIN_SAFE_INT) {
       buf = Buffer.allocUnsafe(4);
-      new Int32Array(buf)[0] = h;
+      buf.writeInt32BE(h);
     } else {
       buf = Buffer.allocUnsafe(8);
-      new Float64Array(buf)[0] = h;
+      buf.writeDoubleBE(h);
     }
     return this.putBytes(buf);
   }

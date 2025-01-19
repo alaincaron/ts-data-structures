@@ -2,7 +2,7 @@ import { FluentIterator, Predicate } from 'ts-fluent-iterators';
 import { AbstractMap, buildMap } from './abstract_map';
 import { HashMapOptions } from './hash_map';
 import { MapInitializer, MutableMapEntry } from './mutable_map';
-import { equalsAny, hashAny, hashNumber, MAX_ARRAY_SIZE, nextPrime, WithCapacity } from '../utils';
+import { equalsAny, FNV1a32HashFunction, hashAny, MAX_ARRAY_SIZE, nextPrime, WithCapacity } from '../utils';
 
 const DEFAULT_INITIAL_SIZE = 5; // should be prime.
 const DEFAULT_LOAD_FACTOR = 0.7;
@@ -85,7 +85,7 @@ export class OpenHashMap<K, V> extends AbstractMap<K, V> {
 
   private computeProbe(h: number, nbEntries: number) {
     const probeRange = nbEntries - 2;
-    let p = hashNumber(h) % probeRange;
+    let p = FNV1a32HashFunction.instance().hashNumber(h).asNumber() % probeRange;
     if (p < 0) p += probeRange;
     return p + 1;
   }

@@ -38,7 +38,7 @@ export class Cyrb53HashFunction extends AbstractHashFunction {
   private constructor() {
     super();
   }
-  private static INSTANCE: Cyrb53HashFunction | null;
+  private static INSTANCE: Cyrb53HashFunction | null = null;
 
   static instance(): Cyrb53HashFunction {
     if (!Cyrb53HashFunction.INSTANCE) Cyrb53HashFunction.INSTANCE = new Cyrb53HashFunction();
@@ -54,7 +54,7 @@ export class FNV1a32HashFunction extends AbstractHashFunction {
   private constructor() {
     super();
   }
-  private static INSTANCE: FNV1a32HashFunction | null;
+  private static INSTANCE: FNV1a32HashFunction | null = null;
 
   static instance(): FNV1a32HashFunction {
     if (!FNV1a32HashFunction.INSTANCE) FNV1a32HashFunction.INSTANCE = new FNV1a32HashFunction();
