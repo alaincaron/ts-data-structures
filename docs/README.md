@@ -6,8 +6,8 @@
 
 ## Classes
 
-- [Collection](classes/Collection.md)
-- [Container](classes/Container.md)
+- [AbstractCollection](classes/AbstractCollection.md)
+- [AbstractContainer](classes/AbstractContainer.md)
 
 ## Interfaces
 
@@ -17,6 +17,8 @@
 
 - [CollectionInitializer](type-aliases/CollectionInitializer.md)
 - [CollectionLike](type-aliases/CollectionLike.md)
+- [MapInitializer](type-aliases/MapInitializer.md)
+- [MapLike](type-aliases/MapLike.md)
 
 ## Functions
 

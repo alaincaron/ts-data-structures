@@ -2,9 +2,9 @@
 
 ---
 
-[ts-data-collections](../README.md) / Collection
+[ts-data-collections](../README.md) / AbstractCollection
 
-# Class: `abstract` Collection\<E\>
+# Class: `abstract` AbstractCollection\<E\>
 
 A `Collection` represents a group of objects, known as its
 elements. Some collections allow duplicate elements and others do
@@ -12,7 +12,7 @@ not. Some are ordered and others unordered.
 
 ## Extends
 
-- [`Container`](Container.md)
+- [`AbstractContainer`](AbstractContainer.md)
 
 ## Type Parameters
 
@@ -20,25 +20,25 @@ not. Some are ordered and others unordered.
 
 ## Implements
 
-- `Iterable`\<`E`\>
+- `MutableCollection`\<`E`\>
 
 ## Methods
 
 ### \[iterator\]()
 
-> `abstract` **\[iterator\]**(): `IterableIterator`\<`E`, `any`, `any`\>
+> `abstract` **\[iterator\]**(): `Iterator`\<`E`, `any`, `any`\>
 
-Used to make this [Collection](Collection.md) being seen as an
+Used to make this MutableCollection being seen as an
 `Iterable<A>`. This allows them to be used in APIs expecting an
 `Iterable<A>`
 
 #### Returns
 
-`IterableIterator`\<`E`, `any`, `any`\>
+`Iterator`\<`E`, `any`, `any`\>
 
 #### Implementation of
 
-`Iterable.[iterator]`
+`MutableCollection.[iterator]`
 
 ---
 
@@ -68,6 +68,10 @@ true if this collection changed as a result of the call.
 Overflowexception if the capacity of the `Collection`
 would be exceeded by adding this element.
 
+#### Implementation of
+
+`MutableCollection.add`
+
 ---
 
 ### addFully()
@@ -75,7 +79,7 @@ would be exceeded by adding this element.
 > **addFully**\<`E1`\>(`container`): `number`
 
 Adds all the items of the `container` to this `Collection` if
-there is enough remaining capaacity.
+there is enough remaining capacity.
 
 #### Type Parameters
 
@@ -99,6 +103,10 @@ in the container.
 Overflowexception if there remaining capacity of this
 `Collection` is less than the number of items in the `container`.
 
+#### Implementation of
+
+`MutableCollection.addFully`
+
 ---
 
 ### buildOptions()
@@ -114,34 +122,34 @@ operation.
 
 [`ContainerOptions`](../interfaces/ContainerOptions.md)
 
-#### Overrides
-
-[`Container`](Container.md).[`buildOptions`](Container.md#buildoptions)
-
 ---
 
 ### capacity()
 
 > **capacity**(): `number`
 
-Returns the capacity of this [Container](Container.md), i.e. the maximum
-number of elements it can contains.
+Returns the capacity of this Container, i.e. the maximum
+number of elements it can contain.
 
 #### Returns
 
 `number`
 
-The capacity of this [Container](Container.md)
+The capacity of this Container
+
+#### Implementation of
+
+`MutableCollection.capacity`
 
 #### Inherited from
 
-[`Container`](Container.md).[`capacity`](Container.md#capacity)
+[`AbstractContainer`](AbstractContainer.md).[`capacity`](AbstractContainer.md#capacity)
 
 ---
 
 ### clear()
 
-> `abstract` **clear**(): [`Collection`](Collection.md)\<`E`\>
+> `abstract` **clear**(): [`AbstractCollection`](AbstractCollection.md)\<`E`\>
 
 Removes all elements from this `Collection`
 
@@ -149,24 +157,32 @@ Removes all elements from this `Collection`
 
 #### Returns
 
-[`Collection`](Collection.md)\<`E`\>
+[`AbstractCollection`](AbstractCollection.md)\<`E`\>
 
 This collection.
+
+#### Implementation of
+
+`MutableCollection.clear`
 
 ---
 
 ### clone()
 
-> `abstract` **clone**(): [`Collection`](Collection.md)\<`E`\>
+> `abstract` **clone**(): [`AbstractCollection`](AbstractCollection.md)\<`E`\>
 
 Returns a clone of this `Collection`.
 
 The clone `Collection` will have the same elements and capacity
-as the original one and also all other settings returned by `[Collection.buildOptions](Collection.md#buildoptions).
+as the original one and also all other settings returned by `Collection.buildOptions.
 
 #### Returns
 
-[`Collection`](Collection.md)\<`E`\>
+[`AbstractCollection`](AbstractCollection.md)\<`E`\>
+
+#### Implementation of
+
+`MutableCollection.clone`
 
 ---
 
@@ -190,13 +206,17 @@ The item whose presence is tested.
 `true` if this `Collections contains the specified
 `item`, `false` otherwise.
 
+#### Implementation of
+
+`MutableCollection.contains`
+
 ---
 
 ### containsAll()
 
 > **containsAll**\<`E1`\>(`iteratorLike`): `boolean`
 
-Returns true if this `Collection` contains all of the elements in the specified `IteratorLike`.
+Returns true if this `Collection` contains all the elements in the specified `IteratorLike`.
 
 #### Type Parameters
 
@@ -212,7 +232,11 @@ The items to be checked for containment in this `Collection`.
 
 `boolean`
 
-true if this collection contains all of the elements in the specified `IteratorLike`
+true if this collection contains all the elements in the specified `IteratorLike`
+
+#### Implementation of
+
+`MutableCollection.containsAll`
 
 ---
 
@@ -229,6 +253,10 @@ Returns true if this collection is equal to the specified argument `other`.
 #### Returns
 
 `boolean`
+
+#### Implementation of
+
+`MutableCollection.equals`
 
 ---
 
@@ -252,6 +280,10 @@ item of this `Collection`.
 
 the number of elements removed from this `Collection`
 
+#### Implementation of
+
+`MutableCollection.filter`
+
 ---
 
 ### find()
@@ -273,6 +305,10 @@ the predicate used to select an item
 An item for which the `predicate` evaluates to `true` or
 `undefined`
 
+#### Implementation of
+
+`MutableCollection.find`
+
 ---
 
 ### hashCode()
@@ -284,6 +320,10 @@ Returns a hashCode for this `Collection`
 #### Returns
 
 `number`
+
+#### Implementation of
+
+`MutableCollection.hashCode`
 
 ---
 
@@ -307,23 +347,31 @@ The item whose presence is tested.
 `true` if this `Collections contains the specified
 `item`, `false` otherwise.
 
+#### Implementation of
+
+`MutableCollection.includes`
+
 ---
 
 ### isEmpty()
 
 > **isEmpty**(): `boolean`
 
-Returns `true` if this [Container](Container.md) is empty, i.e., its size is `0`.
+Returns `true` if this Container is empty, i.e., its size is `0`.
 
 #### Returns
 
 `boolean`
 
-`true` if this [Container](Container.md) is empty, `false` otherwise.
+`true` if this Container is empty, `false` otherwise.
+
+#### Implementation of
+
+`MutableCollection.isEmpty`
 
 #### Inherited from
 
-[`Container`](Container.md).[`isEmpty`](Container.md#isempty)
+[`AbstractContainer`](AbstractContainer.md).[`isEmpty`](AbstractContainer.md#isempty)
 
 ---
 
@@ -331,17 +379,21 @@ Returns `true` if this [Container](Container.md) is empty, i.e., its size is `0`
 
 > **isFull**(): `boolean`
 
-Returns `true` if this [Container](Container.md) is full, i.e. its size is greater than or equal to is capacity.\*
+Returns `true` if this Container is full, i.e. its size is greater than or equal to is capacity.\*
 
 #### Returns
 
 `boolean`
 
-`true` if this [Container](Container.md) is full, false otherwise.
+`true` if this Container is full, false otherwise.
+
+#### Implementation of
+
+`MutableCollection.isFull`
 
 #### Inherited from
 
-[`Container`](Container.md).[`isFull`](Container.md#isfull)
+[`AbstractContainer`](AbstractContainer.md).[`isFull`](AbstractContainer.md#isfull)
 
 ---
 
@@ -359,6 +411,10 @@ yielding all elements of this `Collection`.
 
 a `FluentIterator` yielding all elements of this `Collection`.
 
+#### Implementation of
+
+`MutableCollection.iterator`
+
 ---
 
 ### offer()
@@ -366,7 +422,7 @@ a `FluentIterator` yielding all elements of this `Collection`.
 > `abstract` **offer**(`item`): `boolean`
 
 Inserts an element if possible, without exceeding the `capacity`
-of this `Collection`. Otherwise returning false.
+of this `Collection`, otherwise returning false.
 
 #### Parameters
 
@@ -380,6 +436,10 @@ the item to add to the `Collection`
 
 `true` if the element can be added without exceeding the `capacity`, `false` otherwise.
 
+#### Implementation of
+
+`MutableCollection.offer`
+
 ---
 
 ### offerPartially()
@@ -387,9 +447,9 @@ the item to add to the `Collection`
 > **offerPartially**\<`E1`\>(`container`): `number`
 
 Adds as many items as possible of the `container` to this
-`Collection` as long there is remaining capaacity. Items are
+`Collection` as long there is remaining capacity. Items are
 added one by one until all items are added or the `Collection` is
-[full](Container.md#isfull).
+Collection.isFull | full.
 
 #### Type Parameters
 
@@ -407,6 +467,10 @@ The container of items to add.
 
 The number of items added
 
+#### Implementation of
+
+`MutableCollection.offerPartially`
+
 ---
 
 ### remaining()
@@ -414,17 +478,21 @@ The number of items added
 > **remaining**(): `number`
 
 Returns the number of elements that can be added to this
-[Container](Container.md) without exceeding its `capacity`.
+Container without exceeding its `capacity`.
 
 #### Returns
 
 `number`
 
-the number of elements that can be added to this [Container](Container.md) without exceeding its `capacity`.
+the number of elements that can be added to this Container without exceeding its `capacity`.
+
+#### Implementation of
+
+`MutableCollection.remaining`
 
 #### Inherited from
 
-[`Container`](Container.md).[`remaining`](Container.md#remaining)
+[`AbstractContainer`](AbstractContainer.md).[`remaining`](AbstractContainer.md#remaining)
 
 ---
 
@@ -439,7 +507,7 @@ specified `Collection`.
 
 #### Parameters
 
-• **c**: [`Collection`](Collection.md)\<`E`\>
+• **c**: `Collection`\<`E`\>
 
 `Collection` containing elements to be removed from this `Collection`.
 
@@ -448,6 +516,10 @@ specified `Collection`.
 `number`
 
 The number of elements that were removed as a result of this call.
+
+#### Implementation of
+
+`MutableCollection.removeAll`
 
 ---
 
@@ -473,6 +545,10 @@ The `item` to remove from the `Collection`
 
 The comparison for equality is made using the function equalsAny.
 
+#### Implementation of
+
+`MutableCollection.removeItem`
+
 ---
 
 ### removeMatchingItem()
@@ -485,7 +561,7 @@ Removes an item for which the `predicate` returns `true`.
 
 • **predicate**: `Predicate`\<`E`\>
 
-The predicate that is being evaluated for each elements.
+The predicate that is being evaluated for each element.
 
 #### Returns
 
@@ -494,6 +570,10 @@ The predicate that is being evaluated for each elements.
 the element removed from the `Collection` or `undefined`
 if there are no items for which the `predicate` evaluated to
 `true`.
+
+#### Implementation of
+
+`MutableCollection.removeMatchingItem`
 
 ---
 
@@ -510,7 +590,7 @@ specified `Collection`.
 
 #### Parameters
 
-• **c**: [`Collection`](Collection.md)\<`E`\>
+• **c**: `Collection`\<`E`\>
 
 #### Returns
 
@@ -518,23 +598,31 @@ specified `Collection`.
 
 The number of elements that were removed as a result of this call.
 
+#### Implementation of
+
+`MutableCollection.retainAll`
+
 ---
 
 ### size()
 
 > `abstract` **size**(): `number`
 
-Returns the number of items in this [Container](Container.md).
+Returns the number of items in this Container.
 
 #### Returns
 
 `number`
 
-the number of items in this [Container](Container.md).
+the number of items in this Container.
+
+#### Implementation of
+
+`MutableCollection.size`
 
 #### Inherited from
 
-[`Container`](Container.md).[`size`](Container.md#size)
+[`AbstractContainer`](AbstractContainer.md).[`size`](AbstractContainer.md#size)
 
 ---
 
@@ -550,6 +638,10 @@ Returns an array containing all elements of this `Collection`
 
 an array containing all elements of this `Collection`
 
+#### Implementation of
+
+`MutableCollection.toArray`
+
 ---
 
 ### toJSON()
@@ -561,3 +653,7 @@ Returns a JSON string representation of this `Collection`.
 #### Returns
 
 `string`
+
+#### Implementation of
+
+`MutableCollection.toJSON`

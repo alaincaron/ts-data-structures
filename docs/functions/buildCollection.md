@@ -14,7 +14,7 @@ Builds a `Collection`
 
 • **E**
 
-• **C** _extends_ [`Collection`](../classes/Collection.md)\<`E`\>
+• **C** _extends_ `MutableCollection`\<`E`\>
 
 • **Options** _extends_ `object` = `object`
 

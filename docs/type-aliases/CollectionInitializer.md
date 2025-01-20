@@ -8,7 +8,7 @@
 
 > **CollectionInitializer**\<`E`\>: `ContainerInitializer`\<[`CollectionLike`](CollectionLike.md)\<`E`\>\>
 
-Interface used to specify initial elements in a create method for a [Collection](../classes/Collection.md).
+Interface used to specify initial elements in a create method for a Collection.
 
 ## Type Parameters
 

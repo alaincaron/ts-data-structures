@@ -1,0 +1,17 @@
+[**ts-data-collections**](../README.md) • **Docs**
+
+---
+
+[ts-data-collections](../README.md) / MapInitializer
+
+# Type Alias: MapInitializer\<K, V\>
+
+> **MapInitializer**\<`K`, `V`\>: `ContainerInitializer`\<[`MapLike`](MapLike.md)\<`K`, `V`\>\>
+
+Interface used to specify initial elements in a create method for a Map.
+
+## Type Parameters
+
+• **K**
+
+• **V**
