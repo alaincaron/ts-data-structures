@@ -1,4 +1,43 @@
 import { Mapper } from 'ts-fluent-iterators';
+import { Cyrb53HashFunction, Funnel, hashAny, HashFunction } from '../utils';
+
+export type BloomFilterFunction<T> = HashFunction | Mapper<T, number>;
+export interface BloomFilterOptions<T> {
+  hashFunctions?: BloomFilterFunction<T>[];
+  funnel?: Funnel<T>;
+  generate?: number;
+}
+
+function generateHashFunctions<T>(options?: BloomFilterOptions<T>): Mapper<T, number>[] {
+  const functions: Mapper<T, number>[] = [];
+  const funnel = options?.funnel;
+  if (options?.hashFunctions) {
+    for (const f of options.hashFunctions) {
+      if (typeof f === 'function') {
+        functions.push(f);
+      } else {
+        if (funnel) {
+          functions.push((t: T) => f.hashObject(t, funnel).asNumber());
+        } else {
+          functions.push((t: T) => hashAny(t, f));
+        }
+      }
+    }
+    if (options?.generate && options.generate > functions.length) {
+      for (let i = functions.length; i < options.generate; ++i) {
+        if (funnel) {
+          functions.push((t: T) =>
+            Cyrb53HashFunction.instance().newHasher().putObject(t, funnel).putNumber(i).hash().asNumber()
+          );
+        } else {
+          functions.push((t: T) => hashAny([t, i], Cyrb53HashFunction.instance()));
+        }
+      }
+    }
+  }
+
+  return functions;
+}
 
 export class BloomFilter<T> {
   private readonly _size: number;
@@ -6,11 +45,11 @@ export class BloomFilter<T> {
   private readonly storage: boolean[];
   private _count: number;
 
-  constructor(size: number, ...hashFunctions: Mapper<T, number>[]) {
+  constructor(size: number, options?: BloomFilterOptions<T>) {
     this._size = size;
     this._count = 0;
     this.storage = new Array(size).fill(false);
-    this.hashFunctions = hashFunctions;
+    this.hashFunctions = generateHashFunctions(options);
   }
 
   clear() {

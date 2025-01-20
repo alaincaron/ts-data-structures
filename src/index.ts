@@ -2,6 +2,7 @@ export * from './bimaps';
 export * from './collections';
 export * from './collectors';
 export * from './deques';
+export * from './filters';
 export * from './iterators';
 export * from './lists';
 export * from './maps';

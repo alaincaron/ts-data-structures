@@ -63,7 +63,7 @@ export interface Hasher extends PrimitiveSink {
   putBoolean(x: boolean): Hasher;
   putString(x: string): Hasher;
   hash(): HashCode;
-  putOjbect<T>(x: T, funnel: Funnel<T>): Hasher;
+  putObject<T>(x: T, funnel: Funnel<T>): Hasher;
 }
 
 export abstract class AbstractHasher implements Hasher {
@@ -102,7 +102,7 @@ export abstract class AbstractHasher implements Hasher {
 
   protected abstract update(value: number): void;
 
-  putOjbect<T>(x: T, funnel: Funnel<T>): AbstractHasher {
+  putObject<T>(x: T, funnel: Funnel<T>): AbstractHasher {
     funnel.funnel(x, this);
     return this;
   }

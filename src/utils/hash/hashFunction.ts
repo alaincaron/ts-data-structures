@@ -7,7 +7,7 @@ export interface HashFunction {
   hashBytes(buf: Buffer): HashCode;
   hashBoolean(x: boolean): HashCode;
   hashString(x: string): HashCode;
-  hashOjbect<T>(x: T, funnel: Funnel<T>): HashCode;
+  hashObject<T>(x: T, funnel: Funnel<T>): HashCode;
 }
 
 export abstract class AbstractHashFunction implements HashFunction {
@@ -29,8 +29,8 @@ export abstract class AbstractHashFunction implements HashFunction {
     return this.newHasher().putString(x).hash();
   }
 
-  hashOjbect<T>(x: T, funnel: Funnel<T>) {
-    return this.newHasher().putOjbect(x, funnel).hash();
+  hashObject<T>(x: T, funnel: Funnel<T>) {
+    return this.newHasher().putObject(x, funnel).hash();
   }
 }
 

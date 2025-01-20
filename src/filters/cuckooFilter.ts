@@ -1,43 +1,70 @@
-import { Mapper } from 'ts-fluent-iterators';
-import { hashAny } from '../utils';
+import { Cyrb53HashFunction, Funnel, hashAny, HashFunction } from '../utils';
 
 export interface CuckooFilterOptions<T> {
   bucketSize?: number;
   maxKicks?: number;
-  hashFunction?: Mapper<T, number>;
+  hashFunction?: HashFunction;
+  funnel?: Funnel<T>;
   fingerPrintSize?: number;
 }
+
 export class CuckooFilter<T> {
   private readonly buckets: (number | null)[][];
   private readonly bucketSize: number;
   private readonly maxKicks: number;
   private readonly fingerPrintSize: number;
-  private readonly hashFunction: Mapper<T, number>;
+  private readonly hashFunction: HashFunction;
+  private readonly funnel?: Funnel<T>;
+  private _count: number;
 
   constructor(numBuckets: number, options?: CuckooFilterOptions<T>) {
     this.bucketSize = options?.bucketSize ?? 10;
     // Initialize each bucket as an array of `bucketSize`, filled with null
     this.buckets = Array.from({ length: numBuckets }, () => Array(this.bucketSize).fill(null));
     this.maxKicks = options?.maxKicks ?? 500;
-    this.hashFunction = options?.hashFunction ?? hashAny;
+    this.hashFunction = options?.hashFunction ?? Cyrb53HashFunction.instance();
     this.fingerPrintSize = options?.fingerPrintSize ?? 0;
+    this.funnel = options?.funnel;
+    this._count = 0;
+  }
+
+  clear() {
+    for (let i = 0; i < this.buckets.length; ++i) {
+      for (let j = 0; i < this.bucketSize; ++j) {
+        this.buckets[i][j] = null;
+      }
+    }
+    this._count = 0;
+  }
+
+  count() {
+    return this._count;
+  }
+
+  private hashValue(value: T, salt: string) {
+    return this.funnel
+      ? this.hashFunction.newHasher().putObject(value, this.funnel).putString(salt).hash().asNumber()
+      : hashAny([value, salt], this.hashFunction);
   }
 
   private hash1(value: T): number {
-    let h = this.hashFunction(value) % this.buckets.length;
+    let h = this.hashValue(value, '1') % this.buckets.length;
     if (h < 0) h += this.buckets.length;
     return h;
   }
 
   private hash2(value: T): number {
-    let h = hashAny([value, 'salt']);
+    let h = this.hashValue(value, '2') % this.buckets.length;
     if (h < 0) h += this.buckets.length;
     return h;
   }
 
   private fingerprint(value: T): number {
-    let h = this.hashFunction(value);
-    if (this.fingerPrintSize > 0) h %= this.fingerPrintSize - 1;
+    let h = this.hashValue(value, 'fp');
+    if (this.fingerPrintSize > 0) {
+      h %= this.fingerPrintSize - 1;
+      if (h < 0) h += this.fingerPrintSize - 1;
+    }
     return h;
   }
 
@@ -98,9 +125,10 @@ export class CuckooFilter<T> {
 
   private addToBucket(index: number, fingerprint: number): boolean {
     const bucket = this.buckets[index];
-    for (let i = 0; i < this.bucketSize; i++) {
+    for (let i = 0; i < this.bucketSize; ++i) {
       if (bucket[i] === null) {
         bucket[i] = fingerprint;
+        ++this._count;
         return true;
       }
     }
@@ -112,6 +140,7 @@ export class CuckooFilter<T> {
     for (let i = 0; i < this.bucketSize; i++) {
       if (bucket[i] === fingerprint) {
         bucket[i] = null;
+        --this._count;
         return true;
       }
     }
