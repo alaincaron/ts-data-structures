@@ -31,7 +31,5 @@ export interface MutableSortedMultiMap<K, V> extends SortedMultiMap<K, V>, Mutab
 
   partitionIterator(): FluentIterator<[K, MutableCollection<V>]>;
 
-  clear(): MutableSortedMultiMap<K, V>;
-
   clone(): MutableSortedMultiMap<K, V>;
 }

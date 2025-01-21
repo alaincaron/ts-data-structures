@@ -7,18 +7,6 @@ export class SingletonSet<E> extends SingletonCollection<E> implements SortedSet
     super(item);
   }
 
-  clone(): SingletonSet<E> {
-    return this;
-  }
-
-  toReadOnly(): SingletonSet<E> {
-    return this;
-  }
-
-  asReadOnly(): SingletonSet<E> {
-    return this;
-  }
-
   equals(other: unknown): boolean {
     if (other === this) return true;
     return isSet(other) && other.size() === 1 && other.contains(this.item);

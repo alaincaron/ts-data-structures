@@ -56,7 +56,7 @@ export abstract class BaseArrayList<E> extends AbstractList<E> {
     return x;
   }
 
-  sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): BaseArrayList<E> {
+  sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>) {
     const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
     checkListBounds(this, left, right);
     qsort(this.elements, left, right, comparator);
@@ -67,7 +67,7 @@ export abstract class BaseArrayList<E> extends AbstractList<E> {
     return bsearch(this.elements, e, options);
   }
 
-  insertSorted(e: E, comparator: Comparator<E> = Comparators.natural): BaseArrayList<E> {
+  insertSorted(e: E, comparator: Comparator<E> = Comparators.natural) {
     insertSorted(this.elements, e, comparator);
     return this;
   }
@@ -76,7 +76,7 @@ export abstract class BaseArrayList<E> extends AbstractList<E> {
     arg1?: number | Mapper<void, number>,
     arg2?: number | Mapper<void, number>,
     arg3?: Mapper<void, number> | undefined
-  ): BaseArrayList<E> {
+  ) {
     const { left, right, f: mapper } = parseArgs(this.size(), arg1, arg2, arg3, Math.random);
     checkListBounds(this, left, right);
     shuffle(this.elements, left, right, mapper);

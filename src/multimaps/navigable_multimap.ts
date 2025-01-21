@@ -54,5 +54,4 @@ export interface MutableNavigableMultiMap<K, V> extends MutableSortedMultiMap<K,
   reverseEntryIterator(): FluentIterator<MutableMapEntry<K, MutableCollection<V>>>;
 
   clone(): MutableNavigableMultiMap<K, V>;
-  clear(): MutableNavigableMultiMap<K, V>;
 }

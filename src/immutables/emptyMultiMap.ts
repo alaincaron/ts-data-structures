@@ -5,7 +5,7 @@ import { hashIterableUnordered } from '../utils';
 export class EmptyMultiMap<K, V> implements NavigableMultiMap<K, V> {
   private static EMPTY_MULTIMAP = new EmptyMultiMap<never, never>();
 
-  public static instance<K, V>(): NavigableMultiMap<K, V> {
+  public static instance<K, V>(): EmptyMultiMap<K, V> {
     return EmptyMultiMap.EMPTY_MULTIMAP;
   }
 
@@ -18,7 +18,7 @@ export class EmptyMultiMap<K, V> implements NavigableMultiMap<K, V> {
   higherKey(_: K) {
     return undefined;
   }
-  floorKey(_: K): K | undefined {
+  floorKey(_: K) {
     return undefined;
   }
   ceilingKey(_: K) {
@@ -101,34 +101,38 @@ export class EmptyMultiMap<K, V> implements NavigableMultiMap<K, V> {
     return FluentIterator.empty();
   }
 
-  toJSON(): string {
+  toJSON() {
     return '{}';
   }
 
-  hashCode(): number {
+  hashCode() {
     return hashIterableUnordered(this);
   }
 
-  equals(other: unknown): boolean {
+  equals(other: unknown) {
     if (other === this) return true;
     return isMultiMap<K, V>(other) && other.isEmpty();
   }
 
   *[Symbol.iterator]() {}
 
-  size(): number {
+  size() {
     return 0;
   }
-  capacity(): number {
+
+  capacity() {
     return 0;
   }
-  isEmpty(): boolean {
+
+  isEmpty() {
     return true;
   }
-  isFull(): boolean {
+
+  isFull() {
     return true;
   }
-  remaining(): number {
+
+  remaining() {
     return 0;
   }
 }

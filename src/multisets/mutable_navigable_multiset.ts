@@ -15,5 +15,4 @@ export interface MutableNavigableMultiSet<E> extends NavigableMultiSet<E>, Mutab
   removeLast(): E;
 
   clone(): MutableNavigableMultiSet<E>;
-  clear(): MutableNavigableMultiSet<E>;
 }

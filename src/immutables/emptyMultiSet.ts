@@ -1,6 +1,6 @@
 import { FluentIterator } from 'ts-fluent-iterators';
 import { EmptyCollection } from './emptyCollection';
-import { isMultiSet, MultiSetEntry, NavigableMultiSet } from '../multisets';
+import { isMultiSet, NavigableMultiSet } from '../multisets';
 
 export class EmptyMultiSet<E> extends EmptyCollection<E> implements NavigableMultiSet<E> {
   private static readonly EMPTY_MULTISET = new EmptyMultiSet<never>();
@@ -13,33 +13,21 @@ export class EmptyMultiSet<E> extends EmptyCollection<E> implements NavigableMul
     return EmptyMultiSet.EMPTY_MULTISET;
   }
 
-  clone(): NavigableMultiSet<E> {
-    return this;
-  }
-
-  toReadOnly() {
-    return this;
-  }
-
-  asReadOnly() {
-    return this;
-  }
-
   equals(other: unknown) {
     if (other === this) return true;
     if (!other) return false;
     return isMultiSet(other) && other.isEmpty();
   }
 
-  reverseIterator(): FluentIterator<E> {
+  reverseIterator() {
     return FluentIterator.empty();
   }
 
-  peekFirst(): E | undefined {
+  peekFirst() {
     return undefined;
   }
 
-  peekLast(): E | undefined {
+  peekLast() {
     return undefined;
   }
 
@@ -49,17 +37,17 @@ export class EmptyMultiSet<E> extends EmptyCollection<E> implements NavigableMul
 
   *entries() {}
 
-  entryIterator(): FluentIterator<MultiSetEntry<E>> {
+  entryIterator() {
     return FluentIterator.empty();
   }
 
-  keyIterator(): FluentIterator<E> {
+  keyIterator() {
     return FluentIterator.empty();
   }
 
-  *keys(): IterableIterator<E> {}
+  *keys() {}
 
-  nbKeys(): number {
+  nbKeys() {
     return 0;
   }
 

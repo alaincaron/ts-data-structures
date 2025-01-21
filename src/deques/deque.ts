@@ -21,9 +21,9 @@ export class FluentDequeIterator<E> extends FluentQueueIterator<E> {
 }
 
 export interface Deque<E> extends Queue<E>, SequencedMutableCollection<E> {
-  addFirst(item: E): Deque<E>;
+  addFirst(item: E): this;
 
-  addLast(item: E): Deque<E>;
+  addLast(item: E): this;
 
   offerFirst(item: E): boolean;
 

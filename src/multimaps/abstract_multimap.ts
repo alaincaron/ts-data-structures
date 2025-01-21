@@ -33,7 +33,7 @@ export abstract class AbstractMultiMap<K, V> extends AbstractContainer implement
     FluentIterator.from(map).forEach(([k, v]) => this.put(k, v));
   }
 
-  abstract clear(): AbstractMultiMap<K, V>;
+  abstract clear(): this;
 
   containsKey(key: K) {
     const col = this.getValues(key);

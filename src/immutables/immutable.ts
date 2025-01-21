@@ -6,7 +6,7 @@ import { EmptySet } from './emptySet';
 import { ImmutableCollection } from './immutableCollection';
 import { ImmutableList } from './immutableList';
 import { ImmutableMultiSet } from './immutableMultiSet';
-import { ImmutableNavigableMultiSet } from './ImmutableNavigableMultiSet';
+import { ImmutableNavigableMultiSet } from './immutableNavigableMultiSet';
 import { ImmutableNavigableSet } from './immutableNavigableSet';
 import { ImmutableSet } from './immutableSet';
 import { ImmutableSortedMultiSet } from './immutableSortedMultiSet';
@@ -39,20 +39,20 @@ export class Immutable {
     return EmptyList.instance();
   }
 
-  static singletonList<E>(item: E): List<E> {
+  static singletonList<E>(item: E) {
     return new SingletonList(item);
   }
 
-  static asReadOnlyCollection<E>(items: Collection<E>): Collection<E> {
+  static asReadOnlyCollection<E>(items: Collection<E>) {
     if (collectionIsReadOnly(items)) return items;
     return new ImmutableCollection<E>(items);
   }
 
-  static listOf<E>(...items: E[]): List<E> {
+  static listOf<E>(...items: E[]) {
     return Immutable.createListFromArray(items, null);
   }
 
-  static sortedListOf<E>(comparator: Comparator<E>, ...items: E[]): List<E> {
+  static sortedListOf<E>(comparator: Comparator<E>, ...items: E[]) {
     return Immutable.createListFromArray(items, comparator);
   }
 
@@ -70,11 +70,11 @@ export class Immutable {
     }
   }
 
-  static toList<E>(items: CollectionLike<E>): List<E> {
+  static toList<E>(items: CollectionLike<E>) {
     return this.createListFromCollection(items, null);
   }
 
-  static toSortedList<E>(items: CollectionLike<E>, comparator: Comparator<E> = Comparators.natural): List<E> {
+  static toSortedList<E>(items: CollectionLike<E>, comparator: Comparator<E> = Comparators.natural) {
     return Immutable.createListFromCollection(items, comparator);
   }
 
@@ -109,7 +109,7 @@ export class Immutable {
     return new SingletonSet(item);
   }
 
-  static setOf<E>(...items: E[]): ISet<E> {
+  static setOf<E>(...items: E[]) {
     switch (items.length) {
       case 0:
         return Immutable.emptySet();
@@ -122,7 +122,7 @@ export class Immutable {
     }
   }
 
-  static sortedSetOf<E>(comparator: Comparator<E>, ...items: E[]): SortedSet<E> {
+  static sortedSetOf<E>(comparator: Comparator<E>, ...items: E[]) {
     switch (items.length) {
       case 0:
         return Immutable.emptySet();
@@ -134,7 +134,7 @@ export class Immutable {
     }
   }
 
-  static navigableSetOf<E>(comparator: Comparator<E>, ...items: E[]): NavigableSet<E> {
+  static navigableSetOf<E>(comparator: Comparator<E>, ...items: E[]) {
     switch (items.length) {
       case 0:
         return Immutable.emptySet();
@@ -157,7 +157,7 @@ export class Immutable {
     }
   }
 
-  static toSortedSet<E>(items: CollectionLike<E>, comparator: Comparator<E> = Comparators.natural): SortedSet<E> {
+  static toSortedSet<E>(items: CollectionLike<E>, comparator: Comparator<E> = Comparators.natural) {
     if (isReadonlySet<E>(items) && 'first' in items) return items as SortedSet<E>;
     const delegate = AvlTreeSet.create({ comparator, initial: items });
     switch (delegate.size()) {
@@ -170,7 +170,7 @@ export class Immutable {
     }
   }
 
-  static toNavigableSet<E>(items: CollectionLike<E>, comparator: Comparator<E> = Comparators.natural): NavigableSet<E> {
+  static toNavigableSet<E>(items: CollectionLike<E>, comparator: Comparator<E> = Comparators.natural) {
     if (isReadonlySet<E>(items) && 'floor' in items) return items as NavigableSet<E>;
     const delegate = AvlTreeSet.create({ comparator, initial: items });
     switch (delegate.size()) {
@@ -181,17 +181,17 @@ export class Immutable {
     }
   }
 
-  static asReadOnlySet<E>(items: ISet<E>): ISet<E> {
+  static asReadOnlySet<E>(items: ISet<E>) {
     if (collectionIsReadOnly(items)) return items;
     return new ImmutableSet<E>(items);
   }
 
-  static asReadOnlySortedSet<E>(items: SortedSet<E>): SortedSet<E> {
+  static asReadOnlySortedSet<E>(items: SortedSet<E>) {
     if (collectionIsReadOnly(items)) return items;
     return new ImmutableSortedSet(items);
   }
 
-  static asReadOnlyNavigableSet<E>(items: NavigableSet<E>): NavigableSet<E> {
+  static asReadOnlyNavigableSet<E>(items: NavigableSet<E>) {
     if (collectionIsReadOnly(items)) return items;
     return new ImmutableNavigableSet(items);
   }
@@ -204,7 +204,7 @@ export class Immutable {
     return new SingletonMultiSet(item);
   }
 
-  static multiSetOf<E>(...items: E[]): MultiSet<E> {
+  static multiSetOf<E>(...items: E[]) {
     const delegate = LinkedHashMultiSet.create({ initial: items });
     switch (delegate.size()) {
       case 0:
@@ -218,7 +218,7 @@ export class Immutable {
     }
   }
 
-  static sortedMultiSetOf<E>(comparator: Comparator<E>, ...items: E[]): SortedMultiSet<E> {
+  static sortedMultiSetOf<E>(comparator: Comparator<E>, ...items: E[]) {
     const delegate = AvlTreeMultiSet.create({ comparator, initial: items });
     switch (delegate.size()) {
       case 0:
@@ -250,10 +250,7 @@ export class Immutable {
     return new ImmutableMultiSet(items);
   }
 
-  static toSortedMultiSet<E>(
-    items: CollectionLike<E>,
-    comparator: Comparator<E> = Comparators.natural
-  ): SortedMultiSet<E> {
+  static toSortedMultiSet<E>(items: CollectionLike<E>, comparator: Comparator<E> = Comparators.natural) {
     if (isReadOnlyMultiSet<E>(items) && 'first' in items) return items as SortedMultiSet<E>;
     const delegate = AvlTreeMultiSet.create({ comparator, initial: items });
     switch (delegate.size()) {
@@ -265,15 +262,12 @@ export class Immutable {
         return new ImmutableSortedMultiSet(delegate);
     }
   }
-  static asReadOnlySortedMultiSet<E>(items: SortedMultiSet<E>): SortedMultiSet<E> {
+  static asReadOnlySortedMultiSet<E>(items: SortedMultiSet<E>) {
     if (isReadOnlyMultiSet<E>(items) && 'first' in items) return items;
     return new ImmutableSortedMultiSet(items);
   }
 
-  static toNavigableMultiSet<E>(
-    items: CollectionLike<E>,
-    comparator: Comparator<E> = Comparators.natural
-  ): NavigableMultiSet<E> {
+  static toNavigableMultiSet<E>(items: CollectionLike<E>, comparator: Comparator<E> = Comparators.natural) {
     if (isReadOnlyMultiSet<E>(items) && 'floor' in items) return items as NavigableMultiSet<E>;
     const delegate = AvlTreeMultiSet.create({ comparator, initial: items });
     switch (delegate.size()) {
@@ -284,7 +278,7 @@ export class Immutable {
     }
   }
 
-  static asReadOnlyNavigableMultiSet<E>(items: MutableMultiSet<E>): MultiSet<E> {
+  static asReadOnlyNavigableMultiSet<E>(items: MutableMultiSet<E>) {
     if (isReadOnlyMultiSet<E>(items)) return items;
     return new ImmutableNavigableMultiSet(items);
   }

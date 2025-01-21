@@ -42,7 +42,7 @@ export abstract class CollectionBasedSet<
     return this._delegate.filter(predicate);
   }
 
-  clear(): CollectionBasedSet<E, C, Options> {
+  clear() {
     this._delegate.clear();
     return this;
   }

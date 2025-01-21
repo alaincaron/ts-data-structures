@@ -11,5 +11,4 @@ export interface MutableNavigableSet<E> extends NavigableSet<E>, MutableSortedSe
   pollFirst(): E | undefined;
   pollLast(): E | undefined;
   clone(): MutableNavigableSet<E>;
-  clear(): MutableNavigableSet<E>;
 }

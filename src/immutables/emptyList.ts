@@ -15,57 +15,57 @@ export class EmptyList<E> extends EmptyCollection<E> implements List<E> {
     return EmptyList.EMPTY_LIST;
   }
 
-  getAt(_: number): E {
+  getAt(_: number): never {
     throw new IndexOutOfBoundsException();
   }
 
-  getFirst(): E {
+  getFirst(): never {
     throw new IndexOutOfBoundsException();
   }
 
-  getLast(): E {
+  getLast(): never {
     throw new IndexOutOfBoundsException();
   }
 
-  reverseIterator(): FluentIterator<E> {
+  reverseIterator() {
     return FluentIterator.empty();
   }
 
-  listIterator(skip?: number, count?: number): FluentIterator<E> {
+  listIterator(skip?: number, count?: number) {
     if (skip || count) throw new IndexOutOfBoundsException('Empty list');
     return FluentIterator.empty();
   }
 
-  reverseListIterator(skip?: number, count?: number): FluentIterator<E> {
+  reverseListIterator(skip?: number, count?: number) {
     if (skip || count) throw new IndexOutOfBoundsException('Empty list');
     return FluentIterator.empty();
   }
 
-  indexOfFirstOccurrence(_: Predicate<E>): number {
+  indexOfFirstOccurrence(_: Predicate<E>) {
     return -1;
   }
 
-  indexOf(_: E): number {
+  indexOf(_: E) {
     return -1;
   }
 
-  indexOfLastOccurrence(_: Predicate<E>): number {
+  indexOfLastOccurrence(_: Predicate<E>) {
     return -1;
   }
 
-  lastIndexOf(_: E): number {
+  lastIndexOf(_: E) {
     return -1;
   }
 
-  peekFirst(): E | undefined {
+  peekFirst() {
     return undefined;
   }
 
-  peekLast(): E | undefined {
+  peekLast() {
     return undefined;
   }
 
-  equals(other: unknown): boolean {
+  equals(other: unknown) {
     if (other === this) return true;
     if (!other) return false;
     return isList(other) && other.isEmpty();
@@ -88,17 +88,5 @@ export class EmptyList<E> extends EmptyCollection<E> implements List<E> {
 
   isStrictlyOrdered(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>) {
     return this.isOrdered(arg1, arg2, arg3);
-  }
-
-  clone() {
-    return this;
-  }
-
-  toReadOnly() {
-    return this;
-  }
-
-  asReadOnly() {
-    return this;
   }
 }

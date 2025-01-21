@@ -1,6 +1,6 @@
 import { FluentIterator } from 'ts-fluent-iterators';
 import { SingletonCollection } from './singletonCollection';
-import { isMultiSet, MultiSetEntry, SortedMultiSet } from '../multisets';
+import { isMultiSet, SortedMultiSet } from '../multisets';
 import { equalsAny } from '../utils';
 
 export class SingletonMultiSet<E> extends SingletonCollection<E> implements SortedMultiSet<E> {
@@ -8,23 +8,11 @@ export class SingletonMultiSet<E> extends SingletonCollection<E> implements Sort
     super(item);
   }
 
-  reverseIterator(): FluentIterator<E> {
+  reverseIterator() {
     return FluentIterator.singleton(this.item);
   }
 
-  clone(): SingletonMultiSet<E> {
-    return this;
-  }
-
-  toReadOnly(): SingletonMultiSet<E> {
-    return this;
-  }
-
-  asReadOnly(): SingletonMultiSet<E> {
-    return this;
-  }
-
-  equals(other: unknown): boolean {
+  equals(other: unknown) {
     if (other === this) return true;
     return isMultiSet(other) && other.size() === 1 && other.contains(this.item);
   }
@@ -33,15 +21,15 @@ export class SingletonMultiSet<E> extends SingletonCollection<E> implements Sort
     return equalsAny(item, this.item) ? 1 : 0;
   }
 
-  *entries(): IterableIterator<MultiSetEntry<E>> {
+  *entries() {
     yield this.firstEntry();
   }
 
-  entryIterator(): FluentIterator<MultiSetEntry<E>> {
+  entryIterator() {
     return new FluentIterator(this.entries());
   }
 
-  keyIterator(): FluentIterator<E> {
+  keyIterator() {
     return FluentIterator.singleton(this.item);
   }
 
@@ -49,7 +37,7 @@ export class SingletonMultiSet<E> extends SingletonCollection<E> implements Sort
     yield this.item;
   }
 
-  nbKeys(): number {
+  nbKeys() {
     return 1;
   }
 
@@ -61,15 +49,15 @@ export class SingletonMultiSet<E> extends SingletonCollection<E> implements Sort
     return this.item;
   }
 
-  firstEntry(): MultiSetEntry<E> {
+  firstEntry() {
     return { key: this.item, count: 1 };
   }
 
-  lastEntry(): MultiSetEntry<E> {
+  lastEntry() {
     return this.firstEntry();
   }
 
-  reverseEntryIterator(): FluentIterator<MultiSetEntry<E>> {
+  reverseEntryIterator() {
     return this.entryIterator();
   }
 }

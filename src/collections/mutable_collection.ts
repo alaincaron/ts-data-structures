@@ -63,7 +63,7 @@ export interface MutableCollection<E> extends Collection<E> {
    */
   offerPartially<E1 extends E>(container: IteratorLike<E1> | CollectionLike<E1>): number;
 
-  clear(): MutableCollection<E>;
+  clear(): this;
 
   /**
    * Removes all of this collection's elements that are also contained

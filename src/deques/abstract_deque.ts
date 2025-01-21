@@ -8,14 +8,14 @@ export abstract class AbstractDeque<E> extends AbstractQueue<E> implements Deque
     super(options);
   }
 
-  addFirst(item: E): AbstractDeque<E> {
+  addFirst(item: E) {
     if (this.offerFirst(item)) return this;
     if (!this.handleOverflow(1, 'addFirst')) return this;
     if (!this.offerFirst(item)) throw new OverflowException();
     return this;
   }
 
-  addLast(item: E): AbstractDeque<E> {
+  addLast(item: E) {
     if (this.offerLast(item)) return this;
     if (!this.handleOverflow(1, 'addLast')) return this;
     if (!this.offerLast(item)) throw new OverflowException();

@@ -50,7 +50,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
 
   abstract offerAt(idx: number, item: E): boolean;
 
-  addAt(idx: number, item: E): AbstractList<E> {
+  addAt(idx: number, item: E) {
     if (!this.offerAt(idx, item)) throw new OverflowException();
     return this;
   }
@@ -59,7 +59,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
     return this.offerAt(0, item);
   }
 
-  addFirst(item: E): AbstractList<E> {
+  addFirst(item: E) {
     if (!this.offerFirst(item)) throw new OverflowException();
     return this;
   }
@@ -68,7 +68,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
     return this.offerAt(this.size(), item);
   }
 
-  addLast(item: E): AbstractList<E> {
+  addLast(item: E) {
     if (!this.offerLast(item)) throw new OverflowException();
     return this;
   }
@@ -77,7 +77,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
 
   abstract removeAt(idx: number): E;
 
-  removeRange(start: number, end?: number): AbstractList<E> {
+  removeRange(start: number, end?: number) {
     end ??= this.size();
     checkListBounds(this, start, end);
     const iter = this.listIterator(start);
@@ -150,7 +150,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
     };
   }
 
-  transform(mapper: Mapper<E, E>): AbstractList<E> {
+  transform(mapper: Mapper<E, E>): this {
     return this.replaceIf(_ => true, mapper);
   }
 
@@ -164,7 +164,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
     return new FluentListIterator(this.getListIterator(bounds.start, bounds.count, -1));
   }
 
-  replaceIf(predicate: Predicate<E>, f: Mapper<E, E>): AbstractList<E> {
+  replaceIf(predicate: Predicate<E>, f: Mapper<E, E>) {
     const iter = this.listIterator()[Symbol.iterator]();
     for (;;) {
       const item = iter.next();
@@ -205,12 +205,12 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
     return this.indexOfLastOccurrence(x => equalsAny(e, x));
   }
 
-  sort(): AbstractList<E>;
-  sort(arg1: number | Comparator<E> | undefined): AbstractList<E>;
-  sort(arg1: number, arg2: number | Comparator<E> | undefined): AbstractList<E>;
-  sort(arg1: number, arg2: number, arg3: Comparator<E> | undefined): AbstractList<E>;
+  sort(): this;
+  sort(arg1: number | Comparator<E> | undefined): this;
+  sort(arg1: number, arg2: number | Comparator<E> | undefined): this;
+  sort(arg1: number, arg2: number, arg3: Comparator<E> | undefined): this;
 
-  sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): AbstractList<E> {
+  sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>) {
     const { left, right, f: comparator } = parseArgs(this.size(), arg1, arg2, arg3, Comparators.natural);
     checkListBounds(this, left, right);
     if (left >= right) return this;
@@ -246,7 +246,7 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
     return Comparators.isStrictlyOrdered(comparator, this.listIterator(left, right - left));
   }
 
-  reverse(start?: number, end?: number): AbstractList<E> {
+  reverse(start?: number, end?: number) {
     start ??= 0;
     end ??= this.size();
     checkListBounds(this, start, end);
@@ -266,15 +266,15 @@ export abstract class AbstractList<E> extends AbstractCollection<E> implements M
     return this;
   }
 
-  shuffle(): AbstractList<E>;
-  shuffle(arg1: number | Mapper<void, number> | undefined): AbstractList<E>;
-  shuffle(arg1: number, arg2: number | Mapper<void, number> | undefined): AbstractList<E>;
-  shuffle(arg1: number, arg2: number, arg3: Mapper<void, number> | undefined): AbstractList<E>;
+  shuffle(): this;
+  shuffle(arg1: number | Mapper<void, number> | undefined): this;
+  shuffle(arg1: number, arg2: number | Mapper<void, number> | undefined): this;
+  shuffle(arg1: number, arg2: number, arg3: Mapper<void, number> | undefined): this;
   shuffle(
     arg1?: number | Mapper<void, number>,
     arg2?: number | Mapper<void, number>,
     arg3?: Mapper<void, number> | undefined
-  ): AbstractList<E> {
+  ): this {
     const { left, right, f: random } = parseArgs(this.size(), arg1, arg2, arg3, Math.random);
     checkListBounds(this, left, right);
     if (left >= right) return this;

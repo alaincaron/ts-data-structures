@@ -1,5 +1,5 @@
 import { FluentIterator } from 'ts-fluent-iterators';
-import { isMap, MapEntry, NavigableMap } from '../maps';
+import { isMap, NavigableMap } from '../maps';
 import { hashIterableUnordered } from '../utils';
 
 class EmptyMap<K, V> implements NavigableMap<K, V> {
@@ -10,52 +10,68 @@ class EmptyMap<K, V> implements NavigableMap<K, V> {
   lowerKey(_: K) {
     return undefined;
   }
+
   lowerEntry(_: K) {
     return undefined;
   }
+
   higherKey(_: K) {
     return undefined;
   }
+
   higherEntry(_: K) {
     return undefined;
   }
+
   floorEntry(_: K) {
     return undefined;
   }
+
   floorKey(_: K) {
     return undefined;
   }
+
   ceilingKey(_: K) {
     return undefined;
   }
+
   ceilingEntry(_: K) {
     return undefined;
   }
+
   firstEntry() {
     return undefined;
   }
+
   lastEntry() {
     return undefined;
   }
-  firstKey(): K | undefined {
+
+  firstKey() {
     return undefined;
   }
+
   lastKey() {
     return undefined;
   }
+
   reverseEntryIterator() {
     return FluentIterator.empty();
   }
+
   reverseKeyIterator() {
     return FluentIterator.empty();
   }
+
   reverseValueIterator() {
     return FluentIterator.empty();
   }
+
   *reverseEntries() {}
+
   *[Symbol.iterator]() {}
 
-  static instance<K, V>(): NavigableMap<K, V> {
+  static instance<K, V>(): EmptyMap<K, V> {
     return EmptyMap.EMPTY_MAP;
   }
 
@@ -66,63 +82,70 @@ class EmptyMap<K, V> implements NavigableMap<K, V> {
   get(_k: K) {
     return undefined;
   }
-  containsKey(_: K): boolean {
+
+  containsKey(_: K) {
     return false;
   }
-  containsValue(_: V): boolean {
+
+  containsValue(_: V) {
     return false;
   }
+
   *keys(): IterableIterator<K> {}
+
   *values(): IterableIterator<V> {}
 
-  keyIterator(): FluentIterator<K> {
+  keyIterator() {
     return FluentIterator.empty();
   }
 
-  valueIterator(): FluentIterator<V> {
+  valueIterator() {
     return FluentIterator.empty();
   }
-  entryIterator(): FluentIterator<MapEntry<K, V>> {
+
+  entryIterator() {
     return FluentIterator.empty();
   }
 
   *entries(): IterableIterator<[K, V]> {}
 
-  toMap(): Map<K, V> {
+  toMap() {
     return new Map<K, V>();
   }
 
-  toJSON(): string {
+  toJSON() {
     return '{}';
   }
 
-  hashCode(): number {
+  hashCode() {
     return hashIterableUnordered(this);
   }
 
-  clone(): NavigableMap<K, V> {
+  clone() {
     return this;
   }
 
-  equals(other: unknown): boolean {
+  equals(other: unknown) {
     if (other === this) return true;
     return isMap<K, V>(other) && other.isEmpty();
   }
 
-  size(): number {
+  size() {
     return 0;
   }
-  capacity(): number {
+
+  capacity() {
     return 0;
   }
-  isEmpty(): boolean {
+
+  isEmpty() {
     return true;
   }
-  isFull(): boolean {
+  isFull() {
     return true;
   }
 
-  remaining(): number {
+  remaining() {
     return 0;
   }
 }

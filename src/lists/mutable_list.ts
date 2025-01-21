@@ -29,21 +29,21 @@ export class FluentListIterator<E> extends FluentIterator<E> {
 export interface MutableList<E> extends List<E>, SequencedMutableCollection<E> {
   offerAt(idx: number, item: E): boolean;
 
-  addAt(idx: number, item: E): MutableList<E>;
+  addAt(idx: number, item: E): this;
 
   offerFirst(item: E): boolean;
 
-  addFirst(item: E): MutableList<E>;
+  addFirst(item: E): this;
 
   offerLast(item: E): boolean;
 
-  addLast(item: E): MutableList<E>;
+  addLast(item: E): this;
 
   setAt(idx: number, item: E): E;
 
   removeAt(idx: number): E;
 
-  removeRange(start: number, end?: number): MutableList<E>;
+  removeRange(start: number, end?: number): this;
 
   removeFirst(): E;
 
@@ -51,43 +51,43 @@ export interface MutableList<E> extends List<E>, SequencedMutableCollection<E> {
 
   listIterator(skip?: number, count?: number): FluentListIterator<E>;
 
-  transform(mapper: Mapper<E, E>): MutableList<E>;
+  transform(mapper: Mapper<E, E>): this;
 
   reverseListIterator(skip?: number, count?: number): FluentListIterator<E>;
 
-  replaceIf(predicate: Predicate<E>, f: Mapper<E, E>): MutableList<E>;
+  replaceIf(predicate: Predicate<E>, f: Mapper<E, E>): this;
 
   replaceAll(f: Mapper<E, E>): void;
 
-  clear(): MutableList<E>;
+  clear(): this;
 
   clone(): MutableList<E>;
 
-  sort(): MutableList<E>;
+  sort(): this;
 
-  sort(arg1: number | Comparator<E> | undefined): MutableList<E>;
+  sort(arg1: number | Comparator<E> | undefined): this;
 
-  sort(arg1: number, arg2: number | Comparator<E> | undefined): MutableList<E>;
+  sort(arg1: number, arg2: number | Comparator<E> | undefined): this;
 
-  sort(arg1: number, arg2: number, arg3: Comparator<E> | undefined): MutableList<E>;
+  sort(arg1: number, arg2: number, arg3: Comparator<E> | undefined): this;
 
-  sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): MutableList<E>;
+  sort(arg1?: number | Comparator<E>, arg2?: number | Comparator<E>, arg3?: Comparator<E>): this;
 
   reverse(start?: number, end?: number): MutableList<E>;
 
-  shuffle(): MutableList<E>;
+  shuffle(): this;
 
-  shuffle(arg1: number | Mapper<void, number> | undefined): MutableList<E>;
+  shuffle(arg1: number | Mapper<void, number> | undefined): this;
 
-  shuffle(arg1: number, arg2: number | Mapper<void, number> | undefined): MutableList<E>;
+  shuffle(arg1: number, arg2: number | Mapper<void, number> | undefined): this;
 
-  shuffle(arg1: number, arg2: number, arg3: Mapper<void, number> | undefined): MutableList<E>;
+  shuffle(arg1: number, arg2: number, arg3: Mapper<void, number> | undefined): this;
 
   shuffle(
     arg1?: number | Mapper<void, number>,
     arg2?: number | Mapper<void, number>,
     arg3?: Mapper<void, number> | undefined
-  ): MutableList<E>;
+  ): this;
 
   removeFirstMatchingItem(predicate: Predicate<E>): E | undefined;
 

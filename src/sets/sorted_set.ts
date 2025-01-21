@@ -10,5 +10,4 @@ export interface SortedSet<E> extends ISet<E> {
 
 export interface MutableSortedSet<E> extends MutableSet<E>, SortedSet<E> {
   clone(): MutableSortedSet<E>;
-  clear(): MutableSortedSet<E>;
 }

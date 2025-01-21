@@ -5,67 +5,75 @@ import { hashIterableOrdered } from '../utils';
 export abstract class EmptyCollection<E> implements Collection<E> {
   protected constructor() {}
 
-  abstract clone(): EmptyCollection<E>;
+  clone() {
+    return this;
+  }
 
-  contains(_: E): boolean {
+  contains(_: E) {
     return false;
   }
 
-  includes(_: E): boolean {
+  includes(_: E) {
     return false;
   }
 
-  toArray(): E[] {
+  toArray() {
     return [];
   }
 
-  find(_: Predicate<E>): E | undefined {
+  find(_: Predicate<E>) {
     return undefined;
   }
 
-  containsAll<E1 extends E>(_: IteratorLike<E1>): boolean {
+  containsAll<E1 extends E>(_: IteratorLike<E1>) {
     return false;
   }
 
-  disjoint<E1 extends E>(_: IteratorLike<E1>): boolean {
+  disjoint<E1 extends E>(_: IteratorLike<E1>) {
     return true;
   }
 
-  iterator(): FluentIterator<E> {
+  iterator() {
     return FluentIterator.empty();
   }
 
-  hashCode(): number {
+  hashCode() {
     return hashIterableOrdered(this);
   }
 
   *[Symbol.iterator](): Iterator<E> {}
 
-  size(): number {
+  size() {
     return 0;
   }
 
-  capacity(): number {
+  capacity() {
     return 0;
   }
 
-  isEmpty(): boolean {
+  isEmpty() {
     return true;
   }
 
-  isFull(): boolean {
+  isFull() {
     return true;
   }
 
-  remaining(): number {
+  remaining() {
     return 0;
   }
 
-  toJSON(): string {
+  toJSON() {
     return '[]';
   }
 
   abstract equals(other: unknown): boolean;
-  abstract toReadOnly(): Collection<E>;
-  abstract asReadOnly(): Collection<E>;
+
+  toReadOnly() {
+    return this;
+  }
+
+  asReadOnly() {
+    return this;
+  }
 }

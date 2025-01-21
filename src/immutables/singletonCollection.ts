@@ -5,7 +5,9 @@ import { equalsAny, hashIterableOrdered, iterableToJSON } from '../utils';
 export abstract class SingletonCollection<E> implements Collection<E> {
   protected constructor(protected readonly item: E) {}
 
-  abstract clone(): SingletonCollection<E>;
+  clone(): this {
+    return this;
+  }
 
   contains(item: E): boolean {
     return equalsAny(item, this.item);
@@ -19,9 +21,13 @@ export abstract class SingletonCollection<E> implements Collection<E> {
     return [this.item];
   }
 
-  abstract toReadOnly(): SingletonCollection<E>;
+  toReadOnly(): this {
+    return this;
+  }
 
-  abstract asReadOnly(): SingletonCollection<E>;
+  asReadOnly(): this {
+    return this;
+  }
 
   find(predicate: Predicate<E>): E | undefined {
     return predicate(this.item) ? this.item : undefined;

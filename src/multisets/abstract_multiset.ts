@@ -20,8 +20,6 @@ export interface MultiSetInitializer<E> {
 export abstract class AbstractMultiSet<E> extends AbstractCollection<E> implements MutableMultiSet<E> {
   abstract count(item: E): number;
 
-  abstract clear(): AbstractMultiSet<E>;
-
   addCount(item: E, count: number): number {
     if (this.remaining() < count) throw new OverflowException();
     return this.offerCount(item, count);

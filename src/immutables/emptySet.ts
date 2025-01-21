@@ -17,18 +17,6 @@ export class EmptySet<E> extends EmptyCollection<E> implements NavigableSet<E> {
     return new Set<E>();
   }
 
-  clone(): NavigableSet<E> {
-    return this;
-  }
-
-  toReadOnly() {
-    return this;
-  }
-
-  asReadOnly() {
-    return this;
-  }
-
   equals(other: unknown) {
     if (other === this) return true;
     if (!other) return false;

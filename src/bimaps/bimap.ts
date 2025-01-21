@@ -132,7 +132,7 @@ export class BiMap<K, V> extends AbstractContainer implements MutableBiMap<K, V>
     return this.filterEntries(([_, v]) => predicate(v));
   }
 
-  clear(): BiMap<K, V> {
+  clear(): this {
     this.keyMapping.clear();
     this.valueMapping.clear();
     return this;

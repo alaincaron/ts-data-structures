@@ -28,7 +28,7 @@ export abstract class MapBasedSet<
     return this._delegate.capacity();
   }
 
-  clear(): MapBasedSet<E, M, Options> {
+  clear() {
     this._delegate.clear();
     return this;
   }

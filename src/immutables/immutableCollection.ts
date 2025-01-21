@@ -8,7 +8,7 @@ export class ImmutableCollection<E> implements Collection<E> {
     return this._delegate;
   }
 
-  clone(): ImmutableCollection<E> {
+  clone(): this {
     return this;
   }
 

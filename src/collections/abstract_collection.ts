@@ -180,7 +180,7 @@ export abstract class AbstractCollection<E> extends AbstractContainer implements
    *
    @ @returns This collection.
    */
-  abstract clear(): AbstractCollection<E>;
+  abstract clear(): this;
 
   /**
    * Returns true if this `Collection` contains all the elements in the specified `IteratorLike`.

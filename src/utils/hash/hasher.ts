@@ -23,6 +23,22 @@ abstract class NumericHashCode implements HashCode {
   abstract asBuffer(): Buffer;
 }
 
+export class Numeric32HashCode extends NumericHashCode {
+  constructor(value: number) {
+    super(value | 0);
+  }
+
+  bits() {
+    return 32;
+  }
+
+  asBuffer() {
+    const buffer = Buffer.allocUnsafe(4);
+    buffer.writeInt32BE(this.asNumber());
+    return buffer;
+  }
+}
+
 class Cyrb53HashCode extends NumericHashCode {
   constructor(value: number) {
     super(value);
@@ -41,54 +57,38 @@ class Cyrb53HashCode extends NumericHashCode {
   }
 }
 
-class FNV1a32HashCode extends NumericHashCode {
-  constructor(value: number) {
-    super(value);
-  }
-
-  bits() {
-    return 32;
-  }
-
-  asBuffer() {
-    const buffer = Buffer.allocUnsafe(4);
-    buffer.writeInt32BE(this.asNumber());
-    return buffer;
-  }
-}
-
 export interface Hasher extends PrimitiveSink {
-  putNumber(x: number): Hasher;
-  putBytes(buf: Buffer): Hasher;
-  putBoolean(x: boolean): Hasher;
-  putString(x: string): Hasher;
+  putNumber(x: number): this;
+  putBytes(buf: Buffer): this;
+  putBoolean(x: boolean): this;
+  putString(x: string): this;
   hash(): HashCode;
-  putObject<T>(x: T, funnel: Funnel<T>): Hasher;
+  putObject<T>(x: T, funnel: Funnel<T>): this;
 }
 
 export abstract class AbstractHasher implements Hasher {
   abstract hash(): HashCode;
 
-  putBytes(buf: Buffer): AbstractHasher {
+  putBytes(buf: Buffer) {
     for (const x of buf) {
       this.update(x);
     }
     return this;
   }
 
-  putBoolean(x: boolean): AbstractHasher {
+  putBoolean(x: boolean) {
     this.update(x ? 1 : 0);
     return this;
   }
 
-  putString(str: string): AbstractHasher {
+  putString(str: string) {
     for (let i = 0; i < str.length; ++i) {
       this.update(str.charCodeAt(i));
     }
     return this;
   }
 
-  putNumber(h: number): AbstractHasher {
+  putNumber(h: number) {
     let buf: Buffer;
     if (Number.isSafeInteger(h) && h <= MAX_SAFE_INT && h >= MIN_SAFE_INT) {
       buf = Buffer.allocUnsafe(4);
@@ -102,7 +102,7 @@ export abstract class AbstractHasher implements Hasher {
 
   protected abstract update(value: number): void;
 
-  putObject<T>(x: T, funnel: Funnel<T>): AbstractHasher {
+  putObject<T>(x: T, funnel: Funnel<T>) {
     funnel.funnel(x, this);
     return this;
   }
@@ -147,6 +147,6 @@ export class FNV1a32Hasher extends AbstractHasher {
   }
 
   hash() {
-    return new FNV1a32HashCode(this.h);
+    return new Numeric32HashCode(this.h);
   }
 }

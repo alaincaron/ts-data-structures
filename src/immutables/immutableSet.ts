@@ -10,10 +10,6 @@ export class ImmutableSet<E> extends ImmutableCollection<E> implements ISet<E> {
     return super.delegate as ISet<E>;
   }
 
-  clone() {
-    return this;
-  }
-
   toSet(): Set<E> {
     return this.delegate.toSet();
   }

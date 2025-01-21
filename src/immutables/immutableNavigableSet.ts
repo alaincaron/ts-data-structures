@@ -10,10 +10,6 @@ export class ImmutableNavigableSet<E> extends ImmutableSortedSet<E> implements N
     return super.delegate as NavigableSet<E>;
   }
 
-  clone() {
-    return this;
-  }
-
   toSet(): Set<E> {
     return this.delegate.toSet();
   }

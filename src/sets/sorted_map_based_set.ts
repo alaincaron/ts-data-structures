@@ -31,10 +31,5 @@ export abstract class SortedMapBasedSet<
     return this.delegate().reverseKeyIterator();
   }
 
-  clear() {
-    this.delegate().clear();
-    return this;
-  }
-
   abstract clone(): SortedMapBasedSet<E, M, Options>;
 }

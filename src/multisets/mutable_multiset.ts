@@ -11,6 +11,4 @@ export interface MutableMultiSet<E> extends MultiSet<E>, MutableCollection<E> {
   setCount(item: E, count: number): number;
 
   clone(): MutableMultiSet<E>;
-
-  clear(): MutableMultiSet<E>;
 }

@@ -18,7 +18,7 @@ export interface MutableMultiMap<K, V> extends MultiMap<K, V> {
 
   putAll<K1 extends K, V1 extends V>(map: MultiMapLike<K1, V1>): void;
 
-  clear(): MutableMultiMap<K, V>;
+  clear(): this;
 
   filterKeys(predicate: Predicate<K>): number;
 

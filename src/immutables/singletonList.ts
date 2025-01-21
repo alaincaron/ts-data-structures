@@ -81,23 +81,11 @@ export class SingletonList<E> extends SingletonCollection<E> implements List<E> 
     return this.isOrdered(arg1, arg2, arg3);
   }
 
-  clone(): SingletonList<E> {
-    return this;
-  }
-
   toArray(start?: number, end?: number): E[] {
     start ??= 0;
     end ??= 1;
     checkListBounds(this, start, end);
     return [this.item];
-  }
-
-  toReadOnly(): SingletonList<E> {
-    return this;
-  }
-
-  asReadOnly(): SingletonList<E> {
-    return this;
   }
 
   equals(other: unknown): boolean {

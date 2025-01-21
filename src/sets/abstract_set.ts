@@ -22,8 +22,6 @@ export abstract class AbstractSet<E> extends AbstractCollection<E> implements Mu
     return this.iterator().collectToSet();
   }
 
-  abstract clear(): AbstractSet<E>;
-
   add(item: E) {
     if (this.contains(item)) return false;
     return super.add(item);
