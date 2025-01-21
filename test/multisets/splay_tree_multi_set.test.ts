@@ -370,7 +370,10 @@ describe('SplayTreeMultiSet', () => {
       { key: 'bar', count: barValue },
     ]);
 
-    expect(ms.reverseIterator().collect()).to.deep.equal(['foo', 'bar']);
+    const arr: string[] = [];
+    for (let i = 0; i < fooValue; ++i) arr.push('foo');
+    for (let i = 0; i < barValue; ++i) arr.push('bar');
+    expect(ms.reverseIterator().collect()).to.deep.equal(arr);
 
     expect(ms.pollFirst()).equal('bar');
     expect(ms.pollLast()).equal('foo');

@@ -8,10 +8,13 @@ const PSEUDO_MED_THRESH_9 = 45; // threshold for pseudo-median 9 .
 const INSERTION_THRESH = 15; // threshold for insertion sort.
 
 /**
- * Sorts (using quicksort) an array according to the comparator.
+ * Sorts (using quicksort) an array according to the specified comparator.
  *
- * @param arr       List to be sorted.
- * @param comparator Comparator used to compare items in the array.
+ * @param arr The array to be sorted
+ * @param arg2 Optional start index or comparator function
+ * @param arg3 Optional end index or comparator function
+ * @param arg4 Optional comparator function
+ * @returns The sorted array (same instance as input)
  */
 export function qsort<E>(arr: E[]): E[];
 export function qsort<E>(arr: E[], arg2: number | Comparator<E> | undefined): E[];

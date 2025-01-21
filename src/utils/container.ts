@@ -10,34 +10,45 @@ export interface ContainerOptions {
   capacity?: number;
 }
 
+/**
+ * A Container is a fundamental interface that represents any data structure that can hold elements.
+ * It provides basic operations to query the state of the container such as its size, capacity,
+ * and whether it is empty or full.
+ *
+ * This interface is implemented by both Collections and Maps in the library.
+ */
 export interface Container {
+  /**
+   * Returns the number of elements in this container.
+   * @returns The current number of elements in the container
+   */
   size(): number;
 
   /**
-   * Returns the capacity of this {@link Container}, i.e. the maximum
+   * Returns the capacity of this container, i.e. the maximum
    * number of elements it can contain.
    *
-   * @returns The capacity of this {@link Container}
+   * @returns The capacity of this container
    */
   capacity(): number;
 
   /**
-   * Returns `true` if this {@link Container} is empty, i.e., its size is `0`.
-   * @returns `true` if this {@link Container} is empty, `false` otherwise.
+   * Returns `true` if this container is empty, i.e., its size is `0`.
+   * @returns `true` if this container is empty, `false` otherwise.
    */
   isEmpty(): boolean;
 
   /**
-   * Returns `true` if this {@link Container} is full, i.e. its size is greater than or equal to is capacity.*
-   * @returns `true` if this {@link Container} is full, false otherwise.
+   * Returns `true` if this container is full, i.e. its size is greater than or equal to its capacity.
+   * @returns `true` if this container is full, false otherwise.
    */
   isFull(): boolean;
 
   /**
    * Returns the number of elements that can be added to this
-   * {@link Container} without exceeding its `capacity`.
+   * container without exceeding its `capacity`.
    *
-   * @returns the number of elements that can be added to this {@link Container} without exceeding its `capacity`.
+   * @returns The number of additional elements that can be added
    */
   remaining(): number;
 }
@@ -89,7 +100,17 @@ export abstract class AbstractContainer implements Container {
   }
 }
 
+/**
+ * Interface for initializing a container with initial elements.
+ * This is used by container factory methods to create new instances
+ * with predefined content.
+ */
 export interface ContainerInitializer<ContainerLike extends object> {
+  /**
+   * Optional initial elements to populate the container with.
+   * Can be an array, another container, or any object implementing
+   * the ContainerLike interface.
+   */
   initial?: ContainerLike;
 }
 
@@ -122,7 +143,16 @@ export function buildOptions(obj?: object) {
   return {};
 }
 
-type NumberProvider = number | (() => number);
+/**
+ * Type alias for values that can provide a number, either directly or via a function
+ */
+export type NumberProvider = number | (() => number);
+
+/**
+ * Interface for objects that can provide a numeric length or size.
+ * This is used to abstract over different ways of getting an object's size,
+ * such as arrays (length) and collections (size).
+ */
 export type LengthProvider = { length: NumberProvider } | { size: NumberProvider };
 
 export function getSize(items: LengthProvider) {

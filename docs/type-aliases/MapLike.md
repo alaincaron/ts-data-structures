@@ -6,7 +6,7 @@
 
 # Type Alias: MapLike\<K, V\>
 
-> **MapLike**\<`K`, `V`\>: `Iterable`\<[`K`, `V`]\> & `LengthProvider` \| `ArrayGenerator`\<[`K`, `V`]\>
+> **MapLike**\<`K`, `V`\>: `Iterable`\<[`K`, `V`]\> & [`LengthProvider`](LengthProvider.md) \| `ArrayGenerator`\<[`K`, `V`]\>
 
 Describes an object that can behave like a Map. It has a
 `size` or `length` and it is possible to iterate through its

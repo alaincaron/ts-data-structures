@@ -85,7 +85,7 @@ export class SingletonMultiMap<K, V> implements SortedMultiMap<K, V> {
   }
 
   toJSON(): string {
-    return toJSON(this.entry);
+    return toJSON({ [String(this.getKey())]: [...this.entry.value] });
   }
 
   hashCode(): number {

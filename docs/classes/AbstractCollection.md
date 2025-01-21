@@ -128,14 +128,14 @@ operation.
 
 > **capacity**(): `number`
 
-Returns the capacity of this Container, i.e. the maximum
+Returns the capacity of this [Container](../interfaces/Container.md), i.e. the maximum
 number of elements it can contain.
 
 #### Returns
 
 `number`
 
-The capacity of this Container
+The capacity of this [Container](../interfaces/Container.md)
 
 #### Implementation of
 
@@ -149,7 +149,7 @@ The capacity of this Container
 
 ### clear()
 
-> `abstract` **clear**(): [`AbstractCollection`](AbstractCollection.md)\<`E`\>
+> `abstract` **clear**(): `this`
 
 Removes all elements from this `Collection`
 
@@ -157,7 +157,7 @@ Removes all elements from this `Collection`
 
 #### Returns
 
-[`AbstractCollection`](AbstractCollection.md)\<`E`\>
+`this`
 
 This collection.
 
@@ -357,13 +357,13 @@ The item whose presence is tested.
 
 > **isEmpty**(): `boolean`
 
-Returns `true` if this Container is empty, i.e., its size is `0`.
+Returns `true` if this [Container](../interfaces/Container.md) is empty, i.e., its size is `0`.
 
 #### Returns
 
 `boolean`
 
-`true` if this Container is empty, `false` otherwise.
+`true` if this [Container](../interfaces/Container.md) is empty, `false` otherwise.
 
 #### Implementation of
 
@@ -379,13 +379,13 @@ Returns `true` if this Container is empty, i.e., its size is `0`.
 
 > **isFull**(): `boolean`
 
-Returns `true` if this Container is full, i.e. its size is greater than or equal to is capacity.\*
+Returns `true` if this [Container](../interfaces/Container.md) is full, i.e. its size is greater than or equal to is capacity.\*
 
 #### Returns
 
 `boolean`
 
-`true` if this Container is full, false otherwise.
+`true` if this [Container](../interfaces/Container.md) is full, false otherwise.
 
 #### Implementation of
 
@@ -449,7 +449,7 @@ the item to add to the `Collection`
 Adds as many items as possible of the `container` to this
 `Collection` as long there is remaining capacity. Items are
 added one by one until all items are added or the `Collection` is
-Collection.isFull | full.
+[full](../interfaces/Container.md#isfull).
 
 #### Type Parameters
 
@@ -478,13 +478,13 @@ The number of items added
 > **remaining**(): `number`
 
 Returns the number of elements that can be added to this
-Container without exceeding its `capacity`.
+[Container](../interfaces/Container.md) without exceeding its `capacity`.
 
 #### Returns
 
 `number`
 
-the number of elements that can be added to this Container without exceeding its `capacity`.
+the number of elements that can be added to this [Container](../interfaces/Container.md) without exceeding its `capacity`.
 
 #### Implementation of
 
@@ -608,13 +608,13 @@ The number of elements that were removed as a result of this call.
 
 > `abstract` **size**(): `number`
 
-Returns the number of items in this Container.
+Returns the number of items in this [Container](../interfaces/Container.md).
 
 #### Returns
 
 `number`
 
-the number of items in this Container.
+the number of items in this [Container](../interfaces/Container.md).
 
 #### Implementation of
 

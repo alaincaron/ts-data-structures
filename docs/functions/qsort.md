@@ -8,7 +8,7 @@
 
 > **qsort**\<`E`\>(`arr`): `E`[]
 
-Sorts (using quicksort) an array according to the comparator.
+Sorts (using quicksort) an array according to the specified comparator.
 
 ## Type Parameters
 
@@ -18,8 +18,10 @@ Sorts (using quicksort) an array according to the comparator.
 
 • **arr**: `E`[]
 
-List to be sorted.
+The array to be sorted
 
 ## Returns
 
 `E`[]
+
+The sorted array (same instance as input)

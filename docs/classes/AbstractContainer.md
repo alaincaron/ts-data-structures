@@ -14,7 +14,7 @@ A `Container` is an object that can contain objects.
 
 ## Implements
 
-- `Container`
+- [`Container`](../interfaces/Container.md)
 
 ## Methods
 
@@ -22,18 +22,18 @@ A `Container` is an object that can contain objects.
 
 > **capacity**(): `number`
 
-Returns the capacity of this Container, i.e. the maximum
+Returns the capacity of this [Container](../interfaces/Container.md), i.e. the maximum
 number of elements it can contain.
 
 #### Returns
 
 `number`
 
-The capacity of this Container
+The capacity of this [Container](../interfaces/Container.md)
 
 #### Implementation of
 
-`Container.capacity`
+[`Container`](../interfaces/Container.md).[`capacity`](../interfaces/Container.md#capacity)
 
 ---
 
@@ -41,17 +41,17 @@ The capacity of this Container
 
 > **isEmpty**(): `boolean`
 
-Returns `true` if this Container is empty, i.e., its size is `0`.
+Returns `true` if this [Container](../interfaces/Container.md) is empty, i.e., its size is `0`.
 
 #### Returns
 
 `boolean`
 
-`true` if this Container is empty, `false` otherwise.
+`true` if this [Container](../interfaces/Container.md) is empty, `false` otherwise.
 
 #### Implementation of
 
-`Container.isEmpty`
+[`Container`](../interfaces/Container.md).[`isEmpty`](../interfaces/Container.md#isempty)
 
 ---
 
@@ -59,17 +59,17 @@ Returns `true` if this Container is empty, i.e., its size is `0`.
 
 > **isFull**(): `boolean`
 
-Returns `true` if this Container is full, i.e. its size is greater than or equal to is capacity.\*
+Returns `true` if this [Container](../interfaces/Container.md) is full, i.e. its size is greater than or equal to is capacity.\*
 
 #### Returns
 
 `boolean`
 
-`true` if this Container is full, false otherwise.
+`true` if this [Container](../interfaces/Container.md) is full, false otherwise.
 
 #### Implementation of
 
-`Container.isFull`
+[`Container`](../interfaces/Container.md).[`isFull`](../interfaces/Container.md#isfull)
 
 ---
 
@@ -78,17 +78,17 @@ Returns `true` if this Container is full, i.e. its size is greater than or equal
 > **remaining**(): `number`
 
 Returns the number of elements that can be added to this
-Container without exceeding its `capacity`.
+[Container](../interfaces/Container.md) without exceeding its `capacity`.
 
 #### Returns
 
 `number`
 
-the number of elements that can be added to this Container without exceeding its `capacity`.
+the number of elements that can be added to this [Container](../interfaces/Container.md) without exceeding its `capacity`.
 
 #### Implementation of
 
-`Container.remaining`
+[`Container`](../interfaces/Container.md).[`remaining`](../interfaces/Container.md#remaining)
 
 ---
 
@@ -96,14 +96,14 @@ the number of elements that can be added to this Container without exceeding its
 
 > `abstract` **size**(): `number`
 
-Returns the number of items in this Container.
+Returns the number of items in this [Container](../interfaces/Container.md).
 
 #### Returns
 
 `number`
 
-the number of items in this Container.
+the number of items in this [Container](../interfaces/Container.md).
 
 #### Implementation of
 
-`Container.size`
+[`Container`](../interfaces/Container.md).[`size`](../interfaces/Container.md#size)

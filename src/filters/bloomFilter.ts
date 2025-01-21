@@ -23,17 +23,21 @@ function generateHashFunctions<T>(options?: BloomFilterOptions<T>): Mapper<T, nu
         }
       }
     }
-    if (options?.generate && options.generate > functions.length) {
-      for (let i = functions.length; i < options.generate; ++i) {
-        if (funnel) {
-          functions.push((t: T) =>
-            Cyrb53HashFunction.instance().newHasher().putObject(t, funnel).putNumber(i).hash().asNumber()
-          );
-        } else {
-          functions.push((t: T) => hashAny([t, i], Cyrb53HashFunction.instance()));
-        }
+  }
+  if (options?.generate && options.generate > functions.length) {
+    for (let i = functions.length; i < options.generate; ++i) {
+      if (funnel) {
+        functions.push((t: T) =>
+          Cyrb53HashFunction.instance().newHasher().putObject(t, funnel).putNumber(i).hash().asNumber()
+        );
+      } else {
+        functions.push((t: T) => hashAny([t, i], Cyrb53HashFunction.instance()));
       }
     }
+  }
+  // Default to at least one hash function if none provided
+  if (functions.length === 0) {
+    functions.push((t: T) => hashAny(t, Cyrb53HashFunction.instance()));
   }
 
   return functions;
@@ -82,6 +86,7 @@ export class BloomFilter<T> {
 
   // Checks if an element might exist in the Bloom filter
   contains(element: T): boolean {
+    if (this._count === 0) return false;
     return this.hashFunctions.every(fn => {
       const index = this.slot(fn(element));
       return this.storage[index];

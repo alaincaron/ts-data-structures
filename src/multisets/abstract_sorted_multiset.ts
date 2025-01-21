@@ -42,8 +42,14 @@ export abstract class AbstractSortedMultiSet<
       .map(e => this.convert(e)!);
   }
 
+  private *reverseFoldIterator(): IterableIterator<E> {
+    for (const [key, count] of this.delegate().reverseEntries()) {
+      for (let i = 0; i < count; ++i) yield key;
+    }
+  }
+
   reverseIterator(): FluentIterator<E> {
-    return this.delegate().reverseKeyIterator();
+    return FluentIterator.from(this.reverseFoldIterator());
   }
 
   abstract clone(): AbstractSortedMultiSet<E, M, Options>;

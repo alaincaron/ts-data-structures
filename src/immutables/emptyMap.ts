@@ -127,7 +127,8 @@ class EmptyMap<K, V> implements NavigableMap<K, V> {
 
   equals(other: unknown) {
     if (other === this) return true;
-    return isMap<K, V>(other) && other.isEmpty();
+    if (!isMap<K, V>(other)) return false;
+    return other.isEmpty();
   }
 
   size() {
@@ -150,6 +151,6 @@ class EmptyMap<K, V> implements NavigableMap<K, V> {
   }
 }
 
-export function emptyMap<K, V>() {
-  return EmptyMap.instance<K, V>();
+export function emptyMap<K, V>(): EmptyMap<K, V> {
+  return EmptyMap.instance();
 }

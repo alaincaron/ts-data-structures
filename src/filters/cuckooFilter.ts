@@ -30,7 +30,7 @@ export class CuckooFilter<T> {
 
   clear() {
     for (let i = 0; i < this.buckets.length; ++i) {
-      for (let j = 0; i < this.bucketSize; ++j) {
+      for (let j = 0; j < this.bucketSize; ++j) {
         this.buckets[i][j] = null;
       }
     }
