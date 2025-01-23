@@ -25,8 +25,8 @@ export abstract class EmptyCollection<E> implements Collection<E> {
     return undefined;
   }
 
-  containsAll<E1 extends E>(_: IteratorLike<E1>) {
-    return false;
+  containsAll<E1 extends E>(iter: IteratorLike<E1>) {
+    return FluentIterator.from(iter).next().done!;
   }
 
   disjoint<E1 extends E>(_: IteratorLike<E1>) {

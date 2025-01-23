@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { CuckooFilter } from '../../src/filters/cuckooFilter';
-import { Funnel } from '../../src/utils';
+import { PrimitiveSink } from '../../src/utils';
 
 describe('CuckooFilter', () => {
   describe('constructor', () => {
@@ -85,15 +85,13 @@ describe('CuckooFilter', () => {
       value: string;
     }
 
-    class TestFunnel implements Funnel<TestObject> {
-      funnel(obj: TestObject, sink: { putString: (s: string) => any; putNumber: (n: number) => any }) {
-        sink.putNumber(obj.id);
-        sink.putString(obj.value);
-      }
-    }
+    const testFunnel = (obj: TestObject, sink: PrimitiveSink) => {
+      sink.putNumber(obj.id);
+      sink.putString(obj.value);
+    };
 
     it('should work with custom objects using a funnel', () => {
-      const filter = new CuckooFilter<TestObject>(100, { funnel: new TestFunnel() });
+      const filter = new CuckooFilter<TestObject>(100, { funnel: testFunnel });
       const obj1 = { id: 1, value: 'test1' };
       const obj2 = { id: 2, value: 'test2' };
 

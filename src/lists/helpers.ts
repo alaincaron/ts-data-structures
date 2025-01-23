@@ -45,8 +45,8 @@ export function computeListReverseIteratorBounds<E>(list: List<E>, skip?: number
 }
 
 export function isList<E>(obj: unknown): obj is List<E> {
-  if (!isCollection(obj)) return true;
   if (obj instanceof AbstractList || obj instanceof ImmutableList) return true;
+  if (!isCollection(obj)) return false;
   if (!Objects.hasFunction(obj, 'getAt')) return false;
   return true;
 }

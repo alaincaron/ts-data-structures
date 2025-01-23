@@ -1,5 +1,3 @@
 import { PrimitiveSink } from './primitiveSink';
 
-export interface Funnel<T> {
-  funnel(t: T, sink: PrimitiveSink): void;
-}
+export type Funnel<T> = (t: T, sink: PrimitiveSink) => void;

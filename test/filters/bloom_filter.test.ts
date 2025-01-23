@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import { BloomFilter, BloomFilterOptions } from '../../src/filters/bloomFilter';
-import { Cyrb53HashFunction, Funnel, PrimitiveSink } from '../../src/utils';
+import { BloomFilter, BloomFilterOptions, Cyrb53HashFunction, Funnel, PrimitiveSink } from '../../src';
 
 describe('BloomFilter', () => {
   describe('constructor', () => {
@@ -103,10 +102,8 @@ describe('BloomFilter', () => {
       name: string;
     }
 
-    const funnel: Funnel<TestObject> = {
-      funnel: (obj: TestObject, sink: PrimitiveSink) => {
-        sink.putNumber(obj.id).putString(obj.name);
-      },
+    const funnel: Funnel<TestObject> = (obj: TestObject, sink: PrimitiveSink) => {
+      sink.putNumber(obj.id).putString(obj.name);
     };
 
     it('should work with custom objects using a funnel', () => {

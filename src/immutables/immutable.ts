@@ -70,7 +70,7 @@ export class Immutable {
     }
   }
 
-  static toList<E>(items: CollectionLike<E>) {
+  static toList<E>(items: CollectionLike<E>): List<E> {
     return this.createListFromCollection(items, null);
   }
 

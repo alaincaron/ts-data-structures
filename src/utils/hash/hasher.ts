@@ -103,7 +103,7 @@ export abstract class AbstractHasher implements Hasher {
   protected abstract update(value: number): void;
 
   putObject<T>(x: T, funnel: Funnel<T>) {
-    funnel.funnel(x, this);
+    funnel(x, this);
     return this;
   }
 }
