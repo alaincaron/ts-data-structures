@@ -33,7 +33,7 @@ export class ImmutableCollection<E> implements Collection<E> {
   }
 
   disjoint<E1 extends E>(iteratorLike: IteratorLike<E1>) {
-    return this._delegate.containsAll(iteratorLike);
+    return this._delegate.disjoint(iteratorLike);
   }
 
   iterator() {

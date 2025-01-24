@@ -1,7 +1,20 @@
 import { expect } from 'chai';
 import { Comparators } from 'ts-fluent-iterators';
-import { EmptyList, EmptySet, Immutable, ImmutableList, SingletonList, SingletonSet } from '../../src/immutables';
-import { ArrayList } from '../../src/lists';
+import {
+  ArrayList,
+  EmptyList,
+  EmptyMultiSet,
+  EmptySet,
+  Immutable,
+  ImmutableList,
+  ImmutableNavigableMultiSet,
+  ImmutableNavigableSet,
+  ImmutableSortedMultiSet,
+  ImmutableSortedSet,
+  SingletonList,
+  SingletonMultiSet,
+  SingletonSet,
+} from '../../src';
 
 describe('Immutable', () => {
   describe('emptyList', () => {
@@ -67,6 +80,10 @@ describe('Immutable', () => {
       const array = [7, 8, 9];
       const list = Immutable.toList(array);
       expect(list.toArray()).to.eql(array);
+    });
+    it('should return the argument is the argument is a readonly list', () => {
+      const argList = Immutable.listOf(1, 2, 3);
+      expect(Immutable.toList(argList)).to.equal(argList);
     });
   });
 
@@ -136,6 +153,12 @@ describe('Immutable', () => {
       expect(multiset.count(3)).to.equal(2);
     });
 
+    it('should create a singleton multiset if only one element is provided', () => {
+      const multiset = Immutable.multiSetOf(1);
+      expect(multiset).to.be.instanceOf(SingletonMultiSet);
+      expect(multiset.equals(Immutable.singletonMultiSet(1))).to.be.true;
+    });
+
     it('should return empty multiset when no elements provided', () => {
       const multiset = Immutable.multiSetOf();
       expect(multiset.size()).to.equal(0);
@@ -151,11 +174,184 @@ describe('Immutable', () => {
   });
 
   describe('toSet', () => {
+    it('should create an EmptySet when no items are provided', () => {
+      expect(Immutable.toSet([])).to.be.instanceOf(EmptySet);
+    });
+
+    it('should create an immutable set from a collection-like object', () => {
+      const set = Immutable.toSet([3]);
+      expect(set).to.be.instanceof(SingletonSet);
+      expect(set.equals(Immutable.singletonSet(3))).to.be.true;
+    });
     it('should create an immutable set from a collection-like object', () => {
       const array = [3, 1, 2];
       const set = Immutable.toSet(array);
       expect(set.contains(1)).to.be.true;
       expect(set.contains(4)).to.be.false;
+    });
+  });
+
+  describe('toMultiSet', () => {
+    it('should create an EmptyMultiSet when no items are provided', () => {
+      expect(Immutable.toMultiSet([])).to.be.instanceOf(EmptyMultiSet);
+    });
+
+    it('should create an immutable set from a collection-like object', () => {
+      const set = Immutable.toMultiSet([3]);
+      expect(set).to.be.instanceof(SingletonMultiSet);
+      expect(set.equals(Immutable.singletonMultiSet(3))).to.be.true;
+    });
+    it('should create an immutable set from a collection-like object', () => {
+      const array = [3, 1, 2, 3];
+      const set = Immutable.toMultiSet(array);
+      expect(set.contains(1)).to.be.true;
+      expect(set.contains(4)).to.be.false;
+      expect(set.count(3)).equal(2);
+    });
+  });
+
+  describe('toSortedList', () => {
+    it('should return an empty list when no elements provided', () => {
+      expect(Immutable.toSortedList([])).to.be.instanceof(EmptyList);
+    });
+    it('should return a SingletonList for one item', () => {
+      const list = Immutable.toSortedList(ArrayList.create({ initial: [11] }));
+      expect(list).to.be.instanceOf(SingletonList);
+      expect(list.iterator().collect()).to.eql([11]);
+    });
+    it('should return a sorted list', () => {
+      const arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100000));
+      const list = Immutable.toSortedList(arr);
+      arr.sort(Comparators.natural);
+      expect(list.toArray()).to.eql(arr);
+    });
+  });
+
+  describe('sortedSetOf', () => {
+    it('should return EmptySet with no items', () => {
+      expect(Immutable.sortedSetOf(Comparators.natural)).to.be.instanceof(EmptySet);
+    });
+    it('should return a SingletonSet with a single item', () => {
+      const set = Immutable.sortedSetOf(Comparators.natural, 1);
+      expect(set).to.be.instanceOf(SingletonSet);
+      expect(set.equals(Immutable.singletonSet(1))).to.be.true;
+    });
+    it('should return a sorted set', () => {
+      const arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100000));
+      const set = Immutable.sortedSetOf(Comparators.natural, ...arr);
+      expect(set).to.be.instanceOf(ImmutableSortedSet);
+      expect(set.toArray()).eql(arr.sort(Comparators.natural));
+    });
+  });
+
+  describe('toSortedSet', () => {
+    it('should return an empty set when no elements provided', () => {
+      expect(Immutable.toSortedSet([])).to.be.instanceof(EmptySet);
+    });
+    it('should return a SingletonSet for one item', () => {
+      const set = Immutable.toSortedSet(ArrayList.create({ initial: [11, 11] }));
+      expect(set).to.be.instanceOf(SingletonSet);
+      expect(set.iterator().collect()).to.eql([11]);
+    });
+    it('should return a sorted set', () => {
+      const arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100000));
+      const set = Immutable.toSortedSet(arr);
+      arr.sort(Comparators.natural);
+      expect(set.toArray()).to.eql(arr);
+    });
+  });
+
+  describe('toNavigableSet', () => {
+    it('should return an empty set when no elements provided', () => {
+      expect(Immutable.toNavigableSet([])).to.be.instanceof(EmptySet);
+    });
+    it('should return a navigable set for one item', () => {
+      const set = Immutable.toNavigableSet(ArrayList.create({ initial: [11, 11] }));
+      expect(set).to.be.instanceOf(ImmutableNavigableSet);
+      expect(set.iterator().collect()).to.eql([11]);
+    });
+    it('should return a navigable set', () => {
+      const arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100000));
+      const set = Immutable.toNavigableSet(arr);
+      expect(set).to.be.instanceof(ImmutableNavigableSet);
+      arr.sort(Comparators.natural);
+      expect(set.toArray()).to.eql(arr);
+    });
+  });
+
+  describe('navigableSetOf', () => {
+    it('should return EmptySet with no items', () => {
+      expect(Immutable.navigableSetOf(Comparators.natural)).to.be.instanceof(EmptySet);
+    });
+    it('should return a SingletonSet with a single item', () => {
+      const set = Immutable.navigableSetOf(Comparators.natural, 1);
+      expect(set).to.be.instanceOf(ImmutableNavigableSet);
+      expect(set.equals(Immutable.singletonSet(1))).to.be.true;
+    });
+    it('should return a sorted set', () => {
+      const arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100000));
+      const set = Immutable.navigableSetOf(Comparators.natural, ...arr);
+      expect(set).to.be.instanceOf(ImmutableNavigableSet);
+      expect(set.toArray()).eql(arr.sort(Comparators.natural));
+    });
+  });
+
+  describe('sortedMultiSetOf', () => {
+    it('should return EmptyMultiSet with no items', () => {
+      expect(Immutable.sortedMultiSetOf(Comparators.natural)).to.be.instanceof(EmptyMultiSet);
+    });
+    it('should return a SingletonMultiSet with a single item', () => {
+      const set = Immutable.sortedMultiSetOf(Comparators.natural, 1);
+      expect(set).to.be.instanceOf(SingletonMultiSet);
+      expect(set.equals(Immutable.singletonMultiSet(1))).to.be.true;
+    });
+    it('should return a sorted multiSet', () => {
+      const arr = [1, 2, 3, 2, 3, 4, 1, 4, 0];
+      const set = Immutable.sortedMultiSetOf(Comparators.natural, ...arr);
+      expect(set).to.be.instanceOf(ImmutableSortedMultiSet);
+      expect(set.toArray()).eql(arr.sort(Comparators.natural));
+    });
+  });
+
+  describe('toSortedMultiSet', () => {
+    it('should return an empty multiSet when no elements provided', () => {
+      expect(Immutable.toSortedMultiSet([])).to.be.instanceof(EmptyMultiSet);
+    });
+    it('should return a SingletonMultiSet for one item', () => {
+      const set = Immutable.toSortedMultiSet(ArrayList.create({ initial: [11] }));
+      expect(set).to.be.instanceOf(SingletonMultiSet);
+      expect(set.iterator().collect()).to.eql([11]);
+    });
+    it('should return a sorted multiSet', () => {
+      const arr = [1, 2, 3, 2, 3, 4, 1, 4, 0];
+      const set = Immutable.toSortedMultiSet(arr);
+      arr.sort(Comparators.natural);
+      expect(set.toArray()).to.eql(arr);
+    });
+  });
+
+  describe('toNavigableMultiSet', () => {
+    it('should return an empty set when no elements provided', () => {
+      expect(Immutable.toNavigableMultiSet([])).to.be.instanceof(EmptyMultiSet);
+    });
+    it('should return a navigable set', () => {
+      const arr = [1, 2, 3, 2, 3, 4, 1, 4, 0];
+      const set = Immutable.toNavigableMultiSet(arr);
+      expect(set).to.be.instanceof(ImmutableNavigableMultiSet);
+      arr.sort(Comparators.natural);
+      expect(set.toArray()).to.eql(arr);
+    });
+  });
+
+  describe('navigableMultiSetOf', () => {
+    it('should return EmptyMultiSet with no items', () => {
+      expect(Immutable.navigableMultiSetOf(Comparators.natural)).to.be.instanceof(EmptyMultiSet);
+    });
+    it('should return a sorted set', () => {
+      const arr = [1, 2, 3, 2, 3, 4, 1, 4, 0];
+      const set = Immutable.navigableMultiSetOf(Comparators.natural, ...arr);
+      expect(set).to.be.instanceOf(ImmutableNavigableMultiSet);
+      expect(set.toArray()).eql(arr.sort(Comparators.natural));
     });
   });
 });

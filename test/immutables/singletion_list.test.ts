@@ -52,6 +52,10 @@ describe('SingletonList', () => {
       it('should return false for non-list objects', () => {
         expect(singletonList.equals([42])).to.be.false;
       });
+
+      it('should return true if compared to itself', () => {
+        expect(singletonList.equals(singletonList)).to.be.true;
+      });
     });
 
     describe('first and last', () => {

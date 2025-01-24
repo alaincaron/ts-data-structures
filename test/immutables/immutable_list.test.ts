@@ -1,11 +1,12 @@
 import { expect } from 'chai';
-import { ArrayList, ImmutableList, IndexOutOfBoundsException } from '../../src';
+import { ArrayList, ImmutableList, IndexOutOfBoundsException, MutableList } from '../../src';
 
 describe('ImmutableList', () => {
   let immutableList: ImmutableList<number>;
+  let delegate: MutableList<number>;
 
   beforeEach(() => {
-    const delegate = ArrayList.create({ initial: [10, 20, 30] });
+    delegate = ArrayList.create({ initial: [10, 20, 30] });
     immutableList = new ImmutableList(delegate);
   });
 
@@ -54,5 +55,54 @@ describe('ImmutableList', () => {
   it('should peek at the first and last elements correctly', () => {
     expect(immutableList.peekFirst()).to.equal(10);
     expect(immutableList.peekLast()).to.equal(30);
+  });
+
+  describe('containsAll', () => {
+    it('should return true if the argument is a subset, false otherwise', () => {
+      expect(immutableList.containsAll([10])).to.be.true;
+      expect(immutableList.containsAll([10, 20])).to.be.true;
+      expect(immutableList.containsAll([10, 20, 42, 43])).to.be.false;
+      expect(immutableList.containsAll([43])).to.be.false;
+      expect(immutableList.containsAll([])).to.be.true;
+    });
+  });
+
+  describe('disjoint', () => {
+    it('should return true if the argument has no elements in common, false otherwise', () => {
+      expect(immutableList.disjoint([10, 20])).to.be.false;
+      expect(immutableList.disjoint([10, 10])).to.be.false;
+      expect(immutableList.disjoint([42, 43])).to.be.true;
+      expect(immutableList.disjoint([])).to.be.true;
+    });
+  });
+
+  describe('iterator', () => {
+    it('should return an iterator over the elements', () => {
+      expect(immutableList.iterator().collect()).to.eql([10, 20, 30]);
+    });
+  });
+
+  describe('hashCode', () => {
+    it('should return the same hash code as the delegate', () => {
+      expect(immutableList.hashCode()).to.equal(delegate.hashCode());
+    });
+  });
+
+  describe('toJSON', () => {
+    it('should return the same JSON representation as the delegate', () => {
+      expect(immutableList.toJSON()).to.equal(delegate.toJSON());
+    });
+  });
+
+  describe('asReadOnly', () => {
+    it('should return itself', () => {
+      expect(immutableList.asReadOnly()).to.equal(immutableList);
+    });
+  });
+
+  describe('toReadOnly', () => {
+    it('should return itself', () => {
+      expect(immutableList.toReadOnly()).to.equal(immutableList);
+    });
   });
 });

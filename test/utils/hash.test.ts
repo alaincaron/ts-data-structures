@@ -1,7 +1,12 @@
 import { expect } from 'chai';
-import { hashAny, hashIterableOrdered, hashIterableUnordered } from '../../../src/utils/hash';
-import { Cyrb53HashFunction, FNV1a32HashFunction } from '../../../src/utils/hash';
-import { Funnel } from '../../../src/utils/hash';
+import {
+  Cyrb53HashFunction,
+  FNV1a32HashFunction,
+  Funnel,
+  hashAny,
+  hashIterableOrdered,
+  hashIterableUnordered,
+} from '../../src';
 
 describe('Hash Utils', () => {
   describe('hashAny', () => {
@@ -124,11 +129,9 @@ describe('Hash Utils', () => {
           name: string;
         }
 
-        const funnel: Funnel<TestObject> = {
-          funnel: (obj, sink) => {
-            sink.putNumber(obj.id);
-            sink.putString(obj.name);
-          },
+        const funnel: Funnel<TestObject> = (obj, sink) => {
+          sink.putNumber(obj.id);
+          sink.putString(obj.name);
         };
 
         const obj = { id: 1, name: 'test' };
@@ -161,11 +164,9 @@ describe('Hash Utils', () => {
           name: string;
         }
 
-        const funnel: Funnel<TestObject> = {
-          funnel: (obj, sink) => {
-            sink.putNumber(obj.id);
-            sink.putString(obj.name);
-          },
+        const funnel: Funnel<TestObject> = (obj, sink) => {
+          sink.putNumber(obj.id);
+          sink.putString(obj.name);
         };
 
         const obj = { id: 1, name: 'test' };

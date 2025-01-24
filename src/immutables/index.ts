@@ -8,6 +8,7 @@ export * from './immutable';
 export * from './immutableCollection';
 export * from './immutableList';
 export * from './immutableMultiSet';
+export * from './immutableNavigableMultiSet';
 export * from './immutableNavigableSet';
 export * from './immutableSet';
 export * from './immutableSortedMultiSet';

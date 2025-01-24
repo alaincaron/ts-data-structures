@@ -97,8 +97,59 @@ describe('SingletonMultiSet', () => {
       expect(multiSet.equals(otherMultiSet)).to.be.false;
     });
 
+    it('should return true if compared to itself', () => {
+      expect(multiSet.equals(multiSet)).to.be.true;
+    });
+
     it('should return false for a non-multiSet object', () => {
       expect(multiSet.equals([42])).to.be.false;
+    });
+  });
+
+  describe('find', () => {
+    it('should return the item if it returns true for the predicate', () => {
+      expect(multiSet.find(x => x % 2 === 0)).to.equal(42);
+    });
+
+    it('should return undefined if it returns false for the predicate', () => {
+      expect(multiSet.find(x => x % 2 === 1)).to.be.undefined;
+    });
+  });
+
+  describe('containsAll', () => {
+    it('should return true if the argument is a subset, false otherwise', () => {
+      expect(multiSet.containsAll([42])).to.be.true;
+      expect(multiSet.containsAll([42, 42])).to.be.true;
+      expect(multiSet.containsAll([42, 43])).to.be.false;
+      expect(multiSet.containsAll([43])).to.be.false;
+      expect(multiSet.containsAll([])).to.be.true;
+    });
+  });
+
+  describe('disjoint', () => {
+    it('should return true if the argument has no elements in common, false otherwise', () => {
+      expect(multiSet.disjoint([42])).to.be.false;
+      expect(multiSet.disjoint([42, 42])).to.be.false;
+      expect(multiSet.disjoint([42, 43])).to.be.false;
+      expect(multiSet.disjoint([44, 43])).to.be.true;
+      expect(multiSet.disjoint([43])).to.be.true;
+      expect(multiSet.disjoint([])).to.be.true;
+    });
+  });
+
+  describe('size, capacity, isEmpty, isFull, remaining', () => {
+    it('should return the correct values', () => {
+      expect(multiSet.size()).to.equal(1);
+      expect(multiSet.capacity()).to.equal(1);
+      expect(multiSet.isEmpty()).to.be.false;
+      expect(multiSet.isFull()).to.be.true;
+      expect(multiSet.remaining()).to.equal(0);
+    });
+  });
+
+  describe('toJSON', () => {
+    it('should return the correct JSON representation', () => {
+      expect(multiSet.toJSON()).to.equal('[42]');
     });
   });
 });

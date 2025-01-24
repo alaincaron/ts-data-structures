@@ -62,11 +62,10 @@ export class Immutable {
         return Immutable.emptyList();
       case 1:
         return Immutable.singletonList(items[0]);
-      default: {
+      default:
         const delegate = AdapterArrayList.create({ initial: items });
         if (comparator) delegate.sort(comparator);
         return new ImmutableList(delegate);
-      }
     }
   }
 
@@ -89,8 +88,15 @@ export class Immutable {
       default: {
         const delegate = new AdapterArrayList<E>();
         delegate.addFully(items);
-        if (comparator) delegate.sort(comparator);
-        return new ImmutableList(delegate);
+        switch (delegate.size()) {
+          case 0:
+            return Immutable.emptyList();
+          case 1:
+            return Immutable.singletonList(delegate.getFirst());
+          default:
+            if (comparator) delegate.sort(comparator);
+            return new ImmutableList(delegate);
+        }
       }
     }
   }
@@ -265,6 +271,16 @@ export class Immutable {
   static asReadOnlySortedMultiSet<E>(items: SortedMultiSet<E>) {
     if (isReadOnlyMultiSet<E>(items) && 'first' in items) return items;
     return new ImmutableSortedMultiSet(items);
+  }
+
+  static navigableMultiSetOf<E>(comparator: Comparator<E>, ...items: E[]): NavigableMultiSet<E> {
+    const delegate = AvlTreeMultiSet.create({ comparator, initial: items });
+    switch (delegate.size()) {
+      case 0:
+        return Immutable.emptyMultiSet();
+      default:
+        return new ImmutableNavigableMultiSet<E>(delegate);
+    }
   }
 
   static toNavigableMultiSet<E>(items: CollectionLike<E>, comparator: Comparator<E> = Comparators.natural) {

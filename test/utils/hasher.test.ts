@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { Buffer } from 'node:buffer';
-import { AbstractHasher, Cyrb53Hasher, FNV1a32Hasher, HashCode, Numeric32HashCode } from '../../../src';
+import { AbstractHasher, Cyrb53Hasher, FNV1a32Hasher, HashCode, Numeric32HashCode, PrimitiveSink } from '../../src';
 
 describe('Hasher Utilities', () => {
   describe('Numeric32HashCode', () => {
@@ -14,7 +14,7 @@ describe('Hasher Utilities', () => {
       expect(hashCode.bits()).to.equal(32);
     });
 
-    it('should return the correct buffer representation', () => {
+    it('should return the correct buffer representation for safe 32 bit integers', () => {
       const value = 12345;
       const hashCode = new Numeric32HashCode(value);
       const buffer = hashCode.asBuffer();
@@ -56,10 +56,8 @@ describe('Hasher Utilities', () => {
     });
 
     it('should hash objects using a funnel', () => {
-      const funnel = {
-        funnel: (obj: { id: number }, hasher: Cyrb53Hasher) => {
-          hasher.putNumber(obj.id);
-        },
+      const funnel = (obj: { id: number }, sink: PrimitiveSink) => {
+        sink.putNumber(obj.id);
       };
       hasher.putObject({ id: 123 }, funnel);
       const hash = hasher.hash();
@@ -131,9 +129,11 @@ describe('Hasher Utilities', () => {
     });
 
     it('should hash numbers and strings consistently', () => {
-      const hasher = new MockHasher();
-      const hash1 = hasher.putNumber(10).putString('abc').hash();
-      const hash2 = hasher.putNumber(10).putString('abc').hash();
+      const hasher1 = new MockHasher();
+      const hash1 = hasher1.putNumber(10).putString('abc').hash();
+
+      const hasher2 = new MockHasher();
+      const hash2 = hasher2.putNumber(10).putString('abc').hash();
       expect(hash1.asNumber()).to.equal(hash2.asNumber());
     });
   });
