@@ -62,10 +62,11 @@ export class Immutable {
         return Immutable.emptyList();
       case 1:
         return Immutable.singletonList(items[0]);
-      default:
+      default: {
         const delegate = AdapterArrayList.create({ initial: items });
         if (comparator) delegate.sort(comparator);
         return new ImmutableList(delegate);
+      }
     }
   }
 

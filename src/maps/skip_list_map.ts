@@ -45,7 +45,7 @@ export class SkipListMap<K, V> extends AbstractNavigableMap<K, V> {
   }
 
   put(key: K, value: V): V | undefined {
-    const { node, exact } = this.findNode(key);
+    const { node, exact } = this.findNodeEntry(key);
 
     if (node && exact) {
       const oldValue = node.value;
@@ -82,13 +82,13 @@ export class SkipListMap<K, V> extends AbstractNavigableMap<K, V> {
   }
 
   lowerEntry(key: K) {
-    const { node, exact } = this.findNode(key);
+    const { node, exact } = this.findNodeEntry(key);
     if (!node || !exact) return node;
     return this._layers[0].before(node);
   }
 
   higherEntry(key: K) {
-    let { node } = this.findNode(key);
+    let { node } = this.findNodeEntry(key);
     if (node) {
       return this._layers[0].after(node);
     }
@@ -98,10 +98,11 @@ export class SkipListMap<K, V> extends AbstractNavigableMap<K, V> {
   }
 
   ceilingEntry(key: K) {
-    let { node, exact } = this.findNode(key);
+    const nodeEntry = this.findNodeEntry(key);
+    let { node } = nodeEntry;
 
     if (node) {
-      return exact ? node : this._layers[0].after(node);
+      return nodeEntry.exact ? node : this._layers[0].after(node);
     }
 
     node = this._layers[0].first();
@@ -109,7 +110,7 @@ export class SkipListMap<K, V> extends AbstractNavigableMap<K, V> {
   }
 
   floorEntry(key: K) {
-    return this.findNode(key)?.node;
+    return this.findNodeEntry(key)?.node;
   }
 
   pollLastEntry() {
@@ -174,7 +175,7 @@ export class SkipListMap<K, V> extends AbstractNavigableMap<K, V> {
   }
 
   getEntry(key: K): SkipListNode<K, V> | undefined {
-    const { node, exact } = this.findNode(key);
+    const { node, exact } = this.findNodeEntry(key);
     return node && exact ? node : undefined;
   }
 
@@ -201,7 +202,7 @@ export class SkipListMap<K, V> extends AbstractNavigableMap<K, V> {
     this.horizontalInsert(level, node.up, upNode);
   }
 
-  private findNode(key: K): { node?: SkipListNode<K, V>; exact?: boolean } {
+  private findNodeEntry(key: K): { node?: SkipListNode<K, V>; exact?: boolean } {
     let idx = this._layers.length - 1;
     let node: SkipListNode<K, V> | undefined;
     let c: number | undefined = undefined;

@@ -26,7 +26,6 @@ export function shuffle<E>(
 }
 
 declare global {
-  // eslint-disable-next-line
   interface Array<T> {
     shuffle(
       arg2?: number | Mapper<void, number>,

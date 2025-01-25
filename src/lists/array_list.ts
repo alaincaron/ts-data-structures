@@ -43,7 +43,6 @@ export class AdapterArrayList<E> extends BaseArrayList<E> {
 }
 
 declare global {
-  // eslint-disable-next-line
   interface Array<T> {
     asList(): AdapterArrayList<T>;
     listIterator(skip?: number, count?: number): ListIterator<T>;

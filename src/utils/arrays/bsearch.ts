@@ -32,7 +32,6 @@ export function insertSorted<T>(arr: T[], e: T, comparator?: Comparator<T>): T[]
 }
 
 declare global {
-  // eslint-disable-next-line
   interface Array<T> {
     bsearch<K = T>(e: K, options?: SearchOptions<T, K>): number;
     insertSorted(e: T): T[];

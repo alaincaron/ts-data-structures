@@ -75,7 +75,6 @@ export class AdapterSet<E> extends AbstractSet<E> {
 }
 
 declare global {
-  // eslint-disable-next-line
   interface Set<T> {
     equals(other: unknown): boolean;
     asISet(): AdapterSet<T>;

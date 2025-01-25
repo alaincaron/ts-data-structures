@@ -111,7 +111,6 @@ export class AdapterMap<K, V> extends AbstractMap<K, V> {
 }
 
 declare global {
-  // eslint-disable-next-line
   interface Map<K, V> {
     equals(other: unknown): boolean;
     asIMap(): AdapterMap<K, V>;

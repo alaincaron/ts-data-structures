@@ -14,7 +14,7 @@ export function equalsAny(x: any, y: any): boolean {
   if (typeof x != typeof y) return false;
   if (x == null || y == null) return x === y;
   switch (typeof x) {
-    case 'object':
+    case 'object': {
       if (typeof x.equals === 'function') return x.equals(y);
       if (x.constructor != y.constructor) return false;
       const isIterableX = typeof x[Symbol.iterator] === 'function';
@@ -27,6 +27,7 @@ export function equalsAny(x: any, y: any): boolean {
       const entriesY = Object.entries(y);
       if (entriesX.length != entriesY.length) return false;
       return equalsIterable(entriesX.sort(), entriesY.sort());
+    }
     default:
       return false;
   }
