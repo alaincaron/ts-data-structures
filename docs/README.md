@@ -1,4 +1,4 @@
-**ts-data-collections** • **Docs**
+**ts-data-collections**
 
 ---
 

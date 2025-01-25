@@ -1,4 +1,4 @@
-[**ts-data-collections**](../README.md) • **Docs**
+[**ts-data-collections**](../README.md)
 
 ---
 
@@ -26,7 +26,7 @@ not. Some are ordered and others unordered.
 
 ### \[iterator\]()
 
-> `abstract` **\[iterator\]**(): `Iterator`\<`E`, `any`, `any`\>
+> `abstract` **\[iterator\]**(): `Iterator`\<`E`\>
 
 Used to make this MutableCollection being seen as an
 `Iterable<A>`. This allows them to be used in APIs expecting an
@@ -34,7 +34,7 @@ Used to make this MutableCollection being seen as an
 
 #### Returns
 
-`Iterator`\<`E`, `any`, `any`\>
+`Iterator`\<`E`\>
 
 #### Implementation of
 
@@ -53,7 +53,9 @@ duplicates and already contains the specified element.
 
 #### Parameters
 
-• **item**: `E`
+##### item
+
+`E`
 
 the item whose presence in the `Collection` is to be ensured
 
@@ -87,7 +89,9 @@ there is enough remaining capacity.
 
 #### Parameters
 
-• **container**: [`CollectionLike`](../type-aliases/CollectionLike.md)\<`E1`\>
+##### container
+
+[`CollectionLike`](../type-aliases/CollectionLike.md)\<`E1`\>
 
 The container of items to add.
 
@@ -195,7 +199,9 @@ Returns `true` if this `Collection` contains the specified
 
 #### Parameters
 
-• **item**: `E`
+##### item
+
+`E`
 
 The item whose presence is tested.
 
@@ -224,7 +230,9 @@ Returns true if this `Collection` contains all the elements in the specified `It
 
 #### Parameters
 
-• **iteratorLike**: `IteratorLike`\<`E1`\>
+##### iteratorLike
+
+`IteratorLike`\<`E1`\>
 
 The items to be checked for containment in this `Collection`.
 
@@ -248,7 +256,9 @@ Returns true if this collection is equal to the specified argument `other`.
 
 #### Parameters
 
-• **other**: `unknown`
+##### other
+
+`unknown`
 
 #### Returns
 
@@ -269,7 +279,9 @@ Removes items from this `Collection` for which the argument
 
 #### Parameters
 
-• **predicate**: `Predicate`\<`E`\>
+##### predicate
+
+`Predicate`\<`E`\>
 
 the predicate used for filtering
 item of this `Collection`.
@@ -294,7 +306,9 @@ Finds an item for which the argument `predicate` evaluates to `true`.
 
 #### Parameters
 
-• **predicate**: `Predicate`\<`E`\>
+##### predicate
+
+`Predicate`\<`E`\>
 
 the predicate used to select an item
 
@@ -336,7 +350,9 @@ Returns `true` if this `Collection` contains the specified
 
 #### Parameters
 
-• **item**: `E`
+##### item
+
+`E`
 
 The item whose presence is tested.
 
@@ -426,7 +442,9 @@ of this `Collection`, otherwise returning false.
 
 #### Parameters
 
-• **item**: `E`
+##### item
+
+`E`
 
 the item to add to the `Collection`
 
@@ -457,9 +475,11 @@ added one by one until all items are added or the `Collection` is
 
 #### Parameters
 
-• **container**: `IteratorLike`\<`E1`\> \| [`CollectionLike`](../type-aliases/CollectionLike.md)\<`E1`\>
+##### container
 
 The container of items to add.
+
+`IteratorLike`\<`E1`\> | [`CollectionLike`](../type-aliases/CollectionLike.md)\<`E1`\>
 
 #### Returns
 
@@ -507,7 +527,9 @@ specified `Collection`.
 
 #### Parameters
 
-• **c**: `Collection`\<`E`\>
+##### c
+
+`Collection`\<`E`\>
 
 `Collection` containing elements to be removed from this `Collection`.
 
@@ -531,7 +553,9 @@ Removes an instance of item from the `Collection`
 
 #### Parameters
 
-• **item**: `E`
+##### item
+
+`E`
 
 The `item` to remove from the `Collection`
 
@@ -559,7 +583,9 @@ Removes an item for which the `predicate` returns `true`.
 
 #### Parameters
 
-• **predicate**: `Predicate`\<`E`\>
+##### predicate
+
+`Predicate`\<`E`\>
 
 The predicate that is being evaluated for each element.
 
@@ -586,11 +612,13 @@ in the specified `Collection`. In other words, removes from this
 `Collection all of its elements that are not contained in the
 specified `Collection`.
 
-@param c `Collection` containing elements to be retained in this `Collection`.
-
 #### Parameters
 
-• **c**: `Collection`\<`E`\>
+##### c
+
+`Collection`\<`E`\>
+
+`Collection` containing elements to be retained in this `Collection`.
 
 #### Returns
 

@@ -1,4 +1,4 @@
-[**ts-data-collections**](../README.md) • **Docs**
+[**ts-data-collections**](../README.md)
 
 ---
 
@@ -6,7 +6,7 @@
 
 # Type Alias: LengthProvider
 
-> **LengthProvider**: `object` \| `object`
+> **LengthProvider**: \{ `length`: [`NumberProvider`](NumberProvider.md); \} \| \{ `size`: [`NumberProvider`](NumberProvider.md); \}
 
 Interface for objects that can provide a numeric length or size.
 This is used to abstract over different ways of getting an object's size,

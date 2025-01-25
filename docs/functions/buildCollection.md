@@ -1,4 +1,4 @@
-[**ts-data-collections**](../README.md) • **Docs**
+[**ts-data-collections**](../README.md)
 
 ---
 
@@ -22,9 +22,13 @@ Builds a `Collection`
 
 ## Parameters
 
-• **factory**: `Constructor`\<`C`, [`undefined` \| `Options`]\>
+### factory
 
-• **initializer?**: `WithCapacity`\<`Options` & `Initializer`\>
+`Constructor`\<`C`, \[`undefined` \| `Options`\]\>
+
+### initializer?
+
+`WithCapacity`\<`Options` & `Initializer`\>
 
 ## Returns
 

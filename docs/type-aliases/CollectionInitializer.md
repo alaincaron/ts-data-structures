@@ -1,4 +1,4 @@
-[**ts-data-collections**](../README.md) • **Docs**
+[**ts-data-collections**](../README.md)
 
 ---
 
